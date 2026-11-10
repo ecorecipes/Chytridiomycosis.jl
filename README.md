@@ -21,6 +21,7 @@ parameter values are illustrative:
 | Stochastic load birth–death–immigration | `LoadBDI` |
 | Load tipping with saturating clearance, host differences and recruitment | `LoadTippingProblem`, `LoadTippingRecruitmentProblem` |
 | Microbiome (probiotic) treatment on the three host models | `MicrobiomeTreatment`, `ProbioticSLIProblem`, `ProbioticPondProblem`, `ProbioticLoadProblem` |
+| Microbiome treatment on Bsal with larvae | `ProbioticLarvalProblem` |
 | Bsal with an infectable larval stage | `BsalLarvalStage`, `BsalLarvalProblem` |
 | Toads with infection after metamorphosis | `PostMetamorphicInfection`, `ToadStageProblem` |
 

@@ -467,4 +467,38 @@ using Random: Xoshiro
             adult_relative_shedding = 1.0, adult_clearance = 12.0)))
         @test !quick.bd_persist                            # unless adults clear within weeks
     end
+
+    @testset "Microbiome treatment on the stage models (new)" begin
+        p = SchmidtParameters(:schmidt2017)
+        st = BsalLarvalStage(:wang2021; adult_to_larva = 5.2)
+        block = MicrobiomeTreatment(efficacy = 0.99)
+        lar(tr; kw...) = solve(ProbioticLarvalProblem(p, st, tr; coverage = 1.0, kw...))
+        none = solve(ProbioticLarvalProblem(p, st, MicrobiomeTreatment()))
+        @test isapprox(none.min_adults, solve(BsalLarvalProblem(p, st)).min_adults; rtol = 1e-3)
+        @test none.final_treated == 0
+        q = 0:0.25:9.75
+        lost = lar(block; treat = :larvae, treat_times = q)                 # lost at metamorphosis
+        kept = lar(block; treat = :larvae, treat_times = q, retention = 1.0)
+        @test isapprox(lost.final_adults, none.final_adults; rtol = 0.2) && lost.final_treated < 1e-6
+        @test kept.final_adults > 3 * none.final_adults && kept.final_treated > 0.8
+        both = lar(block; treat = :both, treat_times = q, retention = 1.0)
+        @test both.mean_adults > 0.99                    # both stages, retained: no spread needed
+        weeks = lar(MicrobiomeTreatment(efficacy = 0.99, half_life = 0.05); treat = :both,
+            treat_times = q, retention = 1.0)
+        @test weeks.mean_adults < 0.1                    # a half-life of weeks fails
+        @test_throws ArgumentError ProbioticLarvalProblem(p, st, block; treat = :eggs)
+        @test_throws ArgumentError ProbioticLarvalProblem(p, st, block; retention = 1.5)
+
+        # Toads when infected metamorphs can survive (Smith 2022): blocking infection no longer
+        # removes Bd, and tolerance does better than blocking.
+        sm = parameter_set(:smith2022)
+        stages = PostMetamorphicInfection(metamorph_survival = 1 - sm.deaths_exposed / sm.n_exposed)
+        pd = MitchellParameters(:mitchell2008; set = "fig2d")
+        pond(tr) = solve(ProbioticPondProblem(pd, tr; coverage = 0.8, stages))
+        blocked, tolerant = pond(MicrobiomeTreatment(efficacy = 0.9)), pond(MicrobiomeTreatment(tolerance = 0.7))
+        @test blocked.bd_persist && blocked.A_mean < 0.2 * blocked.A_disease_free
+        @test tolerant.A_mean > 0.6 * tolerant.A_disease_free
+        @test_throws ArgumentError ProbioticPondProblem(pd, MicrobiomeTreatment();
+            stages = PostMetamorphicInfection(adult_exposure_days = 14.0))
+    end
 end

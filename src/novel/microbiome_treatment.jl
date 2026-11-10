@@ -323,7 +323,8 @@ end
 """
     ProbioticPondProblem(p::MitchellParameters, treatment; stage = :tadpoles, coverage = 0,
         treat_years = 0:(years - 1), maternal = 0, adult_seeding = 0, years = 35,
-        spinup = 100, Z0 = 1e4, A0 = p.K / 2, toad_limit = 50, bd_limit = 100)
+        spinup = 100, Z0 = 1e4, A0 = p.K / 2, toad_limit = 50, bd_limit = 100,
+        stages = PostMetamorphicInfection())
 
 Mitchell et al. (2008) toad–Bd model with a treated class. In each year of `treat_years`
 (year 0 is the year Bd arrives) a fraction `coverage` is treated: of the newly hatched
@@ -331,6 +332,11 @@ tadpoles if `stage = :tadpoles`, or of the adults just before breeding if `stage
 Treated adults pass the microbiome on directly (`maternal`: probability that a treated
 adult's tadpole is born treated) or through the pond (`adult_seeding`: reservoir added at
 breeding when all adults are treated). Time in years.
+
+`stages` adds infection after metamorphosis ([`PostMetamorphicInfection`](@ref)): an infected
+metamorph survives with probability `s_J = metamorph_survival`, or `s_J + tolerance (1 − s_J)`
+if treated, and metamorphs leaving the pond are exposed for `metamorph_exposure_days`
+(treated ones at `1 − efficacy` times the rate). Infected adults are not supported here yet.
 
 `solve` returns series at each event (`t`, `A`, `A_treated`, `Z`, `tadpoles_treated` as a
 fraction of uninfected tadpoles), and `toads_persist`, `bd_persist`, `A_disease_free`,
@@ -350,17 +356,21 @@ struct ProbioticPondProblem
     A0::Float64
     toad_limit::Float64
     bd_limit::Float64
+    stages::PostMetamorphicInfection
 end
 function ProbioticPondProblem(p::MitchellParameters, treatment::MicrobiomeTreatment;
         stage::Symbol = :tadpoles, coverage = 0.0, years::Integer = 35,
         treat_years = 0:(years - 1), maternal = 0.0, adult_seeding = 0.0,
-        spinup::Integer = 100, Z0 = 1e4, A0 = p.K / 2, toad_limit = 50.0, bd_limit = 100.0)
+        spinup::Integer = 100, Z0 = 1e4, A0 = p.K / 2, toad_limit = 50.0, bd_limit = 100.0,
+        stages::PostMetamorphicInfection = PostMetamorphicInfection())
+    stages.adult_exposure_days == 0 || throw(ArgumentError(
+        "infected adults (adult_exposure_days > 0) are not supported with treatment yet"))
     stage in (:tadpoles, :adults) || throw(ArgumentError("stage must be :tadpoles or :adults"))
     (0 <= coverage <= 1 && 0 <= maternal <= 1 && adult_seeding >= 0) ||
         throw(ArgumentError("need coverage, maternal in [0, 1] and adult_seeding ≥ 0"))
     return ProbioticPondProblem(p, treatment, stage, float(coverage), collect(Int, treat_years),
         float(maternal), float(adult_seeding), Int(years), Int(spinup), float(Z0), float(A0),
-        float(toad_limit), float(bd_limit))
+        float(toad_limit), float(bd_limit), stages)
 end
 
 function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1e-6,
@@ -409,7 +419,13 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
                 u[2] += moved
             end
         elseif kind === :metamorphosis
-            push!(cohorts, (te + p.ω, (u[1] + u[2] + tr.tolerance * u[9]) * exp(-p.μJ * p.ω)))
+            st = prob.stages
+            exposure = p.ν * u[7] * st.metamorph_exposure_days / 365
+            qU, qT = -expm1(-exposure), -expm1(-(1 - tr.efficacy) * exposure)
+            sU = st.metamorph_survival
+            sT = sU + tr.tolerance * (1 - sU)
+            survivors = u[1] * (1 - qU + qU * sU) + u[2] * (1 - qT + qT * sT) + u[3] * sU + u[9] * sT
+            push!(cohorts, (te + p.ω, survivors * exp(-p.μJ * p.ω)))
             u[1] = u[2] = u[3] = u[9] = 0.0
         elseif kind === :introduce
             A_disease_free = u[5] + u[6]
