@@ -1,0 +1,96 @@
+# Schmidt BR, Bozzuto C, Lötters S, Steinfartz S (2017) Dynamics of host populations affected by
+# the emerging fungal pathogen Batrachochytrium salamandrivorans. R Soc Open Sci 4:160801.
+# https://doi.org/10.1098/rsos.160801   Checked against Table 1 of the paper (PMC5383822).
+# Time unit: years. Densities: adult females per hectare. Space: km.
+
+source = { ref = "schmidt2017", doi = "10.1098/rsos.160801", review_ref = 11 }
+
+[[parameter]]
+symbol = "b"
+quantity = "recruitment (birth) rate: new adult females per adult female"
+value = 0.39
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult female" }
+location = "Table 1 (from ref [29] of the paper)"
+verified = true
+
+[[parameter]]
+symbol = "d"
+quantity = "natural death rate (1/d ≈ 8 yr life expectancy)"
+value = 0.125
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult female" }
+location = "Table 1 (from ref [29] of the paper)"
+verified = true
+
+[[parameter]]
+symbol = "d_I"
+quantity = "Bsal-induced death rate of infectious hosts (1/d_I ≈ 7 days)"
+value = 52.0
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult female", setting = "lab" }
+location = "Table 1 (from Martel et al. 2013)"
+verified = true
+
+[[parameter]]
+symbol = "e"
+quantity = "rate latent -> infectious (1/e ≈ 1 day)"
+value = 364.0
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult female", setting = "lab" }
+location = "Table 1 (from Martel et al. 2013)"
+verified = true
+notes = "The review (§9.3) codes this A (assumed); the paper sources it to Martel et al. 2013."
+
+[[parameter]]
+symbol = "β"
+quantity = "mass-action transmission coefficient (1/β ≈ 1 week)"
+value = 52.0
+units = "ha yr^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult female" }
+location = "Table 1 (authors' estimate)"
+verified = true
+
+[[parameter]]
+symbol = "K"
+quantity = "carrying capacity, K = (b - d)/γ"
+value = 25.0
+units = "ha^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult female" }
+location = "Table 1 (authors' estimate, lower end of observed densities)"
+verified = true
+
+[[parameter]]
+symbol = "D"
+quantity = "diffusion coefficient D = <x^2>/(4t), with x ≈ 0.5 km travelled per year"
+value = 0.0625
+units = "km^2 yr^-1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult female" }
+location = "Table 1 (authors' estimate of x; D derived here)"
+verified = true
+notes = "Derived as 0.5^2/4; reproduces the reported wave speed c = 11.15 km/yr."
+
+[[parameter]]
+symbol = "μ"
+quantity = "scattered-colony (long-distance introduction) rate"
+value = 1.0
+units = "yr^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra" }
+location = "Table 1 (authors' estimate; 0.1 yr^-1 also shown)"
+verified = true

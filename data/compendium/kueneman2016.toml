@@ -1,0 +1,66 @@
+# Kueneman JG, Woodhams DC, Harris R, Archer HM, Knight R, McKenzie VJ (2016) Probiotic
+# treatment restores protection against lethal fungal infection lost during amphibian
+# captivity. Proc R Soc B 283:20161553. https://doi.org/10.1098/rspb.2016.1553
+# Trial outcomes, not model parameters. Copied from the microbiome literature review
+# (lab/papers/litreview, Manus AI). Only the abstract was checked (PubMed, 2026-11-10): it
+# gives "a 40% increase in survival" and infection rising "to 100%", which agrees with the
+# values below but does not confirm the group sizes. Death counts are not reported, and 60% of
+# 21 is not a whole number. Second Bd challenge, after earlier treatments and repeated
+# bacterial applications.
+
+source = { ref = "kueneman2016", doi = "10.1098/rspb.2016.1553" }
+
+[[parameter]]
+symbol = "n_control"
+quantity = "toads assigned to the Bd-only group"
+value = 10
+units = "toads"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Anaxyrus boreas", stage = "juvenile" }
+location = "Results; Figure 5 (per the review)"
+verified = false
+
+[[parameter]]
+symbol = "mortality_control"
+quantity = "mortality in the Bd-only group"
+value = 1.0
+units = "proportion"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Anaxyrus boreas", stage = "juvenile" }
+location = "Results; Figure 5 (per the review)"
+verified = false
+
+[[parameter]]
+symbol = "n_treated"
+quantity = "toads assigned to the Janthinobacterium lividum plus Bd group"
+value = 21
+units = "toads"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Anaxyrus boreas", stage = "juvenile" }
+location = "Results; Figure 5 (per the review)"
+verified = false
+
+[[parameter]]
+symbol = "mortality_treated"
+quantity = "mortality in the bacteria-plus-Bd group"
+value = 0.6
+units = "proportion"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Anaxyrus boreas", stage = "juvenile" }
+location = "Results; Figure 5 (per the review)"
+verified = false
+
+[[parameter]]
+symbol = "infected"
+quantity = "challenged toads that became infected, both groups pooled"
+value = 31
+units = "toads"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Anaxyrus boreas", stage = "juvenile" }
+location = "Figure 4b (per the review)"
+verified = false

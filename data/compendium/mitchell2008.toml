@@ -1,0 +1,234 @@
+# Mitchell KM, Churcher TS, Garner TWJ, Fisher MC (2008) Persistence of the emerging pathogen
+# Batrachochytrium dendrobatidis outside the amphibian host greatly increases the probability
+# of host extinction. Proc R Soc B 275:329-334. https://doi.org/10.1098/rspb.2007.1356
+# Base set: Table 1 "estimated value", read from the PDF page images on 2026-11-09.
+# Named sets fig2b, fig2c, fig2d: the three parameter points of Fig. 2 (legend).
+# Host: Bufo bufo at one pond. Time unit: years, except t1, t2 and ω, which are in days.
+
+source = { ref = "mitchell2008", doi = "10.1098/rspb.2007.1356", review_ref = 18 }
+
+[[parameter]]
+symbol = "t1"
+quantity = "day of year on which the tadpole cohort is born"
+value = 60.0
+units = "day"
+provenance = "M"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "t2"
+quantity = "day of year on which all tadpoles metamorphose"
+value = 155.0
+units = "day"
+provenance = "M"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "ω"
+quantity = "minimum time after metamorphosis before juveniles start to mature"
+value = 500.0
+units = "day"
+provenance = "M"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "ι"
+quantity = "successfully mating couples per adult"
+value = 0.14
+units = "1"
+provenance = "M"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "ψ"
+quantity = "eggs per mated couple"
+value = 2000.0
+units = "couple^-1"
+provenance = "M"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "ε"
+quantity = "per-capita maturation rate of juveniles older than ω"
+value = 0.16
+units = "yr^-1"
+provenance = "M"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "μP"
+quantity = "tadpole natural death rate"
+value = 7.55
+units = "yr^-1"
+provenance = "M"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "μJ"
+quantity = "juvenile natural death rate"
+value = 0.73
+units = "yr^-1"
+provenance = "M"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "μA"
+quantity = "adult natural death rate"
+value = 0.73
+units = "yr^-1"
+provenance = "M"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "K"
+quantity = "constant limiting the adult toad population"
+value = 14000.0
+units = "toads"
+provenance = "M"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "αP"
+quantity = "additional tadpole death rate due to infection"
+value = 1.62
+units = "yr^-1"
+provenance = "F"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "ν"
+quantity = "transmission parameter (infection of tadpoles per zoospore)"
+value = 6.0e-9
+units = "zoospore^-1 yr^-1"
+provenance = "F"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "ρ"
+quantity = "zoospore release per infected tadpole"
+value = 1.0e5
+units = "yr^-1"
+provenance = "F"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "μZ"
+quantity = "death rate of free-living zoospores"
+value = 13.0
+units = "yr^-1"
+provenance = "M"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "γ"
+quantity = "saprobic growth rate of free-living Bd"
+value = 0.0
+units = "yr^-1"
+provenance = "A"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "φ"
+quantity = "severity of density-dependent regulation of saprobic growth"
+value = 1.0e-6
+units = "zoospore^-1"
+provenance = "A"
+role = "uncertain"
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "fig2b"
+symbol = "ρ"
+quantity = "zoospore release per infected tadpole"
+value = 1.0e5
+units = "yr^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2 legend"
+verified = true
+
+[[parameter]]
+set = "fig2b"
+symbol = "ν"
+quantity = "transmission parameter"
+value = 2.4e-8
+units = "zoospore^-1 yr^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2 legend"
+verified = true
+
+[[parameter]]
+set = "fig2c"
+symbol = "ρ"
+quantity = "zoospore release per infected tadpole"
+value = 1.0e6
+units = "yr^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2 legend"
+verified = true
+
+[[parameter]]
+set = "fig2c"
+symbol = "ν"
+quantity = "transmission parameter"
+value = 1.8e-8
+units = "zoospore^-1 yr^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2 legend"
+verified = true
+
+[[parameter]]
+set = "fig2d"
+symbol = "ρ"
+quantity = "zoospore release per infected tadpole"
+value = 6.0e6
+units = "yr^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2 legend"
+verified = true
+
+[[parameter]]
+set = "fig2d"
+symbol = "ν"
+quantity = "transmission parameter"
+value = 2.3e-8
+units = "zoospore^-1 yr^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2 legend"
+verified = true

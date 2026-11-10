@@ -1,0 +1,55 @@
+# Becker MH, Brucker RM, Schwantes CR, Harris RN, Minbiole KPC (2009) The bacterially produced
+# metabolite violacein is associated with survival of amphibians infected with a lethal fungus.
+# Appl Environ Microbiol 75:6635-6638. https://doi.org/10.1128/AEM.01294-09
+# Trial outcome counts, not model parameters. Copied from the microbiome literature review
+# (lab/papers/litreview, Manus AI). NOT checked against the paper (publisher returned 403).
+# The review notes an inconsistent pooled survival description in the paper. Follow-up ended
+# 14 days after challenge.
+
+source = { ref = "becker2009aem", doi = "10.1128/AEM.01294-09" }
+
+[[parameter]]
+symbol = "n_control"
+quantity = "salamanders in the Bd-only group"
+value = 16
+units = "salamanders"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Plethodon cinereus", stage = "adult" }
+location = "Results (per the review)"
+verified = false
+
+[[parameter]]
+symbol = "deaths_control"
+quantity = "deaths in the Bd-only group (16 minus 9 survivors)"
+value = 7
+units = "salamanders"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Plethodon cinereus", stage = "adult" }
+location = "Results (per the review)"
+verified = false
+notes = "n_control - survivors = 16 - 9; survival reported as 56% (9/16)"
+
+[[parameter]]
+symbol = "n_treated"
+quantity = "salamanders given Janthinobacterium lividum before Bd"
+value = 15
+units = "salamanders"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Plethodon cinereus", stage = "adult" }
+location = "Results (per the review)"
+verified = false
+
+[[parameter]]
+symbol = "deaths_treated"
+quantity = "deaths in the bacteria-plus-Bd group (15 minus 11 survivors)"
+value = 4
+units = "salamanders"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Plethodon cinereus", stage = "adult" }
+location = "Results (per the review)"
+verified = false
+notes = "n_treated - survivors = 15 - 11; survival reported as 73% (11/15)"

@@ -1,0 +1,54 @@
+# Smith D, O'Brien D, Hall J, et al. (2022) Challenging a host-pathogen paradigm:
+# susceptibility to chytridiomycosis is decoupled from genetic erosion. J Evol Biol 35:589-598.
+# https://doi.org/10.1111/jeb.13987
+# Experimental outcome counts for Bd in post-metamorphic common toads. Reached through the
+# follow-up literature review; checked against the paper's Results text (Europe PMC
+# PMC9306973, read 2026-11-10): "Within 50 days of the initial exposure, 72 of 101 (71%)
+# toadlets exposed to Bd died, whereas all 101 control animals survived." 10 of the 29
+# survivors were still Bd-positive at the end.
+
+source = { ref = "smith2022", doi = "10.1111/jeb.13987" }
+
+[[parameter]]
+symbol = "n_exposed"
+quantity = "young-of-year toadlets exposed to Bd"
+value = 101
+units = "toadlets"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo bufo", stage = "post-metamorphic toadlet" }
+location = "Results 3.2"
+verified = true
+
+[[parameter]]
+symbol = "deaths_exposed"
+quantity = "exposed toadlets that died within 50 days"
+value = 72
+units = "toadlets"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo bufo", stage = "post-metamorphic toadlet" }
+location = "Results 3.2"
+verified = true
+
+[[parameter]]
+symbol = "survivors_positive"
+quantity = "of the 29 surviving exposed toadlets, those still Bd-positive at the end"
+value = 10
+units = "toadlets"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo bufo", stage = "post-metamorphic toadlet" }
+location = "Results 3.2"
+verified = true
+
+[[parameter]]
+symbol = "n_control"
+quantity = "control toadlets (all survived)"
+value = 101
+units = "toadlets"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo bufo", stage = "post-metamorphic toadlet" }
+location = "Results 3.2"
+verified = true

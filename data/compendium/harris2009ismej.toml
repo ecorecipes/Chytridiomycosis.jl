@@ -1,0 +1,53 @@
+# Harris RN, Brucker RM, Walke JB, et al. (2009) Skin microbes on frogs prevent morbidity and
+# mortality caused by a lethal skin fungus. ISME J 3:818-824.
+# https://doi.org/10.1038/ismej.2009.27
+# Trial outcome counts, not model parameters. Reached through the microbiome literature review
+# (lab/papers/litreview); the counts were then checked against the paper's Results text
+# (academic.oup.com/ismej/article/3/7/818/7588227, read 2026-11-10).
+# Caveat: all groups had their resident skin bacteria reduced before treatment. 140 days.
+
+source = { ref = "harris2009ismej", doi = "10.1038/ismej.2009.27" }
+
+[[parameter]]
+symbol = "n_control"
+quantity = "frogs in the Bd-only group"
+value = 6
+units = "frogs"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa", stage = "juvenile" }
+location = "Methods; Results: Survival"
+verified = true
+
+[[parameter]]
+symbol = "deaths_control"
+quantity = "deaths in the Bd-only group (the sixth frog had advanced disease)"
+value = 5
+units = "frogs"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa", stage = "juvenile" }
+location = "Results: Survival; Figure 1a"
+verified = true
+
+[[parameter]]
+symbol = "n_treated"
+quantity = "frogs given Janthinobacterium lividum before Bd"
+value = 6
+units = "frogs"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa", stage = "juvenile" }
+location = "Methods; Results: Survival"
+verified = true
+
+[[parameter]]
+symbol = "deaths_treated"
+quantity = "deaths in the bacteria-plus-Bd group"
+value = 0
+units = "frogs"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa", stage = "juvenile" }
+location = "Results: Survival; Figure 1a"
+verified = true

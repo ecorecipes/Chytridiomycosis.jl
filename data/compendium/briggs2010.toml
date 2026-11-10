@@ -1,0 +1,387 @@
+# Briggs CJ, Knapp RA, Vredenburg VT (2010) Enzootic and epizootic dynamics of the chytrid fungal
+# pathogen of amphibians. PNAS 107:9695-9700. https://doi.org/10.1073/pnas.0912886107
+# Parameter set of Fig. 2 (panel C for ν and f). Time unit: days. Volume: arbitrary unit V.
+# Read from the PMC article page (PMC2906864) via a summarising fetch, not from the PDF:
+# verified = true until checked against the PDF and SI.
+
+source = { ref = "briggs2010", doi = "10.1073/pnas.0912886107", review_ref = 10 }
+
+[[parameter]]
+symbol = "V"
+quantity = "pool volume"
+value = 1.0
+units = "volume unit"
+provenance = "A"
+role = "structural"
+location = "Fig. 2 legend"
+verified = true
+
+[[parameter]]
+symbol = "γ"
+quantity = "zoospore–frog encounter rate (the review calls this β)"
+value = 0.01
+units = "volume unit day^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2 legend"
+verified = true
+notes = "Successful transmission is β = νγ in the paper."
+
+[[parameter]]
+symbol = "ν"
+quantity = "probability that an encountering zoospore establishes a sporangium"
+value = 0.05
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2C"
+verified = true
+
+[[parameter]]
+symbol = "f"
+quantity = "fraction of released zoospores that re-encounter their own host"
+value = 0.05
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2C"
+verified = true
+
+[[parameter]]
+symbol = "μ"
+quantity = "zoospore death rate in the pool"
+value = 1.0
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2 legend"
+verified = true
+
+[[parameter]]
+symbol = "η"
+quantity = "zoospores released per sporangium per day"
+value = 17.5
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2 legend"
+verified = true
+
+[[parameter]]
+symbol = "σ"
+quantity = "sporangium loss rate (death and skin sloughing)"
+value = 0.2
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 2 legend"
+verified = true
+
+[[parameter]]
+symbol = "Smax"
+quantity = "sporangial load at which a frog dies"
+value = 10000.0
+units = "sporangia host^-1"
+provenance = "A"
+role = "structural"
+location = "Fig. 2C, Fig. 3F (1000 for subadults and tadpoles in Fig. 4)"
+verified = true
+notes = "Sporangia, not ZE per swab: do not equate with Vredenburg's 10,000 ZE crash load."
+
+[[parameter]]
+symbol = "summer"
+quantity = "length of the active (ice-free) season in which transmission occurs"
+value = 100.0
+units = "day"
+provenance = "A"
+role = "structural"
+location = "SI Methods, unstructured host model"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "ν"
+quantity = "establishment probability"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (A and B)"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "R"
+quantity = "mean recruits per frog per spring (Poisson)"
+value = 4.0
+units = "frog^-1 yr^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (A and B)"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "K"
+quantity = "ceiling on the number of frogs"
+value = 100.0
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (A and B)"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "θF"
+quantity = "frog overwinter survival probability"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (A and B)"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "θZ"
+quantity = "zoospore overwinter survival probability"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (A and B)"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "f"
+quantity = "self-reinfection fraction"
+value = 0.15
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend, panel B"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "γ"
+quantity = "zoospore–frog encounter rate"
+value = 1.0e-6
+units = "volume unit day^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend, panel B"
+verified = true
+
+[[parameter]]
+set = "fig3d"
+symbol = "ν"
+quantity = "establishment probability"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (A and B)"
+verified = true
+
+[[parameter]]
+set = "fig3d"
+symbol = "R"
+quantity = "mean recruits per frog per spring (Poisson)"
+value = 4.0
+units = "frog^-1 yr^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (A and B)"
+verified = true
+
+[[parameter]]
+set = "fig3d"
+symbol = "K"
+quantity = "ceiling on the number of frogs"
+value = 100.0
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (A and B)"
+verified = true
+
+[[parameter]]
+set = "fig3d"
+symbol = "θF"
+quantity = "frog overwinter survival probability"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (A and B)"
+verified = true
+
+[[parameter]]
+set = "fig3d"
+symbol = "θZ"
+quantity = "zoospore overwinter survival probability"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (A and B)"
+verified = true
+
+[[parameter]]
+set = "fig3d"
+symbol = "f"
+quantity = "self-reinfection fraction"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend, panel D"
+verified = true
+
+[[parameter]]
+set = "fig3d"
+symbol = "γ"
+quantity = "zoospore–frog encounter rate"
+value = 1.0e-4
+units = "volume unit day^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend, panel D"
+verified = true
+
+[[parameter]]
+set = "fig3d"
+symbol = "εZ"
+quantity = "mean external zoospores added to the pool per day (Poisson)"
+value = 1000.0
+units = "zoospores day^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (C and D)"
+verified = true
+
+[[parameter]]
+set = "fig3f"
+symbol = "ν"
+quantity = "establishment probability, adults and tadpoles"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (E and F)"
+verified = true
+
+[[parameter]]
+set = "fig3f"
+symbol = "f"
+quantity = "self-reinfection fraction, adults and tadpoles"
+value = 0.05
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (E and F)"
+verified = true
+
+[[parameter]]
+set = "fig3f"
+symbol = "R"
+quantity = "mean tadpoles per adult per spring (Poisson)"
+value = 40.0
+units = "tadpoles adult^-1 yr^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (E and F)"
+verified = true
+
+[[parameter]]
+set = "fig3f"
+symbol = "θF"
+quantity = "adult overwinter survival probability"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (E and F)"
+verified = true
+
+[[parameter]]
+set = "fig3f"
+symbol = "θ_tadpole"
+quantity = "tadpole overwinter survival probability"
+value = 0.2
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (E and F)"
+verified = true
+
+[[parameter]]
+set = "fig3f"
+symbol = "θZ"
+quantity = "zoospore overwinter survival probability"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (E and F)"
+verified = true
+
+[[parameter]]
+set = "fig3f"
+symbol = "m"
+quantity = "probability a tadpole metamorphoses each spring"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (E and F)"
+verified = true
+
+[[parameter]]
+set = "fig3f"
+symbol = "Smax_tadpole"
+quantity = "load cap on tadpoles (not lethal)"
+value = 10000.0
+units = "sporangia host^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (E and F)"
+verified = true
+
+[[parameter]]
+set = "fig3f"
+symbol = "γ"
+quantity = "zoospore–adult encounter rate"
+value = 1.0e-6
+units = "volume unit day^-1"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (E and F)"
+verified = true
+notes = "The legend also lists γ = 0.01 among the shared values, contradicting γ_adult = 1e-6; the stage-specific value is used."
+
+[[parameter]]
+set = "fig3f"
+symbol = "γ_tadpole"
+quantity = "zoospore–tadpole encounter rate (100 γ_adult)"
+value = 1.0e-4
+units = "volume unit day^-1"
+provenance = "D"
+role = "uncertain"
+location = "Fig. 3 legend (E and F)"
+verified = true
+
+[[parameter]]
+set = "fig3f"
+symbol = "K"
+quantity = "ceiling on the number of adults"
+value = 100.0
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+location = "Fig. 3 legend (E and F)"
+verified = true
+notes = "Not restated for panels E and F; carried over from panel A."

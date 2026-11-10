@@ -1,0 +1,32 @@
+# Wang Y, Verbrugghe E, Meuris L, et al. (2021) Epidermal galactose spurs chytrid virulence and
+# predicts amphibian colonization. Nat Commun 12:5788.
+# https://doi.org/10.1038/s41467-021-26127-9
+# Experimental outcome counts for Bsal in fire salamander larvae. Reached through the follow-up
+# literature review; checked against the paper's Results text (Europe PMC PMC8490390, read
+# 2026-11-10): "Five out of ten inoculated late stage larvae carried over the infection
+# through metamorphosis, resulting in lethal disease of juveniles." Disease signs were seen in
+# metamorphs only. The number tested at each follow-up is not reported.
+
+source = { ref = "wang2021", doi = "10.1038/s41467-021-26127-9" }
+
+[[parameter]]
+symbol = "n_larvae"
+quantity = "late-stage larvae inoculated with Bsal"
+value = 10
+units = "larvae"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "late larva" }
+location = "Results; Figure 4"
+verified = true
+
+[[parameter]]
+symbol = "carried_over"
+quantity = "of those, larvae that carried infection through metamorphosis"
+value = 5
+units = "larvae"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "late larva" }
+location = "Results; Figure 4"
+verified = true
