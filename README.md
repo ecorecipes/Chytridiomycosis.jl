@@ -25,6 +25,13 @@ parameter values are illustrative:
 | Bsal with an infectable larval stage | `BsalLarvalStage`, `BsalLarvalProblem` |
 | Toads with infection after metamorphosis | `PostMetamorphicInfection`, `ToadStageProblem` |
 
+## Vignette
+
+[Does a protective skin microbiome save the population?](vignettes/01_building_realism/01_building_realism.md)
+builds the treatment model one piece of biology at a time, for Bsal in fire salamanders and Bd
+in common toads, and shows how each added piece of realism changes the answer. Render it with
+`quarto render` in `vignettes/` (Quarto with the Julia engine).
+
 ## Parameters
 
 Published values are read from a TOML compendium (`data/compendium/`, one file per source

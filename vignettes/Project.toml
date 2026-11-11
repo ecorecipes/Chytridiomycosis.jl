@@ -1,0 +1,7 @@
+[deps]
+Chytridiomycosis = "225de920-55da-40a7-8ddb-3f32ee84be8d"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+
+[sources]
+Chytridiomycosis = {path = ".."}
