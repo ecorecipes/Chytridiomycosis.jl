@@ -501,4 +501,27 @@ using Random: Xoshiro
         @test_throws ArgumentError ProbioticPondProblem(pd, MicrobiomeTreatment();
             stages = PostMetamorphicInfection(adult_exposure_days = 14.0))
     end
+
+    @testset "Waning protection (new)" begin
+        w = MicrobiomeTreatment(efficacy = 0.9, abundance_half_life = 5 / 365, protective_fold = 100.0)
+        @test protection(w, 0.0) == 1 && protection(MicrobiomeTreatment(efficacy = 0.9), 3.0) == 1
+        @test protection(w, 1.0) < 1e-6
+        d = protection_duration(w)
+        @test isapprox(protection(w, d), 0.5; atol = 1e-8)
+        @test isapprox(d * 365, 5 * log2(100 * (2 * 1.01 - 1)); rtol = 1e-8)   # ≈ log2(F) half-lives
+        @test protection_duration(MicrobiomeTreatment()) == Inf
+        @test_throws ArgumentError MicrobiomeTreatment(protective_fold = 0.0)
+        # toad tadpoles: one dose wanes within the season; repeated doses restore protection
+        pd = MitchellParameters(:mitchell2008; set = "fig2d")
+        pond(tr; kw...) = solve(ProbioticPondProblem(pd, tr; coverage = 0.8, kw...))
+        lasting = pond(MicrobiomeTreatment(efficacy = 0.9))
+        once = pond(w)
+        thrice = pond(w; redose_days = [30.0, 60.0])
+        @test once.A_mean < thrice.A_mean <= lasting.A_mean * 1.001
+        @test_throws ArgumentError pond(w; redose_days = [200.0])
+        # Bsal: a waning treatment is as good as none after a year
+        ps = SchmidtParameters(:schmidt2017)
+        @test solve(ProbioticSLIProblem(ps, MicrobiomeTreatment(efficacy = 0.99,
+            abundance_half_life = 5 / 365, protective_fold = 100.0); coverage = 1.0)).final_hosts < 0.01
+    end
 end

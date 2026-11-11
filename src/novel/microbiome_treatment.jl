@@ -24,11 +24,16 @@
 #   shedding_reduction  proportional reduction in the pathogen shed by a treated, infected host
 # A treatment that lowers pathogen load acts on the last two together
 # (`load_reducing_treatment`).
+# Protection can also wane with the abundance of the applied bacteria (`abundance_half_life`,
+# `protective_fold`): all three effects are multiplied by `protection(treatment, age)`, where
+# age is the time since the last application. Hosts that acquire the microbiome from others
+# share that clock, so waning is meant for use without transmission.
 # NONE of the treatment parameters has a published value here. All numbers are illustrative.
 
 """
     MicrobiomeTreatment(; efficacy = 0, half_life = Inf, direct = 0, environmental = 0,
-                        reservoir_half_life = 1, tolerance = 0, shedding_reduction = 0)
+                        reservoir_half_life = 1, tolerance = 0, shedding_reduction = 0,
+                        abundance_half_life = Inf, protective_fold = Inf)
 
 A protective microbiome carried by "treated" hosts. `efficacy` (0–1) is the proportional
 reduction in the infection rate of a treated host. `tolerance` (0–1) is the proportional
@@ -39,6 +44,11 @@ A treated host reverts to untreated with half-life `half_life`. An
 untreated host acquires the microbiome at rate `direct ×` (treated fraction of hosts) plus
 `environmental × E`, where `E` is an environmental reservoir with half-life
 `reservoir_half_life`. Times and rates are in the host model's time unit.
+
+Waning: the applied bacteria decline with `abundance_half_life`, and `protective_fold` is the
+starting abundance divided by the abundance that gives half the full effect. Efficacy,
+tolerance and shedding reduction are all multiplied by [`protection`](@ref) at the time since
+the last application. With the default `abundance_half_life = Inf` there is no waning.
 """
 Base.@kwdef struct MicrobiomeTreatment
     efficacy::Float64 = 0.0
@@ -48,15 +58,48 @@ Base.@kwdef struct MicrobiomeTreatment
     reservoir_half_life::Float64 = 1.0
     tolerance::Float64 = 0.0
     shedding_reduction::Float64 = 0.0
+    abundance_half_life::Float64 = Inf
+    protective_fold::Float64 = Inf
     function MicrobiomeTreatment(efficacy, half_life, direct, environmental,
-            reservoir_half_life, tolerance, shedding_reduction)
+            reservoir_half_life, tolerance, shedding_reduction, abundance_half_life,
+            protective_fold)
         (0 <= efficacy <= 1 && 0 <= tolerance <= 1 && 0 <= shedding_reduction <= 1 &&
-         half_life > 0 && direct >= 0 && environmental >= 0 && reservoir_half_life > 0) ||
+         half_life > 0 && direct >= 0 && environmental >= 0 && reservoir_half_life > 0 &&
+         abundance_half_life > 0 && protective_fold > 0) ||
             throw(ArgumentError("need 0 ≤ efficacy, tolerance, shedding_reduction ≤ 1, " *
-                "half-lives > 0 and transmission rates ≥ 0"))
+                "half-lives and protective_fold > 0 and transmission rates ≥ 0"))
         return new(efficacy, half_life, direct, environmental, reservoir_half_life, tolerance,
-            shedding_reduction)
+            shedding_reduction, abundance_half_life, protective_fold)
     end
+end
+
+"""
+    protection(t::MicrobiomeTreatment, age)
+
+Fraction of the full treatment effect that remains `age` after an application. Abundance is
+`B(age) = B₀ 2^(−age/abundance_half_life)` and the effect is proportional to `B/(B + B₅₀)`,
+with `B₀/B₅₀ = protective_fold`, scaled to 1 at age 0:
+
+    protection = (1 + 1/F) / (1 + 2^(age/h)/F)
+
+It falls to about one half after `log2(F)` abundance half-lives.
+"""
+function protection(t::MicrobiomeTreatment, age::Real)
+    (isinf(t.abundance_half_life) || isinf(t.protective_fold)) && return 1.0
+    F = t.protective_fold
+    return (1 + 1 / F) / (1 + 2.0^(max(age, 0.0) / t.abundance_half_life) / F)
+end
+
+"""
+    protection_duration(t::MicrobiomeTreatment; level = 0.5)
+
+Time after an application at which [`protection`](@ref) has fallen to `level`.
+"""
+function protection_duration(t::MicrobiomeTreatment; level::Real = 0.5)
+    (isinf(t.abundance_half_life) || isinf(t.protective_fold)) && return Inf
+    F = t.protective_fold
+    x = F * ((1 + 1 / F) / level - 1)
+    return x > 1 ? t.abundance_half_life * log2(x) : 0.0
 end
 
 """
@@ -169,13 +212,14 @@ end
 # rule, with τ = 1 a carrier breeds like a healthy animal). Larvae are not in the model.
 
 function probiotic_sli_rhs!(du, u, q, t)
-    p, tr = q
+    p, tr, clock = q
     SU, ST, LU, LT, IU, IT = (max(u[i], 0.0) for i in 1:6)
     E = u[7]
+    g = protection(tr, t - clock[])
     N = SU + ST + LU + LT + IU + IT
-    I = IU + (1 - tr.shedding_reduction) * IT
+    I = IU + (1 - g * tr.shedding_reduction) * IT
     γ = density_dependence(p)
-    ω, δ, e, τ = reversion_rate(tr), reservoir_rate(tr), tr.efficacy, tr.tolerance
+    ω, δ, e, τ = reversion_rate(tr), reservoir_rate(tr), g * tr.efficacy, g * tr.tolerance
     frac = N > 0 ? min((ST + LT + IT) / N, 1.0) : 0.0
     a = tr.direct * frac + tr.environmental * E
     out = p.d + γ * N
@@ -227,10 +271,12 @@ function CommonSolve.solve(prob::ProbioticSLIProblem, alg = Tsit5(); dt = 0.01,
     u = [float(p.K), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]   # SU, ST, LU, LT, IU, IT, E
     ts, us = Float64[], Vector{Float64}[]
     t = t0
+    clock = Ref(t0)                                  # time of the last application
     for (te, kind) in events
-        t = probiotic_advance!(u, t, te, probiotic_sli_rhs!, (p, prob.treatment), alg, ts, us;
-            dt, abstol, reltol, kwargs...)
+        t = probiotic_advance!(u, t, te, probiotic_sli_rhs!, (p, prob.treatment, clock), alg,
+            ts, us; dt, abstol, reltol, kwargs...)
         if kind === :treat
+            clock[] = te
             for i in (1, 3, 5)
                 moved = prob.coverage * u[i]
                 u[i] -= moved
@@ -302,9 +348,10 @@ end
 # metamorphosis), so new adults are untreated.
 
 function probiotic_pond_rhs!(du, u, q, t)
-    p, tr, Pref = q
+    p, tr, Pref, clock = q
     PXU, PXT, PYU, M, AU, AT, Z, E, PYT = (max(x, 0.0) for x in u)
-    ω, δ, e, τ = reversion_rate(tr), reservoir_rate(tr), tr.efficacy, tr.tolerance
+    g = protection(tr, t - clock[])
+    ω, δ, e, τ = reversion_rate(tr), reservoir_rate(tr), g * tr.efficacy, g * tr.tolerance
     P = PXU + PXT + PYU + PYT
     PT = PXT + PYT
     a = (P > 0 ? tr.direct * min(PT / P, 1.0) : 0.0) + tr.environmental * E
@@ -314,7 +361,7 @@ function probiotic_pond_rhs!(du, u, q, t)
     du[4] = -(p.μJ + p.ε) * M
     du[5] = p.ε * M * (1 - (AU + AT) / p.K) - p.μA * AU + ω * AT
     du[6] = -(p.μA + ω) * AT
-    du[7] = p.ρ * (PYU + (1 - tr.shedding_reduction) * PYT) + p.γ * Z * exp(-p.φ * Z) - p.μZ * Z
+    du[7] = p.ρ * (PYU + (1 - g * tr.shedding_reduction) * PYT) + p.γ * Z * exp(-p.φ * Z) - p.μZ * Z
     du[8] = δ * (PT / Pref - E)
     du[9] = (1 - e) * p.ν * Z * PXT - (p.μP + (1 - τ) * p.αP) * PYT - ω * PYT + a * PYU
     return nothing
@@ -324,7 +371,7 @@ end
     ProbioticPondProblem(p::MitchellParameters, treatment; stage = :tadpoles, coverage = 0,
         treat_years = 0:(years - 1), maternal = 0, adult_seeding = 0, years = 35,
         spinup = 100, Z0 = 1e4, A0 = p.K / 2, toad_limit = 50, bd_limit = 100,
-        stages = PostMetamorphicInfection())
+        stages = PostMetamorphicInfection(), redose_days = [])
 
 Mitchell et al. (2008) toad–Bd model with a treated class. In each year of `treat_years`
 (year 0 is the year Bd arrives) a fraction `coverage` is treated: of the newly hatched
@@ -337,6 +384,10 @@ breeding when all adults are treated). Time in years.
 metamorph survives with probability `s_J = metamorph_survival`, or `s_J + tolerance (1 − s_J)`
 if treated, and metamorphs leaving the pond are exposed for `metamorph_exposure_days`
 (treated ones at `1 − efficacy` times the rate). Infected adults are not supported here yet.
+
+`redose_days` (for `stage = :tadpoles`) are days after hatching at which, in each treatment
+year, treated tadpoles are dosed again and a fraction `coverage` of the untreated ones is
+treated. Each application restarts the waning clock of [`protection`](@ref).
 
 `solve` returns series at each event (`t`, `A`, `A_treated`, `Z`, `tadpoles_treated` as a
 fraction of uninfected tadpoles), and `toads_persist`, `bd_persist`, `A_disease_free`,
@@ -357,12 +408,13 @@ struct ProbioticPondProblem
     toad_limit::Float64
     bd_limit::Float64
     stages::PostMetamorphicInfection
+    redose_days::Vector{Float64}
 end
 function ProbioticPondProblem(p::MitchellParameters, treatment::MicrobiomeTreatment;
         stage::Symbol = :tadpoles, coverage = 0.0, years::Integer = 35,
         treat_years = 0:(years - 1), maternal = 0.0, adult_seeding = 0.0,
         spinup::Integer = 100, Z0 = 1e4, A0 = p.K / 2, toad_limit = 50.0, bd_limit = 100.0,
-        stages::PostMetamorphicInfection = PostMetamorphicInfection())
+        stages::PostMetamorphicInfection = PostMetamorphicInfection(), redose_days = Float64[])
     stages.adult_exposure_days == 0 || throw(ArgumentError(
         "infected adults (adult_exposure_days > 0) are not supported with treatment yet"))
     stage in (:tadpoles, :adults) || throw(ArgumentError("stage must be :tadpoles or :adults"))
@@ -370,19 +422,27 @@ function ProbioticPondProblem(p::MitchellParameters, treatment::MicrobiomeTreatm
         throw(ArgumentError("need coverage, maternal in [0, 1] and adult_seeding ≥ 0"))
     return ProbioticPondProblem(p, treatment, stage, float(coverage), collect(Int, treat_years),
         float(maternal), float(adult_seeding), Int(years), Int(spinup), float(Z0), float(A0),
-        float(toad_limit), float(bd_limit), stages)
+        float(toad_limit), float(bd_limit), stages, collect(Float64, redose_days))
 end
 
 function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1e-6,
         reltol = 1e-8, kwargs...)
     p, tr = prob.p, prob.treatment
     0 <= p.t1 < p.t2 < 1 || throw(ArgumentError("need 0 ≤ t1 < t2 < 1 (fractions of a year)"))
-    q = (p, tr, p.ι * p.ψ * p.K)
+    clock = Ref(float(-prob.spinup))
+    q = (p, tr, p.ι * p.ψ * p.K, clock)
     u = [0.0, 0.0, 0.0, 0.0, prob.A0, 0.0, 0.0, 0.0, 0.0]   # PXU, PXT, PYU, M, AU, AT, Z, E, PYT
     cohorts = Tuple{Float64,Float64}[]
     events = Tuple{Float64,Symbol,Int}[]
     for y in -prob.spinup:(prob.years - 1)
         push!(events, (y + p.t1, :birth, y), (y + p.t2, :metamorphosis, y))
+        if prob.stage === :tadpoles && y in prob.treat_years
+            for d in prob.redose_days
+                0 < d / 365 < p.t2 - p.t1 || throw(ArgumentError(
+                    "redose_days must fall inside the tadpole season"))
+                push!(events, (y + p.t1 + d / 365, :redose, y))
+            end
+        end
     end
     push!(events, (0.0, :introduce, 0), (float(prob.years), :stop, prob.years))
     sort!(events; by = first)
@@ -402,6 +462,7 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
         treating = y in prob.treat_years
         if kind === :birth
             0 < u[7] < prob.bd_limit && (u[7] = 0.0)
+            treating && (clock[] = te)
             if treating && prob.stage === :adults
                 moved = prob.coverage * u[5]
                 u[5] -= moved
@@ -418,12 +479,20 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
                 u[1] -= moved
                 u[2] += moved
             end
+        elseif kind === :redose
+            clock[] = te
+            for (i, j) in ((1, 2), (3, 9))
+                moved = prob.coverage * u[i]
+                u[i] -= moved
+                u[j] += moved
+            end
         elseif kind === :metamorphosis
             st = prob.stages
+            g = protection(tr, te - clock[])
             exposure = p.ν * u[7] * st.metamorph_exposure_days / 365
-            qU, qT = -expm1(-exposure), -expm1(-(1 - tr.efficacy) * exposure)
+            qU, qT = -expm1(-exposure), -expm1(-(1 - g * tr.efficacy) * exposure)
             sU = st.metamorph_survival
-            sT = sU + tr.tolerance * (1 - sU)
+            sT = sU + g * tr.tolerance * (1 - sU)
             survivors = u[1] * (1 - qU + qU * sU) + u[2] * (1 - qT + qT * sT) + u[3] * sU + u[9] * sT
             push!(cohorts, (te + p.ω, survivors * exp(-p.μJ * p.ω)))
             u[1] = u[2] = u[3] = u[9] = 0.0

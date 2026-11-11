@@ -45,7 +45,7 @@ export LoadTipping, LoadTippingProblem, pool_feedback, net_growth_rate, critical
 export BsalLarvalStage, BsalLarvalProblem, larval_reproduction_number, disease_free_larvae
 export PostMetamorphicInfection, ToadStageProblem
 export ProbioticLarvalProblem
-export MicrobiomeTreatment, load_reducing_treatment, reversion_rate, microbiome_reproduction_number,
+export MicrobiomeTreatment, load_reducing_treatment, protection, protection_duration, reversion_rate, microbiome_reproduction_number,
        equilibrium_coverage, treatment_efficacy, mortality_reduction, effective_reproduction_number,
        critical_coverage, ProbioticSLIProblem, ProbioticPondProblem, ProbioticLoadProblem
 

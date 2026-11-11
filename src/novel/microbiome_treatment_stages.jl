@@ -16,12 +16,13 @@
 # Larvae of untreated mothers are born untreated. Infected larvae do not die of Bsal.
 
 function probiotic_larval_rhs!(du, u, q, t)
-    p, st, tr, retention, maternal = q
+    p, st, tr, retention, maternal, clock = q
     SU, ST, LU, LT, IU, IT, WSU, WST, WIU, WIT = (max(u[i], 0.0) for i in 1:10)
     E = u[11]
     m, out = 1 / st.larval_period, larval_exit(st)
-    ω, δ, e, τ, s = reversion_rate(tr), reservoir_rate(tr), tr.efficacy, tr.tolerance,
-        tr.shedding_reduction
+    g = protection(tr, t - clock[])
+    ω, δ, e, τ, s = reversion_rate(tr), reservoir_rate(tr), g * tr.efficacy, g * tr.tolerance,
+        g * tr.shedding_reduction
     NA = SU + ST + LU + LT + IU + IT
     NW = WSU + WST + WIU + WIT
     fA = NA > 0 ? min((ST + LT + IT) / NA, 1.0) : 0.0
@@ -96,7 +97,8 @@ end
 function CommonSolve.solve(prob::ProbioticLarvalProblem, alg = Tsit5(); dt = 0.01,
         abstol = 1e-10, reltol = 1e-8, kwargs...)
     p, (t0, t1) = prob.p, prob.tspan
-    q = (p, prob.stage, prob.treatment, prob.retention, prob.maternal)
+    clock = Ref(t0)
+    q = (p, prob.stage, prob.treatment, prob.retention, prob.maternal, clock)
     events = Tuple{Float64,Symbol}[(t, :treat) for t in prob.treat_times if t0 <= t < t1]
     t0 <= prob.t_intro < t1 && push!(events, (prob.t_intro, :introduce))
     push!(events, (t1, :stop))
@@ -111,6 +113,7 @@ function CommonSolve.solve(prob::ProbioticLarvalProblem, alg = Tsit5(); dt = 0.0
         t = probiotic_advance!(u, t, te, probiotic_larval_rhs!, q, alg, ts, us; dt, abstol,
             reltol, kwargs...)
         if kind === :treat
+            clock[] = te
             for i in untreated
                 moved = prob.coverage * u[i]
                 u[i] -= moved
