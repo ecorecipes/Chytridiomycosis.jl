@@ -15,6 +15,23 @@ format:
     theme: cosmo
     toc: true
     embed-resources: true
+  pdf:
+    documentclass: scrartcl
+    papersize: a4
+    mainfont: "STIX Two Text"
+    sansfont: "STIX Two Text"
+    monofont: "Menlo"
+    mathfont: "STIX Two Math"
+    pdf-engine: lualatex
+    toc: true
+    colorlinks: true
+    linkcolor: "blue"
+    urlcolor: "blue"
+    include-in-header:
+      text: |
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere,commandchars=\\\{\}}
+        \RecustomVerbatimEnvironment{verbatim}{Verbatim}{breaklines,breakanywhere}
   gfm:
     toc: true
 

@@ -29,9 +29,18 @@ parameter values are illustrative:
 ## Vignette
 
 [Does a protective skin microbiome save the population?](vignettes/01_building_realism/01_building_realism.md)
-builds the treatment model one piece of biology at a time, for Bsal in fire salamanders and Bd
-in common toads, and shows how each added piece of realism changes the answer. Render it with
-`quarto render` in `vignettes/` (Quarto with the Julia engine).
+([PDF](vignettes/01_building_realism/01_building_realism.pdf),
+[HTML](vignettes/01_building_realism/01_building_realism.html),
+[source](vignettes/01_building_realism/01_building_realism.qmd))
+
+For three systems (Bsal in fire salamanders, Bd in common toads, Bd in frogs) it starts from
+the simplest model, adds the biology of the host and pathogen one piece at a time, then the
+biology of the treatment, and records after every step how the population fares with and
+without treatment. It ends by measuring how far each step moved the answer and, with a
+factorial design, whether the effect of one piece depends on the others.
+
+Vignettes are Quarto documents with executable Julia code, rendered to HTML, PDF and
+Markdown: run `quarto render` in `vignettes/`.
 
 ## Parameters
 

@@ -1,92 +1,97 @@
 # Does a protective skin microbiome save the population?
 
 
-- [The question](#the-question)
+- [The question and the method](#the-question-and-the-method)
 - [Part A. Bsal in fire salamanders](#part-a-bsal-in-fire-salamanders)
-  - [Step 0. The host and the
-    pathogen](#step-0-the-host-and-the-pathogen)
-  - [Step 1. A treated class](#step-1-a-treated-class)
-  - [Step 2. Protection is lost](#step-2-protection-is-lost)
-  - [Step 3. The microbiome spreads between
-    animals](#step-3-the-microbiome-spreads-between-animals)
-  - [Step 4. What trials actually show: survival, not fewer
-    infections](#step-4-what-trials-actually-show-survival-not-fewer-infections)
-  - [Step 5. Lower pathogen load: less death and less
-    shedding](#step-5-lower-pathogen-load-less-death-and-less-shedding)
-  - [Step 6. Larvae](#step-6-larvae)
-  - [Step 7. Treat the right stage](#step-7-treat-the-right-stage)
-  - [Step 8. How long the bacteria really
-    last](#step-8-how-long-the-bacteria-really-last)
+  - [Host and pathogen](#host-and-pathogen)
+  - [Treatment](#treatment)
   - [Part A summary](#part-a-summary)
 - [Part B. Bd in common toads](#part-b-bd-in-common-toads)
-  - [Step 0. The host and the
-    pathogen](#step-0-the-host-and-the-pathogen-1)
-  - [Step 1. A treated class](#step-1-a-treated-class-1)
-  - [Step 2. Protection is lost](#step-2-protection-is-lost-1)
-  - [Step 3. Stop treating and rely on
-    spread](#step-3-stop-treating-and-rely-on-spread)
-  - [Step 4. Survival, not fewer
-    infections](#step-4-survival-not-fewer-infections)
-  - [Step 5. Lower load](#step-5-lower-load)
-  - [Step 6. Infection after
-    metamorphosis](#step-6-infection-after-metamorphosis)
-  - [Step 8. How long the bacteria really
-    last](#step-8-how-long-the-bacteria-really-last-1)
+  - [Host and pathogen](#host-and-pathogen-1)
+  - [Treatment](#treatment-1)
   - [Part B summary](#part-b-summary)
-- [Part C. Bd in frogs: bacteria as a state of each
-  animal](#part-c-bd-in-frogs-bacteria-as-a-state-of-each-animal)
-- [What each piece of realism did](#what-each-piece-of-realism-did)
-- [What is not in the model](#what-is-not-in-the-model)
+- [Part C. Bd in frogs](#part-c-bd-in-frogs)
+  - [Host and pathogen](#host-and-pathogen-2)
+  - [Treatment](#treatment-2)
+  - [Part C summary](#part-c-summary)
+- [How much did each step move the
+  answer?](#how-much-did-each-step-move-the-answer)
+- [Does the effect of one piece of realism depend on the
+  others?](#does-the-effect-of-one-piece-of-realism-depend-on-the-others)
+- [All steps](#all-steps)
+- [What the exercise shows](#what-the-exercise-shows)
+- [What is not in the models](#what-is-not-in-the-models)
 - [References](#references)
 
-## The question
+## The question and the method
 
 Amphibians can be treated with skin bacteria that inhibit the chytrid
 fungi *Batrachochytrium dendrobatidis* (Bd) and *B. salamandrivorans*
 (Bsal). Would that protect a population?
 
-This vignette answers the question several times over. It starts from
-the simplest possible description of treatment and adds one piece of
-biology at each step. After every step it asks the same question again,
-so that the effect of each added piece of realism can be seen.
+The answer a model gives depends on how much biology is in it. This
+vignette makes that dependence visible. For each of three host–pathogen
+systems it:
 
-Two systems are followed in parallel, and a third is used for the final
-step:
+1.  starts from the **simplest model** of the host and the pathogen;
+2.  adds the **biology of the host and pathogen** one piece at a time,
+    with no treatment;
+3.  adds the **biology of the treatment** one piece at a time;
+4.  after every step, records the same two outcomes: the population
+    **without treatment**, and the population under one fixed
+    **reference treatment**.
 
-- **Bsal in fire salamanders**, starting from the model of Schmidt et
-  al. (2017);
-- **Bd in common toads**, starting from the model of Mitchell et
-  al. (2008);
-- **Bd in frogs**, starting from the load model of Briggs et al. (2010),
-  in Part C.
+Each step adds one thing, and the step before it is recovered by
+switching that thing off. The final sections measure how much each
+addition moved the answer, and check with a factorial design whether the
+effect of one piece of realism depends on the others.
+
+| Part | System                   | Simplest model                    |
+|------|--------------------------|-----------------------------------|
+| A    | Bsal in fire salamanders | susceptible and infectious adults |
+| B    | Bd in common toads       | Mitchell et al. (2008) pond model |
+| C    | Bd in frogs              | Briggs et al. (2010) load model   |
 
 > [!IMPORTANT]
 >
-> The two starting models are published and are reproduced here from
-> their papers. Everything added to them is new work in this package and
-> **is not a published result**. Values taken from experiments are read
-> from the package’s parameter compendium and are named where they are
-> used. All other added values (efficacy, coverage, spread, exposure
-> windows) are illustrative: they show what the model does, not what a
-> real treatment would achieve.
+> The published models (Schmidt et al. 2017, Mitchell et al. 2008,
+> Briggs et al. 2010) are reproduced from their papers. Everything added
+> to them is new work in this package and **is not a published result**.
+> Values taken from experiments are read from the package’s parameter
+> compendium and are named where they are used. All other added values
+> (efficacy, coverage, spread, exposure windows, clearance) are
+> illustrative: they show what the model does, not what a real treatment
+> would achieve.
 
 ``` julia
 using Chytridiomycosis, Plots, Printf
+using Distributions: LogNormal, quantile
+using Random: Xoshiro
 default(linewidth = 2, size = (720, 380), legendfontsize = 8, guidefontsize = 9,
     titlefontsize = 10, left_margin = 4Plots.mm, bottom_margin = 4Plots.mm)
 
 T(; kw...) = MicrobiomeTreatment(; kw...)
 
-# One row per step, filled in as we go and shown as a table at the end.
+# One row per step, filled in as we go. `untreated` and `treated` are the two outcomes;
+# NaN where one does not apply.
 ladder = NamedTuple[]
-step!(system, n, added, outcome, note) = push!(ladder, (; system, n, added, outcome, note))
+function step!(system, phase, added, untreated, treated, note)
+    n = count(r -> r.system == system, ladder)
+    push!(ladder, (; system, n, phase, added, untreated, treated, note))
+    return (step = n, untreated = round(untreated, digits = 3), treated = round(treated, digits = 3))
+end
 
 function ladder_plot(system, xlabel)
     rows = filter(r -> r.system == system, ladder)
+    k = length(rows)
     labels = ["$(r.n). $(r.added)" for r in rows]
-    bar([r.outcome for r in rows]; orientation = :h, yticks = (1:length(rows), labels),
-        yflip = true, legend = false, xlabel, xlims = (0, 1.05), xticks = 0:0.25:1,
-        size = (820, 70 + 34 * length(rows)), left_margin = 6Plots.mm, color = :steelblue)
+    z(x) = isnan(x) ? 0.0 : x
+    bar((1:k) .- 0.2, [z(r.untreated) for r in rows]; orientation = :h, bar_width = 0.38,
+        label = "no treatment", color = :gray70, yticks = (1:k, labels), yflip = true, xlabel,
+        xlims = (0, 1.05), xticks = 0:0.25:1, size = (840, 80 + 36k), left_margin = 6Plots.mm,
+        legend = :outertop, legend_column = 2)
+    bar!((1:k) .+ 0.2, [z(r.treated) for r in rows]; orientation = :h, bar_width = 0.38,
+        label = "with treatment", color = :steelblue)
 end
 ```
 
@@ -94,137 +99,188 @@ end
 
 ## Part A. Bsal in fire salamanders
 
-The outcome throughout Part A is the **mean number of adults over the
-ten years after Bsal arrives, as a fraction of carrying capacity**. A
-value of 1 means the population was untouched.
+The outcome in Part A is the **mean number of adults over the ten years
+after Bsal arrives, as a fraction of carrying capacity**. The reference
+treatment is: every adult treated once, on the day Bsal arrives, with
+bacteria that block 99% of infections for life.
 
-### Step 0. The host and the pathogen
+### Host and pathogen
 
-Schmidt et al. (2017) describe adult female salamanders as susceptible,
-latent or infectious. Infectious animals die within about a week.
+#### Step 0. Susceptible and infectious adults
+
+The simplest model: an adult is susceptible or infectious, infection
+passes by contact, and infectious animals die of the disease. This is
+the model of Schmidt et al. (2017) with its latent period made
+negligibly short.
 
 ``` julia
 p = SchmidtParameters(:schmidt2017)
-@printf("R0 = %.1f\n", basic_reproduction_number(p))
+p_si = Chytridiomycosis.with(p; e = 5000.0)          # latent period under two hours
+block = T(efficacy = 0.99)
 
-sli(tr; kw...) = solve(ProbioticSLIProblem(p, tr; kw...))
-a0 = sli(T())
-step!("Bsal", 0, "no treatment", a0.mean_hosts, "population collapses within a year")
-plot(a0.t, a0.hosts ./ p.K; xlabel = "years since Bsal arrived", ylabel = "adults (fraction of K)",
-    label = "no treatment", xlims = (0, 3))
+sli(q, tr; kw...) = solve(ProbioticSLIProblem(q, tr; kw...))
+u0, t0 = sli(p_si, T()), sli(p_si, block; coverage = 1.0)
+@printf("R0 = %.1f\n", basic_reproduction_number(p_si))
+step!("Bsal", "host", "susceptible and infectious adults", u0.mean_hosts, t0.mean_hosts,
+    "collapse; treated adults live but are not replaced")
 ```
 
     R0 = 24.8
 
-![](01_building_realism_files/figure-commonmark/cell-3-output-2.svg)
+    (step = 0, untreated = 0.003, treated = 0.338)
 
-With a reproduction number near 25 the population collapses.
+#### Step 1. A latent period
 
-### Step 1. A treated class
-
-The simplest description of treatment: an animal is either treated or
-not, and a treated animal is infected less often. Every adult is treated
-once, on the day Bsal arrives, with a treatment that blocks 99% of
-infections and lasts for life.
+Infected animals are not infectious at once (Schmidt et al. 2017, as
+published).
 
 ``` julia
-block = T(efficacy = 0.99)
-@printf("coverage needed to stop Bsal invading: %.2f\n", critical_coverage(p, block))
-a1 = sli(block; coverage = 1.0)
-step!("Bsal", 1, "treated class: blocks 99% of infection, for life", a1.mean_hosts,
-    "treated adults are safe; their offspring are not")
-plot(a1.t, [a1.hosts a1.treated] ./ p.K; label = ["all adults" "treated adults"],
-    xlabel = "years since Bsal arrived", ylabel = "fraction of K")
+u1, t1 = sli(p, T()), sli(p, block; coverage = 1.0)
+@printf("R0 = %.1f\n", basic_reproduction_number(p))
+step!("Bsal", "host", "+ latent period (Schmidt 2017)", u1.mean_hosts, t1.mean_hosts,
+    "almost no change: a one-day delay against a one-week illness")
 ```
 
-    coverage needed to stop Bsal invading: 0.97
+    R0 = 24.8
 
-![](01_building_realism_files/figure-commonmark/cell-4-output-2.svg)
-
-The treated adults survive, but the population still declines. Recruits
-are born untreated and Bsal is still circulating, so each generation of
-treated animals is replaced by unprotected ones.
-
-### Step 2. Protection is lost
-
-Applied bacteria do not stay for life. Here a treated animal reverts to
-untreated with a half-life of one year.
+    (step = 1, untreated = 0.004, treated = 0.338)
 
 ``` julia
-a2 = sli(T(efficacy = 0.99, half_life = 1.0); coverage = 1.0)
-step!("Bsal", 2, "+ protection lost, half-life 1 year", a2.mean_hosts, "collapse is only delayed")
-a2.mean_hosts
+plot(u1.t, u1.hosts ./ p.K; label = "no treatment", xlabel = "years since Bsal arrived",
+    ylabel = "adults (fraction of K)")
+plot!(t1.t, t1.hosts ./ p.K; label = "all adults treated once")
+plot!(t1.t, t1.treated ./ p.K; label = "of which still treated", linestyle = :dash)
 ```
 
-    0.13396963041084453
+![](01_building_realism_files/figure-commonmark/cell-5-output-1.svg)
 
-### Step 3. The microbiome spreads between animals
+Treated adults survive, but the population still declines: recruits are
+born untreated and Bsal is still circulating.
 
-If treated animals pass the bacteria to others, protection can reach the
-recruits. The microbiome then has its own reproduction number: the
-number of animals one treated animal passes it to before losing it.
+#### Step 2. A larval stage
+
+Salamanders have aquatic larvae. Here they are added as a stage that
+Bsal does not infect.
+
+``` julia
+clean_larvae = BsalLarvalStage(carry_over = 0.0)
+lar(st, tr; kw...) = solve(ProbioticLarvalProblem(p, st, tr; kw...))
+u2, t2 = lar(clean_larvae, T()), lar(clean_larvae, block; coverage = 1.0)
+step!("Bsal", "host", "+ larval stage, not infected", u2.mean_adults, t2.mean_adults,
+    "untreated population no longer vanishes: larvae are a refuge")
+```
+
+    (step = 2, untreated = 0.044, treated = 0.336)
+
+``` julia
+plot(u1.t, max.(u1.hosts ./ p.K, 1e-12); yscale = :log10, label = "adults only (step 1)",
+    xlabel = "years since Bsal arrived", ylabel = "adults (fraction of K), no treatment",
+    legend = :bottomright)
+plot!(u2.t, u2.adults ./ p.K; label = "with a larval stage (step 2)")
+```
+
+![](01_building_realism_files/figure-commonmark/cell-7-output-1.svg)
+
+Larvae already in the water metamorphose after the adult epidemic has
+burnt out. The near-extinction in the adults-only model was partly a
+result of having no other stage.
+
+#### Step 3. Larvae can be infected
+
+Fire salamander larvae can be infected experimentally without showing
+disease, and half carried the infection through metamorphosis (Wang et
+al. 2021; the count is read from the compendium). The transmission rate
+from adults to larvae is illustrative.
+
+``` julia
+stage = BsalLarvalStage(:wang2021; adult_to_larva = 5.2)
+@printf("carry-over through metamorphosis: %.1f; R0 = %.1f\n", stage.carry_over,
+    basic_reproduction_number(p, stage))
+u3, t3 = lar(stage, T()), lar(stage, block; coverage = 1.0)
+step!("Bsal", "host", "+ larvae infected, carry-over 0.5", u3.mean_adults, t3.mean_adults,
+    "small change at this carry-over")
+```
+
+    carry-over through metamorphosis: 0.5; R0 = 24.9
+
+    (step = 3, untreated = 0.039, treated = 0.334)
+
+This is the host model used for the rest of Part A.
+
+### Treatment
+
+The reference treatment of step 3 is now made more realistic. Each step
+states what changed.
+
+#### Step 4. Protection is lost
+
+A treated animal reverts to untreated, with a half-life of one year.
+
+``` julia
+a = lar(stage, T(efficacy = 0.99, half_life = 1.0); coverage = 1.0)
+step!("Bsal", "treatment", "+ protection lost, half-life 1 year", u3.mean_adults, a.mean_adults,
+    "collapse only delayed")
+```
+
+    (step = 4, untreated = 0.039, treated = 0.133)
+
+#### Step 5. The bacteria spread between animals
+
+Treated animals pass the bacteria to others, so protection can reach the
+recruits.
 
 ``` julia
 spread = T(efficacy = 0.99, half_life = 1.0, direct = 50.0)
 @printf("microbiome reproduction number %.0f, long-run coverage %.2f\n",
     microbiome_reproduction_number(spread; turnover = p.b), equilibrium_coverage(spread; turnover = p.b))
-a3 = sli(spread; coverage = 1.0)
-step!("Bsal", 3, "+ microbiome spreads between animals", a3.mean_hosts,
+a = lar(stage, spread; coverage = 1.0)
+step!("Bsal", "treatment", "+ bacteria spread between animals", u3.mean_adults, a.mean_adults,
     "full protection: the microbiome maintains itself")
-plot(a0.t, a0.hosts ./ p.K; label = "0. no treatment", xlabel = "years since Bsal arrived",
-    ylabel = "adults (fraction of K)", legend = :right)
-plot!(a1.t, a1.hosts ./ p.K; label = "1. treated class, for life")
-plot!(a2.t, a2.hosts ./ p.K; label = "2. + lost with half-life 1 yr")
-plot!(a3.t, a3.hosts ./ p.K; label = "3. + spreads between animals")
 ```
 
     microbiome reproduction number 46, long-run coverage 0.98
 
-![](01_building_realism_files/figure-commonmark/cell-6-output-2.svg)
+    (step = 5, untreated = 0.039, treated = 0.999)
 
-At this level of realism the conclusion would be: **a self-spreading,
-strongly protective microbiome works, and nothing else does.**
+A model stopped here says: **a self-spreading, strongly protective
+microbiome works, and nothing else does.**
 
-### Step 4. What trials actually show: survival, not fewer infections
+#### Step 6. What trials show: survival, not fewer infections
 
 In challenge trials, treated animals were infected as often as untreated
-ones, but fewer died. In one trial of *Rana muscosa*, the compendium
-records these counts:
+ones, but fewer died. The compendium holds the counts from one trial in
+*Rana muscosa*:
 
 ``` julia
 h = parameter_set(:harris2009ismej)
-mortality_reduction(h.deaths_treated, h.n_treated, h.deaths_control, h.n_control)
+mortality_reduction(h.deaths_treated, h.n_treated, h.deaths_control, h.n_control; rng = Xoshiro(1))
 ```
 
-    (median = 0.9535026941077734, lower = 0.5403000988119004, upper = 0.999900212602007)
+    (median = 0.9528399509303813, lower = 0.5571631729768851, upper = 0.9998974605554769)
 
-So the treated class is changed: instead of blocking infection,
-treatment reduces disease-induced death (`tolerance`). A treated,
-infected animal stays infectious.
+So the mechanism is changed: treatment reduces disease-induced death
+(`tolerance`) and does not block infection. A treated, infected animal
+stays infectious. Loss and spread are as in step 5.
 
 ``` julia
 tolerant = T(tolerance = 0.9, half_life = 1.0, direct = 50.0)
 @printf("Bsal reproduction number if everyone is treated: %.0f (untreated %.0f)\n",
     effective_reproduction_number(p, tolerant, 1.0), basic_reproduction_number(p))
-a4 = sli(tolerant; coverage = 1.0)
-step!("Bsal", 4, "+ protection as in trials: survive, still infected", a4.mean_hosts,
-    "fails, and raises transmission: survivors shed for longer")
-a4.mean_hosts
+a = lar(stage, tolerant; coverage = 1.0)
+step!("Bsal", "treatment", "mechanism as in trials: survive, still infected", u3.mean_adults,
+    a.mean_adults, "fails; survivors shed for longer, so transmission rises")
 ```
 
     Bsal reproduction number if everyone is treated: 232 (untreated 25)
 
-    0.020566192434802892
+    (step = 6, untreated = 0.039, treated = 0.025)
 
-The same spreading microbiome now fails. Animals that survive infection
-shed for longer, so Bsal’s reproduction number goes up, not down.
+#### Step 7. Lower load: less death and less shedding
 
-### Step 5. Lower pathogen load: less death and less shedding
-
-A microbiome that suppresses the fungus should lower the load on the
-animal. Lower load means less shedding as well as less death. Here both
-follow from one reduction in load: shedding in proportion to load, death
-in proportion to load raised to a power `k`.
+Bacteria that suppress the fungus should lower the load on the animal,
+and so reduce shedding as well as death. Both now follow from one
+reduction in load: shedding in proportion to load, death in proportion
+to load raised to a power `k`.
 
 ``` julia
 reductions = [0.5, 0.9, 0.99, 0.999]
@@ -237,107 +293,59 @@ plot(string.(reductions), R; yscale = :log10, marker = :circle, xlabel = "reduct
 hline!([1.0]; color = :black, linestyle = :dash, label = "threshold")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-9-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-13-output-1.svg)
 
 With death proportional to load (`k = 1`) the two effects nearly cancel:
-the animal sheds less but for longer. Only a very large reduction brings
-the reproduction number below 1.
+the animal sheds less but for longer.
 
 ``` julia
-a5 = sli(load_reducing_treatment(0.99; half_life = 1.0, direct = 50.0); coverage = 1.0)
-step!("Bsal", 5, "+ lower load (99%): less death and less shedding", a5.mean_hosts,
+a = lar(stage, load_reducing_treatment(0.99; half_life = 1.0, direct = 50.0); coverage = 1.0)
+step!("Bsal", "treatment", "+ lower load (99%): also less shedding", u3.mean_adults, a.mean_adults,
     "partial; survivors remain infected")
-(mean_adults = a5.mean_hosts, final_prevalence = a5.final_prevalence)
 ```
 
-    (mean_adults = 0.17958281415555719, final_prevalence = 0.1329268012959979)
+    (step = 7, untreated = 0.039, treated = 0.189)
 
-### Step 6. Larvae
+#### Step 8. Treat larvae as well
 
-Schmidt’s model has adults only. Fire salamander larvae can be infected
-experimentally without showing disease, and half of them carried the
-infection through metamorphosis (Wang et al. 2021; the count is read
-from the compendium).
-
-``` julia
-stage = BsalLarvalStage(:wang2021; adult_to_larva = 5.2)
-@printf("carry-over through metamorphosis: %.1f\n", stage.carry_over)
-b0 = solve(BsalLarvalProblem(p, stage))
-plot(a0.t, max.(a0.hosts ./ p.K, 1e-12); yscale = :log10, label = "adults only (step 0)",
-    xlabel = "years since Bsal arrived", ylabel = "adults (fraction of K)", legend = :bottomright)
-plot!(b0.t, b0.adults ./ p.K; label = "with a larval stage")
-```
-
-    carry-over through metamorphosis: 0.5
-
-![](01_building_realism_files/figure-commonmark/cell-11-output-2.svg)
-
-Adding the stage changes the untreated outcome. Larvae already in the
-water metamorphose after the adult epidemic has burnt out, so the
-population no longer falls to vanishingly small numbers. The
-near-extinction in the adults-only model was partly a result of having
-no other stage.
-
-Treatment is now put on this model, going back to the infection-blocking
-treatment of step 1 so that the effect of the stage itself is clear.
-
-``` julia
-lar(tr; kw...) = solve(ProbioticLarvalProblem(p, stage, tr; coverage = 1.0, kw...))
-a6 = lar(block)
-step!("Bsal", 6, "+ larval stage (treatment as in step 1)", a6.mean_adults,
-    "as step 1: recruits still unprotected")
-a6.mean_adults
-```
-
-    0.33434708829646337
-
-### Step 7. Treat the right stage
-
-With larvae in the model, treatment can be given to them too. Two new
-unknowns link the stages: whether a treated larva keeps the bacteria
-through metamorphosis (`retention`), and whether a treated mother’s
-larvae are born with them (`maternal`).
+With larvae in the host model they can be treated too. Whether a treated
+larva keeps the bacteria through metamorphosis (`retention`) has not
+been measured. This step goes back to bacteria that block infection and
+last, with no spread, to isolate the effect of the stage.
 
 ``` julia
 quarterly = 0:0.25:9.75
-strategies = [
-    ("adults, once", (;)),
+options = [("adults, once", (;)),
     ("larvae, quarterly; lost at metamorphosis", (treat = :larvae, treat_times = quarterly)),
     ("larvae, quarterly; kept", (treat = :larvae, treat_times = quarterly, retention = 1.0)),
-    ("both stages, quarterly; kept", (treat = :both, treat_times = quarterly, retention = 1.0)),
-]
-vals = [lar(block; kw...).mean_adults for (_, kw) in strategies]
-bar(vals; orientation = :h, yticks = (1:4, first.(strategies)), yflip = true, legend = false,
+    ("both stages, quarterly; kept", (treat = :both, treat_times = quarterly, retention = 1.0))]
+vals = [lar(stage, block; coverage = 1.0, kw...).mean_adults for (_, kw) in options]
+bar(vals; orientation = :h, yticks = (1:4, first.(options)), yflip = true, legend = false,
     xlabel = "mean adults (fraction of K)", xlims = (0, 1.05), xticks = 0:0.25:1,
     left_margin = 6Plots.mm, size = (820, 230), color = :steelblue)
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-13-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-15-output-1.svg)
 
 ``` julia
-a7 = lar(block; treat = :both, treat_times = quarterly, retention = 1.0)
-step!("Bsal", 7, "+ treat both stages, kept through metamorphosis", a7.mean_adults,
+step!("Bsal", "treatment", "treat both stages, kept through metamorphosis", u3.mean_adults, vals[4],
     "full protection with no spread at all")
-a7.mean_adults
 ```
 
-    0.9999385316733599
+    (step = 8, untreated = 0.039, treated = 1.0)
 
-This overturns the conclusion of step 3. Once recruits can be treated
-before they become adults, **the microbiome does not need to spread**.
-It does need to survive metamorphosis, and that has not been measured.
+This overturns step 5. Once recruits can be treated before they become
+adults, the bacteria do not need to spread.
 
-### Step 8. How long the bacteria really last
+#### Step 9. How long the bacteria really last
 
-Two open datasets (a field trial in *Rana sierrae* and a laboratory
-trial in *Xenopus laevis*) give the abundance of applied bacteria over
-time. Fitting an exponential decline to them gives half-lives of 3 to 14
-days; in the field, 4 to 5 days. (The fits are this project’s own and
-are described in the project wiki.)
-
-Protection now wanes with abundance. `protective_fold` is how far
-abundance can fall before half the effect is lost; nobody has measured
-it, so three values are shown.
+Two open datasets (a field trial in *Rana sierrae*, Knapp et al. 2022,
+and a laboratory trial in *Xenopus laevis*, Madison et al. 2025) give
+the abundance of applied bacteria over time. Fitting an exponential
+decline gives half-lives of 3 to 14 days, and 4 to 5 days in the field.
+(The fits are this project’s own.) Protection now wanes with abundance.
+`protective_fold` is how far abundance can fall before half the effect
+is lost; it has not been measured.
 
 ``` julia
 days = 0:1:150
@@ -350,18 +358,20 @@ end
 current()
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-15-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-17-output-1.svg)
 
 ``` julia
 waning = T(efficacy = 0.99, abundance_half_life = 5 / 365, protective_fold = 100.0)
-a8 = lar(waning; treat = :both, treat_times = quarterly, retention = 1.0)
-step!("Bsal", 8, "+ measured decay (half-life 5 days), dosed quarterly", a8.mean_adults,
-    "fails: protection lasts about a month; monthly dosing reaches 0.28")
-monthly = lar(waning; treat = :both, treat_times = 0:(1 / 12):9.95, retention = 1.0)
-(quarterly = a8.mean_adults, monthly = monthly.mean_adults)
+a = lar(stage, waning; coverage = 1.0, treat = :both, treat_times = quarterly, retention = 1.0)
+monthly = lar(stage, waning; coverage = 1.0, treat = :both, treat_times = 0:(1 / 12):9.95, retention = 1.0)
+@printf("dosed monthly instead of quarterly: %.2f\n", monthly.mean_adults)
+step!("Bsal", "treatment", "+ measured decay (half-life 5 days)", u3.mean_adults, a.mean_adults,
+    "fails: protection lasts about a month")
 ```
 
-    (quarterly = 0.06364264021907155, monthly = 0.2817745379332257)
+    dosed monthly instead of quarterly: 0.28
+
+    (step = 9, untreated = 0.039, treated = 0.064)
 
 ### Part A summary
 
@@ -369,116 +379,57 @@ monthly = lar(waning; treat = :both, treat_times = 0:(1 / 12):9.95, retention = 
 ladder_plot("Bsal", "mean adults over 10 years, fraction of K")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-17-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-19-output-1.svg)
 
 ## Part B. Bd in common toads
 
-The outcome throughout Part B is the **number of adults over the last
-ten of 35 years, as a fraction of the number without Bd**, together with
-whether Bd persists. The parameter set is the one behind Figure 2d of
-Mitchell et al. (2008), in which Bd drives the toads extinct and then
-dies out itself.
+The outcome in Part B is the **number of adults in years 25 to 35 after
+Bd arrives, as a fraction of the number without Bd**. The reference
+treatment is: 80% of tadpoles treated at hatching every year with
+bacteria that block 90% of infections for the season. The parameter set
+is the one behind Figure 2d of Mitchell et al. (2008).
 
-### Step 0. The host and the pathogen
+### Host and pathogen
 
-In Mitchell’s model only tadpoles are infected. Infected tadpoles are
-removed at metamorphosis, and zoospores live in the pond.
+#### Step 0. The pond model
+
+Mitchell’s model is the simplest available for this system, though it is
+not as simple as step 0 of Part A: tadpoles are infected by zoospores in
+the pond, infected tadpoles are removed at metamorphosis, and juveniles
+and adults are never infected.
 
 ``` julia
 m = MitchellParameters(:mitchell2008; set = "fig2d")
-pond(tr; kw...) = solve(ProbioticPondProblem(m, tr; kw...))
+none = PostMetamorphicInfection()
+pond(tr; stages = none, kw...) = solve(ProbioticPondProblem(m, tr; stages, kw...))
 rel(r) = r.A_mean / r.A_disease_free
-show_pond(r) = (adults = round(rel(r), digits = 2), toads_persist = r.toads_persist, bd_persists = r.bd_persist)
+ref = T(efficacy = 0.9)
 
-b0 = pond(T())
-step!("Bd toad", 0, "no treatment", rel(b0), "toads and Bd both go extinct")
-show_pond(b0)
+u, t = pond(T()), pond(ref; coverage = 0.8)
+@printf("Bd persists: untreated %s, treated %s\n", u.bd_persist, t.bd_persist)
+step!("Bd toad", "host", "Mitchell 2008 pond model", rel(u), rel(t),
+    "untreated: toads and Bd both die out; treated: toads saved, Bd gone")
 ```
 
-    (adults = 0.0, toads_persist = false, bd_persists = false)
+    Bd persists: untreated false, treated false
 
-### Step 1. A treated class
-
-Each year 80% of tadpoles are treated at hatching with a treatment that
-blocks 90% of infections and lasts the season.
+    (step = 0, untreated = 0.0, treated = 0.975)
 
 ``` julia
-b1 = pond(T(efficacy = 0.9); coverage = 0.8)
-step!("Bd toad", 1, "treated class: 80% of tadpoles, blocks 90%", rel(b1), "toads saved, Bd eliminated")
-adults(r) = (r.t[r.t .>= -2], r.A[r.t .>= -2] ./ r.A_disease_free)
-plot(adults(b0)...; label = "0. no treatment", xlabel = "years since Bd arrived",
+series(r) = (r.t[r.t .>= -2], r.A[r.t .>= -2] ./ r.A_disease_free)
+plot(series(u)...; label = "no treatment", xlabel = "years since Bd arrived",
     ylabel = "adults (fraction of disease-free)", legend = :right)
-plot!(adults(b1)...; label = "1. tadpoles treated every year")
+plot!(series(t)...; label = "tadpoles treated every year")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-19-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-21-output-1.svg)
 
-Unlike Bsal, the simplest treatment works here. The infected stage is
-short and a new cohort can be treated every year. It does not prevent
-the initial crash: adults fall to a few percent of their former number
-before Bd dies out and the population recovers over two decades.
+Unlike Bsal, the simplest treatment works here: the infected stage is
+short and a new cohort can be treated each year. It does not prevent the
+initial crash.
 
-### Step 2. Protection is lost
+#### Step 1. Infected metamorphs can survive
 
-``` julia
-b2 = pond(T(efficacy = 0.9, half_life = 0.05); coverage = 0.8)
-step!("Bd toad", 2, "+ protection lost, half-life 18 days", rel(b2), "still works: the season is short")
-show_pond(b2)
-```
-
-    (adults = 0.86, toads_persist = true, bd_persists = false)
-
-### Step 3. Stop treating and rely on spread
-
-Can treatment stop after five years if the bacteria persist in the pond
-and reach new tadpoles from there?
-
-``` julia
-b3 = pond(T(efficacy = 0.9, environmental = 50.0, reservoir_half_life = 1.0); coverage = 0.8,
-    treat_years = 0:4)
-step!("Bd toad", 3, "+ treat 5 years only, bacteria persist in pond", rel(b3),
-    "fails once treatment stops")
-show_pond(b3)
-```
-
-    (adults = 0.0, toads_persist = false, bd_persists = false)
-
-The field trial behind step 8 found that the applied bacterium spread to
-untreated frogs within days but then declined everywhere, so this step
-is not rescued by the evidence either. The remaining steps go back to
-treating every year.
-
-### Step 4. Survival, not fewer infections
-
-As in Part A, treatment now lets infected tadpoles live instead of
-preventing infection.
-
-``` julia
-b4 = pond(T(tolerance = 0.7); coverage = 0.8)
-step!("Bd toad", 4, "+ protection as in trials: survive, still infected", rel(b4),
-    "toads persist at lower numbers; Bd is no longer eliminated")
-show_pond(b4)
-```
-
-    (adults = 0.62, toads_persist = true, bd_persists = true)
-
-The toads are saved, but Bd now stays in the pond for good, so treatment
-can never stop.
-
-### Step 5. Lower load
-
-``` julia
-b5 = pond(load_reducing_treatment(0.7); coverage = 0.8)
-step!("Bd toad", 5, "+ lower load (70%): less death and less shedding", rel(b5),
-    "little changed: untreated tadpoles and the pond keep Bd going")
-show_pond(b5)
-```
-
-    (adults = 0.63, toads_persist = true, bd_persists = true)
-
-### Step 6. Infection after metamorphosis
-
-Mitchell’s model removes every infected tadpole at metamorphosis.
 Experiments show that toadlets exposed to Bd are infected, that most
 die, and that some survive (Smith et al. 2022; counts from the
 compendium).
@@ -486,79 +437,137 @@ compendium).
 ``` julia
 s = parameter_set(:smith2022)
 survival = 1 - s.deaths_exposed / s.n_exposed
-stages = PostMetamorphicInfection(metamorph_survival = survival)
 @printf("toadlet survival after exposure: %.2f\n", survival)
-c0 = pond(T(); stages)
-show_pond(c0)
+st1 = PostMetamorphicInfection(metamorph_survival = survival)
+u, t = pond(T(); stages = st1), pond(ref; coverage = 0.8, stages = st1)
+@printf("Bd persists: untreated %s, treated %s\n", u.bd_persist, t.bd_persist)
+step!("Bd toad", "host", "+ infected metamorphs can survive (0.29)", rel(u), rel(t),
+    "toads no longer die out, so nor does Bd; treatment now protects poorly")
 ```
 
     toadlet survival after exposure: 0.29
+    Bd persists: untreated true, treated true
 
-    (adults = 0.05, toads_persist = true, bd_persists = true)
+    (step = 1, untreated = 0.046, treated = 0.085)
 
-This changes the untreated outcome: with some infected metamorphs
-surviving, the toads no longer go extinct, and so neither does Bd. The
-published “both die out” result depended on every infected animal dying.
+One added survival probability reverses both outcomes. The published
+“both die out” result depended on every infected animal dying; once some
+survive, the host persists, Bd persists with it, and blocking 90% of
+infections is no longer enough.
 
-``` julia
-effs = [0.5, 0.9, 0.99]
-tols = [0.3, 0.7, 1.0]
-blocking = [rel(pond(T(efficacy = e); coverage = 0.8, stages)) for e in effs]
-tolerating = [rel(pond(T(tolerance = τ); coverage = 0.8, stages)) for τ in tols]
-plot(["0.5", "0.9", "0.99"], blocking; marker = :circle, label = "blocks infection (efficacy)",
-    xlabel = "strength of treatment", ylabel = "adults (fraction of disease-free)", ylims = (0, 1),
-    legend = :topleft)
-plot!(["0.5", "0.9", "0.99"], tolerating; marker = :square,
-    label = "survives infection (tolerance 0.3, 0.7, 1.0)")
-```
-
-![](01_building_realism_files/figure-commonmark/cell-25-output-1.svg)
+#### Step 2. Metamorphs are exposed as they leave the pond
 
 ``` julia
-b6 = pond(T(efficacy = 0.9); coverage = 0.8, stages)
-step!("Bd toad", 6, "+ infected metamorphs can survive (treatment as in step 1)", rel(b6),
-    "blocking infection no longer eliminates Bd or protects well")
-b6t = pond(T(tolerance = 0.7); coverage = 0.8, stages)
-step!("Bd toad", 7, "same, with survival-type protection", rel(b6t),
-    "now the better mechanism: the ranking has reversed")
-(blocking = show_pond(b6), tolerating = show_pond(b6t))
+st2 = PostMetamorphicInfection(metamorph_survival = survival, metamorph_exposure_days = 7.0)
+u, t = pond(T(); stages = st2), pond(ref; coverage = 0.8, stages = st2)
+step!("Bd toad", "host", "+ metamorphs exposed for a week on leaving", rel(u), rel(t),
+    "little further change")
 ```
 
-    (blocking = (adults = 0.09, toads_persist = true, bd_persists = true), tolerating = (adults = 0.75, toads_persist = true, bd_persists = true))
+    (step = 2, untreated = 0.046, treated = 0.082)
 
-In step 1, blocking infection eliminated Bd. With the more realistic
-life cycle it does not, and the treatment that lets animals survive
-infection now does better. **Which mechanism is best depends on a detail
-of the host’s life cycle, not on the treatment.**
+#### Step 3. Adults carry Bd between years
 
-### Step 8. How long the bacteria really last
+Breeding adults carry Bd at low prevalence in field surveys. Here adults
+are infected while at the pond, shed there, and clear the infection over
+about a year. (Treatment is not yet combined with infected adults in the
+package, so only the untreated outcome is shown.)
+
+``` julia
+st3 = PostMetamorphicInfection(metamorph_survival = survival, metamorph_exposure_days = 7.0,
+    adult_exposure_days = 30.0, adult_relative_shedding = 1.0, adult_clearance = 1.0)
+r = solve(ToadStageProblem(m, st3))
+@printf("Bd persists: %s; adult prevalence after breeding: %.2f\n", r.bd_persist, r.adult_prevalence)
+step!("Bd toad", "host", "+ adults carry Bd between years", r.A_mean / r.A_disease_free, NaN,
+    "untreated only; little change in this parameter set")
+```
+
+    Bd persists: true; adult prevalence after breeding: 0.99
+
+    (step = 3, untreated = 0.044, treated = NaN)
+
+The host model of step 2 is used for the rest of Part B.
+
+### Treatment
+
+#### Step 4. Protection is lost
+
+``` julia
+u = pond(T(); stages = st2)
+a = pond(T(efficacy = 0.9, half_life = 0.05); coverage = 0.8, stages = st2)
+step!("Bd toad", "treatment", "+ protection lost, half-life 18 days", rel(u), rel(a), "slightly worse")
+```
+
+    (step = 4, untreated = 0.046, treated = 0.056)
+
+#### Step 5. Mechanism as in trials: survival, not fewer infections
+
+``` julia
+effs, tols = [0.5, 0.9, 0.99], [0.3, 0.7, 1.0]
+blocking = [rel(pond(T(efficacy = e); coverage = 0.8, stages = st2)) for e in effs]
+tolerating = [rel(pond(T(tolerance = τ); coverage = 0.8, stages = st2)) for τ in tols]
+plot(["weak", "medium", "strong"], blocking; marker = :circle,
+    label = "blocks infection (0.5, 0.9, 0.99)", xlabel = "strength of treatment",
+    ylabel = "adults (fraction of disease-free)", ylims = (0, 1), legend = :topleft)
+plot!(["weak", "medium", "strong"], tolerating; marker = :square,
+    label = "survives infection (0.3, 0.7, 1.0)")
+```
+
+![](01_building_realism_files/figure-commonmark/cell-26-output-1.svg)
+
+``` julia
+a = pond(T(tolerance = 0.7); coverage = 0.8, stages = st2)
+step!("Bd toad", "treatment", "mechanism as in trials: survive, still infected", rel(u), rel(a),
+    "much better than blocking here; Bd persists")
+```
+
+    (step = 5, untreated = 0.046, treated = 0.748)
+
+For Bsal the observed mechanism made treatment fail. Here it makes
+treatment work better, because Bd is going to persist anyway and what
+matters is how many infected animals live.
+
+#### Step 6. Lower load
+
+``` julia
+a = pond(load_reducing_treatment(0.7); coverage = 0.8, stages = st2)
+step!("Bd toad", "treatment", "+ lower load (70%): also less shedding", rel(u), rel(a),
+    "little changed: untreated tadpoles and the pond keep Bd going")
+```
+
+    (step = 6, untreated = 0.046, treated = 0.751)
+
+#### Step 7. How long the bacteria really last
 
 With the measured decay, one dose at hatching wanes during the 95-day
-tadpole season. More doses in the season restore much of it.
+tadpole season.
 
 ``` julia
 waning_t = T(tolerance = 0.7, abundance_half_life = 5 / 365, protective_fold = 100.0)
 schedules = [("at hatching only", Float64[]), ("+ day 45", [45.0]), ("+ days 30, 60", [30.0, 60.0]),
     ("+ days 20, 40, 60, 80", [20.0, 40.0, 60.0, 80.0])]
-doses = [rel(pond(waning_t; coverage = 0.8, stages, redose_days = d)) for (_, d) in schedules]
+doses = [rel(pond(waning_t; coverage = 0.8, stages = st2, redose_days = d)) for (_, d) in schedules]
 bar(doses; orientation = :h, yticks = (1:4, first.(schedules)), yflip = true, legend = false,
     xlabel = "adults (fraction of disease-free)", xlims = (0, 1.05), xticks = 0:0.25:1,
     left_margin = 6Plots.mm, size = (820, 230), color = :steelblue)
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-27-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-29-output-1.svg)
 
 ``` julia
-step!("Bd toad", 8, "+ measured decay, one dose at hatching", doses[1], "protection gone before the season ends")
-step!("Bd toad", 9, "+ three doses per season", doses[3], "about two-thirds of the benefit restored; five doses do better")
-doses
+step!("Bd toad", "treatment", "+ measured decay, one dose at hatching", rel(u), doses[1],
+    "protection gone before the season ends")
 ```
 
-    4-element Vector{Float64}:
-     0.056362921491221865
-     0.14450370239523072
-     0.5057080690629617
-     0.8044351451182551
+    (step = 7, untreated = 0.046, treated = 0.056)
+
+#### Step 8. Several doses in a season
+
+``` julia
+step!("Bd toad", "treatment", "+ five doses per season", rel(u), doses[4], "most of the benefit restored")
+```
+
+    (step = 8, untreated = 0.046, treated = 0.804)
 
 ### Part B summary
 
@@ -566,32 +575,126 @@ doses
 ladder_plot("Bd toad", "adults in years 25 to 35, fraction of disease-free")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-29-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-32-output-1.svg)
 
-## Part C. Bd in frogs: bacteria as a state of each animal
+## Part C. Bd in frogs
 
-Parts A and B gave every treated animal the same clock. The last step
-removes that simplification, in a third system where it is natural to do
-so: frogs sharing a pool, with disease driven by the fungal load on each
-frog (after Briggs et al. 2010, with the saturating clearance added in
-this package’s load tipping model). Here 80 frogs share a pool, which is
-enough for loads to run away, and untreated they all die.
+The outcome in Part C is the **fraction of 80 frogs sharing one pool
+that are alive after two years**. Disease here depends on the fungal
+load on each frog. The reference treatment is introduced at step 2.
 
-Each frog now carries its own abundance of the applied bacteria.
-Abundance declines at the measured rate, and frogs exchange bacteria
-through the pond. Exchange moves bacteria between frogs without creating
-any, so the bacteria spread but do not sustain themselves. That is what
-the field trial showed: eleven days after 60 to 90% of the frogs in a
-pond were bathed, frogs that were never bathed carried about 0.63 times
-as much of the bacterium as bathed ones, and it then declined in both.
+### Host and pathogen
+
+#### Step 0. Load on each frog
+
+In the model of Briggs et al. (2010) each frog carries a load of
+sporangia. Sporangia release zoospores into a shared pool, zoospores
+infect frogs, and a frog dies when its load reaches a lethal level.
+Loads run away when there are enough frogs to keep the pool topped up.
 
 ``` julia
 pb = BriggsParameters(:briggs2010)
-frog = (c = 100.0, c_treated = 300.0, h = 500.0, N = 80, ε = 1000.0)
+N, hsat, ε = 80, 500.0, 1000.0
+tipping(c; n = N) = solve(LoadTippingProblem(pb; c, h = hsat, N = n, ε, tspan = (0.0, 730.0)))
+alive(r) = count(r.alive) / length(r.alive)
+
+@printf("frogs needed for loads to run away: %.0f\n", host_density_threshold(pb))
+r0 = tipping(0.0)
+step!("Bd frog", "host", "Briggs 2010 load model", alive(r0), NaN, "all die: 80 frogs is above the threshold of 23")
+```
+
+    frogs needed for loads to run away: 23
+
+    (step = 0, untreated = 0.0, treated = NaN)
+
+#### Step 1. Frogs clear some of their load
+
+Frogs have defences. Here each frog removes sporangia at a rate that
+saturates as load rises: defences cope with a light infection and are
+overwhelmed by a heavy one (this package’s load tipping model; the
+clearance values are illustrative).
+
+``` julia
+c = 100.0
+@printf("frogs needed for loads to run away: %d\n", critical_host_number(pb; c, h = hsat, ε))
+r1 = tipping(c)
+r1small = tipping(c; n = 50)
+@printf("alive after two years: %.2f of 80 frogs, %.2f of 50 frogs\n", alive(r1), alive(r1small))
+step!("Bd frog", "host", "+ saturating clearance by the frog", alive(r1), NaN,
+    "threshold rises from 23 to 68 frogs; 80 still all die")
+```
+
+    frogs needed for loads to run away: 68
+    alive after two years: 0.00 of 80 frogs, 1.00 of 50 frogs
+
+    (step = 1, untreated = 0.0, treated = NaN)
+
+#### Step 2. Frogs differ
+
+Frogs now differ in how strong their defences are (lognormal, same
+median). The reference treatment for Part C starts here: 40% of frogs
+carry bacteria that triple their clearance, for life.
+
+``` julia
+cs = quantile.(LogNormal(log(c), 0.5), ((1:N) .- 0.5) ./ N)
+r2 = tipping(cs)
+frogs(tr; kw...) = solve(ProbioticLoadProblem(pb, tr; c, c_treated = 3c, h = hsat, N, ε, days = 730, kw...);
+    rng = Xoshiro(1))
+ref_c = frogs(T(); coverage = 0.4)
+step!("Bd frog", "host", "+ frogs differ in their defences", alive(r2), NaN,
+    "a few of the best-defended survive")
+```
+
+    (step = 2, untreated = 0.062, treated = NaN)
+
+With identical frogs a die-off is all or nothing; with differences it is
+partial, and it stops when too few frogs are left to sustain the pool.
+The treatment steps use identical frogs (step 1), because treatment and
+host differences are not yet combined in the package.
+
+### Treatment
+
+#### Step 3. A treated class
+
+``` julia
+step!("Bd frog", "treatment", "treated class: 40% of frogs, lasts for life", alive(r1),
+    ref_c.alive[end] / N, "all survive, including the untreated: protection is shared")
+```
+
+    (step = 3, untreated = 0.0, treated = 1.0)
+
+Because disease depends on the shared pool, treating 40% protects
+everyone.
+
+#### Step 4. Protection is lost
+
+``` julia
+a = frogs(T(half_life = 30.0); coverage = 1.0)
+@printf("first death: day %d (untreated: day %d)\n", minimum(filter(>(0), a.death_day)),
+    ceil(Int, minimum(r1.death_time)))
+step!("Bd frog", "treatment", "+ protection lost, half-life 30 days", alive(r1), a.alive[end] / N,
+    "die-off delayed by about three months, not prevented")
+```
+
+    first death: day 241 (untreated: day 156)
+
+    (step = 4, untreated = 0.0, treated = 0.0)
+
+#### Step 5. Bacteria as a state of each frog
+
+Until now every treated animal has been simply “treated”. Each frog now
+carries its own abundance of the applied bacteria. It declines at the
+measured rate (half-life 5 days), and frogs exchange bacteria through
+the pond. Exchange moves bacteria between frogs without creating any, so
+they spread but do not sustain themselves. That is what the field trial
+showed: eleven days after most frogs in a pond were bathed, frogs that
+were never bathed carried about 0.63 times as much of the bacterium as
+bathed ones, and it then declined in both.
+
+``` julia
 baths(; x = 0.1, F = 100.0, coverage = 0.75, dose_days = [0], days = 730) =
     solve(ProbioticAbundanceProblem(pb, T(abundance_half_life = 5.0, protective_fold = F, direct = x);
-        frog..., coverage, dose_days, days))
-
+        c, c_treated = 3c, h = hsat, N, ε, coverage, dose_days, days))
 for x in (0.0, 0.1, 1.0)
     r = baths(; x, days = 30)
     @printf("exchange %.1f per day: unbathed/bathed abundance on day 11 = %.2f\n", x,
@@ -603,21 +706,29 @@ end
     exchange 0.1 per day: unbathed/bathed abundance on day 11 = 0.60
     exchange 1.0 per day: unbathed/bathed abundance on day 11 = 1.00
 
-An exchange rate of about 0.1 per day reproduces the field ratio, and is
+An exchange rate of about 0.1 per day reproduces the field ratio and is
 used below.
 
 ``` julia
-untreated = baths(coverage = 0.0)
 one = baths()
-every90 = baths(dose_days = 0:90:729)
+step!("Bd frog", "treatment", "+ bacteria on each frog, measured decay; one bath", alive(r1),
+    one.alive[end] / N, "die-off delayed by about six weeks")
+```
+
+    (step = 5, untreated = 0.0, treated = 0.0)
+
+#### Step 6. Repeated baths
+
+``` julia
+untreated, every90 = baths(coverage = 0.0), baths(dose_days = 0:90:729)
 plot(untreated.t, max.(untreated.mean_load, 1.0); yscale = :log10, label = "no treatment",
-    xlabel = "days", ylabel = "mean Bd load per live frog", legend = :topright, xlims = (0, 730))
+    xlabel = "days", ylabel = "mean Bd load per live frog", legend = :bottomright, xlims = (0, 730))
 plot!(one.t, max.(one.mean_load, 1.0); label = "one bath on day 0")
 plot!(every90.t, max.(every90.mean_load, 1.0); label = "a bath every 90 days")
 hline!([pb.Smax]; color = :black, linestyle = :dash, label = "lethal load")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-31-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-40-output-1.svg)
 
 ``` julia
 first_death(r) = any(>(0), r.death_day) ? minimum(filter(>(0), r.death_day)) : 0
@@ -644,40 +755,16 @@ end
 | one, day 150 (loads already high) | 0 | 157 |
 
 ``` julia
-step!("Bd frog", 0, "no treatment", untreated.alive[end] / 80, "all die at about day 156")
-step!("Bd frog", 1, "bacteria on each frog, measured decay: one bath", one.alive[end] / 80,
-    "die-off delayed by about six weeks")
-step!("Bd frog", 2, "+ a bath every 90 days", every90.alive[end] / 80,
+step!("Bd frog", "treatment", "+ a bath every 90 days", alive(r1), every90.alive[end] / N,
     "all survive: each bath resets the slow build-up of load")
 ```
 
-    22-element Vector{NamedTuple}:
-     (system = "Bsal", n = 0, added = "no treatment", outcome = 0.0036039110806988517, note = "population collapses within a year")
-     (system = "Bsal", n = 1, added = "treated class: blocks 99% of infection, for life", outcome = 0.338009180619946, note = "treated adults are safe; their offspring are not")
-     (system = "Bsal", n = 2, added = "+ protection lost, half-life 1 year", outcome = 0.13396963041084453, note = "collapse is only delayed")
-     (system = "Bsal", n = 3, added = "+ microbiome spreads between animals", outcome = 0.9997264167078429, note = "full protection: the microbiome maintains itself")
-     (system = "Bsal", n = 4, added = "+ protection as in trials: survive, still infected", outcome = 0.020566192434802892, note = "fails, and raises transmission: survivors shed for longer")
-     (system = "Bsal", n = 5, added = "+ lower load (99%): less death and less shedding", outcome = 0.17958281415555719, note = "partial; survivors remain infected")
-     (system = "Bsal", n = 6, added = "+ larval stage (treatment as in step 1)", outcome = 0.33434708829646337, note = "as step 1: recruits still unprotected")
-     (system = "Bsal", n = 7, added = "+ treat both stages, kept through metamorphosis", outcome = 0.9999385316733599, note = "full protection with no spread at all")
-     (system = "Bsal", n = 8, added = "+ measured decay (half-life 5 days), dosed quarterly", outcome = 0.06364264021907155, note = "fails: protection lasts about a month; monthly dosing reaches 0.28")
-     (system = "Bd toad", n = 0, added = "no treatment", outcome = 0.0, note = "toads and Bd both go extinct")
-     ⋮
-     (system = "Bd toad", n = 4, added = "+ protection as in trials: survive, still infected", outcome = 0.6231865466308418, note = "toads persist at lower numbers; Bd is no longer eliminated")
-     (system = "Bd toad", n = 5, added = "+ lower load (70%): less death and less shedding", outcome = 0.6268304969048699, note = "little changed: untreated tadpoles and the pond keep Bd going")
-     (system = "Bd toad", n = 6, added = "+ infected metamorphs can survive (treatment as in step 1)", outcome = 0.08519903100859083, note = "blocking infection no longer eliminates Bd or protects well")
-     (system = "Bd toad", n = 7, added = "same, with survival-type protection", outcome = 0.7477821943494158, note = "now the better mechanism: the ranking has reversed")
-     (system = "Bd toad", n = 8, added = "+ measured decay, one dose at hatching", outcome = 0.056362921491221865, note = "protection gone before the season ends")
-     (system = "Bd toad", n = 9, added = "+ three doses per season", outcome = 0.5057080690629617, note = "about two-thirds of the benefit restored; five doses do better")
-     (system = "Bd frog", n = 0, added = "no treatment", outcome = 0.0, note = "all die at about day 156")
-     (system = "Bd frog", n = 1, added = "bacteria on each frog, measured decay: one bath", outcome = 0.0, note = "die-off delayed by about six weeks")
-     (system = "Bd frog", n = 2, added = "+ a bath every 90 days", outcome = 1.0, note = "all survive: each bath resets the slow build-up of load")
+    (step = 6, untreated = 0.0, treated = 1.0)
 
 This is the one system where bacteria that last only weeks could still
-work. Disease here depends on load, and load takes months to build. A
-short burst of extra clearance knocks it back, and the build-up starts
-again. Because frogs exchange bacteria, bathing a small part of the
-population protects the rest.
+work. Load takes months to build; a short burst of extra clearance
+knocks it back, and the build-up starts again. Because frogs exchange
+bacteria, bathing a small part of the population protects the rest.
 
 Two cautions. The slow build-up is for a population that starts clean.
 In the field trial the pond was in the middle of an outbreak, treated
@@ -686,81 +773,240 @@ back within two months; the last row of the table is the model’s version
 of treating too late. And the size of the clearance effect of the
 bacteria is assumed, not measured.
 
-## What each piece of realism did
+### Part C summary
 
 ``` julia
-println("| System | Step | Added | Outcome | What changed |")
+ladder_plot("Bd frog", "fraction of 80 frogs alive after 2 years")
+```
+
+![](01_building_realism_files/figure-commonmark/cell-43-output-1.svg)
+
+## How much did each step move the answer?
+
+The change in the treated outcome at each step, for each system. Bars to
+the right are steps that made treatment look better; bars to the left,
+worse.
+
+``` julia
+function change_plot(system)
+    rows = filter(r -> r.system == system && !isnan(r.treated), ladder)
+    d = [rows[i].treated - rows[i - 1].treated for i in 2:length(rows)]
+    labels = ["$(rows[i].n). $(rows[i].added)" for i in 2:length(rows)]
+    bar(d; orientation = :h, yticks = (1:length(d), labels), yflip = true, legend = false,
+        xlims = (-1.05, 1.05), xlabel = "change in treated outcome", title = system,
+        color = [x >= 0 ? :seagreen : :indianred for x in d], left_margin = 6Plots.mm,
+        size = (840, 70 + 34 * length(d)))
+    vline!([0.0]; color = :black)
+end
+change_plot("Bsal")
+```
+
+![](01_building_realism_files/figure-commonmark/cell-44-output-1.svg)
+
+``` julia
+change_plot("Bd toad")
+```
+
+![](01_building_realism_files/figure-commonmark/cell-45-output-1.svg)
+
+``` julia
+change_plot("Bd frog")
+```
+
+![](01_building_realism_files/figure-commonmark/cell-46-output-1.svg)
+
+Large bars point both ways in every system. No single addition
+dominates, and the sign of a step depends on the system: the observed
+mechanism (survive, still infected) is the largest negative step for
+Bsal and a large positive step for toads.
+
+## Does the effect of one piece of realism depend on the others?
+
+A ladder adds things in one order. To check that the order is not
+driving the conclusions, four pieces of treatment realism are switched
+on and off in every combination for Bsal, on the full host model of step
+3:
+
+- **mechanism**: blocks infection (0.99), or survive but stay infected
+  (0.99);
+- **duration**: lasts for life, or measured decay (half-life 5 days);
+- **spread**: none, or between animals at 50 per year;
+- **stages**: adults once, or both stages every quarter with the
+  bacteria kept through metamorphosis.
+
+``` julia
+levels = (
+    mechanism = ["blocks", "survive"],
+    duration = ["lasting", "decays"],
+    spread = ["none", "spreads"],
+    stages = ["adults", "both"],
+)
+function factorial_run(mech, dur, spr, stg)
+    tr = T(; (mech == "blocks" ? (efficacy = 0.99,) : (tolerance = 0.99,))...,
+        (dur == "decays" ? (abundance_half_life = 5 / 365, protective_fold = 100.0) : (;))...,
+        direct = spr == "spreads" ? 50.0 : 0.0)
+    kw = stg == "both" ? (treat = :both, treat_times = quarterly, retention = 1.0) : (;)
+    return lar(stage, tr; coverage = 1.0, kw...).mean_adults
+end
+design = [(; mech, dur, spr, stg, outcome = factorial_run(mech, dur, spr, stg))
+          for mech in levels.mechanism, dur in levels.duration, spr in levels.spread, stg in levels.stages]
+design = sort(vec(design); by = r -> -r.outcome)
+nothing
+```
+
+``` julia
+println("| Mechanism | Duration | Spread | Stages treated | Mean adults |")
 println("|---|---|---|---|---|")
-for r in ladder
-    @printf("| %s | %d | %s | %.2f | %s |\n", r.system, r.n, r.added, r.outcome, r.note)
+for r in design
+    @printf("| %s | %s | %s | %s | %.2f |\n", r.mech, r.dur, r.spr, r.stg, r.outcome)
 end
 ```
 
-| System | Step | Added | Outcome | What changed |
-|----|----|----|----|----|
-| Bsal | 0 | no treatment | 0.00 | population collapses within a year |
-| Bsal | 1 | treated class: blocks 99% of infection, for life | 0.34 | treated adults are safe; their offspring are not |
-| Bsal | 2 | \+ protection lost, half-life 1 year | 0.13 | collapse is only delayed |
-| Bsal | 3 | \+ microbiome spreads between animals | 1.00 | full protection: the microbiome maintains itself |
-| Bsal | 4 | \+ protection as in trials: survive, still infected | 0.02 | fails, and raises transmission: survivors shed for longer |
-| Bsal | 5 | \+ lower load (99%): less death and less shedding | 0.18 | partial; survivors remain infected |
-| Bsal | 6 | \+ larval stage (treatment as in step 1) | 0.33 | as step 1: recruits still unprotected |
-| Bsal | 7 | \+ treat both stages, kept through metamorphosis | 1.00 | full protection with no spread at all |
-| Bsal | 8 | \+ measured decay (half-life 5 days), dosed quarterly | 0.06 | fails: protection lasts about a month; monthly dosing reaches 0.28 |
-| Bd toad | 0 | no treatment | 0.00 | toads and Bd both go extinct |
-| Bd toad | 1 | treated class: 80% of tadpoles, blocks 90% | 0.98 | toads saved, Bd eliminated |
-| Bd toad | 2 | \+ protection lost, half-life 18 days | 0.86 | still works: the season is short |
-| Bd toad | 3 | \+ treat 5 years only, bacteria persist in pond | 0.00 | fails once treatment stops |
-| Bd toad | 4 | \+ protection as in trials: survive, still infected | 0.62 | toads persist at lower numbers; Bd is no longer eliminated |
-| Bd toad | 5 | \+ lower load (70%): less death and less shedding | 0.63 | little changed: untreated tadpoles and the pond keep Bd going |
-| Bd toad | 6 | \+ infected metamorphs can survive (treatment as in step 1) | 0.09 | blocking infection no longer eliminates Bd or protects well |
-| Bd toad | 7 | same, with survival-type protection | 0.75 | now the better mechanism: the ranking has reversed |
-| Bd toad | 8 | \+ measured decay, one dose at hatching | 0.06 | protection gone before the season ends |
-| Bd toad | 9 | \+ three doses per season | 0.51 | about two-thirds of the benefit restored; five doses do better |
-| Bd frog | 0 | no treatment | 0.00 | all die at about day 156 |
-| Bd frog | 1 | bacteria on each frog, measured decay: one bath | 0.00 | die-off delayed by about six weeks |
-| Bd frog | 2 | \+ a bath every 90 days | 1.00 | all survive: each bath resets the slow build-up of load |
+| Mechanism | Duration | Spread  | Stages treated | Mean adults |
+|-----------|----------|---------|----------------|-------------|
+| blocks    | lasting  | spreads | both           | 1.00        |
+| blocks    | lasting  | none    | both           | 1.00        |
+| blocks    | lasting  | spreads | adults         | 1.00        |
+| blocks    | lasting  | none    | adults         | 0.33        |
+| survive   | lasting  | spreads | both           | 0.27        |
+| survive   | lasting  | none    | both           | 0.22        |
+| survive   | lasting  | spreads | adults         | 0.20        |
+| survive   | lasting  | none    | adults         | 0.13        |
+| blocks    | decays   | spreads | both           | 0.07        |
+| blocks    | decays   | none    | both           | 0.06        |
+| blocks    | decays   | spreads | adults         | 0.05        |
+| blocks    | decays   | none    | adults         | 0.05        |
+| survive   | decays   | spreads | adults         | 0.04        |
+| survive   | decays   | none    | adults         | 0.04        |
+| survive   | decays   | none    | both           | 0.03        |
+| survive   | decays   | spreads | both           | 0.03        |
 
-Reading down the table:
+The average effect of switching each piece on, and how much that effect
+varies with the other three:
 
-1.  **The answer changed at almost every step**, and it changed
-    direction more than once. A model stopped at step 3 says a
-    self-spreading microbiome is essential for Bsal. Stopped at step 7
-    it says spread is unnecessary. Stopped at step 8 it says neither is
-    achievable with bacteria that last a few weeks.
-2.  **How protection works matters more than how strong it is.**
-    Blocking infection and surviving infection give opposite
-    population-level results for Bsal, and swap rank in toads when the
-    life cycle is made more realistic.
-3.  **Life-cycle detail in the host model changed the conclusions as
-    much as anything in the treatment model.** Larvae in the Bsal model,
-    and surviving metamorphs in the toad model, each overturned a
-    result.
-4.  **The systems differ for structural reasons.** A toad cohort passes
+``` julia
+function effect(field, on)
+    diffs = Float64[]
+    for r in design
+        getfield(r, field) == on || continue
+        partner = only(filter(q -> all(getfield(q, f) == getfield(r, f) for f in (:mech, :dur, :spr, :stg) if f != field) &&
+            getfield(q, field) != on, design))
+        push!(diffs, r.outcome - partner.outcome)
+    end
+    return diffs
+end
+println("| Switched on | Mean change | Smallest | Largest |")
+println("|---|---|---|---|")
+for (field, on, label) in ((:mech, "survive", "survive instead of block"), (:dur, "decays", "measured decay"),
+        (:spr, "spreads", "spread between animals"), (:stg, "both", "treat both stages"))
+    d = effect(field, on)
+    @printf("| %s | %+.2f | %+.2f | %+.2f |\n", label, sum(d) / length(d), minimum(d), maximum(d))
+end
+```
+
+| Switched on              | Mean change | Smallest | Largest |
+|--------------------------|-------------|----------|---------|
+| survive instead of block | -0.32       | -0.80    | -0.00   |
+| measured decay           | -0.47       | -0.95    | -0.09   |
+| spread between animals   | +0.10       | -0.00    | +0.67   |
+| treat both stages        | +0.10       | -0.01    | +0.67   |
+
+The ranges are wide: the effect of each piece depends strongly on the
+others. Spread, for example, matters a great deal for a lasting,
+infection-blocking treatment given to adults, and hardly at all once the
+bacteria decay in days. (In the model, animals that acquire bacteria
+from others share the dosing clock of the treated ones, so spread cannot
+outlast the decay.) A piece of realism therefore cannot be judged by
+adding it to a simple model alone.
+
+## All steps
+
+``` julia
+fmt(x) = isnan(x) ? "" : @sprintf("%.2f", x)
+println("| System | Step | Phase | Added | No treatment | With treatment | What changed |")
+println("|---|---|---|---|---|---|---|")
+for r in ladder
+    println("| ", join((r.system, r.n, r.phase, r.added, fmt(r.untreated), fmt(r.treated), r.note), " | "), " |")
+end
+```
+
+| System | Step | Phase | Added | No treatment | With treatment | What changed |
+|----|----|----|----|----|----|----|
+| Bsal | 0 | host | susceptible and infectious adults | 0.00 | 0.34 | collapse; treated adults live but are not replaced |
+| Bsal | 1 | host | \+ latent period (Schmidt 2017) | 0.00 | 0.34 | almost no change: a one-day delay against a one-week illness |
+| Bsal | 2 | host | \+ larval stage, not infected | 0.04 | 0.34 | untreated population no longer vanishes: larvae are a refuge |
+| Bsal | 3 | host | \+ larvae infected, carry-over 0.5 | 0.04 | 0.33 | small change at this carry-over |
+| Bsal | 4 | treatment | \+ protection lost, half-life 1 year | 0.04 | 0.13 | collapse only delayed |
+| Bsal | 5 | treatment | \+ bacteria spread between animals | 0.04 | 1.00 | full protection: the microbiome maintains itself |
+| Bsal | 6 | treatment | mechanism as in trials: survive, still infected | 0.04 | 0.02 | fails; survivors shed for longer, so transmission rises |
+| Bsal | 7 | treatment | \+ lower load (99%): also less shedding | 0.04 | 0.19 | partial; survivors remain infected |
+| Bsal | 8 | treatment | treat both stages, kept through metamorphosis | 0.04 | 1.00 | full protection with no spread at all |
+| Bsal | 9 | treatment | \+ measured decay (half-life 5 days) | 0.04 | 0.06 | fails: protection lasts about a month |
+| Bd toad | 0 | host | Mitchell 2008 pond model | 0.00 | 0.98 | untreated: toads and Bd both die out; treated: toads saved, Bd gone |
+| Bd toad | 1 | host | \+ infected metamorphs can survive (0.29) | 0.05 | 0.09 | toads no longer die out, so nor does Bd; treatment now protects poorly |
+| Bd toad | 2 | host | \+ metamorphs exposed for a week on leaving | 0.05 | 0.08 | little further change |
+| Bd toad | 3 | host | \+ adults carry Bd between years | 0.04 |  | untreated only; little change in this parameter set |
+| Bd toad | 4 | treatment | \+ protection lost, half-life 18 days | 0.05 | 0.06 | slightly worse |
+| Bd toad | 5 | treatment | mechanism as in trials: survive, still infected | 0.05 | 0.75 | much better than blocking here; Bd persists |
+| Bd toad | 6 | treatment | \+ lower load (70%): also less shedding | 0.05 | 0.75 | little changed: untreated tadpoles and the pond keep Bd going |
+| Bd toad | 7 | treatment | \+ measured decay, one dose at hatching | 0.05 | 0.06 | protection gone before the season ends |
+| Bd toad | 8 | treatment | \+ five doses per season | 0.05 | 0.80 | most of the benefit restored |
+| Bd frog | 0 | host | Briggs 2010 load model | 0.00 |  | all die: 80 frogs is above the threshold of 23 |
+| Bd frog | 1 | host | \+ saturating clearance by the frog | 0.00 |  | threshold rises from 23 to 68 frogs; 80 still all die |
+| Bd frog | 2 | host | \+ frogs differ in their defences | 0.06 |  | a few of the best-defended survive |
+| Bd frog | 3 | treatment | treated class: 40% of frogs, lasts for life | 0.00 | 1.00 | all survive, including the untreated: protection is shared |
+| Bd frog | 4 | treatment | \+ protection lost, half-life 30 days | 0.00 | 0.00 | die-off delayed by about three months, not prevented |
+| Bd frog | 5 | treatment | \+ bacteria on each frog, measured decay; one bath | 0.00 | 0.00 | die-off delayed by about six weeks |
+| Bd frog | 6 | treatment | \+ a bath every 90 days | 0.00 | 1.00 | all survive: each bath resets the slow build-up of load |
+
+## What the exercise shows
+
+1.  **The answer changed at almost every step, and reversed more than
+    once.** For Bsal, a model stopped at step 5 says a self-spreading
+    microbiome is essential; at step 8, that spread is unnecessary; at
+    step 9, that neither is achievable with bacteria that last a few
+    weeks.
+2.  **Host biology moved the answer as much as treatment biology.** A
+    larval stage changed the untreated fate of the salamanders. One
+    survival probability for infected toad metamorphs reversed both the
+    untreated outcome and the value of the reference treatment.
+3.  **How protection works matters more than how strong it is, and its
+    effect has no fixed sign.** Letting animals survive infection is the
+    worst change for Bsal and one of the best for toads.
+4.  **Effects interact.** The factorial shows that the value of spread,
+    of treating larvae or of a lasting treatment each depends on the
+    other pieces.
+5.  **The systems differ for structural reasons.** A toad cohort passes
     through a short infected stage once a year and can be re-treated. A
     salamander must be protected for life against a pathogen that kills
     in a week. In frogs, where disease follows a load that builds
     slowly, short-lived bacteria can still work if they are re-applied.
 
-## What is not in the model
+## What is not in the models
 
 - In Parts A and B bacterial abundance is a clock since the last dose,
   not a state of each animal. Only the frog model of Part C tracks it
   per animal.
 - The fold-drop in abundance at which protection is lost has not been
-  measured.
-- Whether applied bacteria survive metamorphosis has not been measured.
+  measured, nor has the effect of the bacteria on clearance, nor whether
+  applied bacteria survive metamorphosis.
 - The Bsal model has no recovery from infection and no years between
   metamorphosis and maturity. The toad model has thresholds standing in
-  for extinction, and adult toads that carry Bd are not yet combined
-  with treatment.
-- Everything is deterministic.
+  for extinction, and infected adult toads are not yet combined with
+  treatment. The frog treatment steps use identical frogs.
+- The three systems do not share one model structure, so Part B starts
+  from a more complex model than Part A.
+- Everything is deterministic except the choice of which frogs are
+  treated in Part C.
 
 ## References
 
 - Briggs CJ et al. (2010) PNAS 107:9695–9700.
   doi:10.1073/pnas.0912886107
 - Harris RN et al. (2009) ISME J 3:818–824. doi:10.1038/ismej.2009.27
+- Knapp RA et al. (2022) PeerJ 10:e12712. doi:10.7717/peerj.12712
+- Madison JD et al. (2025) Infect Immun 93:e00569-24.
+  doi:10.1128/iai.00569-24
 - Mitchell KM et al. (2008) Proc R Soc B 275:329–334.
   doi:10.1098/rspb.2007.1356
 - Schmidt BR et al. (2017) R Soc Open Sci 4:160801.
@@ -768,7 +1014,3 @@ Reading down the table:
 - Smith D et al. (2022) J Evol Biol 35:589–598. doi:10.1111/jeb.13987
 - Wang Y et al. (2021) Nat Commun 12:5788.
   doi:10.1038/s41467-021-26127-9
-- Knapp RA et al. (2022) PeerJ 10:e12712. doi:10.7717/peerj.12712 (field
-  persistence data)
-- Madison JD et al. (2025) Infect Immun 93:e00569-24.
-  doi:10.1128/iai.00569-24 (laboratory persistence data)
