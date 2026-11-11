@@ -7,6 +7,7 @@
 - [Every combination](#every-combination)
 - [The same comparison nearer the
   threshold](#the-same-comparison-nearer-the-threshold)
+- [A fade-out rule](#a-fade-out-rule)
 - [Does the order of adding matter?](#does-the-order-of-adding-matter)
 - [What this shows](#what-this-shows)
 - [Limits](#limits)
@@ -80,9 +81,10 @@ recorded for each model:
 function outcomes(p, b)
     run(tr; kw...) = solve(NestedChytridProblem(p, b, tr; kw...))
     u = run(T())
+    bl, sv = run(T(efficacy = 0.99); coverage = 1.0), run(T(tolerance = 0.99); coverage = 1.0)
+    fate(r) = !isnan(r.host_extinction) ? :host_lost : !isnan(r.pathogen_fadeout) ? :pathogen_gone : :both_persist
     return (growth = invasion_growth_rate(p, b), untreated = u.mean_adults, lowest = u.min_adults,
-        block = run(T(efficacy = 0.99); coverage = 1.0).mean_adults,
-        survive = run(T(tolerance = 0.99); coverage = 1.0).mean_adults)
+        block = bl.mean_adults, survive = sv.mean_adults, fates = (fate(u), fate(bl), fate(sv)))
 end
 ```
 
@@ -167,7 +169,7 @@ but not infected, infected): 48 models.
 configs = vec([(; latent, environment, load, recovery, larvae = lv > 0, larval_infection = lv > 1)
     for latent in (false, true), environment in (false, true), load in (false, true),
         recovery in (false, true), lv in 0:2])
-all_models(p) = [(c, outcomes(p, bio(; c...))) for c in configs]
+all_models(p; fade = 0.0) = [(c, outcomes(p, bio(; fadeout_density = fade, c...))) for c in configs]
 
 same(c, c2, skip) = all(getfield(c, k) == getfield(c2, k) for k in keys(c) if !(k in skip))
 pieces = [
@@ -322,11 +324,97 @@ end
 | 3 per ha | 48 of 48 | 0 of 48 |
 | 1.5 per ha | 48 of 48 | 0 of 48 |
 
+## A fade-out rule
+
+The equations are deterministic, so a density can fall to a value that
+means far less than one animal and then grow back. Near the threshold
+that can decide the result. The model is therefore given a fade-out
+rule, itself a piece of realism: once infected animals fall below one
+per 100 km² (0.0001 per hectare) the pathogen is removed, and if all
+animals fall below that density the host population is removed. The
+threshold is illustrative.
+
+``` julia
+fade = 1e-4
+fres_high, fres_mid, fres_low = all_models(schmidt; fade), all_models(mid; fade), all_models(low; fade)
+nothing
+```
+
+With the rule, each run has a fate within the ten years: the host is
+lost, the pathogen is lost and the host remains, or both persist.
+
+``` julia
+println("| Density | Treatment | Host lost | Pathogen lost, host remains | Both persist | Mean adults: range |")
+println("|---|---|---|---|---|---|")
+for (label, res) in (("25 per ha", fres_high), ("3 per ha", fres_mid), ("1.5 per ha", fres_low))
+    for (i, (name, f)) in enumerate((("none", o -> o.untreated), ("block", o -> o.block), ("survive", o -> o.survive)))
+        fates = [o.fates[i] for (_, o) in res]
+        v = [f(o) for (_, o) in res]
+        @printf("| %s | %s | %d | %d | %d | %.2f to %.2f |\n", label, name, count(==(:host_lost), fates),
+            count(==(:pathogen_gone), fates), count(==(:both_persist), fates), minimum(v), maximum(v))
+    end
+end
+```
+
+| Density | Treatment | Host lost | Pathogen lost, host remains | Both persist | Mean adults: range |
+|----|----|----|----|----|----|
+| 25 per ha | none | 4 | 34 | 10 | 0.00 to 0.10 |
+| 25 per ha | block | 0 | 0 | 48 | 0.32 to 0.38 |
+| 25 per ha | survive | 0 | 0 | 48 | 0.13 to 0.15 |
+| 3 per ha | none | 0 | 48 | 0 | 0.15 to 0.64 |
+| 3 per ha | block | 0 | 42 | 6 | 0.57 to 1.00 |
+| 3 per ha | survive | 0 | 12 | 36 | 0.14 to 0.35 |
+| 1.5 per ha | none | 0 | 48 | 0 | 0.56 to 0.99 |
+| 1.5 per ha | block | 0 | 48 | 0 | 1.00 to 1.00 |
+| 1.5 per ha | survive | 0 | 12 | 36 | 0.14 to 0.57 |
+
+``` julia
+spread_figure(fres_mid, "48 models at 3 per ha, with the fade-out rule")
+```
+
+![](02_nested_model_files/figure-commonmark/cell-17-output-1.svg)
+
+``` julia
+effects_table(fres_mid)
+```
+
+| Piece switched on | Untreated: mean (range) | Block: mean (range) | Survive: mean (range) |
+|----|----|----|----|
+| latent period | +0.00 (-0.00 to +0.00) | +0.00 (-0.00 to +0.00) | +0.00 (+0.00 to +0.00) |
+| environmental pool | -0.04 (-0.08 to +0.00) | -0.11 (-0.43 to -0.00) | -0.00 (-0.03 to +0.00) |
+| light and heavy infections | +0.00 (-0.07 to +0.09) | -0.11 (-0.43 to -0.00) | -0.09 (-0.20 to +0.01) |
+| recovery | +0.33 (+0.22 to +0.47) | +0.11 (+0.00 to +0.43) | +0.10 (+0.01 to +0.21) |
+| larval stage | +0.05 (-0.00 to +0.13) | -0.00 (-0.00 to +0.00) | -0.00 (-0.01 to +0.00) |
+| larvae infected | -0.01 (-0.02 to -0.01) | -0.00 (-0.00 to -0.00) | -0.00 (-0.00 to -0.00) |
+
+What the rule changes, and what it does not:
+
+1.  **One apparent effect was an artefact.** Without the rule, adding a
+    latent period at 3 per hectare seemed to turn the blocking treatment
+    from partial to full protection (+0.39). With the rule the latent
+    period has no effect at all. In both models the pathogen is in fact
+    lost; the model without the latent period was regrowing it from a
+    meaningless density.
+2.  **The blocking treatment now eliminates the pathogen in most models
+    near the threshold**: in 42 of 48 at 3 per hectare and in all 48 at
+    1.5. The exceptions at 3 per hectare are models with an
+    environmental pool and light infections but no recovery.
+3.  **Recovery remains the piece that matters most** for the untreated
+    population.
+4.  **Treatment changes the fate as well as the numbers.** At 25 per
+    hectare an untreated epidemic burns itself out in most models, and
+    in a few the host is lost. With either treatment, host and pathogen
+    both persist in every model: the treated animals keep the population
+    going, and with it the pathogen.
+5.  **The survive-type treatment still does worse than none** at the
+    lower densities. In most models it is the reason the pathogen
+    persists.
+
 ## Does the order of adding matter?
 
 The effect of each piece when it is the first thing added to the
 simplest model, and when it is the last thing added to the otherwise
-complete model, at 3 per hectare:
+complete model, at 3 per hectare with the fade-out rule:
 
 ``` julia
 full = (latent = true, environment = true, load = true, recovery = true, larvae = true, larval_infection = true)
@@ -339,8 +427,8 @@ for (label, on, off) in (("latent period", (latent = true,), (latent = false,)),
         ("light and heavy infections", (load = true,), (load = false,)),
         ("recovery", (recovery = true,), (recovery = false,)),
         ("larval stage, infected", (larvae = true, larval_infection = true), (larvae = false, larval_infection = false)))
-    first_ = (get_(res_mid, merge(empty_, on)), get_(res_mid, empty_))
-    last_ = (get_(res_mid, full), get_(res_mid, merge(full, off)))
+    first_ = (get_(fres_mid, merge(empty_, on)), get_(fres_mid, empty_))
+    last_ = (get_(fres_mid, full), get_(fres_mid, merge(full, off)))
     @printf("| %s | %+.2f | %+.2f | %+.2f | %+.2f |\n", label, first_[1].untreated - first_[2].untreated,
         last_[1].untreated - last_[2].untreated, first_[1].block - first_[2].block, last_[1].block - last_[2].block)
 end
@@ -348,11 +436,11 @@ end
 
 | Piece | Untreated: added first | added last | Block: added first | added last |
 |----|----|----|----|----|
-| latent period | +0.00 | +0.00 | +0.39 | +0.00 |
-| environmental pool | +0.00 | +0.03 | -0.00 | +0.01 |
-| light and heavy infections | -0.07 | +0.09 | -0.04 | +0.06 |
-| recovery | +0.33 | +0.36 | +0.39 | +0.23 |
-| larval stage, infected | +0.05 | -0.00 | -0.01 | -0.00 |
+| latent period | +0.00 | +0.00 | -0.00 | -0.00 |
+| environmental pool | +0.00 | -0.04 | -0.00 | -0.00 |
+| light and heavy infections | -0.07 | +0.08 | -0.00 | -0.00 |
+| recovery | +0.33 | +0.37 | +0.00 | +0.42 |
+| larval stage, infected | +0.10 | -0.01 | -0.00 | -0.00 |
 
 Where the two columns differ, the piece interacts with the others, and a
 ladder would give a different impression depending on where the piece
@@ -375,17 +463,22 @@ was placed.
     model should not be read as the effect of that piece.
 4.  **Protection that keeps infected animals alive can be worse than
     none**, where the untreated epidemic would have burnt out.
+5.  **A simple model can mislead through its mathematics as well as its
+    biology.** One of the largest apparent effects in this vignette
+    disappeared when densities too small to mean anything were no longer
+    allowed to grow back.
 
 ## Limits
 
 - The nested model covers the salamander system only. The toad and frog
   systems of the first vignette have features it lacks: a seasonal
   cohort, and a continuous load on each animal.
-- The model is deterministic. A pathogen density can fall to a level
-  that means less than one infected animal in a very large area and then
-  grow back. Some differences between models near the threshold, such as
-  full protection in one model and partial in the next, come from this,
-  and a stochastic version is needed to confirm them.
+- The fade-out rule is a threshold on a deterministic model, with an
+  illustrative value. It removes the worst artefact but is not a
+  substitute for a stochastic model, which would give the chance of each
+  fate.
+- Fates are judged within ten years. A population left at a few percent
+  of its former density is counted as remaining.
 - Treated animals that survive infection never clear it unless
   `recovery` is on.
 - The values attached to the switches are illustrative. Different values

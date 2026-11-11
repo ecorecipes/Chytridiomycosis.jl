@@ -13,6 +13,10 @@
 #   larvae            an aquatic larval stage between birth and adulthood
 #   larval_infection  larvae are infected by adults, without disease, and carry the infection
 #                     through metamorphosis with probability `carry_over`
+#   fadeout_density   below this density (per ha) of infected animals the pathogen is removed,
+#                     and below it of animals in total the host population is removed; the
+#                     deterministic equations otherwise let both fall to densities that mean
+#                     far less than one animal and then grow back
 # and a treated class as in microbiome_treatment.jl (efficacy, tolerance, shedding reduction,
 # loss, spread within a stage, waning with bacterial abundance, retention at metamorphosis).
 #
@@ -32,6 +36,11 @@ take when on: `environmental_fraction` (share of transmission through the pool) 
 one) and `progression` (light to heavy, yr⁻¹); `recovery_rate` (yr⁻¹); `larval_period` (yr),
 `larval_death` (yr⁻¹), `adult_to_larva` (ha yr⁻¹) and `carry_over`. The keyed constructor takes
 `carry_over` from the compendium.
+
+`fadeout_density` (per ha; 0 switches it off) is a fade-out rule. Once the pathogen has been
+introduced, if infected animals plus the pool's equivalent in shedding animals fall below it,
+they are set to zero; if all animals (adults and larvae) fall below it, the host population is
+set to zero.
 """
 Base.@kwdef struct ChytridBiology
     latent::Bool = false
@@ -49,18 +58,19 @@ Base.@kwdef struct ChytridBiology
     larval_death::Float64 = 1.0
     adult_to_larva::Float64 = 5.2
     carry_over::Float64 = 0.0
+    fadeout_density::Float64 = 0.0
     function ChytridBiology(latent, environment, load, recovery, larvae, larval_infection,
             environmental_fraction, pool_half_life, light_shedding, progression, recovery_rate,
-            larval_period, larval_death, adult_to_larva, carry_over)
+            larval_period, larval_death, adult_to_larva, carry_over, fadeout_density)
         (0 <= environmental_fraction <= 1 && pool_half_life > 0 && 0 <= light_shedding <= 1 &&
          progression > 0 && recovery_rate >= 0 && larval_period > 0 && larval_death >= 0 &&
-         adult_to_larva >= 0 && 0 <= carry_over <= 1) ||
+         adult_to_larva >= 0 && 0 <= carry_over <= 1 && fadeout_density >= 0) ||
             throw(ArgumentError("ChytridBiology: a value is out of range"))
         larval_infection && !larvae &&
             throw(ArgumentError("larval_infection needs larvae = true"))
         return new(latent, environment, load, recovery, larvae, larval_infection,
             environmental_fraction, pool_half_life, light_shedding, progression, recovery_rate,
-            larval_period, larval_death, adult_to_larva, carry_over)
+            larval_period, larval_death, adult_to_larva, carry_over, fadeout_density)
     end
 end
 function ChytridBiology(key::Symbol; kwargs...)
@@ -192,7 +202,8 @@ treated; `I0` infectious adults per ha arrive at `t_intro`. Time in years.
 
 `solve` returns series `t`, `adults`, `infected` (adults in any infected class) and
 `min_adults`, `mean_adults`, `final_adults` (fractions of `K`, after `t_intro`),
-`final_prevalence` and `final_treated`.
+`final_prevalence` and `final_treated`; and, for the fade-out rule, `pathogen_fadeout` and
+`host_extinction` (the times they happened, or `NaN`).
 """
 struct NestedChytridProblem{P<:SchmidtParameters}
     p::P
@@ -234,8 +245,33 @@ function CommonSolve.solve(prob::NestedChytridProblem, alg = Tsit5(); dt = 0.01,
     stages = prob.treat === :adults ? (2,) : prob.treat === :larvae ? (1,) : (1, 2)
     ts, us = Float64[], Vector{Float64}[]
     t = t0
+    # fade-out rule
+    limit = prob.biology.fadeout_density
+    infected_idx = [nested_index(s, τ, k) for s in 1:2 for τ in 1:2 for k in 2:4]
+    host_idx = 1:16
+    μZ = log(2) / prob.biology.pool_half_life
+    pathogen_gone, host_gone = Ref(NaN), Ref(NaN)
+    pathogen_left(v) = sum(max(v[i], 0.0) for i in infected_idx) + μZ * max(v[NESTED_Z], 0.0)
+    hosts_left(v) = sum(max(v[i], 0.0) for i in host_idx)
+    low_pathogen(v, t) = t > prob.t_intro && isnan(pathogen_gone[]) && 0 < pathogen_left(v) < limit
+    low_hosts(v) = isnan(host_gone[]) && hosts_left(v) < limit
+    function fade!(integ)
+        if low_hosts(integ.u)
+            integ.u .= 0.0
+            host_gone[] = integ.t
+            isnan(pathogen_gone[]) && (pathogen_gone[] = integ.t)
+        elseif low_pathogen(integ.u, integ.t)
+            integ.u[infected_idx] .= 0.0
+            integ.u[NESTED_Z] = 0.0
+            pathogen_gone[] = integ.t
+        end
+        return nothing
+    end
+    extra = limit > 0 ? (callback = DiscreteCallback((v, t, integ) -> low_hosts(v) || low_pathogen(v, t),
+        fade!; save_positions = (false, false)),) : (;)
     for (te, kind) in events
-        t = probiotic_advance!(u, t, te, nested_rhs!, q, alg, ts, us; dt, abstol, reltol, kwargs...)
+        t = probiotic_advance!(u, t, te, nested_rhs!, q, alg, ts, us; dt, abstol, reltol, extra...,
+            kwargs...)
         if kind === :treat
             clock[] = te
             for s in stages, k in 1:4
@@ -245,7 +281,7 @@ function CommonSolve.solve(prob::NestedChytridProblem, alg = Tsit5(); dt = 0.01,
                 u[j] += moved
             end
         elseif kind === :introduce
-            u[nested_index(2, 1, 4)] += prob.I0
+            isnan(host_gone[]) && (u[nested_index(2, 1, 4)] += prob.I0)
         end
     end
     A(v, τs, ks) = sum(v[nested_index(2, τ, k)] for τ in τs, k in ks)
@@ -256,5 +292,6 @@ function CommonSolve.solve(prob::NestedChytridProblem, alg = Tsit5(); dt = 0.01,
     return (t = ts, adults = adults, infected = infected, min_adults = minimum(rel),
         mean_adults = sum(rel) / length(rel), final_adults = rel[end],
         final_prevalence = adults[end] > 0 ? max(infected[end], 0.0) / adults[end] : 0.0,
-        final_treated = adults[end] > 0 ? A(us[end], 2:2, 1:4) / adults[end] : 0.0)
+        final_treated = adults[end] > 0 ? A(us[end], 2:2, 1:4) / adults[end] : 0.0,
+        pathogen_fadeout = pathogen_gone[], host_extinction = host_gone[])
 end

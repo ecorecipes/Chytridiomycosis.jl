@@ -587,5 +587,18 @@ using Random: Xoshiro
             recovery = true, larvae = true, larval_infection = true)
         @test isapprox(nest(all_on; I0 = 0.0).final_adults, 1.0; atol = 1e-6)
         @test 0 < nest(all_on).mean_adults < 1
+        # fade-out rule: off by default; at Schmidt's density the simplest model's population
+        # falls below one animal per 100 km² and is removed, and with a larval refuge it is the
+        # pathogen that goes and the host that recovers
+        @test isnan(nest(sch).pathogen_fadeout) && isnan(nest(sch).host_extinction)
+        @test_throws ArgumentError ChytridBiology(fadeout_density = -1.0)
+        lost = nest(ChytridBiology(latent = true, fadeout_density = 1e-4); tspan = (0.0, 30.0))
+        @test lost.host_extinction < 5 && lost.final_adults == 0
+        saved = nest(ChytridBiology(latent = true, larvae = true, fadeout_density = 1e-4); tspan = (0.0, 30.0))
+        @test isnan(saved.host_extinction) && saved.pathogen_fadeout < 5
+        @test saved.final_adults > 0.9 && saved.final_prevalence == 0
+        # no pathogen: the rule never fires
+        quiet = nest(ChytridBiology(latent = true, fadeout_density = 1e-4); I0 = 0.0)
+        @test isnan(quiet.pathogen_fadeout) && isapprox(quiet.final_adults, 1.0; atol = 1e-6)
     end
 end

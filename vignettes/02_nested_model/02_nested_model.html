@@ -2228,6 +2228,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
   <li><a href="#a-ladder-in-one-model" id="toc-a-ladder-in-one-model" class="nav-link" data-scroll-target="#a-ladder-in-one-model">A ladder in one model</a></li>
   <li><a href="#every-combination" id="toc-every-combination" class="nav-link" data-scroll-target="#every-combination">Every combination</a></li>
   <li><a href="#the-same-comparison-nearer-the-threshold" id="toc-the-same-comparison-nearer-the-threshold" class="nav-link" data-scroll-target="#the-same-comparison-nearer-the-threshold">The same comparison nearer the threshold</a></li>
+  <li><a href="#a-fade-out-rule" id="toc-a-fade-out-rule" class="nav-link" data-scroll-target="#a-fade-out-rule">A fade-out rule</a></li>
   <li><a href="#does-the-order-of-adding-matter" id="toc-does-the-order-of-adding-matter" class="nav-link" data-scroll-target="#does-the-order-of-adding-matter">Does the order of adding matter?</a></li>
   <li><a href="#what-this-shows" id="toc-what-this-shows" class="nav-link" data-scroll-target="#what-this-shows">What this shows</a></li>
   <li><a href="#limits" id="toc-limits" class="nav-link" data-scroll-target="#limits">Limits</a></li>
@@ -2343,10 +2344,11 @@ Important
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">outcomes</span>(p, b)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">run</span>(tr; kw<span class="op">...</span>) <span class="op">=</span> <span class="fu">solve</span>(<span class="fu">NestedChytridProblem</span>(p, b, tr; kw<span class="op">...</span>))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    u <span class="op">=</span> <span class="fu">run</span>(<span class="fu">T</span>())</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (growth <span class="op">=</span> <span class="fu">invasion_growth_rate</span>(p, b), untreated <span class="op">=</span> u.mean_adults, lowest <span class="op">=</span> u.min_adults,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        block <span class="op">=</span> <span class="fu">run</span>(<span class="fu">T</span>(efficacy <span class="op">=</span> <span class="fl">0.99</span>); coverage <span class="op">=</span> <span class="fl">1.0</span>).mean_adults,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        survive <span class="op">=</span> <span class="fu">run</span>(<span class="fu">T</span>(tolerance <span class="op">=</span> <span class="fl">0.99</span>); coverage <span class="op">=</span> <span class="fl">1.0</span>).mean_adults)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    bl, sv <span class="op">=</span> <span class="fu">run</span>(<span class="fu">T</span>(efficacy <span class="op">=</span> <span class="fl">0.99</span>); coverage <span class="op">=</span> <span class="fl">1.0</span>), <span class="fu">run</span>(<span class="fu">T</span>(tolerance <span class="op">=</span> <span class="fl">0.99</span>); coverage <span class="op">=</span> <span class="fl">1.0</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fate</span>(r) <span class="op">=</span> !<span class="fu">isnan</span>(r.host_extinction) ? <span class="op">:</span>host_lost <span class="op">:</span> !<span class="fu">isnan</span>(r.pathogen_fadeout) ? <span class="op">:</span>pathogen_gone <span class="op">:</span> <span class="op">:</span>both_persist</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (growth <span class="op">=</span> <span class="fu">invasion_growth_rate</span>(p, b), untreated <span class="op">=</span> u.mean_adults, lowest <span class="op">=</span> u.min_adults,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        block <span class="op">=</span> bl.mean_adults, survive <span class="op">=</span> sv.mean_adults, fates <span class="op">=</span> (<span class="fu">fate</span>(u), <span class="fu">fate</span>(bl), <span class="fu">fate</span>(sv)))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
 <pre><code>outcomes (generic function with 1 method)</code></pre>
 </div>
@@ -2483,7 +2485,7 @@ Important
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>configs <span class="op">=</span> <span class="fu">vec</span>([(; latent, environment, load, recovery, larvae <span class="op">=</span> lv <span class="op">&gt;</span> <span class="fl">0</span>, larval_infection <span class="op">=</span> lv <span class="op">&gt;</span> <span class="fl">1</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    for latent <span class="kw">in</span> (<span class="cn">false</span>, <span class="cn">true</span>), environment <span class="kw">in</span> (<span class="cn">false</span>, <span class="cn">true</span>), load <span class="kw">in</span> (<span class="cn">false</span>, <span class="cn">true</span>),</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        recovery <span class="kw">in</span> (<span class="cn">false</span>, <span class="cn">true</span>), lv <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span>])</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">all_models</span>(p) <span class="op">=</span> [(c, <span class="fu">outcomes</span>(p, <span class="fu">bio</span>(; c<span class="op">...</span>))) for c <span class="kw">in</span> configs]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">all_models</span>(p; fade <span class="op">=</span> <span class="fl">0.0</span>) <span class="op">=</span> [(c, <span class="fu">outcomes</span>(p, <span class="fu">bio</span>(; fadeout_density <span class="op">=</span> fade, c<span class="op">...</span>))) for c <span class="kw">in</span> configs]</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">same</span>(c, c2, skip) <span class="op">=</span> <span class="fu">all</span>(<span class="fu">getfield</span>(c, k) <span class="op">==</span> <span class="fu">getfield</span>(c2, k) <span class="cf">for</span> k <span class="kw">in</span> <span class="fu">keys</span>(c) <span class="cf">if</span> !(k <span class="kw">in</span> skip))</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>pieces <span class="op">=</span> [</span>
@@ -2766,24 +2768,207 @@ Important
 </tbody>
 </table>
 </section>
+<section id="a-fade-out-rule" class="level2">
+<h2 class="anchored" data-anchor-id="a-fade-out-rule">A fade-out rule</h2>
+<p>The equations are deterministic, so a density can fall to a value that means far less than one animal and then grow back. Near the threshold that can decide the result. The model is therefore given a fade-out rule, itself a piece of realism: once infected animals fall below one per 100 km² (0.0001 per hectare) the pathogen is removed, and if all animals fall below that density the host population is removed. The threshold is illustrative.</p>
+<div id="28" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fade <span class="op">=</span> <span class="fl">1e-4</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>fres_high, fres_mid, fres_low <span class="op">=</span> <span class="fu">all_models</span>(schmidt; fade), <span class="fu">all_models</span>(mid; fade), <span class="fu">all_models</span>(low; fade)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cn">nothing</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>With the rule, each run has a fate within the ten years: the host is lost, the pathogen is lost and the host remains, or both persist.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">&quot;| Density | Treatment | Host lost | Pathogen lost, host remains | Both persist | Mean adults: range |&quot;</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">&quot;|---|---|---|---|---|---|&quot;</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (label, res) <span class="kw">in</span> ((<span class="st">&quot;25 per ha&quot;</span>, fres_high), (<span class="st">&quot;3 per ha&quot;</span>, fres_mid), (<span class="st">&quot;1.5 per ha&quot;</span>, fres_low))</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i, (name, f)) <span class="kw">in</span> <span class="fu">enumerate</span>(((<span class="st">&quot;none&quot;</span>, o <span class="op">-&gt;</span> o.untreated), (<span class="st">&quot;block&quot;</span>, o <span class="op">-&gt;</span> o.block), (<span class="st">&quot;survive&quot;</span>, o <span class="op">-&gt;</span> o.survive)))</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        fates <span class="op">=</span> [o.fates[i] for (_, o) <span class="kw">in</span> res]</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>        v <span class="op">=</span> [<span class="fu">f</span>(o) for (_, o) <span class="kw">in</span> res]</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="pp">@printf</span>(<span class="st">&quot;| %s | %s | %d | %d | %d | %.2f to %.2f |</span><span class="sc">\n</span><span class="st">&quot;</span>, label, name, <span class="fu">count</span>(<span class="op">==</span>(<span class="op">:</span>host_lost), fates),</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count</span>(<span class="op">==</span>(<span class="op">:</span>pathogen_gone), fates), <span class="fu">count</span>(<span class="op">==</span>(<span class="op">:</span>both_persist), fates), <span class="fu">minimum</span>(v), <span class="fu">maximum</span>(v))</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Density</th>
+<th>Treatment</th>
+<th>Host lost</th>
+<th>Pathogen lost, host remains</th>
+<th>Both persist</th>
+<th>Mean adults: range</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>25 per ha</td>
+<td>none</td>
+<td>4</td>
+<td>34</td>
+<td>10</td>
+<td>0.00 to 0.10</td>
+</tr>
+<tr class="even">
+<td>25 per ha</td>
+<td>block</td>
+<td>0</td>
+<td>0</td>
+<td>48</td>
+<td>0.32 to 0.38</td>
+</tr>
+<tr class="odd">
+<td>25 per ha</td>
+<td>survive</td>
+<td>0</td>
+<td>0</td>
+<td>48</td>
+<td>0.13 to 0.15</td>
+</tr>
+<tr class="even">
+<td>3 per ha</td>
+<td>none</td>
+<td>0</td>
+<td>48</td>
+<td>0</td>
+<td>0.15 to 0.64</td>
+</tr>
+<tr class="odd">
+<td>3 per ha</td>
+<td>block</td>
+<td>0</td>
+<td>42</td>
+<td>6</td>
+<td>0.57 to 1.00</td>
+</tr>
+<tr class="even">
+<td>3 per ha</td>
+<td>survive</td>
+<td>0</td>
+<td>12</td>
+<td>36</td>
+<td>0.14 to 0.35</td>
+</tr>
+<tr class="odd">
+<td>1.5 per ha</td>
+<td>none</td>
+<td>0</td>
+<td>48</td>
+<td>0</td>
+<td>0.56 to 0.99</td>
+</tr>
+<tr class="even">
+<td>1.5 per ha</td>
+<td>block</td>
+<td>0</td>
+<td>48</td>
+<td>0</td>
+<td>1.00 to 1.00</td>
+</tr>
+<tr class="odd">
+<td>1.5 per ha</td>
+<td>survive</td>
+<td>0</td>
+<td>12</td>
+<td>36</td>
+<td>0.14 to 0.57</td>
+</tr>
+</tbody>
+</table>
+<div id="32" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">spread_figure</span>(fres_mid, <span class="st">&quot;48 models at 3 per ha, with the fade-out rule&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<img role="img" src="data:image/png;base64,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">
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">effects_table</span>(fres_mid)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Piece switched on</th>
+<th>Untreated: mean (range)</th>
+<th>Block: mean (range)</th>
+<th>Survive: mean (range)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>latent period</td>
+<td>+0.00 (-0.00 to +0.00)</td>
+<td>+0.00 (-0.00 to +0.00)</td>
+<td>+0.00 (+0.00 to +0.00)</td>
+</tr>
+<tr class="even">
+<td>environmental pool</td>
+<td>-0.04 (-0.08 to +0.00)</td>
+<td>-0.11 (-0.43 to -0.00)</td>
+<td>-0.00 (-0.03 to +0.00)</td>
+</tr>
+<tr class="odd">
+<td>light and heavy infections</td>
+<td>+0.00 (-0.07 to +0.09)</td>
+<td>-0.11 (-0.43 to -0.00)</td>
+<td>-0.09 (-0.20 to +0.01)</td>
+</tr>
+<tr class="even">
+<td>recovery</td>
+<td>+0.33 (+0.22 to +0.47)</td>
+<td>+0.11 (+0.00 to +0.43)</td>
+<td>+0.10 (+0.01 to +0.21)</td>
+</tr>
+<tr class="odd">
+<td>larval stage</td>
+<td>+0.05 (-0.00 to +0.13)</td>
+<td>-0.00 (-0.00 to +0.00)</td>
+<td>-0.00 (-0.01 to +0.00)</td>
+</tr>
+<tr class="even">
+<td>larvae infected</td>
+<td>-0.01 (-0.02 to -0.01)</td>
+<td>-0.00 (-0.00 to -0.00)</td>
+<td>-0.00 (-0.00 to -0.00)</td>
+</tr>
+</tbody>
+</table>
+<p>What the rule changes, and what it does not:</p>
+<ol type="1">
+<li><strong>One apparent effect was an artefact.</strong> Without the rule, adding a latent period at 3 per hectare seemed to turn the blocking treatment from partial to full protection (+0.39). With the rule the latent period has no effect at all. In both models the pathogen is in fact lost; the model without the latent period was regrowing it from a meaningless density.</li>
+<li><strong>The blocking treatment now eliminates the pathogen in most models near the threshold</strong>: in 42 of 48 at 3 per hectare and in all 48 at 1.5. The exceptions at 3 per hectare are models with an environmental pool and light infections but no recovery.</li>
+<li><strong>Recovery remains the piece that matters most</strong> for the untreated population.</li>
+<li><strong>Treatment changes the fate as well as the numbers.</strong> At 25 per hectare an untreated epidemic burns itself out in most models, and in a few the host is lost. With either treatment, host and pathogen both persist in every model: the treated animals keep the population going, and with it the pathogen.</li>
+<li><strong>The survive-type treatment still does worse than none</strong> at the lower densities. In most models it is the reason the pathogen persists.</li>
+</ol>
+</section>
 <section id="does-the-order-of-adding-matter" class="level2">
 <h2 class="anchored" data-anchor-id="does-the-order-of-adding-matter">Does the order of adding matter?</h2>
-<p>The effect of each piece when it is the first thing added to the simplest model, and when it is the last thing added to the otherwise complete model, at 3 per hectare:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>full <span class="op">=</span> (latent <span class="op">=</span> <span class="cn">true</span>, environment <span class="op">=</span> <span class="cn">true</span>, load <span class="op">=</span> <span class="cn">true</span>, recovery <span class="op">=</span> <span class="cn">true</span>, larvae <span class="op">=</span> <span class="cn">true</span>, larval_infection <span class="op">=</span> <span class="cn">true</span>)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>empty_ <span class="op">=</span> (latent <span class="op">=</span> <span class="cn">false</span>, environment <span class="op">=</span> <span class="cn">false</span>, load <span class="op">=</span> <span class="cn">false</span>, recovery <span class="op">=</span> <span class="cn">false</span>, larvae <span class="op">=</span> <span class="cn">false</span>, larval_infection <span class="op">=</span> <span class="cn">false</span>)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">get_</span>(res, c) <span class="op">=</span> <span class="fu">only</span>(o <span class="cf">for</span> (c2, o) <span class="kw">in</span> res <span class="cf">if</span> c2 <span class="op">==</span> c)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">&quot;| Piece | Untreated: added first | added last | Block: added first | added last |&quot;</span>)</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">&quot;|---|---|---|---|---|&quot;</span>)</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (label, on, off) <span class="kw">in</span> ((<span class="st">&quot;latent period&quot;</span>, (latent <span class="op">=</span> <span class="cn">true</span>,), (latent <span class="op">=</span> <span class="cn">false</span>,)),</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;environmental pool&quot;</span>, (environment <span class="op">=</span> <span class="cn">true</span>,), (environment <span class="op">=</span> <span class="cn">false</span>,)),</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;light and heavy infections&quot;</span>, (load <span class="op">=</span> <span class="cn">true</span>,), (load <span class="op">=</span> <span class="cn">false</span>,)),</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;recovery&quot;</span>, (recovery <span class="op">=</span> <span class="cn">true</span>,), (recovery <span class="op">=</span> <span class="cn">false</span>,)),</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;larval stage, infected&quot;</span>, (larvae <span class="op">=</span> <span class="cn">true</span>, larval_infection <span class="op">=</span> <span class="cn">true</span>), (larvae <span class="op">=</span> <span class="cn">false</span>, larval_infection <span class="op">=</span> <span class="cn">false</span>)))</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    first_ <span class="op">=</span> (<span class="fu">get_</span>(res_mid, <span class="fu">merge</span>(empty_, on)), <span class="fu">get_</span>(res_mid, empty_))</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    last_ <span class="op">=</span> (<span class="fu">get_</span>(res_mid, full), <span class="fu">get_</span>(res_mid, <span class="fu">merge</span>(full, off)))</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="pp">@printf</span>(<span class="st">&quot;| %s | %+.2f | %+.2f | %+.2f | %+.2f |</span><span class="sc">\n</span><span class="st">&quot;</span>, label, first_[<span class="fl">1</span>].untreated <span class="op">-</span> first_[<span class="fl">2</span>].untreated,</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        last_[<span class="fl">1</span>].untreated <span class="op">-</span> last_[<span class="fl">2</span>].untreated, first_[<span class="fl">1</span>].block <span class="op">-</span> first_[<span class="fl">2</span>].block, last_[<span class="fl">1</span>].block <span class="op">-</span> last_[<span class="fl">2</span>].block)</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The effect of each piece when it is the first thing added to the simplest model, and when it is the last thing added to the otherwise complete model, at 3 per hectare with the fade-out rule:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>full <span class="op">=</span> (latent <span class="op">=</span> <span class="cn">true</span>, environment <span class="op">=</span> <span class="cn">true</span>, load <span class="op">=</span> <span class="cn">true</span>, recovery <span class="op">=</span> <span class="cn">true</span>, larvae <span class="op">=</span> <span class="cn">true</span>, larval_infection <span class="op">=</span> <span class="cn">true</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>empty_ <span class="op">=</span> (latent <span class="op">=</span> <span class="cn">false</span>, environment <span class="op">=</span> <span class="cn">false</span>, load <span class="op">=</span> <span class="cn">false</span>, recovery <span class="op">=</span> <span class="cn">false</span>, larvae <span class="op">=</span> <span class="cn">false</span>, larval_infection <span class="op">=</span> <span class="cn">false</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">get_</span>(res, c) <span class="op">=</span> <span class="fu">only</span>(o <span class="cf">for</span> (c2, o) <span class="kw">in</span> res <span class="cf">if</span> c2 <span class="op">==</span> c)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">&quot;| Piece | Untreated: added first | added last | Block: added first | added last |&quot;</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">&quot;|---|---|---|---|---|&quot;</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (label, on, off) <span class="kw">in</span> ((<span class="st">&quot;latent period&quot;</span>, (latent <span class="op">=</span> <span class="cn">true</span>,), (latent <span class="op">=</span> <span class="cn">false</span>,)),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;environmental pool&quot;</span>, (environment <span class="op">=</span> <span class="cn">true</span>,), (environment <span class="op">=</span> <span class="cn">false</span>,)),</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;light and heavy infections&quot;</span>, (load <span class="op">=</span> <span class="cn">true</span>,), (load <span class="op">=</span> <span class="cn">false</span>,)),</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;recovery&quot;</span>, (recovery <span class="op">=</span> <span class="cn">true</span>,), (recovery <span class="op">=</span> <span class="cn">false</span>,)),</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;larval stage, infected&quot;</span>, (larvae <span class="op">=</span> <span class="cn">true</span>, larval_infection <span class="op">=</span> <span class="cn">true</span>), (larvae <span class="op">=</span> <span class="cn">false</span>, larval_infection <span class="op">=</span> <span class="cn">false</span>)))</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    first_ <span class="op">=</span> (<span class="fu">get_</span>(fres_mid, <span class="fu">merge</span>(empty_, on)), <span class="fu">get_</span>(fres_mid, empty_))</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    last_ <span class="op">=</span> (<span class="fu">get_</span>(fres_mid, full), <span class="fu">get_</span>(fres_mid, <span class="fu">merge</span>(full, off)))</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    <span class="pp">@printf</span>(<span class="st">&quot;| %s | %+.2f | %+.2f | %+.2f | %+.2f |</span><span class="sc">\n</span><span class="st">&quot;</span>, label, first_[<span class="fl">1</span>].untreated <span class="op">-</span> first_[<span class="fl">2</span>].untreated,</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>        last_[<span class="fl">1</span>].untreated <span class="op">-</span> last_[<span class="fl">2</span>].untreated, first_[<span class="fl">1</span>].block <span class="op">-</span> first_[<span class="fl">2</span>].block, last_[<span class="fl">1</span>].block <span class="op">-</span> last_[<span class="fl">2</span>].block)</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
@@ -2806,35 +2991,35 @@ Important
 <td>latent period</td>
 <td>+0.00</td>
 <td>+0.00</td>
-<td>+0.39</td>
-<td>+0.00</td>
+<td>-0.00</td>
+<td>-0.00</td>
 </tr>
 <tr class="even">
 <td>environmental pool</td>
 <td>+0.00</td>
-<td>+0.03</td>
+<td>-0.04</td>
 <td>-0.00</td>
-<td>+0.01</td>
+<td>-0.00</td>
 </tr>
 <tr class="odd">
 <td>light and heavy infections</td>
 <td>-0.07</td>
-<td>+0.09</td>
-<td>-0.04</td>
-<td>+0.06</td>
+<td>+0.08</td>
+<td>-0.00</td>
+<td>-0.00</td>
 </tr>
 <tr class="even">
 <td>recovery</td>
 <td>+0.33</td>
-<td>+0.36</td>
-<td>+0.39</td>
-<td>+0.23</td>
+<td>+0.37</td>
+<td>+0.00</td>
+<td>+0.42</td>
 </tr>
 <tr class="odd">
 <td>larval stage, infected</td>
-<td>+0.05</td>
-<td>-0.00</td>
+<td>+0.10</td>
 <td>-0.01</td>
+<td>-0.00</td>
 <td>-0.00</td>
 </tr>
 </tbody>
@@ -2848,13 +3033,15 @@ Important
 <li><strong>So the first question is where the system sits.</strong> If Bsal in dense salamander populations really has a reproduction number near 25, a simple model is enough to say that an infection-blocking treatment given once to adults leaves about a third of the population. In sparser populations the answer depends on biology that has not been measured, recovery above all.</li>
 <li><strong>Effects of single pieces are not transferable.</strong> They vary with the rest of the model, so the result of adding one piece to a simple model should not be read as the effect of that piece.</li>
 <li><strong>Protection that keeps infected animals alive can be worse than none</strong>, where the untreated epidemic would have burnt out.</li>
+<li><strong>A simple model can mislead through its mathematics as well as its biology.</strong> One of the largest apparent effects in this vignette disappeared when densities too small to mean anything were no longer allowed to grow back.</li>
 </ol>
 </section>
 <section id="limits" class="level2">
 <h2 class="anchored" data-anchor-id="limits">Limits</h2>
 <ul>
 <li>The nested model covers the salamander system only. The toad and frog systems of the first vignette have features it lacks: a seasonal cohort, and a continuous load on each animal.</li>
-<li>The model is deterministic. A pathogen density can fall to a level that means less than one infected animal in a very large area and then grow back. Some differences between models near the threshold, such as full protection in one model and partial in the next, come from this, and a stochastic version is needed to confirm them.</li>
+<li>The fade-out rule is a threshold on a deterministic model, with an illustrative value. It removes the worst artefact but is not a substitute for a stochastic model, which would give the chance of each fate.</li>
+<li>Fates are judged within ten years. A population left at a few percent of its former density is counted as remaining.</li>
 <li>Treated animals that survive infection never clear it unless <code>recovery</code> is on.</li>
 <li>The values attached to the switches are illustrative. Different values would change the sizes of the effects, though the contrast between regimes should hold.</li>
 </ul>

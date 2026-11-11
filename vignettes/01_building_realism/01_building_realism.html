@@ -2283,7 +2283,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <li>adds the <strong>biology of the treatment</strong> one piece at a time;</li>
 <li>after every step, records the same two outcomes: the population <strong>without treatment</strong>, and the population under one fixed <strong>reference treatment</strong>.</li>
 </ol>
-<p>Each step adds one thing, and the step before it is recovered by switching that thing off. The final sections measure how much each addition moved the answer, and check with a factorial design whether the effect of one piece of realism depends on the others.</p>
+<p>Each step adds one thing, and the step before it is recovered by switching that thing off. The final sections measure how much each addition moved the answer, and check with a factorial design whether the effect of one piece of realism depends on the others. A <a href="../02_nested_model/02_nested_model.md">second vignette</a> repeats the exercise in a single nested model, where every combination of pieces can be compared like for like.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3524,7 +3524,7 @@ exchange 1.0 per day: unbathed/bathed abundance on day 11 = 1.00</code></pre>
 <h2 class="anchored" data-anchor-id="what-the-exercise-shows">What the exercise shows</h2>
 <ol type="1">
 <li><strong>The answer changed at almost every step, and reversed more than once.</strong> For Bsal, a model stopped at step 5 says a self-spreading microbiome is essential; at step 8, that spread is unnecessary; at step 9, that neither is achievable with bacteria that last a few weeks.</li>
-<li><strong>Host biology moved the answer as much as treatment biology.</strong> A larval stage changed the untreated fate of the salamanders. One survival probability for infected toad metamorphs reversed both the untreated outcome and the value of the reference treatment.</li>
+<li><strong>Host biology can move the answer as much as treatment biology, but not everywhere.</strong> A larval stage changed the untreated fate of the salamanders. One survival probability for infected toad metamorphs reversed both the untreated outcome and the value of the reference treatment. The <a href="../02_nested_model/02_nested_model.md">second vignette</a> tests this like for like in a single model and finds that it depends on the regime: for Bsal at the published host density, six pieces of host biology barely change the outcome, and near the invasion threshold they change it a great deal.</li>
 <li><strong>How protection works matters more than how strong it is, and its effect has no fixed sign.</strong> Letting animals survive infection is the worst change for Bsal and one of the best for toads.</li>
 <li><strong>Effects interact.</strong> The factorial shows that the value of spread, of treating larvae or of a lasting treatment each depends on the other pieces.</li>
 <li><strong>The systems differ for structural reasons.</strong> A toad cohort passes through a short infected stage once a year and can be re-treated. A salamander must be protected for life against a pathogen that kills in a week. In frogs, where disease follows a load that builds slowly, short-lived bacteria can still work if they are re-applied.</li>
@@ -3536,7 +3536,8 @@ exchange 1.0 per day: unbathed/bathed abundance on day 11 = 1.00</code></pre>
 <li>In Parts A and B bacterial abundance is a clock since the last dose, not a state of each animal. Only the frog model of Part C tracks it per animal.</li>
 <li>The fold-drop in abundance at which protection is lost has not been measured, nor has the effect of the bacteria on clearance, nor whether applied bacteria survive metamorphosis.</li>
 <li>The Bsal model has no recovery from infection and no years between metamorphosis and maturity. The toad model has thresholds standing in for extinction, and infected adult toads are not yet combined with treatment. The frog treatment steps use identical frogs.</li>
-<li>The three systems do not share one model structure, so Part B starts from a more complex model than Part A.</li>
+<li>The three systems do not share one model structure, so Part B starts from a more complex model than Part A. The <a href="../02_nested_model/02_nested_model.md">second vignette</a> uses one nested model, for the salamander system, in which every piece of biology is a switch.</li>
+<li>No fade-out rule is applied in Part A, so densities can fall to meaningless values and recover. The second vignette shows what such a rule changes.</li>
 <li>Everything is deterministic except the choice of which frogs are treated in Part C.</li>
 </ul>
 </section>

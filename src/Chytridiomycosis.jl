@@ -10,7 +10,7 @@ module Chytridiomycosis
 using CommonSolve: CommonSolve, solve
 using LinearAlgebra: eigvals
 using OrdinaryDiffEqTsit5: Tsit5
-using SciMLBase: SciMLBase, ODEProblem, VectorContinuousCallback
+using SciMLBase: SciMLBase, ODEProblem, VectorContinuousCallback, DiscreteCallback
 using Distributions: Beta, Binomial, DiscreteNonParametric, LogNormal, NegativeBinomial, Normal,
     Poisson
 using Random: Random, AbstractRNG
