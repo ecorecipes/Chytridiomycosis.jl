@@ -39,6 +39,7 @@ bacteria.
 | Toads with infection after metamorphosis | [`ToadStageProblem`](@ref) |
 | One nested model with each piece of biology as a switch | [`NestedChytridProblem`](@ref) |
 | Stochastic versions | [`StochasticNestedProblem`](@ref), [`StochasticFrogProblem`](@ref), `solve(::ProbioticPondProblem; rng)` |
+| Frog load equation fitted to field swabs (Knapp et al. 2022) | [`KnappLoadModel`](@ref), [`maximum_likelihood`](@ref), [`profile_likelihood`](@ref) |
 
 ## Getting started
 
@@ -59,6 +60,9 @@ return a named tuple of time series and summaries; see each problem's documentat
   with chance.
 - [One model, many switches](tutorials/02_nested_model.md): a single nested model in which
   every combination of biology is compared like for like, and a stochastic version.
+- [Fitting to a field trial](tutorials/03_knapp_fit.md): the frog load equation fitted to
+  field swabs of treated, wild and control frogs, comparing four explanations for why treated
+  frogs stayed low.
 
 The tutorials are Quarto documents in `vignettes/`, rendered to HTML, PDF and Markdown.
 

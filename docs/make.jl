@@ -13,13 +13,15 @@ makedocs(;
                                   size_threshold = 2^21),
          pages = ["Home" => "index.md",
                   "Tutorials" => ["Building biological realism" => "tutorials/01_building_realism.md",
-                                  "One model, many switches" => "tutorials/02_nested_model.md"],
+                                  "One model, many switches" => "tutorials/02_nested_model.md",
+                                  "Fitting to a field trial" => "tutorials/03_knapp_fit.md"],
                   "API reference" => ["Parameter compendium" => "api/compendium.md",
                                       "Published models" => "api/published.md",
                                       "Load models" => "api/load.md",
                                       "Microbiome treatment" => "api/treatment.md",
                                       "Life stages" => "api/stages.md",
-                                      "Nested and stochastic models" => "api/nested.md"]])
+                                      "Nested and stochastic models" => "api/nested.md",
+                                      "Fitting to field data" => "api/fitting.md"]])
 
 if get(ENV, "CI", "false") == "true"
     deploydocs(; repo = "github.com/ecorecipes/Chytridiomycosis.jl.git", push_preview = true)

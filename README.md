@@ -29,6 +29,7 @@ parameter values are illustrative:
 | Stochastic frog loads (whole sporangia and zoospores) | `StochasticFrogProblem` |
 | Bsal with an infectable larval stage | `BsalLarvalStage`, `BsalLarvalProblem` |
 | Toads with infection after metamorphosis | `PostMetamorphicInfection`, `ToadStageProblem` |
+| Frog load equation fitted to field swabs (Knapp et al. 2022), LogDensityProblems interface | `load_knapp2022`, `KnappLoadModel`, `maximum_likelihood`, `profile_likelihood` |
 
 ## Vignettes
 
@@ -51,6 +52,17 @@ factorial design, whether the effect of one piece depends on the others.
 Uses a single nested model in which each piece of biology is a switch, runs all 48
 combinations at three host densities, and measures the effect of each piece like for like.
 It ends with a stochastic version, which overturns one of the deterministic results.
+
+[Fitting the frog load model to a field trial](vignettes/03_knapp_fit/03_knapp_fit.md)
+([PDF](vignettes/03_knapp_fit/03_knapp_fit.pdf),
+[HTML](vignettes/03_knapp_fit/03_knapp_fit.html),
+[source](vignettes/03_knapp_fit/03_knapp_fit.qmd))
+
+Fits the frog load equation to field swabs from frogs treated with itraconazole and then
+*Janthinobacterium lividum* (Knapp et al. 2022), building up from no treatment effect to four
+explanations. Something held treated frogs' loads down for weeks. A waning drug and the applied
+bacteria fit about equally well, but resident *J. lividum* at the measured abundances did not
+protect.
 
 Vignettes are Quarto documents with executable Julia code, rendered to HTML, PDF and
 Markdown: run `quarto render` in `vignettes/`.

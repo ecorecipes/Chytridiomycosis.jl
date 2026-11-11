@@ -683,4 +683,50 @@ using Random: Xoshiro
         cs = quantile.(LogNormal(log(100.0), 0.5), ((1:80) .- 0.5) ./ 80)
         @test 0 < frog(80; c = cs).alive[end] < 80
     end
+
+    @testset "Fit to Knapp et al. 2022 (new)" begin
+        LDP = Chytridiomycosis.LogDensityProblems
+        swabs = load_knapp2022()
+        @test length(swabs) == 371
+        @test count(s -> s.group === :treated, swabs) == 246
+        @test count(s -> s.group === :control, swabs) == 44
+        @test count(s -> s.group === :wild, swabs) == 81
+        @test sort(unique(s.day for s in swabs)) == [-7, 0, 12, 37, 56]
+        @test_throws ArgumentError KnappLoadModel(:other)
+
+        m = KnappLoadModel(:applied)
+        @test parameter_names(m)[end] === :K
+        @test LDP.dimension(m) == 12
+        @test LDP.capabilities(KnappLoadModel) isa LDP.LogDensityOrder{0}
+        x = knapp_start(m)
+        @test isfinite(LDP.logdensity(m, x))
+        @test_throws DimensionMismatch LDP.logdensity(m, x[1:3])
+
+        # equilibrium: the positive root, and no suppression gives ι/(−r0)
+        r0 = m.r0
+        L = Chytridiomycosis.knapp_equilibrium(1e5, r0, 2e5, 1e3)
+        @test 1e5 + r0 * L - 2e5 * L / (1e3 + L) ≈ 0 atol = 1e-6
+        @test Chytridiomycosis.knapp_equilibrium(1e5, r0, 0.0, 1e3) ≈ 1e5 / -r0
+
+        # the exponential integrator agrees with an adaptive ODE solver
+        md = KnappLoadModel(:decay)
+        xd = knapp_start(md)
+        q = Chytridiomycosis.knapp_params(md, xd)
+        f(u, _, t) = q.ι + r0 * u - q.Δc * exp(-t / q.τ) * u / (q.h + u)
+        sol = solve(Chytridiomycosis.ODEProblem(f, q.L0, (0.0, 56.0)), Chytridiomycosis.Tsit5();
+            saveat = [12.0, 37.0, 56.0], reltol = 1e-10, abstol = 1e-10)
+        pred = predicted_loads(md, xd)
+        @test pred.treated.bd[3:5] ≈ sol.u rtol = 1e-3
+        @test all(pred.wild.bd .≈ pred.wild.bd[1])          # untreated: at equilibrium
+
+        # fits: the mechanisms nest :none, so neither does worse
+        fn = maximum_likelihood(KnappLoadModel(:none); starts = 1, iters = 1500)
+        fd = maximum_likelihood(md; starts = 1, iters = 1500)
+        @test fd.loglik > fn.loglik + 50                     # treated frogs were suppressed
+        @test fd.aic ≈ 2 * 12 - 2 * fd.loglik
+        @test fd.estimates.L0 < 100
+        prof = profile_likelihood(fd, :τ, fd.estimates.τ .* [0.5, 1.0, 2.0]; iters = 300)
+        @test prof[2] ≈ fd.loglik atol = 0.5
+        @test all(prof .<= fd.loglik + 0.5)
+    end
 end

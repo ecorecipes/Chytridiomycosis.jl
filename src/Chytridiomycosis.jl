@@ -12,8 +12,10 @@ using LinearAlgebra: eigvals
 using OrdinaryDiffEqTsit5: Tsit5
 using SciMLBase: SciMLBase, ODEProblem, VectorContinuousCallback, DiscreteCallback
 using Distributions: Beta, Binomial, DiscreteNonParametric, LogNormal, NegativeBinomial, Normal,
-    Poisson
+    Poisson, logcdf, logpdf
 using Random: Random, AbstractRNG
+using Dates: Date, @dateformat_str
+using LogDensityProblems: LogDensityProblems
 using TOML
 
 """
@@ -41,6 +43,7 @@ include("novel/microbiome_abundance.jl")
 include("novel/frog_stochastic.jl")
 include("novel/nested.jl")
 include("novel/nested_stochastic.jl")
+include("fitting/knapp2022.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -60,6 +63,8 @@ export BsalLarvalStage, BsalLarvalProblem, larval_reproduction_number, disease_f
 export PostMetamorphicInfection, ToadStageProblem
 export ProbioticLarvalProblem, ProbioticAbundanceProblem, StochasticFrogProblem
 export ChytridBiology, NestedChytridProblem, invasion_growth_rate, StochasticNestedProblem
+export KnappSwab, knapp2022_path, load_knapp2022, KnappLoadModel, parameter_names, predicted_loads,
+    knapp_start, maximum_likelihood, profile_likelihood
 export MicrobiomeTreatment, load_reducing_treatment, protection, protection_duration, reversion_rate, microbiome_reproduction_number,
        equilibrium_coverage, treatment_efficacy, mortality_reduction, effective_reproduction_number,
        critical_coverage, ProbioticSLIProblem, ProbioticPondProblem, ProbioticLoadProblem
