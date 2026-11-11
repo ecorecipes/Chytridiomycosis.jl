@@ -23,10 +23,11 @@ parameter values are illustrative:
 | Microbiome (probiotic) treatment on the three host models | `MicrobiomeTreatment`, `ProbioticSLIProblem`, `ProbioticPondProblem`, `ProbioticLoadProblem` |
 | Microbiome treatment on Bsal with larvae | `ProbioticLarvalProblem` |
 | Bacterial abundance on each frog, with repeated baths | `ProbioticAbundanceProblem` |
+| One nested model with each piece of biology as a switch | `ChytridBiology`, `NestedChytridProblem` |
 | Bsal with an infectable larval stage | `BsalLarvalStage`, `BsalLarvalProblem` |
 | Toads with infection after metamorphosis | `PostMetamorphicInfection`, `ToadStageProblem` |
 
-## Vignette
+## Vignettes
 
 [Does a protective skin microbiome save the population?](vignettes/01_building_realism/01_building_realism.md)
 ([PDF](vignettes/01_building_realism/01_building_realism.pdf),
@@ -38,6 +39,14 @@ the simplest model, adds the biology of the host and pathogen one piece at a tim
 biology of the treatment, and records after every step how the population fares with and
 without treatment. It ends by measuring how far each step moved the answer and, with a
 factorial design, whether the effect of one piece depends on the others.
+
+[One model, many switches](vignettes/02_nested_model/02_nested_model.md)
+([PDF](vignettes/02_nested_model/02_nested_model.pdf),
+[HTML](vignettes/02_nested_model/02_nested_model.html),
+[source](vignettes/02_nested_model/02_nested_model.qmd))
+
+Uses a single nested model in which each piece of biology is a switch, runs all 48
+combinations at three host densities, and measures the effect of each piece like for like.
 
 Vignettes are Quarto documents with executable Julia code, rendered to HTML, PDF and
 Markdown: run `quarto render` in `vignettes/`.
