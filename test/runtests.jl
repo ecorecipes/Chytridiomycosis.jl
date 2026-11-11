@@ -636,4 +636,51 @@ using Random: Xoshiro
             coverage = 1.0, introduced = 5); rng = Xoshiro(3))
         @test tr.peak_infected <= 5 && !isnan(tr.pathogen_extinction)
     end
+
+    @testset "Stochastic toads (new)" begin
+        T = MicrobiomeTreatment
+        pb = MitchellParameters(:mitchell2008; set = "fig2b")
+        pd = MitchellParameters(:mitchell2008; set = "fig2d")
+        # the deterministic path is unchanged by the refactor into a list of transitions
+        m0, t0 = solve(MitchellPondProblem(pb)), solve(ProbioticPondProblem(pb, T()))
+        @test isapprox(t0.A_final, m0.A[end]; rtol = 1e-4)
+        # whole numbers; reproducible; close to the ODE before Bd arrives
+        a = solve(ProbioticPondProblem(pb, T()); rng = Xoshiro(4))
+        b = solve(ProbioticPondProblem(pb, T()); rng = Xoshiro(4))
+        @test a.A == b.A && all(x -> isinteger(x) && x >= 0, a.A) && all(isinteger, a.Z)
+        @test isapprox(a.A_disease_free, t0.A_disease_free; rtol = 0.05)
+        # the first years of the Fig. 2d epidemic follow the ODE
+        d = solve(ProbioticPondProblem(pd, T()))
+        r = solve(ProbioticPondProblem(pd, T()); rng = Xoshiro(1))
+        yr5 = findfirst(t -> t >= 5 + pd.t1 - 1e-9, d.t)
+        @test isapprox(r.A[yr5], d.A[yr5]; rtol = 0.1)
+        # Fig. 2d: without the 50-toad extinction rule, Bd dies out at low toad numbers first
+        rs = [solve(ProbioticPondProblem(pd, T()); rng = Xoshiro(s)) for s in 1:10]
+        @test !d.toads_persist && all(r -> r.toads_persist && !r.bd_persist, rs)
+        # treatment and stages run through the stochastic path
+        st = PostMetamorphicInfection(metamorph_survival = 0.29)
+        tr = solve(ProbioticPondProblem(pd, T(tolerance = 0.7, abundance_half_life = 5 / 365,
+            protective_fold = 100.0); coverage = 0.8, stages = st, redose_days = [30.0, 60.0]); rng = Xoshiro(2))
+        @test tr.toads_persist && maximum(tr.tadpoles_treated) > 0
+    end
+
+    @testset "Stochastic frogs (new)" begin
+        p = BriggsParameters(:briggs2010)
+        kw = (c = 100.0, h = 500.0, ε = 1000.0, days = 730)
+        frog(n; tr = MicrobiomeTreatment(), s = 1, k...) = solve(StochasticFrogProblem(p, tr; kw..., N = n, k...); rng = Xoshiro(s))
+        @test_throws ArgumentError StochasticFrogProblem(p; c = 100.0, h = 0.0, N = 10)
+        @test frog(80; s = 3).alive == frog(80; s = 3).alive
+        # the same tipping point as the ODE (fold at 67.5 frogs): survive below, die above
+        @test all(s -> frog(50; s).alive[end] == 50, 1:5)
+        @test all(s -> frog(80; s).alive[end] == 0, 1:5)
+        # treatment: 40% treated for life protects all; baths every 90 days protect all
+        @test all(s -> frog(80; s, c_treated = 300.0, coverage = 0.4).alive[end] == 80, 1:5)
+        bath = MicrobiomeTreatment(abundance_half_life = 5.0, protective_fold = 100.0, direct = 0.1)
+        @test all(s -> frog(80; s, tr = bath, c_treated = 300.0, coverage = 0.75,
+            dose_days = 0:90:729).alive[end] == 80, 1:3)
+        @test frog(80; tr = bath, c_treated = 300.0, coverage = 0.75).alive[end] == 0   # one bath
+        # frogs that differ: a partial die-off
+        cs = quantile.(LogNormal(log(100.0), 0.5), ((1:80) .- 0.5) ./ 80)
+        @test 0 < frog(80; c = cs).alive[end] < 80
+    end
 end

@@ -347,7 +347,10 @@ end
 # Metamorphs lose the "treated" label (the skin community is assumed to turn over at
 # metamorphosis), so new adults are untreated.
 
-function probiotic_pond_rhs!(du, u, q, t)
+# Every transition of the pond model, listed once: `emit(from, to, flow)` with `from = 0` a
+# birth and `to = 0` a death (flows in animals or zoospores per year). The ODE sums the flows
+# and the stochastic version (`solve(...; rng)`) draws events from them. Returns dE/dt.
+function probiotic_pond_flows(emit::F, u, q, t) where {F}
     p, tr, Pref, clock = q
     PXU, PXT, PYU, M, AU, AT, Z, E, PYT = (max(x, 0.0) for x in u)
     g = protection(tr, t - clock[])
@@ -355,16 +358,78 @@ function probiotic_pond_rhs!(du, u, q, t)
     P = PXU + PXT + PYU + PYT
     PT = PXT + PYT
     a = (P > 0 ? tr.direct * min(PT / P, 1.0) : 0.0) + tr.environmental * E
-    du[1] = -(p.μP + p.ν * Z) * PXU + ω * PXT - a * PXU
-    du[2] = -(p.μP + (1 - e) * p.ν * Z) * PXT - ω * PXT + a * PXU
-    du[3] = p.ν * Z * PXU - (p.μP + p.αP) * PYU + ω * PYT - a * PYU
-    du[4] = -(p.μJ + p.ε) * M
-    du[5] = p.ε * M * (1 - (AU + AT) / p.K) - p.μA * AU + ω * AT
-    du[6] = -(p.μA + ω) * AT
-    du[7] = p.ρ * (PYU + (1 - g * tr.shedding_reduction) * PYT) + p.γ * Z * exp(-p.φ * Z) - p.μZ * Z
-    du[8] = δ * (PT / Pref - E)
-    du[9] = (1 - e) * p.ν * Z * PXT - (p.μP + (1 - τ) * p.αP) * PYT - ω * PYT + a * PYU
+    # tadpoles: 1 uninfected untreated, 2 uninfected treated, 3 infected untreated, 9 infected treated
+    emit(1, 0, p.μP * PXU); emit(1, 3, p.ν * Z * PXU); emit(1, 2, a * PXU)
+    emit(2, 0, p.μP * PXT); emit(2, 9, (1 - e) * p.ν * Z * PXT); emit(2, 1, ω * PXT)
+    emit(3, 0, (p.μP + p.αP) * PYU); emit(3, 9, a * PYU)
+    emit(9, 0, (p.μP + (1 - τ) * p.αP) * PYT); emit(9, 3, ω * PYT)
+    # juveniles old enough to mature (4) and adults (5 untreated, 6 treated)
+    recruit = max(1 - (AU + AT) / p.K, 0.0)
+    emit(4, 5, p.ε * recruit * M); emit(4, 0, (p.μJ + p.ε * (1 - recruit)) * M)
+    emit(5, 0, p.μA * AU); emit(6, 0, p.μA * AT); emit(6, 5, ω * AT)
+    # zoospores (7)
+    emit(0, 7, p.ρ * (PYU + (1 - g * tr.shedding_reduction) * PYT) + p.γ * Z * exp(-p.φ * Z))
+    emit(7, 0, p.μZ * Z)
+    return δ * (PT / Pref - E)
+end
+
+function probiotic_pond_rhs!(du, u, q, t)
+    fill!(du, 0.0)
+    du[8] = probiotic_pond_flows(u, q, t) do from, to, f
+        from > 0 && (du[from] -= f)
+        to > 0 && (du[to] += f)
+        return nothing
+    end
     return nothing
+end
+
+# Advance a state of whole numbers (stored as Float64) from t to tn in steps of at most dt,
+# drawing the events of each step from `flows(emit, u, q, t)`: every individual in a class
+# leaves it with probability 1 − exp(−R h) (R its total rate out) and goes to a destination in
+# proportion to the rates; births are Poisson. The return value of `flows` is the derivative
+# of the one continuous variable `continuous` (0 for none), updated by Euler steps.
+function tau_leap!(u, flows::F, q, t, tn, dt, rng; continuous::Int = 0) where {F}
+    k = length(u)
+    rates, dests = [Float64[] for _ in 1:k], [Int[] for _ in 1:k]
+    births = Tuple{Int,Float64}[]
+    Δ = zeros(k)
+    while t < tn - 1e-12
+        h = min(dt, tn - t)
+        foreach(empty!, rates); foreach(empty!, dests); empty!(births)
+        dc = flows(u, q, t) do from, to, f
+            f > 0 || return nothing
+            if from == 0
+                push!(births, (to, f))
+            elseif u[from] >= 1
+                push!(rates[from], f / u[from]); push!(dests[from], to)
+            end
+            return nothing
+        end
+        fill!(Δ, 0.0)
+        for i in 1:k
+            isempty(rates[i]) && continue
+            n = round(Int, u[i])
+            R = sum(rates[i])
+            leave = rand(rng, Binomial(n, -expm1(-R * h)))
+            Δ[i] -= leave
+            rest, Rrest = leave, R
+            for j in eachindex(rates[i])
+                rest == 0 && break
+                m = j == lastindex(rates[i]) ? rest :
+                    rand(rng, Binomial(rest, clamp(rates[i][j] / Rrest, 0.0, 1.0)))
+                dests[i][j] > 0 && (Δ[dests[i][j]] += m)
+                rest -= m
+                Rrest -= rates[i][j]
+            end
+        end
+        for (to, f) in births
+            Δ[to] += rand(rng, Poisson(f * h))
+        end
+        u .+= Δ
+        continuous > 0 && (u[continuous] = max(u[continuous] + dc * h, 0.0))
+        t += h
+    end
+    return tn
 end
 
 """
@@ -388,6 +453,12 @@ if treated, and metamorphs leaving the pond are exposed for `metamorph_exposure_
 `redose_days` (for `stage = :tadpoles`) are days after hatching at which, in each treatment
 year, treated tadpoles are dosed again and a fraction `coverage` of the untreated ones is
 treated. Each application restarts the waning clock of [`protection`](@ref).
+
+**Stochastic version**: `solve(prob; rng)` makes every individual tadpole, juvenile, adult and
+zoospore a whole number. Between events the transitions are drawn in steps of `dt` years
+(default one day); births, treatment, survival through metamorphosis and to maturity are
+binomial or Poisson draws. `toad_limit` and `bd_limit` are then not used: toads and Bd go
+extinct when their numbers reach zero. The reservoir `E` stays continuous.
 
 `solve` returns series at each event (`t`, `A`, `A_treated`, `Z`, `tadpoles_treated` as a
 fraction of uninfected tadpoles), and `toads_persist`, `bd_persist`, `A_disease_free`,
@@ -426,8 +497,12 @@ function ProbioticPondProblem(p::MitchellParameters, treatment::MicrobiomeTreatm
 end
 
 function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1e-6,
-        reltol = 1e-8, kwargs...)
+        reltol = 1e-8, rng::Union{Nothing,AbstractRNG} = nothing, dt = 1 / 365, kwargs...)
     p, tr = prob.p, prob.treatment
+    chance = rng !== nothing
+    # a share `f` of `n` (deterministic) or a binomial draw; a mean `m` or a Poisson draw
+    share(n, f) = chance ? float(rand(rng, Binomial(round(Int, n), clamp(f, 0.0, 1.0)))) : n * f
+    count_(m) = chance ? float(rand(rng, Poisson(m))) : m
     0 <= p.t1 < p.t2 < 1 || throw(ArgumentError("need 0 ≤ t1 < t2 < 1 (fractions of a year)"))
     clock = Ref(float(-prob.spinup))
     q = (p, tr, p.ι * p.ψ * p.K, clock)
@@ -448,8 +523,9 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
     sort!(events; by = first)
     out = (t = Float64[], A = Float64[], A_treated = Float64[], Z = Float64[],
         tadpoles_treated = Float64[])
-    step!(t, tn) = probiotic_advance!(u, t, tn, probiotic_pond_rhs!, q, alg, nothing, nothing;
-        dt = Float64[], save_everystep = false, abstol, reltol, kwargs...)
+    step!(t, tn) = chance ? tau_leap!(u, probiotic_pond_flows, q, t, tn, dt, rng; continuous = 8) :
+        probiotic_advance!(u, t, tn, probiotic_pond_rhs!, q, alg, nothing, nothing;
+            dt = Float64[], save_everystep = false, abstol, reltol, kwargs...)
     t = float(-prob.spinup)
     A_disease_free = NaN
     for (te, kind, y) in events
@@ -461,28 +537,29 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
         t = step!(t, te)
         treating = y in prob.treat_years
         if kind === :birth
-            0 < u[7] < prob.bd_limit && (u[7] = 0.0)
+            !chance && 0 < u[7] < prob.bd_limit && (u[7] = 0.0)
             treating && (clock[] = te)
             if treating && prob.stage === :adults
-                moved = prob.coverage * u[5]
+                moved = share(u[5], prob.coverage)
                 u[5] -= moved
                 u[6] += moved
             end
             A = u[5] + u[6]
             carried = A > 0 ? u[6] / A : 0.0
-            births = p.ι * p.ψ * A
-            u[1] += births * (1 - prob.maternal * carried)
-            u[2] += births * prob.maternal * carried
+            births = count_(p.ι * p.ψ * A)
+            born_treated = share(births, prob.maternal * carried)
+            u[1] += births - born_treated
+            u[2] += born_treated
             u[8] += prob.adult_seeding * carried
             if treating && prob.stage === :tadpoles
-                moved = prob.coverage * u[1]
+                moved = share(u[1], prob.coverage)
                 u[1] -= moved
                 u[2] += moved
             end
         elseif kind === :redose
             clock[] = te
             for (i, j) in ((1, 2), (3, 9))
-                moved = prob.coverage * u[i]
+                moved = share(u[i], prob.coverage)
                 u[i] -= moved
                 u[j] += moved
             end
@@ -493,14 +570,16 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
             qU, qT = -expm1(-exposure), -expm1(-(1 - g * tr.efficacy) * exposure)
             sU = st.metamorph_survival
             sT = sU + g * tr.tolerance * (1 - sU)
-            survivors = u[1] * (1 - qU + qU * sU) + u[2] * (1 - qT + qT * sT) + u[3] * sU + u[9] * sT
-            push!(cohorts, (te + p.ω, survivors * exp(-p.μJ * p.ω)))
+            j = exp(-p.μJ * p.ω)                     # survival from metamorphosis to age ω
+            survivors = share(u[1], (1 - qU + qU * sU) * j) + share(u[2], (1 - qT + qT * sT) * j) +
+                        share(u[3], sU * j) + share(u[9], sT * j)
+            push!(cohorts, (te + p.ω, survivors))
             u[1] = u[2] = u[3] = u[9] = 0.0
         elseif kind === :introduce
             A_disease_free = u[5] + u[6]
             u[7] += prob.Z0
         end
-        if 0 < u[5] + u[6] < prob.toad_limit
+        if !chance && 0 < u[5] + u[6] < prob.toad_limit
             u[1] = u[2] = u[3] = u[4] = u[5] = u[6] = u[9] = 0.0
             empty!(cohorts)
         end
@@ -509,7 +588,8 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
         push!(out.tadpoles_treated, u[1] + u[2] > 0 ? u[2] / (u[1] + u[2]) : 0.0)
     end
     late = findall(>=(prob.years - 10), out.t)
-    return merge(out, (toads_persist = u[5] + u[6] > 0, bd_persist = u[7] >= prob.bd_limit,
+    bd_now = chance ? u[7] >= 1 || u[3] + u[9] >= 1 : u[7] >= prob.bd_limit
+    return merge(out, (toads_persist = u[5] + u[6] > 0, bd_persist = bd_now,
         A_disease_free = A_disease_free, A_final = u[5] + u[6],
         A_mean = sum(out.A[late]) / length(late)))
 end
