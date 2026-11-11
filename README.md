@@ -25,6 +25,8 @@ parameter values are illustrative:
 | Bacterial abundance on each frog, with repeated baths | `ProbioticAbundanceProblem` |
 | One nested model with each piece of biology as a switch | `ChytridBiology`, `NestedChytridProblem` |
 | Stochastic version of the nested model (whole animals) | `StochasticNestedProblem` |
+| Stochastic toad pond (whole animals and zoospores) | `solve(::ProbioticPondProblem; rng)` |
+| Stochastic frog loads (whole sporangia and zoospores) | `StochasticFrogProblem` |
 | Bsal with an infectable larval stage | `BsalLarvalStage`, `BsalLarvalProblem` |
 | Toads with infection after metamorphosis | `PostMetamorphicInfection`, `ToadStageProblem` |
 

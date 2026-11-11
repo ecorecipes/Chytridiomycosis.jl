@@ -514,5 +514,5 @@ untreated young it kills.
 
 ## References
 
-- Schmidt BR et al. (2017) R Soc Open Sci 4:160801. doi:10.1098/rsos.160801
-- Wang Y et al. (2021) Nat Commun 12:5788. doi:10.1038/s41467-021-26127-9
+- Schmidt BR, Bozzuto C, Lötters S, Steinfartz S (2017) Dynamics of host populations affected by the emerging fungal pathogen *Batrachochytrium salamandrivorans*. *Royal Society Open Science* 4:160801. [doi:10.1098/rsos.160801](https://doi.org/10.1098/rsos.160801)
+- Wang Y, Verbrugghe E, Meuris L, Chiers K, et al. (2021) Epidermal galactose spurs chytrid virulence and predicts amphibian colonization. *Nature Communications* 12:5788. [doi:10.1038/s41467-021-26127-9](https://doi.org/10.1038/s41467-021-26127-9)

@@ -16,7 +16,9 @@ dependence visible. For each of three host–pathogen systems it:
 2. adds the **biology of the host and pathogen** one piece at a time, with no treatment;
 3. adds the **biology of the treatment** one piece at a time;
 4. after every step, records the same two outcomes: the population **without treatment**, and
-   the population under one fixed **reference treatment**.
+   the population under one fixed **reference treatment**;
+5. ends with **chance**: the last model of each part is run again with whole animals and
+   random events, many times over.
 
 Each step adds one thing, and the step before it is recovered by switching that thing off.
 The final sections measure how much each addition moved the answer, and check with a factorial
@@ -190,7 +192,7 @@ nothing else does.**
 #### Step 6. What trials show: survival, not fewer infections
 
 In challenge trials, treated animals were infected as often as untreated ones, but fewer
-died. The compendium holds the counts from one trial in *Rana muscosa*:
+died. The compendium holds the counts from one trial in *Rana muscosa* (Harris et al. 2009):
 
 ```{julia}
 h = parameter_set(:harris2009ismej)
@@ -289,6 +291,37 @@ monthly = lar(stage, waning; coverage = 1.0, treat = :both, treat_times = 0:(1 /
 step!("Bsal", "treatment", "+ measured decay (half-life 5 days)", u3.mean_adults, a.mean_adults,
     "fails: protection lasts about a month")
 ```
+
+#### Step 10. Chance
+
+Every model so far treats animals as continuous densities, so a population, or Bsal, can be
+reduced to a fraction of an animal and grow back. The last step runs the same model with
+whole animals and random events (`StochasticNestedProblem`, which reproduces the equations
+when the population is large). Bsal arrives as one infected adult in 20 hectares, 500 adults,
+and each case is run 100 times.
+
+```{julia}
+using Random: Xoshiro
+host_a = ChytridBiology(:wang2021; latent = true, larvae = true, larval_infection = true)
+chanceA(tr; kw...) = [solve(StochasticNestedProblem(p, host_a, tr; area = 20.0, kw...); rng = Xoshiro(s))
+    for s in 1:100]
+meanA(rs) = sum(r.mean_adults for r in rs) / length(rs)
+cu = chanceA(T())
+ct = chanceA(waning; coverage = 1.0, treat = :both, treat_times = quarterly, retention = 1.0)
+cb = chanceA(block; coverage = 1.0)
+@printf("Bsal lost within 10 years, untreated: %d of 100 runs\n", count(r -> !isnan(r.pathogen_extinction), cu))
+@printf("reference treatment of step 3 (block 99%%, adults once): %.2f with chance, %.2f in the equations\n",
+    meanA(cb), t3.mean_adults)
+step!("Bsal", "chance", "+ chance: whole animals, 20 ha", meanA(cu), meanA(ct),
+    "the failed treatment of step 9 now keeps most of the population")
+```
+
+Chance overturns step 9. In the equations, bacteria that last days fail because Bsal never
+quite disappears: whenever protection lapses it returns from a trace. With whole animals,
+Bsal arriving in a population that has just been treated usually fails to establish and is
+lost, and does not come back. The same happens to the step-3 reference treatment, which keeps
+nearly the whole population instead of a third. The
+[second vignette](../02_nested_model/02_nested_model.md) explores this in detail.
 
 ### Part A summary
 
@@ -445,6 +478,37 @@ step!("Bd toad", "treatment", "+ measured decay, one dose at hatching", rel(u), 
 step!("Bd toad", "treatment", "+ five doses per season", rel(u), doses[4], "most of the benefit restored")
 ```
 
+#### Step 9. Chance
+
+The same pond model with every tadpole, toad and zoospore a whole number, and every event
+random (`solve(problem; rng)`); 50 runs of each case. Mitchell et al.'s rule that toads are
+extinct below 50 adults, and Bd below 100 zoospores, is no longer needed: each goes extinct
+when its numbers reach zero.
+
+```{julia}
+chanceB(tr; stages = st2, kw...) = [solve(ProbioticPondProblem(m, tr; stages, kw...); rng = Xoshiro(s)) for s in 1:50]
+meanB(rs) = sum(rel(r) for r in rs) / length(rs)
+five = (coverage = 0.8, redose_days = [20.0, 40.0, 60.0, 80.0])
+bu, bt = chanceB(T()), chanceB(waning_t; five...)
+base = chanceB(T(); stages = none)
+blk = chanceB(ref; coverage = 0.8)
+@printf("Mitchell's model (step 0), untreated: toads persist in %d of 50 runs, adults %.2f (equations: extinct)\n",
+    count(r -> r.toads_persist, base), meanB(base))
+@printf("reference treatment (block 90%%) on the step-2 host: %.2f, Bd persists in %d of 50 (equations: %.2f)\n",
+    meanB(blk), count(r -> r.bd_persist, blk), rel(pond(ref; coverage = 0.8, stages = st2)))
+step!("Bd toad", "chance", "+ chance: whole animals", meanB(bu), meanB(bt),
+    "little change for this model; large changes elsewhere (see text)")
+```
+
+For the final model chance changes little. Elsewhere on the ladder it changes a great deal:
+
+- **Mitchell's published outcome does not survive it.** In the equations Bd drives the toads
+  to extinction and then dies out itself. With whole animals the toads fall to a few dozen
+  adults, too few tadpoles remain to carry Bd through the winter, Bd is lost, and the toads
+  recover. The published result depends on declaring toads extinct below 50 adults.
+- **Blocking infection does better.** On the step-2 host model, Bd is lost by chance in some
+  runs, and treatment then protects the population fully.
+
 ### Part B summary
 
 ```{julia}
@@ -597,6 +661,45 @@ months to build; a short burst of extra clearance knocks it back, and the build-
 again. Because frogs exchange bacteria, bathing a small part of the population protects the
 rest.
 
+#### Step 7. Chance
+
+The same model with every sporangium on every frog, and every zoospore in the pool, a whole
+number, and every event random (`StochasticFrogProblem`); 20 runs of each case.
+
+```{julia}
+bath_tr = T(abundance_half_life = 5.0, protective_fold = 100.0, direct = 0.1)
+chanceC(; tr = bath_tr, kw...) = [solve(StochasticFrogProblem(pb, tr; c, c_treated = 3c, h = hsat, N, ε,
+    days = 730, coverage = 0.75, kw...); rng = Xoshiro(s)) for s in 1:20]
+aliveC(rs) = sum(r.alive[end] for r in rs) / (N * length(rs))
+firstC(rs) = (v = sort([first_death(r) for r in rs if first_death(r) > 0]); isempty(v) ? "none" : string(v[cld(length(v), 2)]))
+cases = [("no treatment", chanceC(coverage = 0.0), untreated),
+    ("bath every 90 days", chanceC(dose_days = 0:90:729), every90),
+    ("bath every 150 days", chanceC(dose_days = 0:150:729), baths(dose_days = 0:150:729)),
+    ("bath every 90 days, 10% of frogs", chanceC(coverage = 0.1, dose_days = 0:90:729),
+        baths(coverage = 0.1, dose_days = 0:90:729))]
+nothing
+```
+
+```{julia}
+#| output: asis
+println("| Baths | Equations: alive after 2 years | Chance: alive (mean of 20 runs) | Chance: runs with no deaths | Chance: median first death |")
+println("|---|---|---|---|---|")
+for (label, rs, det) in cases
+    @printf("| %s | %d | %.0f | %d of 20 | %s |\n", label, det.alive[end], aliveC(rs) * N,
+        count(r -> r.alive[end] == N, rs), firstC(rs))
+end
+```
+
+```{julia}
+step!("Bd frog", "chance", "+ chance: whole sporangia and zoospores", aliveC(cases[1][2]), aliveC(cases[2][2]),
+    "baths every 90 days still protect; less frequent or narrower bathing now fails")
+```
+
+Chance makes the frog system harder to protect. Untreated, frogs die about six weeks earlier
+than in the equations: a few frogs whose loads happen to run high feed the shared pool and
+tip the rest. Baths every 90 days still protect every frog, but baths every 150 days, which
+were enough in the equations, now fail, and bathing 10% of frogs works in only some runs.
+
 Two cautions. The slow build-up is for a population that starts clean. In the field trial the
 pond was in the middle of an outbreak, treated frogs were surrounded by heavily infected ones,
 and their loads were back within two months; the last row of the table is the model's version
@@ -748,6 +851,11 @@ end
    infected stage once a year and can be re-treated. A salamander must be protected for life
    against a pathogen that kills in a week. In frogs, where disease follows a load that
    builds slowly, short-lived bacteria can still work if they are re-applied.
+6. **Chance is a piece of realism, and it changed the answer in every system, in different
+   directions.** For Bsal it turned a failed treatment into a successful one, because Bsal
+   arriving among treated animals is lost before it can establish. For toads it overturned
+   the published extinction of both host and pathogen. For frogs it made treatment harder,
+   because random high loads tip the population sooner.
 
 ## What is not in the models
 
@@ -763,15 +871,18 @@ end
   nested model, for the salamander system, in which every piece of biology is a switch.
 - No fade-out rule is applied in Part A, so densities can fall to meaningless values and
   recover. The second vignette shows what such a rule changes.
-- Everything is deterministic except the choice of which frogs are treated in Part C.
+- The stochastic steps use one introduced infected animal (Part A) or the published
+  introduction (Parts B and C), one population size, and time steps of hours to a day. In
+  Part A the area is 20 hectares; whether the host is lost depends on it (see the second
+  vignette).
 
 ## References
 
-- Briggs CJ et al. (2010) PNAS 107:9695–9700. doi:10.1073/pnas.0912886107
-- Harris RN et al. (2009) ISME J 3:818–824. doi:10.1038/ismej.2009.27
-- Knapp RA et al. (2022) PeerJ 10:e12712. doi:10.7717/peerj.12712
-- Madison JD et al. (2025) Infect Immun 93:e00569-24. doi:10.1128/iai.00569-24
-- Mitchell KM et al. (2008) Proc R Soc B 275:329–334. doi:10.1098/rspb.2007.1356
-- Schmidt BR et al. (2017) R Soc Open Sci 4:160801. doi:10.1098/rsos.160801
-- Smith D et al. (2022) J Evol Biol 35:589–598. doi:10.1111/jeb.13987
-- Wang Y et al. (2021) Nat Commun 12:5788. doi:10.1038/s41467-021-26127-9
+- Briggs CJ, Knapp RA, Vredenburg VT (2010) Enzootic and epizootic dynamics of the chytrid fungal pathogen of amphibians. *Proceedings of the National Academy of Sciences* 107:9695–9700. [doi:10.1073/pnas.0912886107](https://doi.org/10.1073/pnas.0912886107)
+- Harris RN, Brucker RM, Walke JB, Becker MH, et al. (2009) Skin microbes on frogs prevent morbidity and mortality caused by a lethal skin fungus. *The ISME Journal* 3:818–824. [doi:10.1038/ismej.2009.27](https://doi.org/10.1038/ismej.2009.27)
+- Knapp RA, Joseph MB, Smith TC, Hegeman EE, et al. (2022) Effectiveness of antifungal treatments during chytridiomycosis epizootics in populations of an endangered frog. *PeerJ* 10:e12712. [doi:10.7717/peerj.12712](https://doi.org/10.7717/peerj.12712)
+- Madison JD, Osborne OG, Ellison A, Garvey Griffith CN, et al. (2025) Probiotic colonization of *Xenopus laevis* skin causes short-term changes in skin microbiomes and gene expression. *Infection and Immunity* 93:e00569-24. [doi:10.1128/iai.00569-24](https://doi.org/10.1128/iai.00569-24)
+- Mitchell KM, Churcher TS, Garner TWJ, Fisher MC (2008) Persistence of the emerging pathogen *Batrachochytrium dendrobatidis* outside the amphibian host greatly increases the probability of host extinction. *Proceedings of the Royal Society B* 275:329–334. [doi:10.1098/rspb.2007.1356](https://doi.org/10.1098/rspb.2007.1356)
+- Schmidt BR, Bozzuto C, Lötters S, Steinfartz S (2017) Dynamics of host populations affected by the emerging fungal pathogen *Batrachochytrium salamandrivorans*. *Royal Society Open Science* 4:160801. [doi:10.1098/rsos.160801](https://doi.org/10.1098/rsos.160801)
+- Smith D, O'Brien D, Hall J, Sergeant C, et al. (2022) Challenging a host–pathogen paradigm: susceptibility to chytridiomycosis is decoupled from genetic erosion. *Journal of Evolutionary Biology* 35:589–598. [doi:10.1111/jeb.13987](https://doi.org/10.1111/jeb.13987)
+- Wang Y, Verbrugghe E, Meuris L, Chiers K, et al. (2021) Epidermal galactose spurs chytrid virulence and predicts amphibian colonization. *Nature Communications* 12:5788. [doi:10.1038/s41467-021-26127-9](https://doi.org/10.1038/s41467-021-26127-9)
