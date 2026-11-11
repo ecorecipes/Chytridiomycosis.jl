@@ -24,6 +24,7 @@ parameter values are illustrative:
 | Microbiome treatment on Bsal with larvae | `ProbioticLarvalProblem` |
 | Bacterial abundance on each frog, with repeated baths | `ProbioticAbundanceProblem` |
 | One nested model with each piece of biology as a switch | `ChytridBiology`, `NestedChytridProblem` |
+| Stochastic version of the nested model (whole animals) | `StochasticNestedProblem` |
 | Bsal with an infectable larval stage | `BsalLarvalStage`, `BsalLarvalProblem` |
 | Toads with infection after metamorphosis | `PostMetamorphicInfection`, `ToadStageProblem` |
 
@@ -47,6 +48,7 @@ factorial design, whether the effect of one piece depends on the others.
 
 Uses a single nested model in which each piece of biology is a switch, runs all 48
 combinations at three host densities, and measures the effect of each piece like for like.
+It ends with a stochastic version, which overturns one of the deterministic results.
 
 Vignettes are Quarto documents with executable Julia code, rendered to HTML, PDF and
 Markdown: run `quarto render` in `vignettes/`.

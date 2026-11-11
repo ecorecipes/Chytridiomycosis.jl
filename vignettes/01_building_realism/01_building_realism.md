@@ -978,7 +978,11 @@ end
     like in a single model and finds that it depends on the regime: for
     Bsal at the published host density, six pieces of host biology
     barely change the outcome, and near the invasion threshold they
-    change it a great deal.
+    change it a great deal. Its stochastic version also shows that
+    chance can matter more than any of them: with whole animals,
+    blocking infection in every adult on arrival nearly always
+    eliminates Bsal, where the equations of step 1 here leave about a
+    third of the population.
 3.  **How protection works matters more than how strong it is, and its
     effect has no fixed sign.** Letting animals survive infection is the
     worst change for Bsal and one of the best for toads.

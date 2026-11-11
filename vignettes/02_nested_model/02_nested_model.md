@@ -9,6 +9,12 @@
   threshold](#the-same-comparison-nearer-the-threshold)
 - [A fade-out rule](#a-fade-out-rule)
 - [Does the order of adding matter?](#does-the-order-of-adding-matter)
+- [A stochastic version](#a-stochastic-version)
+  - [One run against the equations](#one-run-against-the-equations)
+  - [Fates along the ladder](#fates-along-the-ladder)
+  - [What chance changes](#what-chance-changes)
+  - [Does the size of the population
+    matter?](#does-the-size-of-the-population-matter)
 - [What this shows](#what-this-shows)
 - [Limits](#limits)
 - [References](#references)
@@ -446,16 +452,221 @@ Where the two columns differ, the piece interacts with the others, and a
 ladder would give a different impression depending on where the piece
 was placed.
 
+## A stochastic version
+
+A fade-out rule is a crude stand-in for chance. The model also exists in
+a stochastic form, `StochasticNestedProblem`, in which animals are whole
+numbers in a given area and every transition happens at random. It draws
+its events from the same list of transitions as the equations, so with a
+large enough area it reproduces them, and with one infected animal its
+chance of a major outbreak matches the theoretical $1 - 1/R_0$ (both are
+checked in the package tests). Bsal now arrives as **one infected
+adult** in **20 hectares**: 500 adults at Schmidt’s density, 60 at 3 per
+hectare and 30 at 1.5. Each model is run 100 times.
+
+``` julia
+using Random: Xoshiro
+reps, area = 100, 20.0
+function stochastic_fates(p, b, tr, cov; area = area)
+    runs = [solve(StochasticNestedProblem(p, b, tr; area, coverage = cov); rng = Xoshiro(s)) for s in 1:reps]
+    host = count(r -> !isnan(r.host_extinction), runs) / reps
+    gone = count(r -> isnan(r.host_extinction) && !isnan(r.pathogen_extinction), runs) / reps
+    return (host = host, gone = gone, both = 1 - host - gone,
+        minor = count(r -> r.peak_infected < 10, runs) / reps,
+        mean = sum(r.mean_adults for r in runs) / reps)
+end
+ladder_bios = [bio(; (k => true for k in order[1:i])...) for i in 0:length(order)]
+treatments = (("no treatment", T(), 0.0), ("block infection", T(efficacy = 0.99), 1.0),
+    ("survive infection", T(tolerance = 0.99), 1.0))
+densities = (("25 per ha", schmidt), ("3 per ha", mid), ("1.5 per ha", low))
+sto = Dict((d, t, i) => stochastic_fates(p, b, tr, cov)
+    for (d, p) in densities for (t, tr, cov) in treatments for (i, b) in enumerate(ladder_bios))
+nothing
+```
+
+### One run against the equations
+
+At Schmidt’s density, with every adult treated on arrival with bacteria
+that block 99% of infections, the equations give about a third of the
+population after ten years (step 1 of the ladder above). Ten stochastic
+runs of the same model:
+
+``` julia
+b1 = bio(latent = true)
+det = solve(NestedChytridProblem(schmidt, b1, T(efficacy = 0.99); coverage = 1.0))
+plt = plot(det.t, det.adults ./ schmidt.K; color = :black, linewidth = 3, label = "equations",
+    xlabel = "years since Bsal arrived", ylabel = "adults (fraction of K)", ylims = (0, 1.15),
+    legend = :bottomleft)
+for s in 1:10
+    r = solve(StochasticNestedProblem(schmidt, b1, T(efficacy = 0.99); area, coverage = 1.0); rng = Xoshiro(s))
+    plot!(plt, r.t, r.adults ./ r.adults[1]; color = :steelblue, alpha = 0.6, linewidth = 1,
+        label = s == 1 ? "stochastic runs" : "")
+end
+plt
+```
+
+![](02_nested_model_files/figure-commonmark/cell-21-output-1.svg)
+
+The runs and the equations disagree completely. With 99% of adults
+protected, the one infected animal infects about a quarter of an animal
+on average, so Bsal almost always dies out within weeks. In the
+equations it never quite dies out: a trace of infection, far below one
+animal, waits until enough untreated young have been born and then sets
+off a second epidemic. The fade-out rule did not catch this, because its
+threshold (one animal per 100 km²) is far below one animal in 20
+hectares. **A population-level effect of the treatment that appeared in
+every deterministic model was produced by fractions of an animal.**
+
+### Fates along the ladder
+
+``` julia
+function fate_figure(d)
+    plots = map(treatments) do (t, _, _)
+        rows = [sto[(d, t, i)] for i in 1:length(ladder_bios)]
+        k = length(rows)
+        groupedbar_data = hcat([r.host for r in rows], [r.gone for r in rows], [r.both for r in rows])
+        bar(1:k, groupedbar_data[:, 1]; orientation = :h, color = :indianred, label = "host lost",
+            yticks = (1:k, t == "no treatment" ? names_ : fill("", k)), yflip = true, xlims = (0, 1),
+            xticks = 0:0.5:1, title = t, legend = false, bar_width = 0.7)
+        bar!(1:k, groupedbar_data[:, 1] .+ groupedbar_data[:, 2]; orientation = :h, color = :seagreen,
+            label = "Bsal lost", fillrange = groupedbar_data[:, 1], bar_width = 0.7)
+        bar!(1:k, ones(k); orientation = :h, color = :goldenrod, label = "both persist",
+            fillrange = groupedbar_data[:, 1] .+ groupedbar_data[:, 2], bar_width = 0.7)
+    end
+    plot(plots...; layout = (1, 3), size = (900, 330), left_margin = 4Plots.mm,
+        plot_title = "$d: share of 100 runs", plot_titlefontsize = 10)
+end
+fate_figure("25 per ha")
+```
+
+![](02_nested_model_files/figure-commonmark/cell-22-output-1.svg)
+
+Red: the host population is lost within ten years. Green: Bsal is lost
+and the host remains. Yellow: both persist.
+
+``` julia
+fate_figure("3 per ha")
+```
+
+![](02_nested_model_files/figure-commonmark/cell-23-output-1.svg)
+
+``` julia
+fate_figure("1.5 per ha")
+```
+
+![](02_nested_model_files/figure-commonmark/cell-24-output-1.svg)
+
+Mean adults over ten years, as a fraction of the starting number, and
+the share of introductions that never became an outbreak (fewer than ten
+animals ever infected at once):
+
+``` julia
+println("| Density | Model | None: mean (minor) | Block: mean (minor) | Survive: mean (minor) |")
+println("|---|---|---|---|---|")
+for (d, _) in densities, (i, n) in enumerate(names_)
+    cells = [@sprintf("%.2f (%.2f)", sto[(d, t, i)].mean, sto[(d, t, i)].minor) for (t, _, _) in treatments]
+    println("| ", d, " | ", n, " | ", join(cells, " | "), " |")
+end
+```
+
+| Density | Model | None: mean (minor) | Block: mean (minor) | Survive: mean (minor) |
+|----|----|----|----|----|
+| 25 per ha | simplest: S and I | 0.05 (0.05) | 1.00 (0.97) | 0.17 (0.04) |
+| 25 per ha | \+ latent period | 0.04 (0.04) | 1.00 (0.97) | 0.17 (0.04) |
+| 25 per ha | \+ environmental pool | 0.05 (0.05) | 0.81 (0.63) | 0.18 (0.05) |
+| 25 per ha | \+ light and heavy infections | 0.06 (0.05) | 0.73 (0.52) | 0.18 (0.05) |
+| 25 per ha | \+ recovery | 0.07 (0.05) | 0.89 (0.78) | 0.18 (0.05) |
+| 25 per ha | \+ larval stage | 0.10 (0.02) | 0.90 (0.80) | 0.18 (0.05) |
+| 25 per ha | \+ larvae infected | 0.11 (0.04) | 0.83 (0.71) | 0.19 (0.06) |
+| 3 per ha | simplest: S and I | 0.50 (0.39) | 0.99 (1.00) | 0.37 (0.28) |
+| 3 per ha | \+ latent period | 0.47 (0.36) | 0.99 (1.00) | 0.37 (0.28) |
+| 3 per ha | \+ environmental pool | 0.48 (0.45) | 0.99 (1.00) | 0.40 (0.31) |
+| 3 per ha | \+ light and heavy infections | 0.39 (0.29) | 0.98 (1.00) | 0.41 (0.31) |
+| 3 per ha | \+ recovery | 0.76 (0.67) | 0.98 (1.00) | 0.51 (0.43) |
+| 3 per ha | \+ larval stage | 0.84 (0.70) | 0.99 (1.00) | 0.39 (0.28) |
+| 3 per ha | \+ larvae infected | 0.81 (0.60) | 0.99 (1.00) | 0.42 (0.32) |
+| 1.5 per ha | simplest: S and I | 0.85 (0.91) | 0.99 (1.00) | 0.51 (0.43) |
+| 1.5 per ha | \+ latent period | 0.83 (0.92) | 0.98 (1.00) | 0.51 (0.43) |
+| 1.5 per ha | \+ environmental pool | 0.81 (0.98) | 0.98 (1.00) | 0.49 (0.40) |
+| 1.5 per ha | \+ light and heavy infections | 0.76 (0.93) | 0.99 (1.00) | 0.51 (0.42) |
+| 1.5 per ha | \+ recovery | 0.96 (1.00) | 0.99 (1.00) | 0.61 (0.54) |
+| 1.5 per ha | \+ larval stage | 0.97 (1.00) | 0.98 (1.00) | 0.61 (0.55) |
+| 1.5 per ha | \+ larvae infected | 0.98 (1.00) | 0.98 (1.00) | 0.58 (0.50) |
+
+### What chance changes
+
+1.  **The blocking treatment given on arrival nearly always works at
+    Schmidt’s density** in the simpler models (about 0.99 of adults
+    kept), against a third in the equations. Pieces of biology that make
+    a chain of infection last longer (an environmental pool, light
+    infections, infected larvae) bring it down to between 0.73 and 0.83,
+    because they give untreated young time to be born before Bsal is
+    gone.
+2.  **Without treatment, the simple models lose the host.** At Schmidt’s
+    density the host population disappears in almost every run of the
+    four simplest models. With recovery it survives in about half, and
+    with a larval stage in all. The larval refuge seen in the equations
+    is real, not an artefact.
+3.  **Near the threshold most introductions fizzle.** At 1.5 per hectare
+    most single introductions never become an outbreak, and with
+    recovery or larvae nearly all of them.
+4.  **The survive-type treatment often loses the host in small
+    populations.** In 20 hectares it loses the host in about 30 to 60%
+    of runs at every density. Near the threshold, and in every model
+    with a larval stage, that is more often than with no treatment at
+    all.
+
+### Does the size of the population matter?
+
+The same comparison in 200 hectares (ten times as many animals) for
+three models:
+
+``` julia
+println("| Density | Model | Treatment | Host lost: 20 ha | 200 ha | Mean adults: 20 ha | 200 ha |")
+println("|---|---|---|---|---|---|---|")
+for (d, p) in densities[1:2], i in (1, 5, 7), (t, tr, cov) in treatments
+    small, big = sto[(d, t, i)], stochastic_fates(p, ladder_bios[i], tr, cov; area = 200.0)
+    @printf("| %s | %s | %s | %.2f | %.2f | %.2f | %.2f |\n", d, names_[i], t, small.host, big.host,
+        small.mean, big.mean)
+end
+```
+
+| Density | Model | Treatment | Host lost: 20 ha | 200 ha | Mean adults: 20 ha | 200 ha |
+|----|----|----|----|----|----|----|
+| 25 per ha | simplest: S and I | no treatment | 0.95 | 0.95 | 0.05 | 0.05 |
+| 25 per ha | simplest: S and I | block infection | 0.00 | 0.00 | 1.00 | 0.99 |
+| 25 per ha | simplest: S and I | survive infection | 0.46 | 0.00 | 0.17 | 0.15 |
+| 25 per ha | \+ recovery | no treatment | 0.43 | 0.00 | 0.07 | 0.06 |
+| 25 per ha | \+ recovery | block infection | 0.00 | 0.00 | 0.89 | 0.86 |
+| 25 per ha | \+ recovery | survive infection | 0.39 | 0.00 | 0.18 | 0.18 |
+| 25 per ha | \+ larvae infected | no treatment | 0.00 | 0.00 | 0.11 | 0.11 |
+| 25 per ha | \+ larvae infected | block infection | 0.00 | 0.00 | 0.83 | 0.88 |
+| 25 per ha | \+ larvae infected | survive infection | 0.28 | 0.00 | 0.19 | 0.16 |
+| 3 per ha | simplest: S and I | no treatment | 0.10 | 0.00 | 0.50 | 0.48 |
+| 3 per ha | simplest: S and I | block infection | 0.00 | 0.00 | 0.99 | 1.01 |
+| 3 per ha | simplest: S and I | survive infection | 0.63 | 0.06 | 0.37 | 0.38 |
+| 3 per ha | \+ recovery | no treatment | 0.00 | 0.00 | 0.76 | 0.81 |
+| 3 per ha | \+ recovery | block infection | 0.00 | 0.00 | 0.98 | 1.00 |
+| 3 per ha | \+ recovery | survive infection | 0.44 | 0.01 | 0.51 | 0.42 |
+| 3 per ha | \+ larvae infected | no treatment | 0.00 | 0.00 | 0.81 | 0.81 |
+| 3 per ha | \+ larvae infected | block infection | 0.00 | 0.00 | 0.99 | 1.00 |
+| 3 per ha | \+ larvae infected | survive infection | 0.47 | 0.01 | 0.42 | 0.51 |
+
+The mean numbers of adults hold. Whether the host is lost does not: in
+200 hectares the host is lost only in the simplest untreated model at
+Schmidt’s density, where Bsal kills almost every animal. Under the
+survive-type treatment, host and Bsal instead persist together. In 20
+hectares, the treated animals that survive and keep Bsal going are too
+few to outlast the untreated young it kills.
+
 ## What this shows
 
 1.  **Whether realism matters depends on the regime.** For a pathogen
     far above its invasion threshold, six pieces of host biology barely
     change the outcome or the value of treatment. Near the threshold the
     same pieces change both a great deal.
-2.  **So the first question is where the system sits.** If Bsal in dense
-    salamander populations really has a reproduction number near 25, a
-    simple model is enough to say that an infection-blocking treatment
-    given once to adults leaves about a third of the population. In
+2.  **So the first question is where the system sits.** Far above the
+    threshold, the deterministic models agree with each other. In
     sparser populations the answer depends on biology that has not been
     measured, recovery above all.
 3.  **Effects of single pieces are not transferable.** They vary with
@@ -463,10 +674,17 @@ was placed.
     model should not be read as the effect of that piece.
 4.  **Protection that keeps infected animals alive can be worse than
     none**, where the untreated epidemic would have burnt out.
-5.  **A simple model can mislead through its mathematics as well as its
-    biology.** One of the largest apparent effects in this vignette
-    disappeared when densities too small to mean anything were no longer
-    allowed to grow back.
+5.  **A model can mislead through its mathematics as well as its
+    biology.** One apparent effect disappeared under a fade-out rule.
+    More importantly, the deterministic models all agreed that blocking
+    infection in every adult on arrival leaves about a third of a dense
+    population, and the stochastic version shows that result was made of
+    fractions of an animal: with whole animals, Bsal nearly always dies
+    out first.
+6.  **Chance is a piece of realism like the others, and here it was the
+    largest.** Agreement among the 48 deterministic models at Schmidt’s
+    density did not mean the answer was robust: all of them shared the
+    same mathematical assumption.
 
 ## Limits
 
@@ -474,9 +692,13 @@ was placed.
   systems of the first vignette have features it lacks: a seasonal
   cohort, and a continuous load on each animal.
 - The fade-out rule is a threshold on a deterministic model, with an
-  illustrative value. It removes the worst artefact but is not a
-  substitute for a stochastic model, which would give the chance of each
-  fate.
+  illustrative value. Its threshold was far too low for a population of
+  a few hundred animals; the stochastic version replaces it.
+- The stochastic model advances in steps of six hours, approximate for
+  the one-day latent period. Bsal arrives as a single infected adult,
+  and the area (20 hectares) sets the population size; results for
+  treatments that let infected animals survive depend on it.
+- Space is not modelled: the area is one well-mixed population.
 - Fates are judged within ten years. A population left at a few percent
   of its former density is counted as remaining.
 - Treated animals that survive infection never clear it unless
