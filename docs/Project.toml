@@ -1,0 +1,6 @@
+[deps]
+Chytridiomycosis = "225de920-55da-40a7-8ddb-3f32ee84be8d"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+
+[compat]
+Documenter = "1"

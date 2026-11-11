@@ -75,3 +75,13 @@ using Pkg; Pkg.test()
 ```
 
 Requires Julia 1.12.
+
+## Documentation
+
+[ecorecipes.github.io/Chytridiomycosis.jl](https://ecorecipes.github.io/Chytridiomycosis.jl)
+(built by CI from `docs/`; the tutorials are the rendered vignettes, copied with
+`julia scripts/sync_vignettes.jl`).
+
+## Licence
+
+MIT (see `LICENSE`). Data files in `data/` keep the licences given in their READMEs.

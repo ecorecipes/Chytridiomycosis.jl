@@ -1,0 +1,26 @@
+using Documenter
+using Chytridiomycosis
+
+makedocs(;
+         modules = [Chytridiomycosis],
+         authors = "Simon Frost",
+         sitename = "Chytridiomycosis.jl",
+         checkdocs = :exports,
+         warnonly = false,
+         format = Documenter.HTML(;
+                                  prettyurls = get(ENV, "CI", "false") == "true",
+                                  canonical = "https://ecorecipes.github.io/Chytridiomycosis.jl",
+                                  size_threshold = 2^21),
+         pages = ["Home" => "index.md",
+                  "Tutorials" => ["Building biological realism" => "tutorials/01_building_realism.md",
+                                  "One model, many switches" => "tutorials/02_nested_model.md"],
+                  "API reference" => ["Parameter compendium" => "api/compendium.md",
+                                      "Published models" => "api/published.md",
+                                      "Load models" => "api/load.md",
+                                      "Microbiome treatment" => "api/treatment.md",
+                                      "Life stages" => "api/stages.md",
+                                      "Nested and stochastic models" => "api/nested.md"]])
+
+if get(ENV, "CI", "false") == "true"
+    deploydocs(; repo = "github.com/ecorecipes/Chytridiomycosis.jl.git", push_preview = true)
+end

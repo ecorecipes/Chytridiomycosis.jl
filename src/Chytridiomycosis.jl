@@ -16,6 +16,16 @@ using Distributions: Beta, Binomial, DiscreteNonParametric, LogNormal, NegativeB
 using Random: Random, AbstractRNG
 using TOML
 
+"""
+    to_ode_problem(prob)
+
+The `SciMLBase.ODEProblem` that `solve(prob)` integrates, for the problems that lower to a
+single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
+[`LoadTippingProblem`](@ref) and [`BsalLarvalProblem`](@ref). Use it to solve with other
+options or to pass the model to other SciML tools.
+"""
+function to_ode_problem end
+
 include("compendium.jl")
 include("models/schmidt2017.jl")
 include("models/briggs2010.jl")
