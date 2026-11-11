@@ -550,4 +550,42 @@ using Random: Xoshiro
         @test ab(coverage = 0.1, x = 0.0, days = 730, dose_days = 0:90:729).alive[end] < 40
         @test ab(coverage = 0.1, x = 0.2, days = 730, dose_days = 0:90:729).alive[end] == 80
     end
+
+    @testset "Nested model (new)" begin
+        p = SchmidtParameters(:schmidt2017)
+        nest(bio, tr = MicrobiomeTreatment(); kw...) = solve(NestedChytridProblem(p, bio, tr; kw...))
+        @test_throws ArgumentError ChytridBiology(larval_infection = true)
+        @test_throws ArgumentError NestedChytridProblem(p, ChytridBiology(); treat = :larvae)
+        # with only the latent class it is Schmidt's model, treated or not
+        sch = ChytridBiology(latent = true)
+        tr = MicrobiomeTreatment(efficacy = 0.99, half_life = 1.0, direct = 5.0, tolerance = 0.3,
+            shedding_reduction = 0.2)
+        for (t, cov) in ((MicrobiomeTreatment(), 0.0), (tr, 0.7))
+            a, b = nest(sch, t; coverage = cov), solve(ProbioticSLIProblem(p, t; coverage = cov))
+            @test length(a.adults) == length(b.hosts)
+            @test maximum(abs.(a.adults .- b.hosts)) < 1e-4 * p.K     # same trajectory
+            @test isapprox(a.final_adults, b.final_hosts; rtol = 1e-3)
+        end
+        # with larvae and larval infection it is the larval model
+        st = BsalLarvalStage(:wang2021; adult_to_larva = 5.2)
+        full = ChytridBiology(:wang2021; latent = true, larvae = true, larval_infection = true)
+        @test full.carry_over == 0.5
+        q = 0:0.25:9.75
+        for kw in ((coverage = 0.0,), (coverage = 1.0,),
+                (coverage = 1.0, treat = :both, treat_times = q, retention = 1.0))
+            a, b = nest(full, tr; kw...), solve(ProbioticLarvalProblem(p, st, tr; kw...))
+            @test isapprox(a.mean_adults, b.mean_adults; rtol = 1e-3)
+        end
+        # growth rate: Schmidt's linearised rate; invasion in every configuration here
+        λ = (sqrt((p.e - p.d_I)^2 + 4 * p.e * p.β * p.K) - 2p.b - p.d_I - p.e) / 2
+        @test isapprox(invasion_growth_rate(p, sch), λ; rtol = 1e-4)
+        @test invasion_growth_rate(p, ChytridBiology()) > invasion_growth_rate(p, sch) > 0
+        @test invasion_growth_rate(p, ChytridBiology(environment = true)) <
+              invasion_growth_rate(p, ChytridBiology())          # the pool slows the epidemic
+        # no pathogen: the population stays at carrying capacity with every switch on
+        all_on = ChytridBiology(:wang2021; latent = true, environment = true, load = true,
+            recovery = true, larvae = true, larval_infection = true)
+        @test isapprox(nest(all_on; I0 = 0.0).final_adults, 1.0; atol = 1e-6)
+        @test 0 < nest(all_on).mean_adults < 1
+    end
 end
