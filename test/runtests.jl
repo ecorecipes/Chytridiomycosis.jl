@@ -524,4 +524,30 @@ using Random: Xoshiro
         @test solve(ProbioticSLIProblem(ps, MicrobiomeTreatment(efficacy = 0.99,
             abundance_half_life = 5 / 365, protective_fold = 100.0); coverage = 1.0)).final_hosts < 0.01
     end
+
+    @testset "Bacterial abundance per frog (new)" begin
+        p = BriggsParameters(:briggs2010)
+        kw = (c = 100.0, c_treated = 300.0, h = 500.0, N = 80, ε = 1000.0)
+        ab(; half = 5.0, F = 100.0, x = 0.2, kws...) = solve(ProbioticAbundanceProblem(p,
+            MicrobiomeTreatment(abundance_half_life = half, protective_fold = F, direct = x); kw..., kws...))
+        none = ab(coverage = 0.0)
+        old = solve(ProbioticLoadProblem(p, MicrobiomeTreatment(); kw..., days = 365); rng = Xoshiro(1))
+        @test none.alive[end] == 0 && maximum(none.death_day) == maximum(old.death_day)   # same die-off
+        @test all(isfinite, none.mean_load[1:100])
+        # abundance: the mean declines at the half-life whatever the exchange rate; exchange
+        # evens it out between bathed and unbathed frogs
+        apart, mixed = ab(coverage = 0.75, x = 0.0, days = 30), ab(coverage = 0.75, x = 0.2, days = 30)
+        @test apart.abundance_unbathed[12] == 0 && isapprox(apart.abundance_bathed[11], 2.0^(-2); rtol = 1e-3)
+        @test mixed.abundance_unbathed[12] / mixed.abundance_bathed[12] > 0.8
+        m(r) = 0.75 * r.abundance_bathed[21] + 0.25 * r.abundance_unbathed[21]
+        @test isapprox(m(apart), m(mixed); rtol = 1e-3)
+        # one bath only delays the die-off; baths every 90 days prevent it
+        once = ab(coverage = 0.75, days = 730)
+        @test once.alive[end] == 0 && minimum(filter(>(0), once.death_day)) > maximum(none.death_day) + 20
+        @test ab(coverage = 0.75, days = 730, dose_days = 0:90:729).alive[end] == 80
+        @test ab(coverage = 0.75, days = 730, dose_days = 0:240:729).alive[end] == 0
+        # exchange lets a small bathed group protect the rest
+        @test ab(coverage = 0.1, x = 0.0, days = 730, dose_days = 0:90:729).alive[end] < 40
+        @test ab(coverage = 0.1, x = 0.2, days = 730, dose_days = 0:90:729).alive[end] == 80
+    end
 end

@@ -22,6 +22,7 @@ parameter values are illustrative:
 | Load tipping with saturating clearance, host differences and recruitment | `LoadTippingProblem`, `LoadTippingRecruitmentProblem` |
 | Microbiome (probiotic) treatment on the three host models | `MicrobiomeTreatment`, `ProbioticSLIProblem`, `ProbioticPondProblem`, `ProbioticLoadProblem` |
 | Microbiome treatment on Bsal with larvae | `ProbioticLarvalProblem` |
+| Bacterial abundance on each frog, with repeated baths | `ProbioticAbundanceProblem` |
 | Bsal with an infectable larval stage | `BsalLarvalStage`, `BsalLarvalProblem` |
 | Toads with infection after metamorphosis | `PostMetamorphicInfection`, `ToadStageProblem` |
 

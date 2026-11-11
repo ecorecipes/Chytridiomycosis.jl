@@ -33,6 +33,8 @@
   - [Step 8. How long the bacteria really
     last](#step-8-how-long-the-bacteria-really-last-1)
   - [Part B summary](#part-b-summary)
+- [Part C. Bd in frogs: bacteria as a state of each
+  animal](#part-c-bd-in-frogs-bacteria-as-a-state-of-each-animal)
 - [What each piece of realism did](#what-each-piece-of-realism-did)
 - [What is not in the model](#what-is-not-in-the-model)
 - [References](#references)
@@ -48,12 +50,15 @@ the simplest possible description of treatment and adds one piece of
 biology at each step. After every step it asks the same question again,
 so that the effect of each added piece of realism can be seen.
 
-Two systems are followed in parallel:
+Two systems are followed in parallel, and a third is used for the final
+step:
 
 - **Bsal in fire salamanders**, starting from the model of Schmidt et
   al. (2017);
 - **Bd in common toads**, starting from the model of Mitchell et
-  al. (2008).
+  al. (2008);
+- **Bd in frogs**, starting from the load model of Briggs et al. (2010),
+  in Part C.
 
 > [!IMPORTANT]
 >
@@ -191,7 +196,7 @@ h = parameter_set(:harris2009ismej)
 mortality_reduction(h.deaths_treated, h.n_treated, h.deaths_control, h.n_control)
 ```
 
-    (median = 0.9538243805732652, lower = 0.5503655143974926, upper = 0.9999082328698974)
+    (median = 0.9535026941077734, lower = 0.5403000988119004, upper = 0.999900212602007)
 
 So the treated class is changed: instead of blocking infection,
 treatment reduces disease-induced death (`tolerance`). A treated,
@@ -563,6 +568,124 @@ ladder_plot("Bd toad", "adults in years 25 to 35, fraction of disease-free")
 
 ![](01_building_realism_files/figure-commonmark/cell-29-output-1.svg)
 
+## Part C. Bd in frogs: bacteria as a state of each animal
+
+Parts A and B gave every treated animal the same clock. The last step
+removes that simplification, in a third system where it is natural to do
+so: frogs sharing a pool, with disease driven by the fungal load on each
+frog (after Briggs et al. 2010, with the saturating clearance added in
+this package’s load tipping model). Here 80 frogs share a pool, which is
+enough for loads to run away, and untreated they all die.
+
+Each frog now carries its own abundance of the applied bacteria.
+Abundance declines at the measured rate, and frogs exchange bacteria
+through the pond. Exchange moves bacteria between frogs without creating
+any, so the bacteria spread but do not sustain themselves. That is what
+the field trial showed: eleven days after 60 to 90% of the frogs in a
+pond were bathed, frogs that were never bathed carried about 0.63 times
+as much of the bacterium as bathed ones, and it then declined in both.
+
+``` julia
+pb = BriggsParameters(:briggs2010)
+frog = (c = 100.0, c_treated = 300.0, h = 500.0, N = 80, ε = 1000.0)
+baths(; x = 0.1, F = 100.0, coverage = 0.75, dose_days = [0], days = 730) =
+    solve(ProbioticAbundanceProblem(pb, T(abundance_half_life = 5.0, protective_fold = F, direct = x);
+        frog..., coverage, dose_days, days))
+
+for x in (0.0, 0.1, 1.0)
+    r = baths(; x, days = 30)
+    @printf("exchange %.1f per day: unbathed/bathed abundance on day 11 = %.2f\n", x,
+        r.abundance_unbathed[12] / r.abundance_bathed[12])
+end
+```
+
+    exchange 0.0 per day: unbathed/bathed abundance on day 11 = 0.00
+    exchange 0.1 per day: unbathed/bathed abundance on day 11 = 0.60
+    exchange 1.0 per day: unbathed/bathed abundance on day 11 = 1.00
+
+An exchange rate of about 0.1 per day reproduces the field ratio, and is
+used below.
+
+``` julia
+untreated = baths(coverage = 0.0)
+one = baths()
+every90 = baths(dose_days = 0:90:729)
+plot(untreated.t, max.(untreated.mean_load, 1.0); yscale = :log10, label = "no treatment",
+    xlabel = "days", ylabel = "mean Bd load per live frog", legend = :topright, xlims = (0, 730))
+plot!(one.t, max.(one.mean_load, 1.0); label = "one bath on day 0")
+plot!(every90.t, max.(every90.mean_load, 1.0); label = "a bath every 90 days")
+hline!([pb.Smax]; color = :black, linestyle = :dash, label = "lethal load")
+```
+
+![](01_building_realism_files/figure-commonmark/cell-31-output-1.svg)
+
+``` julia
+first_death(r) = any(>(0), r.death_day) ? minimum(filter(>(0), r.death_day)) : 0
+println("| Baths | Alive after 2 years (of 80) | First death (day) |")
+println("|---|---|---|")
+for (label, r) in (("none", untreated), ("one, day 0", one), ("every 240 days", baths(dose_days = 0:240:729)),
+        ("every 150 days", baths(dose_days = 0:150:729)), ("every 90 days", every90),
+        ("every 90 days, 10% of frogs", baths(coverage = 0.1, dose_days = 0:90:729)),
+        ("every 90 days, 10% of frogs, no exchange", baths(coverage = 0.1, x = 0.0, dose_days = 0:90:729)),
+        ("one, day 150 (loads already high)", baths(dose_days = [150])))
+    @printf("| %s | %d | %s |\n", label, r.alive[end], first_death(r) == 0 ? "none" : string(first_death(r)))
+end
+```
+
+| Baths | Alive after 2 years (of 80) | First death (day) |
+|----|----|----|
+| none | 0 | 156 |
+| one, day 0 | 0 | 195 |
+| every 240 days | 0 | 195 |
+| every 150 days | 80 | none |
+| every 90 days | 80 | none |
+| every 90 days, 10% of frogs | 80 | none |
+| every 90 days, 10% of frogs, no exchange | 8 | 184 |
+| one, day 150 (loads already high) | 0 | 157 |
+
+``` julia
+step!("Bd frog", 0, "no treatment", untreated.alive[end] / 80, "all die at about day 156")
+step!("Bd frog", 1, "bacteria on each frog, measured decay: one bath", one.alive[end] / 80,
+    "die-off delayed by about six weeks")
+step!("Bd frog", 2, "+ a bath every 90 days", every90.alive[end] / 80,
+    "all survive: each bath resets the slow build-up of load")
+```
+
+    22-element Vector{NamedTuple}:
+     (system = "Bsal", n = 0, added = "no treatment", outcome = 0.0036039110806988517, note = "population collapses within a year")
+     (system = "Bsal", n = 1, added = "treated class: blocks 99% of infection, for life", outcome = 0.338009180619946, note = "treated adults are safe; their offspring are not")
+     (system = "Bsal", n = 2, added = "+ protection lost, half-life 1 year", outcome = 0.13396963041084453, note = "collapse is only delayed")
+     (system = "Bsal", n = 3, added = "+ microbiome spreads between animals", outcome = 0.9997264167078429, note = "full protection: the microbiome maintains itself")
+     (system = "Bsal", n = 4, added = "+ protection as in trials: survive, still infected", outcome = 0.020566192434802892, note = "fails, and raises transmission: survivors shed for longer")
+     (system = "Bsal", n = 5, added = "+ lower load (99%): less death and less shedding", outcome = 0.17958281415555719, note = "partial; survivors remain infected")
+     (system = "Bsal", n = 6, added = "+ larval stage (treatment as in step 1)", outcome = 0.33434708829646337, note = "as step 1: recruits still unprotected")
+     (system = "Bsal", n = 7, added = "+ treat both stages, kept through metamorphosis", outcome = 0.9999385316733599, note = "full protection with no spread at all")
+     (system = "Bsal", n = 8, added = "+ measured decay (half-life 5 days), dosed quarterly", outcome = 0.06364264021907155, note = "fails: protection lasts about a month; monthly dosing reaches 0.28")
+     (system = "Bd toad", n = 0, added = "no treatment", outcome = 0.0, note = "toads and Bd both go extinct")
+     ⋮
+     (system = "Bd toad", n = 4, added = "+ protection as in trials: survive, still infected", outcome = 0.6231865466308418, note = "toads persist at lower numbers; Bd is no longer eliminated")
+     (system = "Bd toad", n = 5, added = "+ lower load (70%): less death and less shedding", outcome = 0.6268304969048699, note = "little changed: untreated tadpoles and the pond keep Bd going")
+     (system = "Bd toad", n = 6, added = "+ infected metamorphs can survive (treatment as in step 1)", outcome = 0.08519903100859083, note = "blocking infection no longer eliminates Bd or protects well")
+     (system = "Bd toad", n = 7, added = "same, with survival-type protection", outcome = 0.7477821943494158, note = "now the better mechanism: the ranking has reversed")
+     (system = "Bd toad", n = 8, added = "+ measured decay, one dose at hatching", outcome = 0.056362921491221865, note = "protection gone before the season ends")
+     (system = "Bd toad", n = 9, added = "+ three doses per season", outcome = 0.5057080690629617, note = "about two-thirds of the benefit restored; five doses do better")
+     (system = "Bd frog", n = 0, added = "no treatment", outcome = 0.0, note = "all die at about day 156")
+     (system = "Bd frog", n = 1, added = "bacteria on each frog, measured decay: one bath", outcome = 0.0, note = "die-off delayed by about six weeks")
+     (system = "Bd frog", n = 2, added = "+ a bath every 90 days", outcome = 1.0, note = "all survive: each bath resets the slow build-up of load")
+
+This is the one system where bacteria that last only weeks could still
+work. Disease here depends on load, and load takes months to build. A
+short burst of extra clearance knocks it back, and the build-up starts
+again. Because frogs exchange bacteria, bathing a small part of the
+population protects the rest.
+
+Two cautions. The slow build-up is for a population that starts clean.
+In the field trial the pond was in the middle of an outbreak, treated
+frogs were surrounded by heavily infected ones, and their loads were
+back within two months; the last row of the table is the model’s version
+of treating too late. And the size of the clearance effect of the
+bacteria is assumed, not measured.
+
 ## What each piece of realism did
 
 ``` julia
@@ -594,6 +717,9 @@ end
 | Bd toad | 7 | same, with survival-type protection | 0.75 | now the better mechanism: the ranking has reversed |
 | Bd toad | 8 | \+ measured decay, one dose at hatching | 0.06 | protection gone before the season ends |
 | Bd toad | 9 | \+ three doses per season | 0.51 | about two-thirds of the benefit restored; five doses do better |
+| Bd frog | 0 | no treatment | 0.00 | all die at about day 156 |
+| Bd frog | 1 | bacteria on each frog, measured decay: one bath | 0.00 | die-off delayed by about six weeks |
+| Bd frog | 2 | \+ a bath every 90 days | 1.00 | all survive: each bath resets the slow build-up of load |
 
 Reading down the table:
 
@@ -610,16 +736,17 @@ Reading down the table:
     much as anything in the treatment model.** Larvae in the Bsal model,
     and surviving metamorphs in the toad model, each overturned a
     result.
-4.  **The two systems differ for a structural reason.** A toad cohort
-    passes through a short infected stage once a year and can be
-    re-treated. A salamander must be protected for life against a
-    pathogen that kills in a week.
+4.  **The systems differ for structural reasons.** A toad cohort passes
+    through a short infected stage once a year and can be re-treated. A
+    salamander must be protected for life against a pathogen that kills
+    in a week. In frogs, where disease follows a load that builds
+    slowly, short-lived bacteria can still work if they are re-applied.
 
 ## What is not in the model
 
-- Bacterial abundance is a clock since the last dose, not a state of
-  each animal. Animals that pick up bacteria from others share the clock
-  of the treated ones.
+- In Parts A and B bacterial abundance is a clock since the last dose,
+  not a state of each animal. Only the frog model of Part C tracks it
+  per animal.
 - The fold-drop in abundance at which protection is lost has not been
   measured.
 - Whether applied bacteria survive metamorphosis has not been measured.
@@ -631,6 +758,8 @@ Reading down the table:
 
 ## References
 
+- Briggs CJ et al. (2010) PNAS 107:9695–9700.
+  doi:10.1073/pnas.0912886107
 - Harris RN et al. (2009) ISME J 3:818–824. doi:10.1038/ismej.2009.27
 - Mitchell KM et al. (2008) Proc R Soc B 275:329–334.
   doi:10.1098/rspb.2007.1356

@@ -27,6 +27,7 @@ include("novel/bsal_larval.jl")
 include("novel/toad_postmetamorphic.jl")
 include("novel/microbiome_treatment.jl")
 include("novel/microbiome_treatment_stages.jl")
+include("novel/microbiome_abundance.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -44,7 +45,7 @@ export LoadTipping, LoadTippingProblem, pool_feedback, net_growth_rate, critical
        low_state_distribution, pooled_load_equilibria, LoadTippingRecruitmentProblem
 export BsalLarvalStage, BsalLarvalProblem, larval_reproduction_number, disease_free_larvae
 export PostMetamorphicInfection, ToadStageProblem
-export ProbioticLarvalProblem
+export ProbioticLarvalProblem, ProbioticAbundanceProblem
 export MicrobiomeTreatment, load_reducing_treatment, protection, protection_duration, reversion_rate, microbiome_reproduction_number,
        equilibrium_coverage, treatment_efficacy, mortality_reduction, effective_reproduction_number,
        critical_coverage, ProbioticSLIProblem, ProbioticPondProblem, ProbioticLoadProblem
