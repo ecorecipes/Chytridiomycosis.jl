@@ -601,4 +601,39 @@ using Random: Xoshiro
         quiet = nest(ChytridBiology(latent = true, fadeout_density = 1e-4); I0 = 0.0)
         @test isnan(quiet.pathogen_fadeout) && isapprox(quiet.final_adults, 1.0; atol = 1e-6)
     end
+
+    @testset "Stochastic nested model (new)" begin
+        p3 = Chytridiomycosis.with(SchmidtParameters(:schmidt2017); K = 3.0)
+        sch = ChytridBiology(latent = true)
+        @test_throws ArgumentError StochasticNestedProblem(p3, sch; area = 0.0)
+        # reproducible with a seeded generator
+        a = solve(StochasticNestedProblem(p3, sch); rng = Xoshiro(7))
+        b = solve(StochasticNestedProblem(p3, sch); rng = Xoshiro(7))
+        @test a.adults == b.adults && a.infected == b.infected
+        # no pathogen: the population stays near carrying capacity and nothing goes extinct
+        quiet = solve(StochasticNestedProblem(p3, sch; area = 200.0, introduced = 0); rng = Xoshiro(1))
+        @test isapprox(quiet.mean_adults, 1.0; atol = 0.05) && maximum(quiet.infected) == 0
+        @test isnan(quiet.pathogen_extinction) && isnan(quiet.host_extinction)
+        # a large area recovers the ODE, for Schmidt's model and with every switch on
+        full = ChytridBiology(:wang2021; latent = true, environment = true, load = true,
+            recovery = true, larvae = true, larval_infection = true)
+        for bio in (sch, full)
+            ode = solve(NestedChytridProblem(p3, bio)).mean_adults
+            sto = solve(StochasticNestedProblem(p3, bio; area = 2000.0, introduced = 20); rng = Xoshiro(2))
+            @test isapprox(sto.mean_adults, ode; rtol = 0.1)
+        end
+        # one infected animal: a major outbreak with probability about 1 − 1/R0 (branching
+        # process); here R0 = βK/(b + d_I) ≈ 3
+        simple = ChytridBiology()
+        R0 = p3.β * p3.K / (p3.b + p3.d_I)
+        runs = [solve(StochasticNestedProblem(p3, simple; area = 100.0, tspan = (0.0, 2.0));
+            rng = Xoshiro(s)) for s in 1:300]
+        major = count(r -> r.peak_infected >= 20, runs) / 300
+        @test abs(major - (1 - 1 / R0)) < 0.09
+        @test all(r -> r.peak_infected >= 20 || !isnan(r.pathogen_extinction), runs)
+        # treatment works through the shared transitions: a lasting block of every adult
+        tr = solve(StochasticNestedProblem(p3, sch, MicrobiomeTreatment(efficacy = 1.0);
+            coverage = 1.0, introduced = 5); rng = Xoshiro(3))
+        @test tr.peak_infected <= 5 && !isnan(tr.pathogen_extinction)
+    end
 end

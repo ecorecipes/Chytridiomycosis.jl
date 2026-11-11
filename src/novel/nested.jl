@@ -81,47 +81,45 @@ end
 nested_index(s, τ, k) = (s - 1) * 8 + (τ - 1) * 4 + k
 const NESTED_Z = 17
 
-function nested_rhs!(du, u, q, t)
+# Every transition of the model, listed once. `emit(from, to, flow)` is called for each, with
+# `flow` in animals per ha per year; `from = 0` is a birth and `to = 0` a death. The ODE sums
+# the flows (nested_rhs!) and the stochastic model draws events from them
+# (StochasticNestedProblem), so the two cannot disagree. Returns dZ/dt for the pool.
+function nested_flows(emit::F, u, q, t) where {F}
     p, bio, tr, retention, clock = q
-    x(s, τ, k) = max(u[nested_index(s, τ, k)], 0.0)
+    ix = nested_index
+    x(s, τ, k) = max(u[ix(s, τ, k)], 0.0)
     Z = max(u[NESTED_Z], 0.0)
-    fill!(du, 0.0)
     g = protection(tr, t - clock[])
     eff, tol, sred = g * tr.efficacy, g * tr.tolerance, g * tr.shedding_reduction
     ω = reversion_rate(tr)
     light = bio.load ? bio.light_shedding : 0.0
     shed(s, τ) = (light * x(s, τ, 3) + x(s, τ, 4)) * (τ == 2 ? 1 - sred : 1.0)
-    HA, HW = shed(2, 1) + shed(2, 2), shed(1, 1) + shed(1, 2)
+    HA = shed(2, 1) + shed(2, 2)
     φ = bio.environment ? bio.environmental_fraction : 0.0
     μZ = log(2) / bio.pool_half_life
     source = (1 - φ) * HA + φ * μZ * Z                 # infectious pressure from adults
-    λ = (p.β * source, bio.larval_infection ? bio.adult_to_larva * source : 0.0)   # adult, larva
-    du[NESTED_Z] = bio.environment ? HA - μZ * Z : 0.0
+    λA = p.β * source
+    λW = bio.larval_infection ? bio.adult_to_larva * source : 0.0
     NA = sum(x(2, τ, k) for τ in 1:2, k in 1:4)
     dd = p.d + density_dependence(p) * NA
     m = 1 / bio.larval_period
     σ = bio.recovery ? bio.recovery_rate : 0.0
     entry = bio.latent ? 2 : (bio.load ? 3 : 4)        # class a new adult infection enters
-    add!(s, τ, k, v) = (du[nested_index(s, τ, k)] += v)
 
     # adults
     for τ in 1:2
-        inf = (τ == 2 ? 1 - eff : 1.0) * λ[1] * x(2, τ, 1)
-        add!(2, τ, 1, -inf); add!(2, τ, entry, inf)
-        if bio.latent
-            out = p.e * x(2, τ, 2)
-            add!(2, τ, 2, -out); add!(2, τ, bio.load ? 3 : 4, out)
-        end
-        α = p.d_I * (τ == 2 ? 1 - tol : 1.0)
+        emit(ix(2, τ, 1), ix(2, τ, entry), (τ == 2 ? 1 - eff : 1.0) * λA * x(2, τ, 1))
+        bio.latent && emit(ix(2, τ, 2), ix(2, τ, bio.load ? 3 : 4), p.e * x(2, τ, 2))
         if bio.load
-            add!(2, τ, 3, -bio.progression * x(2, τ, 3)); add!(2, τ, 4, bio.progression * x(2, τ, 3))
-            add!(2, τ, 3, -σ * x(2, τ, 3)); add!(2, τ, 1, σ * x(2, τ, 3))
+            emit(ix(2, τ, 3), ix(2, τ, 4), bio.progression * x(2, τ, 3))
+            emit(ix(2, τ, 3), ix(2, τ, 1), σ * x(2, τ, 3))
         else
-            add!(2, τ, 4, -σ * x(2, τ, 4)); add!(2, τ, 1, σ * x(2, τ, 4))
+            emit(ix(2, τ, 4), ix(2, τ, 1), σ * x(2, τ, 4))
         end
-        add!(2, τ, 4, -α * x(2, τ, 4))
+        emit(ix(2, τ, 4), 0, p.d_I * (τ == 2 ? 1 - tol : 1.0) * x(2, τ, 4))
         for k in 1:4
-            add!(2, τ, k, -dd * x(2, τ, k))
+            emit(ix(2, τ, k), 0, dd * x(2, τ, k))
         end
     end
     # births: susceptible adults, light infections, and treated infected adults in proportion
@@ -129,32 +127,41 @@ function nested_rhs!(du, u, q, t)
     scale = bio.larvae ? p.b * (m + bio.larval_death) / m : p.b
     births = scale * (x(2, 1, 1) + x(2, 2, 1) + x(2, 1, 3) + x(2, 2, 3) +
                       tol * (x(2, 2, 2) + x(2, 2, 4)))
-    add!(bio.larvae ? 1 : 2, 1, 1, births)
-    # larvae
+    emit(0, ix(bio.larvae ? 1 : 2, 1, 1), births)
+    # larvae: infection, death and metamorphosis
     if bio.larvae
         for τ in 1:2
-            inf = (τ == 2 ? 1 - eff : 1.0) * λ[2] * x(1, τ, 1)
-            add!(1, τ, 1, -inf); add!(1, τ, 4, inf)
+            emit(ix(1, τ, 1), ix(1, τ, 4), (τ == 2 ? 1 - eff : 1.0) * λW * x(1, τ, 1))
             keep = τ == 2 ? retention : 1.0            # share that keeps its treatment label
             for (k, carried) in ((1, 0.0), (4, bio.carry_over))
                 n = x(1, τ, k)
-                add!(1, τ, k, -(m + bio.larval_death) * n)
+                emit(ix(1, τ, k), 0, bio.larval_death * n)
                 for (τa, share) in ((τ, keep), (1, 1 - keep))
                     share > 0 || continue
-                    add!(2, τa, entry, carried * share * m * n)
-                    add!(2, τa, 1, (1 - carried) * share * m * n)
+                    emit(ix(1, τ, k), ix(2, τa, entry), carried * share * m * n)
+                    emit(ix(1, τ, k), ix(2, τa, 1), (1 - carried) * share * m * n)
                 end
             end
         end
     end
-    # the microbiome: loss, and spread within a stage
+    # the microbiome: spread within a stage, and loss
     for s in 1:2
         total = sum(x(s, τ, k) for τ in 1:2, k in 1:4)
         frac = total > 0 ? min(sum(x(s, 2, k) for k in 1:4) / total, 1.0) : 0.0
         for k in 1:4
-            move = tr.direct * frac * x(s, 1, k) - ω * x(s, 2, k)
-            add!(s, 1, k, -move); add!(s, 2, k, move)
+            emit(ix(s, 1, k), ix(s, 2, k), tr.direct * frac * x(s, 1, k))
+            emit(ix(s, 2, k), ix(s, 1, k), ω * x(s, 2, k))
         end
+    end
+    return bio.environment ? HA - μZ * Z : 0.0
+end
+
+function nested_rhs!(du, u, q, t)
+    fill!(du, 0.0)
+    du[NESTED_Z] = nested_flows(u, q, t) do from, to, f
+        from > 0 && (du[from] -= f)
+        to > 0 && (du[to] += f)
+        return nothing
     end
     return nothing
 end
