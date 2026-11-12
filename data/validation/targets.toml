@@ -386,13 +386,138 @@ quantity = "R₀ about 9.6 (5.8–14.3); 98% reduction at >80% coverage within 3
 status = "pending"
 notes = "Wiki target R8."
 
+# Rumschlag et al. 2022 (wiki target R9): checked against the published version, J Anim Ecol
+# 91:170; the preprint prints the same numbers. Refits use the authors' figshare deposit
+# (data/rumschlag2022). _rumschlag_reference_fit() fits a model once per session; it fits the
+# selected model (m by water, one d, one β) unless told otherwise.
+
 [[target]]
 id = "rumschlag2022_lifespan"
 model = "bd-rumschlag2022-zoospore-persistence"
-source = { ref = "rumschlag2022", location = "" }
-quantity = "zoospore lifespans 9.4–14.4 h (review values, unverified)"
-status = "pending"
-notes = "Wiki target R9."
+source = { ref = "rumschlag2022", location = "Results, p. 176" }
+quantity = "expected zoospore lifespan 24/m in artificial spring water (h)"
+published = 14.4
+call = "rumschlag_summary(_rumschlag_reference_fit()).lifespan.ASW[1]"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = """
+Wiki target R9. Refit to the deposited data with the recorded count times: 14.43 h. The
+review's range 9.4–14.4 h is confirmed; see the next target and test/rumschlag2022.jl for
+the other waters (Trout Creek 13.31, Flatwoods 11.43)."""
+
+[[target]]
+id = "rumschlag2022_lifespan_GreenSwamp"
+model = "bd-rumschlag2022-zoospore-persistence"
+source = { ref = "rumschlag2022", location = "Results, p. 176" }
+quantity = "expected zoospore lifespan 24/m in Green Swamp pond water (h)"
+published = 9.4
+call = "rumschlag_summary(_rumschlag_reference_fit()).lifespan.GreenSwamp[1]"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "Refit: 9.38 h."
+
+[[target]]
+id = "rumschlag2022_lifespan_ASW_ci"
+model = "bd-rumschlag2022-zoospore-persistence"
+source = { ref = "rumschlag2022", location = "Results, p. 176" }
+quantity = "95% CI half-width of the ASW lifespan (h)"
+published = 2.3
+call = "rumschlag_summary(_rumschlag_reference_fit()).lifespan.ASW[2]"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "Half the width of the Wald interval m ± 1.96 SE carried to 24/m hours: 2.33."
+
+[[target]]
+id = "rumschlag2022_persistence"
+model = "bd-rumschlag2022-zoospore-persistence"
+source = { ref = "rumschlag2022", location = "Results, p. 176" }
+quantity = "expected persistence time 24/d of a dead zoospore (h)"
+published = 21.6
+call = "rumschlag_summary(_rumschlag_reference_fit()).persistence.ASW[1]"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "Refit: 21.56 h (95% half-width 5.22 h; published ± 5.2)."
+
+[[target]]
+id = "rumschlag2022_beta"
+model = "bd-rumschlag2022-zoospore-persistence"
+source = { ref = "rumschlag2022", location = "Results, p. 176" }
+quantity = "per capita transmission rate β (paper's unstated scale)"
+published = 7.1e-6
+call = "rumschlag_summary(_rumschlag_reference_fit()).β.ASW[1]"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+Reproduced as β·ZL(0)/1e5 = 7.101e-6, with ZL(0) the fitted initial live concentration
+(142.8 µl⁻¹). The data identify only the product β·ZL(0). The divisor 1e5 is an inferred
+convention, not printed in the paper; the paper gives no units for β."""
+
+[[target]]
+id = "rumschlag2022_beta_ci"
+model = "bd-rumschlag2022-zoospore-persistence"
+source = { ref = "rumschlag2022", location = "Results, p. 176" }
+quantity = "95% CI half-width of β (paper's scale)"
+published = 2.6e-6
+call = "rumschlag_summary(_rumschlag_reference_fit()).β.ASW[2]"
+tolerance = { rtol = 0.02 }
+status = "discrepant"
+regression = { value = 2.54e-6, rtol = 0.01 }
+notes = """
+The delta method on log(β·ZL0) gives 2.54e-6. Ignoring the β–ZL0 covariance (correlation
+−0.28) would give 2.63e-6, which rounds to the published value. Every other ± in the paper
+is reproduced."""
+
+[[target]]
+id = "rumschlag2022_lrt"
+model = "bd-rumschlag2022-zoospore-persistence"
+source = { ref = "rumschlag2022", location = "Results, p. 176" }
+quantity = "likelihood ratio χ² of m, d by water against the selected model (df = 3)"
+published = 7.581
+call = "2 * (_rumschlag_reference_fit(; d = 4).loglik - _rumschlag_reference_fit().loglik)"
+tolerance = { atol = 0.001 }
+status = "reproduced"
+notes = "Ours 7.5815; p = 0.056."
+
+[[target]]
+id = "rumschlag2022_aicc_selected"
+model = "bd-rumschlag2022-zoospore-persistence"
+source = { ref = "rumschlag2022", location = "Table 1" }
+quantity = "AICc of the selected model (m by water, one d, one β; df = 9)"
+published = 1379.2
+call = "_rumschlag_reference_fit().aicc"
+tolerance = { atol = 0.5 }
+status = "reproduced"
+notes = """
+Ours 1379.0, with n = 595 (two log counts per survival unit plus one per tadpole). Thirteen
+of the 15 AICc values in Table 1 are matched within 0.4; ours are never higher."""
+
+[[target]]
+id = "rumschlag2022_aicc_m2d2b2"
+model = "bd-rumschlag2022-zoospore-persistence"
+source = { ref = "rumschlag2022", location = "Table 1" }
+quantity = "AICc of the model with two estimates (ASW, ponds) of m, d and β (df = 9)"
+published = 1389.7
+call = "_rumschlag_reference_fit(; m = 2, d = 2, β = 2).aicc"
+tolerance = { atol = 0.5 }
+status = "discrepant"
+regression = { value = 1386.42, atol = 0.05 }
+notes = """
+Ours is 3.3 units lower (a better optimum, the same from several starts). The other model
+with two estimates of both m and β (one d; published 1393.9, ours 1390.6) is lower by the
+same amount. Possibly a local optimum in the original fits; unexplained."""
+
+[[target]]
+id = "rumschlag2022_fig4a_ASW"
+model = "bd-rumschlag2022-zoospore-persistence"
+source = { ref = "rumschlag2022", location = "Fig. 4a" }
+quantity = "predicted prevalence in ASW for a tadpole added with the zoospores (lag 0)"
+published = "about 0.29 (read from the figure)"
+call = "infection_probability(RumschlagParameters(:rumschlag2022; water = :ASW), 1e5, 0.0)"
+tolerance = { lower = 0.28, upper = 0.30 }
+status = "qualitative"
+notes = """
+Published values from the compendium; ZL0 = 1e5 is the inferred scale of the printed β.
+With ZL0 = 143 µl⁻¹ (Fig. 3a) the printed β gives a prevalence below 0.001."""
 
 [[target]]
 id = "daversa2022_multihost"

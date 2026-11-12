@@ -291,6 +291,7 @@ or `:year`. Declared so far:
 - [`BriggsParameters`](@ref) and [`BriggsSeasonalParameters`](@ref): `:day`
 - [`MitchellParameters`](@ref): `:year`
 - [`WoodhamsParameters`](@ref): `:hour`
+- [`RumschlagParameters`](@ref): `:day`
 
 A new model declares its own with
 `Chytridiomycosis.time_unit(::Type{<:MyParameters}) = :day`.
