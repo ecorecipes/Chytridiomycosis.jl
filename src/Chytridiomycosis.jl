@@ -68,5 +68,8 @@ export KnappSwab, knapp2022_path, load_knapp2022, KnappLoadModel, parameter_name
 export MicrobiomeTreatment, load_reducing_treatment, protection, protection_duration, reversion_rate, microbiome_reproduction_number,
        equilibrium_coverage, treatment_efficacy, mortality_reduction, effective_reproduction_number,
        critical_coverage, ProbioticSLIProblem, ProbioticPondProblem, ProbioticLoadProblem
+# Bayesian Knapp fit
+export KnappPosterior, knapp_prior, observed_swabs, pointwise_loglikelihood, psis_loo, waic,
+       elpd_difference, turing_model
 
 end # module Chytridiomycosis

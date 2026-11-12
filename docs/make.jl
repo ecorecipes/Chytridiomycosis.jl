@@ -23,7 +23,8 @@ makedocs(;
                                       "Microbiome treatment" => "api/treatment.md",
                                       "Life stages" => "api/stages.md",
                                       "Nested and stochastic models" => "api/nested.md",
-                                      "Fitting to field data" => "api/fitting.md"]])
+                                      "Fitting to field data" => "api/fitting.md",
+                                      "Bayesian fit to field data" => "api/knapp_bayes.md"]])
 
 if get(ENV, "CI", "false") == "true"
     deploydocs(; repo = "github.com/ecorecipes/Chytridiomycosis.jl.git", push_preview = true)

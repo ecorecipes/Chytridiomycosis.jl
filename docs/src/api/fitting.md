@@ -14,7 +14,8 @@ Dusy Basin 2012 skin swabs of Knapp et al. (2022)
 clearance `s(t)` are compared. A [`KnappLoadModel`](@ref) implements the LogDensityProblems
 interface (`logdensity`, `dimension`, `capabilities`), so it can also be passed to
 LogDensityProblems-based samplers. See the tutorial
-[Fitting the frog load model to a field trial](../tutorials/03_knapp_fit.md).
+[Fitting the frog load model to a field trial](../tutorials/03_knapp_fit.md), and
+[Bayesian fit to field data](knapp_bayes.md) for priors, NUTS and PSIS-LOO.
 
 ## Data
 
