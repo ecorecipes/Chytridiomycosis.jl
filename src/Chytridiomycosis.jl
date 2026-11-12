@@ -44,6 +44,9 @@ include("novel/frog_stochastic.jl")
 include("novel/nested.jl")
 include("novel/nested_stochastic.jl")
 include("fitting/knapp2022.jl")
+# Schmidt spatial, Briggs stages
+include("models/schmidt2017_spatial.jl")
+include("models/briggs2010_stages.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -68,5 +71,8 @@ export KnappSwab, knapp2022_path, load_knapp2022, KnappLoadModel, parameter_name
 export MicrobiomeTreatment, load_reducing_treatment, protection, protection_duration, reversion_rate, microbiome_reproduction_number,
        equilibrium_coverage, treatment_efficacy, mortality_reduction, effective_reproduction_number,
        critical_coverage, ProbioticSLIProblem, ProbioticPondProblem, ProbioticLoadProblem
+# Schmidt spatial, Briggs stages
+export SchmidtPDEProblem, SchmidtColonyProblem, front_position, front_speed
+export BriggsLifeStages, BriggsStagedProblem, disease_free_stages
 
 end # module Chytridiomycosis

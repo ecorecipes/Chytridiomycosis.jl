@@ -385,3 +385,623 @@ role = "uncertain"
 location = "Fig. 3 legend (E and F)"
 verified = true
 notes = "Not restated for panels E and F; carried over from panel A."
+
+# Fig. 4: six-stage model (three tadpole and two subadult year classes plus adults).
+# Shared values are stated once in the legend and repeated in each panel's set; η, σ,
+# V, μ and the 100-day summer equal the base set.
+
+[[parameter]]
+set = "fig4a"
+symbol = "γ_adult"
+quantity = "zoospore–adult encounter rate"
+value = 1e-06
+units = "volume unit day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel A"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "γ_subadult"
+quantity = "zoospore–subadult encounter rate (10 γ_adult)"
+value = 1e-05
+units = "volume unit day^-1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel A"
+verified = true
+notes = "Derived: 10 × γ_adult."
+
+[[parameter]]
+set = "fig4a"
+symbol = "γ_tadpole"
+quantity = "zoospore–tadpole encounter rate (100 γ_adult)"
+value = 0.0001
+units = "volume unit day^-1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel A"
+verified = true
+notes = "Derived: 100 × γ_adult."
+
+[[parameter]]
+set = "fig4a"
+symbol = "Smax_adult"
+quantity = "lethal load of adults"
+value = 10000.0
+units = "sporangia host^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel A"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "Smax_subadult"
+quantity = "lethal load of subadults"
+value = 1000.0
+units = "sporangia host^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel A"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "Smax_tadpole"
+quantity = "load cap on tadpoles (not lethal)"
+value = 1000.0
+units = "sporangia host^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel A"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "θ_adult"
+quantity = "adult overwinter survival probability"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "θ_subadult"
+quantity = "subadult (sub1 and sub2) overwinter survival probability"
+value = 0.7
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "θ_tadpole"
+quantity = "tadpole (tad1, tad2 and tad3) overwinter survival probability"
+value = 0.7
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "θZ"
+quantity = "zoospore overwinter survival probability"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "m"
+quantity = "probability that a second-year (tad2) tadpole enters metamorphosis"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "ω_metamorph"
+quantity = "probability that a metamorphosing tadpole survives metamorphosis into sub1"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "pF"
+quantity = "probability that an adult reproduces in a given spring"
+value = 0.25
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "R"
+quantity = "mean tadpoles per breeding adult (Poisson)"
+value = 100.0
+units = "tadpoles adult^-1 yr^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "K"
+quantity = "carrying capacity of the adult class"
+value = 100.0
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "f"
+quantity = "self-reinfection fraction, all stages"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4a"
+symbol = "ν"
+quantity = "establishment probability, all stages"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "γ_adult"
+quantity = "zoospore–adult encounter rate"
+value = 0.0001
+units = "volume unit day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel B"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "γ_subadult"
+quantity = "zoospore–subadult encounter rate (10 γ_adult)"
+value = 0.001
+units = "volume unit day^-1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel B"
+verified = true
+notes = "Derived: 10 × γ_adult."
+
+[[parameter]]
+set = "fig4b"
+symbol = "γ_tadpole"
+quantity = "zoospore–tadpole encounter rate (100 γ_adult)"
+value = 0.01
+units = "volume unit day^-1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel B"
+verified = true
+notes = "Derived: 100 × γ_adult."
+
+[[parameter]]
+set = "fig4b"
+symbol = "Smax_adult"
+quantity = "lethal load of adults"
+value = 10000.0
+units = "sporangia host^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel B"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "Smax_subadult"
+quantity = "lethal load of subadults"
+value = 1000.0
+units = "sporangia host^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel B"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "Smax_tadpole"
+quantity = "load cap on tadpoles (not lethal)"
+value = 1000.0
+units = "sporangia host^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel B"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "θ_adult"
+quantity = "adult overwinter survival probability"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "θ_subadult"
+quantity = "subadult (sub1 and sub2) overwinter survival probability"
+value = 0.7
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "θ_tadpole"
+quantity = "tadpole (tad1, tad2 and tad3) overwinter survival probability"
+value = 0.7
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "θZ"
+quantity = "zoospore overwinter survival probability"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "m"
+quantity = "probability that a second-year (tad2) tadpole enters metamorphosis"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "ω_metamorph"
+quantity = "probability that a metamorphosing tadpole survives metamorphosis into sub1"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "pF"
+quantity = "probability that an adult reproduces in a given spring"
+value = 0.25
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "R"
+quantity = "mean tadpoles per breeding adult (Poisson)"
+value = 100.0
+units = "tadpoles adult^-1 yr^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "K"
+quantity = "carrying capacity of the adult class"
+value = 100.0
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "f"
+quantity = "self-reinfection fraction, all stages"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4b"
+symbol = "ν"
+quantity = "establishment probability, all stages"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "γ_adult"
+quantity = "zoospore–adult encounter rate"
+value = 0.001
+units = "volume unit day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel C"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "γ_subadult"
+quantity = "zoospore–subadult encounter rate (= γ_adult)"
+value = 0.001
+units = "volume unit day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel C"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "γ_tadpole"
+quantity = "zoospore–tadpole encounter rate (= γ_adult)"
+value = 0.001
+units = "volume unit day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel C"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "Smax_adult"
+quantity = "lethal load of adults"
+value = 10000.0
+units = "sporangia host^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel C"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "Smax_subadult"
+quantity = "lethal load of subadults"
+value = 10000.0
+units = "sporangia host^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel C"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "Smax_tadpole"
+quantity = "load cap on tadpoles (not lethal)"
+value = 10000.0
+units = "sporangia host^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698), panel C"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "θ_adult"
+quantity = "adult overwinter survival probability"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "θ_subadult"
+quantity = "subadult (sub1 and sub2) overwinter survival probability"
+value = 0.7
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "θ_tadpole"
+quantity = "tadpole (tad1, tad2 and tad3) overwinter survival probability"
+value = 0.7
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "θZ"
+quantity = "zoospore overwinter survival probability"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "m"
+quantity = "probability that a second-year (tad2) tadpole enters metamorphosis"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "ω_metamorph"
+quantity = "probability that a metamorphosing tadpole survives metamorphosis into sub1"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "pF"
+quantity = "probability that an adult reproduces in a given spring"
+value = 0.25
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "R"
+quantity = "mean tadpoles per breeding adult (Poisson)"
+value = 100.0
+units = "tadpoles adult^-1 yr^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "K"
+quantity = "carrying capacity of the adult class"
+value = 100.0
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698); SI Methods"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "f"
+quantity = "self-reinfection fraction, all stages"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true
+
+[[parameter]]
+set = "fig4c"
+symbol = "ν"
+quantity = "establishment probability, all stages"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae" }
+location = "Fig. 4 legend (p. 9698)"
+verified = true

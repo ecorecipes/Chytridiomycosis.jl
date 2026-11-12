@@ -94,3 +94,39 @@ role = "uncertain"
 system = { pathogen = "Bsal", host = "Salamandra salamandra" }
 location = "Table 1 (authors' estimate; 0.1 yr^-1 also shown)"
 verified = true
+
+[[parameter]]
+symbol = "I0"
+quantity = "initial density of infectious females entering a healthy population (one per km²)"
+value = 0.01
+units = "ha^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult female" }
+location = "§2.3 (p. 4): 'an initial density of one infectious individual per square kilometre'"
+verified = true
+notes = "1 km^-2 = 0.01 ha^-1. Used for figure 1 and as the default start of the spatial model."
+
+[[parameter]]
+symbol = "habitat_area"
+quantity = "total suitable fire-salamander habitat in Germany (50 x 50 km grid squares with records)"
+value = 258750.0
+units = "km^2"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", setting = "Germany" }
+location = "§3 Results (p. 5); ESM 'Human-mediated dispersal' (from Sillero et al. 2014)"
+verified = true
+notes = "The authors' 'educated guess'; the denominator of ESM figure S3."
+
+[[parameter]]
+set = "figS3_low"
+symbol = "μ"
+quantity = "scattered-colony (long-distance introduction) rate, the lower of the two rates shown"
+value = 0.1
+units = "yr^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra" }
+location = "§3 Results (p. 5); ESM figure S3"
+verified = true
