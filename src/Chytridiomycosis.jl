@@ -8,7 +8,7 @@ units and provenance. Plans and verification notes: the OKF wiki in `../../wiki`
 module Chytridiomycosis
 
 using CommonSolve: CommonSolve, solve
-using LinearAlgebra: eigvals
+using LinearAlgebra: eigvals, diag
 using OrdinaryDiffEqTsit5: Tsit5
 using SciMLBase: SciMLBase, ODEProblem, VectorContinuousCallback, DiscreteCallback
 using Distributions: Beta, Binomial, DiscreteNonParametric, LogNormal, NegativeBinomial, Normal,
@@ -23,8 +23,9 @@ using TOML
 
 The `SciMLBase.ODEProblem` that `solve(prob)` integrates, for the problems that lower to a
 single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
-[`LoadTippingProblem`](@ref), [`BsalLarvalProblem`](@ref) and
-[`MultiHostPoolProblem`](@ref) (with its inoculation callback). Use it to solve with other
+[`LoadTippingProblem`](@ref), [`BsalLarvalProblem`](@ref),
+[`MultiHostPoolProblem`](@ref) (with its inoculation callback) and
+[`ZoosporePersistenceProblem`](@ref). Use it to solve with other
 options or to pass the model to other SciML tools.
 """
 function to_ode_problem end
@@ -57,6 +58,11 @@ include("validation.jl")
 # Daversa et al. 2022: several host species sharing one zoospore pool
 include("models/daversa2022.jl")
 
+# Rumschlag et al. 2022 (needs the units layer)
+include("models/zoospore_pool.jl")
+include("models/rumschlag2022.jl")
+include("fitting/rumschlag2022.jl")
+
 # N5
 using LinearAlgebra: svd, eigen, Symmetric, Diagonal
 using Distributions: pdf
@@ -71,6 +77,12 @@ export BriggsParameters, BriggsLoadProblem, transmission_rate, load_growth_rate,
        host_density_threshold
 export BriggsStage, BriggsSeasonalParameters, BriggsSeasonalProblem, persistence_probability
 export MitchellParameters, MitchellPondProblem
+export ZoosporePool, pool_derivatives, pool_state, qpcr_zoospores, infectious_zoospores,
+       viable_fraction
+export RumschlagParameters, ZoosporePersistenceProblem, zoospore_lifespan, persistence_time,
+       infection_probability, RumschlagCount, RumschlagTadpole, rumschlag2022_path,
+       load_rumschlag2022, RumschlagModel, rumschlag_parameters, rumschlag_model_selection,
+       rumschlag_covariance, rumschlag_summary
 export LoadBDI, aggregation, load_distribution, mean_load, prevalence, infection_gain_rate,
        infection_loss_rate, swab, enzootic_pool, enzootic_load_distribution
 export LoadTipping, LoadTippingProblem, pool_feedback, net_growth_rate, critical_immigration,

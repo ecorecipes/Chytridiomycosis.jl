@@ -1,0 +1,123 @@
+# Rumschlag SL, Roth SA, McMahon TA, Rohr JR, Civitello DJ (2022) Variability in environmental
+# persistence but not per capita transmission rates of the amphibian chytrid fungus leads to
+# differences in host infection prevalence. J Anim Ecol 91:170-181.
+# https://doi.org/10.1111/1365-2656.13612
+# Preprint: bioRxiv doi:10.1101/2021.03.17.435818 (v1, posted 2021-03-19), titled
+# "Environmental persistence but not per capita transmission rates of a chytrid fungus
+# determines infection prevalence".
+#
+# VERSION CHECKED: every record was read from the PUBLISHED version (version of record, PDF
+# from the NSF Public Access Repository, par.nsf.gov/biblio/10328896, lab/papers/
+# rumschlag2022.pdf) on 2026-11-12. It was also compared with the preprint
+# (lab/papers/rumschlag2022_preprint.pdf), and every value below is identical in both. The
+# schema has no version field, so each record repeats this in `notes`.
+#
+# System: Bd isolate SRS 810 (from Lithobates catesbeianus, USA). Hosts: Osteopilus
+# septentrionalis tadpoles (Gosner 25 at collection). Temperature 21 °C. Four waters:
+# artificial spring water (ASW) and unfiltered pond water from Trout Creek Conservation Park,
+# Flatwoods Park and Green Swamp Wilderness Preserve (Florida).
+#
+# The model is fitted in DAYS. The paper reports durations in HOURS: "dividing 24 hr by the
+# mortality or decomposition rates", so lifespan = 24/m h with m in day^-1. The lifespans and
+# the persistence time below are therefore in hours (units = "h"), and
+# RumschlagParameters(:rumschlag2022) converts them to rates per day. They come from the
+# selected model of Table 1: m varies by water, with one d and one β (df = 9). The AICc-best
+# model (also varying d, df = 12) was set aside by the paper's simplest-within-2-AICc rule
+# and a likelihood ratio test.
+#
+# "±" is a 95% CONFIDENCE INTERVAL (the paper writes "± 95% CI"), not an SE or SD. The
+# refit (test/rumschlag2022.jl) shows that each ± is half the width of the Wald interval of the
+# rate (m ± 1.96 SE), carried to hours (24/m). The true intervals are therefore asymmetric;
+# `uncertainty` stores estimate ± halfwidth exactly as printed.
+#
+# β: the paper gives no units. The refit shows that the infection data identify only
+# β·ZL(0), which is 0.7101 day^-1 here. The paper's 7.1e-6 equals that product divided by 1e5.
+# The paper therefore appears to have used a fixed ZL(0) = 1e5 in eq. 10 for the infection
+# assay; its units are unstated (perhaps zoospores per ml). That convention is INFERRED, not
+# printed. In this package's own parametrization (ZL in zoospores per µl), the refit gives
+# β = 4.97e-3 µl zoospore^-1 day^-1 with a fitted ZL(0) of 142.8 µl^-1. These refit values
+# are not published numbers and are not entered here.
+
+source = { ref = "rumschlag2022", doi = "10.1111/1365-2656.13612", review_ref = 17 }
+
+[[parameter]]
+set = "ASW"
+symbol = "lifespan"
+quantity = "expected lifespan of a live zoospore (1/m), artificial spring water"
+value = 14.4
+units = "h"
+uncertainty = { kind = "ci95", lo = 12.1, hi = 16.7, as_printed = "14.4 ± 2.3 hr (±95% CI)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "SRS 810", host = "Osteopilus septentrionalis", stage = "tadpole", temperature_C = 21.0, setting = "lab, artificial spring water" }
+location = "Results, para. 2 (p. 176)"
+verified = true
+notes = "Checked against: published version (J Anim Ecol 91:170-181) and bioRxiv preprint v1; identical. Selected model (m by water, one d, one β). Lifespan = 24 h / m, m in day^-1. Refit to the figshare data: 14.43 ± 2.33 h."
+
+[[parameter]]
+set = "TroutCreek"
+symbol = "lifespan"
+quantity = "expected lifespan of a live zoospore (1/m), Trout Creek pond water"
+value = 13.3
+units = "h"
+uncertainty = { kind = "ci95", lo = 11.1, hi = 15.5, as_printed = "13.3 ± 2.2 hr (±95% CI)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "SRS 810", host = "Osteopilus septentrionalis", stage = "tadpole", temperature_C = 21.0, setting = "lab, Trout Creek Conservation Park pond water (unfiltered)" }
+location = "Results, para. 2 (p. 176)"
+verified = true
+notes = "Checked against: published version (J Anim Ecol 91:170-181) and bioRxiv preprint v1; identical. Pond code A in the data deposit. Refit: 13.31 ± 2.22 h."
+
+[[parameter]]
+set = "Flatwoods"
+symbol = "lifespan"
+quantity = "expected lifespan of a live zoospore (1/m), Flatwoods pond water"
+value = 11.4
+units = "h"
+uncertainty = { kind = "ci95", lo = 9.8, hi = 13.0, as_printed = "11.4 ± 1.6 hr (±95% CI)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "SRS 810", host = "Osteopilus septentrionalis", stage = "tadpole", temperature_C = 21.0, setting = "lab, Flatwoods Park pond water (unfiltered)" }
+location = "Results, para. 2 (p. 176)"
+verified = true
+notes = "Checked against: published version (J Anim Ecol 91:170-181) and bioRxiv preprint v1; identical. Pond code B in the data deposit. Refit: 11.43 ± 1.57 h."
+
+[[parameter]]
+set = "GreenSwamp"
+symbol = "lifespan"
+quantity = "expected lifespan of a live zoospore (1/m), Green Swamp pond water"
+value = 9.4
+units = "h"
+uncertainty = { kind = "ci95", lo = 8.3, hi = 10.5, as_printed = "9.4 ± 1.1 hr (±95% CI)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "SRS 810", host = "Osteopilus septentrionalis", stage = "tadpole", temperature_C = 21.0, setting = "lab, Green Swamp Wilderness Preserve pond water (unfiltered)" }
+location = "Results, para. 2 (p. 176)"
+verified = true
+notes = "Checked against: published version (J Anim Ecol 91:170-181) and bioRxiv preprint v1; identical. Pond code C in the data deposit. Refit: 9.38 ± 1.10 h."
+
+[[parameter]]
+symbol = "persistence"
+quantity = "expected time from death of a zoospore to complete decomposition (1/d), common to all four waters"
+value = 21.6
+units = "h"
+uncertainty = { kind = "ci95", lo = 16.4, hi = 26.8, as_printed = "21.6 ± 5.2 hr (±95% CI)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "SRS 810", temperature_C = 21.0, setting = "lab, four waters" }
+location = "Results, para. 3 (p. 176)"
+verified = true
+notes = "Checked against: published version (J Anim Ecol 91:170-181) and bioRxiv preprint v1; identical. Persistence = 24 h / d, d in day^-1. Includes abiotic and biotic loss (paper). Refit: 21.56 ± 5.22 h."
+
+[[parameter]]
+symbol = "β"
+quantity = "per capita transmission rate, common to all four waters, on the paper's (unstated) scale"
+value = 7.1e-6
+units = "day^-1 ZL0^-1"
+uncertainty = { kind = "ci95", lo = 4.5e-6, hi = 9.7e-6, as_printed = "7.1 × 10^-6 ± 2.6 × 10^-6 (95% CI)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "SRS 810", host = "Osteopilus septentrionalis", stage = "tadpole", temperature_C = 21.0, setting = "lab, 100 ml containers, one tadpole, 1-day exposure" }
+location = "Results, para. 4 (p. 176)"
+verified = true
+notes = "Checked against: published version (J Anim Ecol 91:170-181) and bioRxiv preprint v1; identical. Units not given in the paper. Reproduced only as β·ZL(0)/1e5, where ZL(0) is the fitted initial live concentration (µl^-1): refit 7.10e-6 ± 2.6e-6. The paper's Fig. 4 needs β·ZL(0) = 0.710 day^-1; with ZL(0) ≈ 143 µl^-1 (Fig. 3a) the printed β is about 1e5 times too small. Pair this value with ZL0 = 1e5 in infection_probability (an inferred convention, not printed)."
