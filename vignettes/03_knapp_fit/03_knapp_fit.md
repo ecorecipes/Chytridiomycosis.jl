@@ -50,6 +50,7 @@ lividum* had anything to do with it.
 ``` julia
 using Chytridiomycosis, Plots, Printf
 using Distributions: median
+include("../diagram.jl")
 default(linewidth = 2, size = (720, 380), legendfontsize = 8, guidefontsize = 9,
     titlefontsize = 10, left_margin = 4Plots.mm, bottom_margin = 4Plots.mm)
 
@@ -133,12 +134,52 @@ with a time scale of $1/|r_0| \approx 6$ days. That is the problem: on
 its own the equation would return treated frogs to the wild level within
 two weeks of release.
 
-Untreated groups start at their equilibrium. Treated frogs start at a
-fitted load on day 0; their swabs on day −7, before treatment, are
-predicted by the untreated equilibrium. *J. lividum* falls exponentially
-from its day-12 level, at one rate on treated frogs and another on wild
-and control frogs. Swabs are lognormal around the median, and a swab
-with nothing detected is counted as below one copy.
+![The fitted model for one group of frogs. Solid arrows are flows of Bd
+load; dashed arrows show what sets the extra clearance under each
+mechanism.](03_knapp_fit_files/figure-commonmark/cell-5-output-1.svg)
+
+The four mechanisms differ only in the extra clearance $s_g(t)$ of group
+$g$ (treated $T$, wild $W$ or control $C$), with time $t$ in days from
+the first bath:
+
+$$s_g(t) =
+\begin{cases}
+0 & \text{none} \\
+\Delta c\, e^{-t/\tau} \text{ for } g = T,\ t \ge 0, \text{ else } 0 & \text{decay} \\
+\Delta c\, J_T(t)/(J_T(t) + K) \text{ for } g = T,\ t \ge 0, \text{ else } 0 & \text{applied} \\
+\Delta c\, J_g(t)/(J_g(t) + K) & \text{bacteria}
+\end{cases}$$
+
+*J. lividum* falls exponentially from its day-12 level $a_g$, with
+half-life $h_T$ on treated frogs and $h_W$ on wild and control frogs,
+which are held at their day-12 level before day 12:
+
+$$J_T(t) = a_T\, 2^{-(t - 12)/h_T}, \qquad
+J_g(t) = a_g\, 2^{-\max(t - 12,\, 0)/h_W} \quad (g = W, C).$$
+
+Untreated groups start at their equilibrium, the positive root of
+$\iota + r_0 L - s L/(h + L) = 0$. Treated frogs start at a fitted load
+$L_0$ on day 0; their swabs on day −7, before treatment, are predicted
+by the untreated equilibrium (for `bacteria`, with the controls’ *J.
+lividum*). Each swab $y$ is lognormal around the median, and a swab with
+nothing detected is counted as below one copy:
+
+$$\log y \sim \mathrm{Normal}(\log L_g(t),\ \sigma^2), \qquad
+\Pr(y = 0) = \Pr(\log y < 0),$$
+
+and likewise for *J. lividum* with its own standard deviation
+$\sigma_J$.
+
+| Symbol | Meaning | Value |
+|----|----|----|
+| $\iota$ | infection from the pond (copies per swab per day) | fitted |
+| $r_0 = \eta\nu f - \sigma$ | within-frog rate (per day) | compendium (briggs2010) |
+| $\Delta c$, $h$ | most extra clearance (copies per day); load at which it halves | fitted |
+| $\tau$ | time scale of waning, `decay` (days) | fitted |
+| $K$ | *J. lividum* giving half the extra clearance | fitted |
+| $L_0$ | load of treated frogs on day 0 | fitted |
+| $a_T, a_W, a_C$; $h_T, h_W$ | *J. lividum* on day 12; its half-lives (days) | fitted |
+| $\sigma$, $\sigma_J$ | standard deviations of log Bd and log *J. lividum* | fitted |
 
 ``` julia
 mechanisms = (:none, :decay, :applied, :bacteria)
@@ -181,7 +222,7 @@ nothing
 fit_panels(:none)
 ```
 
-![](03_knapp_fit_files/figure-commonmark/cell-7-output-1.svg)
+![](03_knapp_fit_files/figure-commonmark/cell-8-output-1.svg)
 
 Treated frogs return to the common level by day 12 and stay there. The
 fit compromises: it sets that level between treated and untreated frogs,
@@ -197,7 +238,7 @@ frogs get none.
 fit_panels(:decay)
 ```
 
-![](03_knapp_fit_files/figure-commonmark/cell-8-output-1.svg)
+![](03_knapp_fit_files/figure-commonmark/cell-9-output-1.svg)
 
 ### Step 3: suppression from the applied bacteria
 
@@ -211,7 +252,7 @@ differed from the residents (the assay cannot tell them apart).
 fit_panels(:applied)
 ```
 
-![](03_knapp_fit_files/figure-commonmark/cell-9-output-1.svg)
+![](03_knapp_fit_files/figure-commonmark/cell-10-output-1.svg)
 
 ### Step 4: every *J. lividum* protects
 
@@ -223,7 +264,7 @@ residents on wild and control frogs should protect them too.
 fit_panels(:bacteria)
 ```
 
-![](03_knapp_fit_files/figure-commonmark/cell-10-output-1.svg)
+![](03_knapp_fit_files/figure-commonmark/cell-11-output-1.svg)
 
 ## Comparing the four
 
@@ -297,7 +338,7 @@ plot(profile_plot(fd, :τ, τs; xlabel = "τ (days), step 2"),
      profile_plot(fa, :h, hs; xlabel = "h (copies), step 3"); layout = (1, 3), size = (900, 300))
 ```
 
-![](03_knapp_fit_files/figure-commonmark/cell-13-output-1.svg)
+![](03_knapp_fit_files/figure-commonmark/cell-14-output-1.svg)
 
 - **Step 2:** the suppression wanes on a time scale $\tau$ of between
   roughly 17 and 200 days.

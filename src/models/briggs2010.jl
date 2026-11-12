@@ -4,8 +4,8 @@
 # Wiki: lab/wiki/models/bd-briggs2010-load.md
 #
 #   dS_i/dt = (νγ/V) Z + ηνf S_i − σ S_i                        (main text; β = νγ)
-#   dZ/dt   = η(1−f) Σ_alive S_i − μZ − (γ/V) Z N_alive          (review §4.1, with its β read
-#                                                                 as γ; pending the PNAS SI)
+#   dZ/dt   = η(1−f) Σ_alive S_i − μZ − (γ/V) Z N_alive          (checked against the PNAS SI;
+#                                                                 the review's β is γ)
 
 """
     BriggsParameters(; V, γ, ν, f, μ, η, σ, Smax)

@@ -50,6 +50,7 @@ lividum* had anything to do with it.
 ``` julia
 using Chytridiomycosis, Plots, Printf
 using Distributions: median
+include("../diagram.jl")
 default(linewidth = 2, size = (720, 380), legendfontsize = 8, guidefontsize = 9,
     titlefontsize = 10, left_margin = 4Plots.mm, bottom_margin = 4Plots.mm)
 
@@ -117,28 +118,76 @@ plot(data_panel.(groups)...; layout = (1, 3), size = (900, 330))
 
 ## The model
 
-Each group is described by its median load $L$ (ITS copies per swab):
+Each group is described by its median load ``L`` (ITS copies per swab):
 
-$$\frac{dL}{dt} = \iota + r_0 L - s(t)\,\frac{L}{h + L}.$$
+```math
+\frac{dL}{dt} = \iota + r_0 L - s(t)\,\frac{L}{h + L}.
+```
 
-- $\iota$ is infection from outside the frog, by zoospores in the pond.
-- $r_0 = \eta\nu f - \sigma$ is the within-frog rate of the Briggs et
+- ``\iota`` is infection from outside the frog, by zoospores in the pond.
+- ``r_0 = \eta\nu f - \sigma`` is the within-frog rate of the Briggs et
   al. (2010) model. It is negative, so a frog’s own zoospores cannot
   sustain its load.
-- $s(t)\,L/(h + L)$ is extra clearance. It is strongest when the load is
+- ``s(t)\,L/(h + L)`` is extra clearance. It is strongest when the load is
   small and saturates when the load is large.
 
-Without extra clearance, every frog settles at $L^\ast = \iota/(-r_0)$,
-with a time scale of $1/|r_0| \approx 6$ days. That is the problem: on
+Without extra clearance, every frog settles at ``L^\ast = \iota/(-r_0)``,
+with a time scale of ``1/|r_0| \approx 6`` days. That is the problem: on
 its own the equation would return treated frogs to the wild level within
 two weeks of release.
 
-Untreated groups start at their equilibrium. Treated frogs start at a
-fitted load on day 0; their swabs on day −7, before treatment, are
-predicted by the untreated equilibrium. *J. lividum* falls exponentially
-from its day-12 level, at one rate on treated frogs and another on wild
-and control frogs. Swabs are lognormal around the median, and a swab
-with nothing detected is counted as below one copy.
+![The fitted model for one group of frogs. Solid arrows are flows of Bd
+load; dashed arrows show what sets the extra clearance under each
+mechanism.](03_knapp_fit_files/figure-commonmark/cell-5-output-1.svg)
+
+The four mechanisms differ only in the extra clearance ``s_g(t)`` of group
+``g`` (treated ``T``, wild ``W`` or control ``C``), with time ``t`` in days from
+the first bath:
+
+```math
+s_g(t) =
+\begin{cases}
+0 & \text{none} \\
+\Delta c\, e^{-t/\tau} \text{ for } g = T,\ t \ge 0, \text{ else } 0 & \text{decay} \\
+\Delta c\, J_T(t)/(J_T(t) + K) \text{ for } g = T,\ t \ge 0, \text{ else } 0 & \text{applied} \\
+\Delta c\, J_g(t)/(J_g(t) + K) & \text{bacteria}
+\end{cases}
+```
+
+*J. lividum* falls exponentially from its day-12 level ``a_g``, with
+half-life ``h_T`` on treated frogs and ``h_W`` on wild and control frogs,
+which are held at their day-12 level before day 12:
+
+```math
+J_T(t) = a_T\, 2^{-(t - 12)/h_T}, \qquad
+J_g(t) = a_g\, 2^{-\max(t - 12,\, 0)/h_W} \quad (g = W, C).
+```
+
+Untreated groups start at their equilibrium, the positive root of
+``\iota + r_0 L - s L/(h + L) = 0``. Treated frogs start at a fitted load
+``L_0`` on day 0; their swabs on day −7, before treatment, are predicted
+by the untreated equilibrium (for `bacteria`, with the controls’ *J.
+lividum*). Each swab ``y`` is lognormal around the median, and a swab with
+nothing detected is counted as below one copy:
+
+```math
+\log y \sim \mathrm{Normal}(\log L_g(t),\ \sigma^2), \qquad
+\Pr(y = 0) = \Pr(\log y < 0),
+```
+
+and likewise for *J. lividum* with its own standard deviation
+``\sigma_J``.
+
+| Symbol | Meaning | Value |
+|----|----|----|
+| ``\iota`` | infection from the pond (copies per swab per day) | fitted |
+| ``r_0 = \eta\nu f - \sigma`` | within-frog rate (per day) | compendium (briggs2010) |
+| ``\Delta c``, ``h`` | most extra clearance (copies per day); load at which it halves | fitted |
+| ``\tau`` | time scale of waning, `decay` (days) | fitted |
+| ``K`` | *J. lividum* giving half the extra clearance | fitted |
+| ``L_0`` | load of treated frogs on day 0 | fitted |
+| ``a_T, a_W, a_C``; ``h_T, h_W`` | *J. lividum* on day 12; its half-lives (days) | fitted |
+| ``\sigma``, ``\sigma_J`` | standard deviations of log Bd and log *J. lividum* | fitted |
 
 ``` julia
 mechanisms = (:none, :decay, :applied, :bacteria)
@@ -150,7 +199,7 @@ r0 = models[:none].r0
 
     r0 = -0.1562 per day
 
-The fits below compare four explanations for $s(t)$, from simplest to
+The fits below compare four explanations for ``s(t)``, from simplest to
 most complex. Each is fitted to every swab, Bd and *J. lividum* alike,
 from eight starting points. In the figures, the red line is the fitted
 median load. Swabs with no Bd detected are plotted at 0 and count in the
@@ -181,7 +230,7 @@ nothing
 fit_panels(:none)
 ```
 
-![](03_knapp_fit_files/figure-commonmark/cell-7-output-1.svg)
+![](03_knapp_fit_files/figure-commonmark/cell-8-output-1.svg)
 
 Treated frogs return to the common level by day 12 and stay there. The
 fit compromises: it sets that level between treated and untreated frogs,
@@ -189,7 +238,7 @@ too low for wild frogs and too high for treated ones.
 
 ### Step 2: suppression that wanes
 
-Now treated frogs get extra clearance $s(t) = \Delta c\, e^{-t/\tau}$
+Now treated frogs get extra clearance ``s(t) = \Delta c\, e^{-t/\tau}``
 from day 0 on, as leftover antifungal drug would provide. Untreated
 frogs get none.
 
@@ -197,12 +246,12 @@ frogs get none.
 fit_panels(:decay)
 ```
 
-![](03_knapp_fit_files/figure-commonmark/cell-8-output-1.svg)
+![](03_knapp_fit_files/figure-commonmark/cell-9-output-1.svg)
 
 ### Step 3: suppression from the applied bacteria
 
 The extra clearance on treated frogs now follows their *J. lividum*:
-$s(t) = \Delta c\, J(t)/(J(t) + K)$. It is strong while the bacteria are
+``s(t) = \Delta c\, J(t)/(J(t) + K)``. It is strong while the bacteria are
 abundant and fades as they disappear. Resident *J. lividum* on wild and
 control frogs is assumed to have no effect, as if the applied isolate
 differed from the residents (the assay cannot tell them apart).
@@ -211,7 +260,7 @@ differed from the residents (the assay cannot tell them apart).
 fit_panels(:applied)
 ```
 
-![](03_knapp_fit_files/figure-commonmark/cell-9-output-1.svg)
+![](03_knapp_fit_files/figure-commonmark/cell-10-output-1.svg)
 
 ### Step 4: every *J. lividum* protects
 
@@ -223,7 +272,7 @@ residents on wild and control frogs should protect them too.
 fit_panels(:bacteria)
 ```
 
-![](03_knapp_fit_files/figure-commonmark/cell-10-output-1.svg)
+![](03_knapp_fit_files/figure-commonmark/cell-11-output-1.svg)
 
 ## Comparing the four
 
@@ -297,16 +346,16 @@ plot(profile_plot(fd, :τ, τs; xlabel = "τ (days), step 2"),
      profile_plot(fa, :h, hs; xlabel = "h (copies), step 3"); layout = (1, 3), size = (900, 300))
 ```
 
-![](03_knapp_fit_files/figure-commonmark/cell-13-output-1.svg)
+![](03_knapp_fit_files/figure-commonmark/cell-14-output-1.svg)
 
-- **Step 2:** the suppression wanes on a time scale $\tau$ of between
+- **Step 2:** the suppression wanes on a time scale ``\tau`` of between
   roughly 17 and 200 days.
-- **Step 3:** the half-saturation $K$ is between about 0.01 and 3
+- **Step 3:** the half-saturation ``K`` is between about 0.01 and 3
   genomic equivalents, at or below one cell’s worth of DNA on a swab.
   The fit says the bacteria protect fully until they are almost
   undetectable. The rise in Bd between days 37 and 56 coincides with the
   last *J. lividum* vanishing, and that coincidence is all step 3 uses.
-- **The saturating load $h$ is not identified.** No group’s load passes
+- **The saturating load ``h`` is not identified.** No group’s load passes
   through the saturating range slowly enough to measure it.
 
 ## What the fit shows
@@ -328,12 +377,12 @@ plot(profile_plot(fd, :τ, τs; xlabel = "τ (days), step 2"),
 - **Groups, not individuals.** Swabs are treated as independent draws.
   Repeated swabs of the same frogs and the loss of frogs that died both
   bias the sample. Survivors may carry less Bd than the frogs that died.
-- **A fixed outside infection rate.** $\iota$ is constant, although the
+- **A fixed outside infection rate.** ``\iota`` is constant, although the
   zoospores in the pond depend on the loads of all frogs. Treating many
   frogs would lower it. The package’s load tipping model includes this
   feedback; the fit does not.
-- **Lab parameters.** $r_0$ is taken from Briggs et al. (2010). ITS
-  copies per swab are not sporangia, so $\iota$, $h$ and $\Delta c$ are
+- **Lab parameters.** ``r_0`` is taken from Briggs et al. (2010). ITS
+  copies per swab are not sporangia, so ``\iota``, ``h`` and ``\Delta c`` are
   on the swab scale and cannot be moved into the sporangium models
   without a conversion factor.
 - **A species-level assay.** The *J. lividum* qPCR does not distinguish

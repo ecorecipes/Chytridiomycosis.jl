@@ -1,0 +1,118 @@
+<svg width="625pt" height="206pt"
+ viewBox="0.00 0.00 625.00 206.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 202)">
+<!-- bath -->
+<g id="node1" class="node">
+<title>bath</title>
+<text xml:space="preserve" text-anchor="middle" x="45.76" y="-120.55" font-family="Helvetica,sans-Serif" font-size="11.00">bath</text>
+<text xml:space="preserve" text-anchor="middle" x="45.76" y="-108.55" font-family="Helvetica,sans-Serif" font-size="11.00">(days 0, 90, …)</text>
+</g>
+<!-- Bi -->
+<g id="node2" class="node">
+<title>Bi</title>
+<path fill="#cfe2f3" stroke="#555555" d="M225.06,-137C225.06,-137 180.78,-137 180.78,-137 174.78,-137 168.78,-131 168.78,-125 168.78,-125 168.78,-113 168.78,-113 168.78,-107 174.78,-101 180.78,-101 180.78,-101 225.06,-101 225.06,-101 231.06,-101 237.06,-107 237.06,-113 237.06,-113 237.06,-125 237.06,-125 237.06,-131 231.06,-137 225.06,-137"/>
+<text xml:space="preserve" text-anchor="start" x="177.42" y="-120.55" font-family="Helvetica,sans-Serif" font-size="11.00">bacteria B</text>
+<text xml:space="preserve" text-anchor="start" x="226.17" y="-120.55" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="11.00">i</text>
+<text xml:space="preserve" text-anchor="start" x="183.42" y="-109.55" font-family="Helvetica,sans-Serif" font-size="11.00">on frog i</text>
+</g>
+<!-- bath&#45;&gt;Bi -->
+<g id="edge1" class="edge">
+<title>bath&#45;&gt;Bi</title>
+<path fill="none" stroke="#444444" d="M91.23,-119C112.79,-119 138.56,-119 159.8,-119"/>
+<polygon fill="#444444" stroke="#444444" points="159.79,-121.45 166.79,-119 159.79,-116.55 159.79,-121.45"/>
+<text xml:space="preserve" text-anchor="start" x="109.53" y="-121.2" font-family="Helvetica,sans-Serif" font-size="9.00">sets B</text>
+<text xml:space="preserve" text-anchor="start" x="134.28" y="-121.2" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">i</text>
+<text xml:space="preserve" text-anchor="start" x="135.78" y="-121.2" font-family="Helvetica,sans-Serif" font-size="9.00"> = 1</text>
+</g>
+<!-- Bj -->
+<g id="node3" class="node">
+<title>Bj</title>
+<path fill="#cfe2f3" stroke="#555555" d="M408.84,-198C408.84,-198 351.06,-198 351.06,-198 345.06,-198 339.06,-192 339.06,-186 339.06,-186 339.06,-174 339.06,-174 339.06,-168 345.06,-162 351.06,-162 351.06,-162 408.84,-162 408.84,-162 414.84,-162 420.84,-168 420.84,-174 420.84,-174 420.84,-186 420.84,-186 420.84,-192 414.84,-198 408.84,-198"/>
+<text xml:space="preserve" text-anchor="start" x="347.7" y="-176.55" font-family="Helvetica,sans-Serif" font-size="11.00">other frogs B</text>
+<text xml:space="preserve" text-anchor="start" x="409.95" y="-176.55" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="11.00">j</text>
+</g>
+<!-- Bi&#45;&gt;Bj -->
+<g id="edge3" class="edge">
+<title>Bi&#45;&gt;Bj</title>
+<path fill="none" stroke="#444444" d="M244.97,-133.31C270.69,-142.27 303.94,-153.86 330.89,-163.25"/>
+<polygon fill="#444444" stroke="#444444" points="246.1,-131.11 238.68,-131.12 244.49,-135.73 246.1,-131.11"/>
+<polygon fill="#444444" stroke="#444444" points="329.83,-165.47 337.24,-165.47 331.44,-160.85 329.83,-165.47"/>
+<text xml:space="preserve" text-anchor="start" x="267.81" y="-168.98" font-family="Helvetica,sans-Serif" font-size="9.00">exchange</text>
+<text xml:space="preserve" text-anchor="start" x="271.18" y="-159.98" font-family="Helvetica,sans-Serif" font-size="9.00">x(B̄ − B</text>
+<text xml:space="preserve" text-anchor="start" x="300.43" y="-159.98" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">i</text>
+<text xml:space="preserve" text-anchor="start" x="301.93" y="-159.98" font-family="Helvetica,sans-Serif" font-size="9.00">)</text>
+</g>
+<!-- lostB -->
+<g id="node4" class="node">
+<title>lostB</title>
+<text xml:space="preserve" text-anchor="middle" x="379.95" y="-114.55" font-family="Helvetica,sans-Serif" font-size="11.00">lost</text>
+</g>
+<!-- Bi&#45;&gt;lostB -->
+<g id="edge2" class="edge">
+<title>Bi&#45;&gt;lostB</title>
+<path fill="none" stroke="#444444" d="M237.25,-119C268.08,-119 313.69,-119 344.78,-119"/>
+<polygon fill="#444444" stroke="#444444" points="344.62,-121.45 351.62,-119 344.62,-116.55 344.62,-121.45"/>
+<text xml:space="preserve" text-anchor="start" x="281.68" y="-121.2" font-family="Helvetica,sans-Serif" font-size="9.00">δB</text>
+<text xml:space="preserve" text-anchor="start" x="292.93" y="-121.2" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">i</text>
+</g>
+<!-- Si -->
+<g id="node5" class="node">
+<title>Si</title>
+<path fill="#f2f2f2" stroke="#555555" d="M406.59,-76C406.59,-76 353.31,-76 353.31,-76 347.31,-76 341.31,-70 341.31,-64 341.31,-64 341.31,-52 341.31,-52 341.31,-46 347.31,-40 353.31,-40 353.31,-40 406.59,-40 406.59,-40 412.59,-40 418.59,-46 418.59,-52 418.59,-52 418.59,-64 418.59,-64 418.59,-70 412.59,-76 406.59,-76"/>
+<text xml:space="preserve" text-anchor="start" x="349.95" y="-59.55" font-family="Helvetica,sans-Serif" font-size="11.00">sporangia S</text>
+<text xml:space="preserve" text-anchor="start" x="407.7" y="-59.55" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="11.00">i</text>
+<text xml:space="preserve" text-anchor="start" x="360.45" y="-48.55" font-family="Helvetica,sans-Serif" font-size="11.00">on frog i</text>
+</g>
+<!-- Bi&#45;&gt;Si -->
+<g id="edge4" class="edge">
+<title>Bi&#45;&gt;Si</title>
+<path fill="none" stroke="#888888" stroke-dasharray="5,2" d="M237.45,-102.4C243.26,-99.77 249.29,-97.2 255.06,-95 280.39,-85.34 309.39,-76.56 332.96,-69.98"/>
+<polygon fill="#888888" stroke="#888888" points="333.5,-72.37 339.6,-68.15 332.2,-67.65 333.5,-72.37"/>
+<text xml:space="preserve" text-anchor="start" x="271.56" y="-105.45" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#666666">raises c</text>
+<text xml:space="preserve" text-anchor="start" x="303.06" y="-105.45" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00" fill="#666666">i</text>
+<text xml:space="preserve" text-anchor="start" x="255.06" y="-96.45" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#666666">from c toward c</text>
+<text xml:space="preserve" text-anchor="start" x="316.56" y="-96.45" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00" fill="#666666">T</text>
+</g>
+<!-- Z -->
+<g id="node6" class="node">
+<title>Z</title>
+<ellipse fill="#e2efda" stroke="#555555" cx="570.29" cy="-88" rx="46.7" ry="18"/>
+<text xml:space="preserve" text-anchor="middle" x="570.29" y="-83.55" font-family="Helvetica,sans-Serif" font-size="11.00">zoospores Z</text>
+</g>
+<!-- Si&#45;&gt;Z -->
+<g id="edge6" class="edge">
+<title>Si&#45;&gt;Z</title>
+<path fill="none" stroke="#444444" d="M418.9,-65.45C425.54,-66.69 432.38,-67.92 438.84,-69 464.68,-73.34 493.51,-77.59 517.47,-80.98"/>
+<polygon fill="#444444" stroke="#444444" points="516.96,-83.38 524.24,-81.92 517.64,-78.53 516.96,-83.38"/>
+<text xml:space="preserve" text-anchor="start" x="455.34" y="-81.1" font-family="Helvetica,sans-Serif" font-size="9.00">η(1−f) S</text>
+<text xml:space="preserve" text-anchor="start" x="487.59" y="-81.1" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">i</text>
+</g>
+<!-- lostS -->
+<g id="node7" class="node">
+<title>lostS</title>
+<text xml:space="preserve" text-anchor="middle" x="570.29" y="-13.55" font-family="Helvetica,sans-Serif" font-size="11.00">lost</text>
+</g>
+<!-- Si&#45;&gt;lostS -->
+<g id="edge7" class="edge">
+<title>Si&#45;&gt;lostS</title>
+<path fill="none" stroke="#444444" d="M418.92,-43.19C425.5,-40.97 432.32,-38.88 438.84,-37.25 471.1,-29.17 508.76,-24.06 535.3,-21.15"/>
+<polygon fill="#444444" stroke="#444444" points="535.29,-23.62 542,-20.45 534.78,-18.75 535.29,-23.62"/>
+<text xml:space="preserve" text-anchor="start" x="438.84" y="-39.45" font-family="Helvetica,sans-Serif" font-size="9.00">σS</text>
+<text xml:space="preserve" text-anchor="start" x="450.09" y="-39.45" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">i</text>
+<text xml:space="preserve" text-anchor="start" x="451.59" y="-39.45" font-family="Helvetica,sans-Serif" font-size="9.00"> + c</text>
+<text xml:space="preserve" text-anchor="start" x="465.84" y="-39.45" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">i</text>
+<text xml:space="preserve" text-anchor="start" x="467.34" y="-39.45" font-family="Helvetica,sans-Serif" font-size="9.00">S</text>
+<text xml:space="preserve" text-anchor="start" x="473.34" y="-39.45" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">i</text>
+<text xml:space="preserve" text-anchor="start" x="474.84" y="-39.45" font-family="Helvetica,sans-Serif" font-size="9.00">/(h + S</text>
+<text xml:space="preserve" text-anchor="start" x="501.09" y="-39.45" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">i</text>
+<text xml:space="preserve" text-anchor="start" x="502.59" y="-39.45" font-family="Helvetica,sans-Serif" font-size="9.00">)</text>
+</g>
+<!-- Z&#45;&gt;Si -->
+<g id="edge5" class="edge">
+<title>Z&#45;&gt;Si</title>
+<path fill="none" stroke="#444444" d="M543.55,-72.86C532.3,-67.08 518.69,-61.17 505.59,-58.25 480.2,-52.59 451.16,-52.19 427.51,-53.36"/>
+<polygon fill="#444444" stroke="#444444" points="427.41,-50.91 420.56,-53.76 427.7,-55.8 427.41,-50.91"/>
+<text xml:space="preserve" text-anchor="middle" x="472.21" y="-59.45" font-family="Helvetica,sans-Serif" font-size="9.00">(νγ/V) Z</text>
+</g>
+</g>
+</svg>

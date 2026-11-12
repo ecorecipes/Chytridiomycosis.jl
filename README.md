@@ -64,8 +64,14 @@ explanations. Something held treated frogs' loads down for weeks. A waning drug 
 bacteria fit about equally well, but resident *J. lividum* at the measured abundances did not
 protect.
 
+Each vignette writes out the equations of every model it runs, with a symbol table and a
+diagram of the model.
+
 Vignettes are Quarto documents with executable Julia code, rendered to HTML, PDF and
-Markdown: run `quarto render` in `vignettes/`.
+Markdown: run `quarto render` in `vignettes/`. Drawing the diagrams needs
+[Graphviz](https://graphviz.org) (the `dot` program) on the `PATH`, and the PDFs need
+`rsvg-convert` (librsvg) to convert them. Render one vignette and one format at a time, since
+Quarto's Julia engine shares one notebook server.
 
 ## Parameters
 

@@ -205,7 +205,9 @@ end
 One host–pathogen–microbiome model with each piece of biology switched on or off by
 `biology`. The population starts at its disease-free state; at each of `treat_times` a
 fraction `coverage` of the untreated animals in `treat` (`:adults`, `:larvae`, `:both`) is
-treated; `I0` infectious adults per ha arrive at `t_intro`. Time in years.
+treated; `I0` infectious adults per ha arrive at `t_intro`. Time in years. Treated animals
+pass the bacteria on within their stage through `treatment.direct`; there is no environmental
+reservoir of bacteria, so `treatment.environmental` must be 0.
 
 `solve` returns series `t`, `adults`, `infected` (adults in any infected class) and
 `min_adults`, `mean_adults`, `final_adults` (fractions of `K`, after `t_intro`),
@@ -234,6 +236,9 @@ function NestedChytridProblem(p::SchmidtParameters, biology::ChytridBiology,
         throw(ArgumentError("treating larvae needs biology.larvae = true"))
     (0 <= coverage <= 1 && 0 <= retention <= 1) ||
         throw(ArgumentError("coverage and retention must be in [0, 1]"))
+    treatment.environmental == 0 ||
+        throw(ArgumentError("the nested model has no environmental reservoir of bacteria; " *
+                            "set environmental = 0 (spread is through `direct` only)"))
     return NestedChytridProblem(p, biology, treatment, treat, float(coverage),
         collect(float.(treat_times)), float(retention), float(t_intro), float(I0),
         (float(tspan[1]), float(tspan[2])))

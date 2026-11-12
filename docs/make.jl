@@ -10,7 +10,9 @@ makedocs(;
          format = Documenter.HTML(;
                                   prettyurls = get(ENV, "CI", "false") == "true",
                                   canonical = "https://ecorecipes.github.io/Chytridiomycosis.jl",
-                                  size_threshold = 2^21),
+                                  size_threshold = 2^21,
+                                  # the tutorials carry equations and SVG figures inline
+                                  size_threshold_warn = 2^18),
          pages = ["Home" => "index.md",
                   "Tutorials" => ["Building biological realism" => "tutorials/01_building_realism.md",
                                   "One model, many switches" => "tutorials/02_nested_model.md",

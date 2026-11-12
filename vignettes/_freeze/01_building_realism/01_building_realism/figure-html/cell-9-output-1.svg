@@ -1,0 +1,141 @@
+<svg width="639pt" height="205pt"
+ viewBox="0.00 0.00 639.00 205.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 200.78)">
+<g id="clust1" class="cluster">
+<title>cluster_larvae</title>
+<path fill="none" stroke="#999999" d="M60.82,-107.78C60.82,-107.78 234.38,-107.78 234.38,-107.78 240.38,-107.78 246.38,-113.78 246.38,-119.78 246.38,-119.78 246.38,-167.78 246.38,-167.78 246.38,-173.78 240.38,-179.78 234.38,-179.78 234.38,-179.78 60.82,-179.78 60.82,-179.78 54.82,-179.78 48.82,-173.78 48.82,-167.78 48.82,-167.78 48.82,-119.78 48.82,-119.78 48.82,-113.78 54.82,-107.78 60.82,-107.78"/>
+<text xml:space="preserve" text-anchor="middle" x="147.6" y="-165.33" font-family="Helvetica,sans-Serif" font-size="11.00">larvae</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster_adults</title>
+<path fill="none" stroke="#999999" d="M313.63,-56.78C313.63,-56.78 579.44,-56.78 579.44,-56.78 585.44,-56.78 591.44,-62.78 591.44,-68.78 591.44,-68.78 591.44,-176.78 591.44,-176.78 591.44,-182.78 585.44,-188.78 579.44,-188.78 579.44,-188.78 313.63,-188.78 313.63,-188.78 307.63,-188.78 301.63,-182.78 301.63,-176.78 301.63,-176.78 301.63,-68.78 301.63,-68.78 301.63,-62.78 307.63,-56.78 313.63,-56.78"/>
+<text xml:space="preserve" text-anchor="middle" x="446.53" y="-174.33" font-family="Helvetica,sans-Serif" font-size="11.00">adults</text>
+</g>
+<!-- birth -->
+<g id="node1" class="node">
+<title>birth</title>
+<ellipse fill="#f2f2f2" stroke="#555555" cx="2.16" cy="-133.78" rx="2.16" ry="2.16"/>
+</g>
+<!-- WS -->
+<g id="node2" class="node">
+<title>WS</title>
+<path fill="#f2f2f2" stroke="#555555" d="M111.6,-151.78C111.6,-151.78 68.82,-151.78 68.82,-151.78 62.82,-151.78 56.82,-145.78 56.82,-139.78 56.82,-139.78 56.82,-127.78 56.82,-127.78 56.82,-121.78 62.82,-115.78 68.82,-115.78 68.82,-115.78 111.6,-115.78 111.6,-115.78 117.6,-115.78 123.6,-121.78 123.6,-127.78 123.6,-127.78 123.6,-139.78 123.6,-139.78 123.6,-145.78 117.6,-151.78 111.6,-151.78"/>
+<text xml:space="preserve" text-anchor="start" x="82.33" y="-135.33" font-family="Helvetica,sans-Serif" font-size="11.00">W</text>
+<text xml:space="preserve" text-anchor="start" x="92.83" y="-135.33" font-family="Helvetica,sans-Serif" font-size="8.00">S</text>
+<text xml:space="preserve" text-anchor="start" x="65.46" y="-124.33" font-family="Helvetica,sans-Serif" font-size="11.00">uninfected</text>
+</g>
+<!-- birth&#45;&gt;WS -->
+<g id="edge1" class="edge">
+<title>birth&#45;&gt;WS</title>
+<path fill="none" stroke="#444444" d="M4.65,-133.78C10.1,-133.78 29.54,-133.78 48.42,-133.78"/>
+<polygon fill="#444444" stroke="#444444" points="48.2,-136.23 55.2,-133.78 48.2,-131.33 48.2,-136.23"/>
+<text xml:space="preserve" text-anchor="middle" x="30.57" y="-134.98" font-family="Helvetica,sans-Serif" font-size="9.00">b′ S</text>
+</g>
+<!-- WI -->
+<g id="node3" class="node">
+<title>WI</title>
+<path fill="#fde9c9" stroke="#555555" d="M226.38,-151.78C226.38,-151.78 195.6,-151.78 195.6,-151.78 189.6,-151.78 183.6,-145.78 183.6,-139.78 183.6,-139.78 183.6,-127.78 183.6,-127.78 183.6,-121.78 189.6,-115.78 195.6,-115.78 195.6,-115.78 226.38,-115.78 226.38,-115.78 232.38,-115.78 238.38,-121.78 238.38,-127.78 238.38,-127.78 238.38,-139.78 238.38,-139.78 238.38,-145.78 232.38,-151.78 226.38,-151.78"/>
+<text xml:space="preserve" text-anchor="start" x="204.61" y="-135.33" font-family="Helvetica,sans-Serif" font-size="11.00">W</text>
+<text xml:space="preserve" text-anchor="start" x="215.11" y="-135.33" font-family="Helvetica,sans-Serif" font-size="8.00">I</text>
+<text xml:space="preserve" text-anchor="start" x="192.24" y="-124.33" font-family="Helvetica,sans-Serif" font-size="11.00">infected</text>
+</g>
+<!-- WS&#45;&gt;WI -->
+<g id="edge2" class="edge">
+<title>WS&#45;&gt;WI</title>
+<path fill="none" stroke="#444444" d="M123.98,-133.78C139.89,-133.78 159,-133.78 175.17,-133.78"/>
+<polygon fill="#444444" stroke="#444444" points="174.81,-136.23 181.81,-133.78 174.81,-131.33 174.81,-136.23"/>
+<text xml:space="preserve" text-anchor="start" x="143.1" y="-135.98" font-family="Helvetica,sans-Serif" font-size="9.00">β</text>
+<text xml:space="preserve" text-anchor="start" x="148.35" y="-135.98" font-family="Helvetica,sans-Serif" font-size="7.00">WA</text>
+<text xml:space="preserve" text-anchor="start" x="159.6" y="-135.98" font-family="Helvetica,sans-Serif" font-size="9.00"> I</text>
+</g>
+<!-- S -->
+<g id="node4" class="node">
+<title>S</title>
+<path fill="#f2f2f2" stroke="#555555" d="M368.16,-101.78C368.16,-101.78 321.63,-101.78 321.63,-101.78 315.63,-101.78 309.63,-95.78 309.63,-89.78 309.63,-89.78 309.63,-77.78 309.63,-77.78 309.63,-71.78 315.63,-65.78 321.63,-65.78 321.63,-65.78 368.16,-65.78 368.16,-65.78 374.16,-65.78 380.16,-71.78 380.16,-77.78 380.16,-77.78 380.16,-89.78 380.16,-89.78 380.16,-95.78 374.16,-101.78 368.16,-101.78"/>
+<text xml:space="preserve" text-anchor="middle" x="344.89" y="-85.33" font-family="Helvetica,sans-Serif" font-size="11.00">S</text>
+<text xml:space="preserve" text-anchor="middle" x="344.89" y="-73.33" font-family="Helvetica,sans-Serif" font-size="11.00">susceptible</text>
+</g>
+<!-- WS&#45;&gt;S -->
+<g id="edge3" class="edge">
+<title>WS&#45;&gt;S</title>
+<path fill="none" stroke="#444444" d="M124.05,-116.38C141.29,-108.1 163.05,-98.95 183.6,-94.03 222.56,-84.7 268.27,-82.61 300.89,-82.58"/>
+<polygon fill="#444444" stroke="#444444" points="300.78,-85.03 307.79,-82.61 300.8,-80.13 300.78,-85.03"/>
+<text xml:space="preserve" text-anchor="middle" x="210.99" y="-95.23" font-family="Helvetica,sans-Serif" font-size="9.00">m</text>
+</g>
+<!-- WI&#45;&gt;S -->
+<g id="edge4" class="edge">
+<title>WI&#45;&gt;S</title>
+<path fill="none" stroke="#444444" d="M238.68,-123.66C256.71,-116.83 280.88,-107.67 301.51,-99.85"/>
+<polygon fill="#444444" stroke="#444444" points="302.13,-102.23 307.81,-97.46 300.39,-97.65 302.13,-102.23"/>
+<text xml:space="preserve" text-anchor="middle" x="274" y="-117.38" font-family="Helvetica,sans-Serif" font-size="9.00">(1 − c) m</text>
+</g>
+<!-- L -->
+<g id="node5" class="node">
+<title>L</title>
+<path fill="#fde9c9" stroke="#555555" d="M467.91,-100.78C467.91,-100.78 437.91,-100.78 437.91,-100.78 431.91,-100.78 425.91,-94.78 425.91,-88.78 425.91,-88.78 425.91,-76.78 425.91,-76.78 425.91,-70.78 431.91,-64.78 437.91,-64.78 437.91,-64.78 467.91,-64.78 467.91,-64.78 473.91,-64.78 479.91,-70.78 479.91,-76.78 479.91,-76.78 479.91,-88.78 479.91,-88.78 479.91,-94.78 473.91,-100.78 467.91,-100.78"/>
+<text xml:space="preserve" text-anchor="middle" x="452.91" y="-84.33" font-family="Helvetica,sans-Serif" font-size="11.00">L</text>
+<text xml:space="preserve" text-anchor="middle" x="452.91" y="-72.33" font-family="Helvetica,sans-Serif" font-size="11.00">latent</text>
+</g>
+<!-- WI&#45;&gt;L -->
+<g id="edge5" class="edge">
+<title>WI&#45;&gt;L</title>
+<path fill="none" stroke="#444444" d="M238.61,-134.2C254.12,-134.18 274.03,-133.68 291.63,-131.78 331.46,-127.48 341.94,-126.8 380.16,-114.78 392.86,-110.79 406.31,-105.19 418.09,-99.78"/>
+<polygon fill="#444444" stroke="#444444" points="418.89,-102.11 424.19,-96.92 416.81,-97.68 418.89,-102.11"/>
+<text xml:space="preserve" text-anchor="middle" x="344.89" y="-131.78" font-family="Helvetica,sans-Serif" font-size="9.00">c m</text>
+</g>
+<!-- S&#45;&gt;birth -->
+<g id="edge9" class="edge">
+<title>S&#45;&gt;birth</title>
+<path fill="none" stroke="#888888" stroke-dasharray="5,2" d="M323.18,-65.48C286.5,-35.4 207.77,18.69 141.6,-7.03 77.78,-31.83 25.46,-101.3 8.76,-125.41"/>
+<polygon fill="#888888" stroke="#888888" points="6.77,-123.98 4.89,-131.15 10.84,-126.71 6.77,-123.98"/>
+<text xml:space="preserve" text-anchor="middle" x="153.6" y="-8.23" font-family="Helvetica,sans-Serif" font-size="9.00">breed</text>
+</g>
+<!-- S&#45;&gt;L -->
+<g id="edge6" class="edge">
+<title>S&#45;&gt;L</title>
+<path fill="none" stroke="#444444" d="M380.61,-83.45C392.37,-83.34 405.5,-83.22 417.25,-83.11"/>
+<polygon fill="#444444" stroke="#444444" points="417.04,-85.56 424.02,-83.04 416.99,-80.66 417.04,-85.56"/>
+<text xml:space="preserve" text-anchor="middle" x="403.03" y="-84.48" font-family="Helvetica,sans-Serif" font-size="9.00">β I</text>
+</g>
+<!-- I -->
+<g id="node6" class="node">
+<title>I</title>
+<path fill="#f4c7c3" stroke="#555555" d="M571.44,-107.78C571.44,-107.78 533.16,-107.78 533.16,-107.78 527.16,-107.78 521.16,-101.78 521.16,-95.78 521.16,-95.78 521.16,-83.78 521.16,-83.78 521.16,-77.78 527.16,-71.78 533.16,-71.78 533.16,-71.78 571.44,-71.78 571.44,-71.78 577.44,-71.78 583.44,-77.78 583.44,-83.78 583.44,-83.78 583.44,-95.78 583.44,-95.78 583.44,-101.78 577.44,-107.78 571.44,-107.78"/>
+<text xml:space="preserve" text-anchor="middle" x="552.3" y="-91.33" font-family="Helvetica,sans-Serif" font-size="11.00">I</text>
+<text xml:space="preserve" text-anchor="middle" x="552.3" y="-79.33" font-family="Helvetica,sans-Serif" font-size="11.00">infectious</text>
+</g>
+<!-- L&#45;&gt;I -->
+<g id="edge7" class="edge">
+<title>L&#45;&gt;I</title>
+<path fill="none" stroke="#444444" d="M480.27,-84.67C490.13,-85.38 501.56,-86.2 512.33,-86.98"/>
+<polygon fill="#444444" stroke="#444444" points="512.12,-89.42 519.28,-87.48 512.47,-84.53 512.12,-89.42"/>
+<text xml:space="preserve" text-anchor="middle" x="500.53" y="-87.48" font-family="Helvetica,sans-Serif" font-size="9.00">e</text>
+</g>
+<!-- I&#45;&gt;WS -->
+<g id="edge11" class="edge">
+<title>I&#45;&gt;WS</title>
+<path fill="none" stroke="#888888" stroke-dasharray="5,2" d="M523.37,-71.34C510.66,-64.03 495.1,-56.48 479.91,-52.78 456.59,-47.1 449.91,-52.68 425.91,-52.78 370.67,-53 356.54,-47.8 301.63,-53.78 248.32,-59.58 235.19,-64.17 183.6,-78.78 164.53,-84.18 158.93,-84.16 141.6,-93.78 133.38,-98.35 125.11,-104.24 117.72,-110.09"/>
+<polygon fill="#888888" stroke="#888888" points="116.25,-108.13 112.38,-114.45 119.35,-111.92 116.25,-108.13"/>
+</g>
+<!-- I&#45;&gt;S -->
+<g id="edge10" class="edge">
+<title>I&#45;&gt;S</title>
+<path fill="none" stroke="#888888" stroke-dasharray="5,2" d="M520.93,-102.41C508.45,-106.96 493.72,-111.52 479.91,-113.78 456.22,-117.65 449.53,-118.06 425.91,-113.78 413.34,-111.5 400.17,-107.36 388.22,-102.87"/>
+<polygon fill="#888888" stroke="#888888" points="389.39,-100.69 381.98,-100.43 387.61,-105.26 389.39,-100.69"/>
+<text xml:space="preserve" text-anchor="middle" x="452.91" y="-118.04" font-family="Helvetica,sans-Serif" font-size="9.00">infects</text>
+</g>
+<!-- dead -->
+<g id="node7" class="node">
+<title>dead</title>
+<ellipse fill="#f2f2f2" stroke="#555555" cx="629.1" cy="-89.78" rx="2.16" ry="2.16"/>
+</g>
+<!-- I&#45;&gt;dead -->
+<g id="edge8" class="edge">
+<title>I&#45;&gt;dead</title>
+<path fill="none" stroke="#444444" d="M583.72,-89.78C596.01,-89.78 609.34,-89.78 618.15,-89.78"/>
+<polygon fill="#444444" stroke="#444444" points="617.95,-92.23 624.95,-89.78 617.95,-87.33 617.95,-92.23"/>
+<text xml:space="preserve" text-anchor="start" x="601.44" y="-91.98" font-family="Helvetica,sans-Serif" font-size="9.00">d</text>
+<text xml:space="preserve" text-anchor="start" x="606.69" y="-91.98" font-family="Helvetica,sans-Serif" font-size="7.00">I</text>
+</g>
+</g>
+</svg>

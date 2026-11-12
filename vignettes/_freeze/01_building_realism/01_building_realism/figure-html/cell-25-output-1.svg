@@ -1,0 +1,134 @@
+<svg width="611pt" height="243pt"
+ viewBox="0.00 0.00 611.00 243.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 239)">
+<!-- M -->
+<g id="node1" class="node">
+<title>M</title>
+<path fill="#f2f2f2" stroke="#555555" d="M64.53,-167C64.53,-167 12,-167 12,-167 6,-167 0,-161 0,-155 0,-155 0,-143 0,-143 0,-137 6,-131 12,-131 12,-131 64.53,-131 64.53,-131 70.53,-131 76.53,-137 76.53,-143 76.53,-143 76.53,-155 76.53,-155 76.53,-161 70.53,-167 64.53,-167"/>
+<text xml:space="preserve" text-anchor="start" x="11.64" y="-150.55" font-family="Helvetica,sans-Serif" font-size="11.00">M juveniles</text>
+<text xml:space="preserve" text-anchor="start" x="8.64" y="-138.55" font-family="Helvetica,sans-Serif" font-size="11.00">older than ω</text>
+</g>
+<!-- AX -->
+<g id="node2" class="node">
+<title>AX</title>
+<path fill="#f2f2f2" stroke="#555555" d="M203.31,-167C203.31,-167 165.03,-167 165.03,-167 159.03,-167 153.03,-161 153.03,-155 153.03,-155 153.03,-143 153.03,-143 153.03,-137 159.03,-131 165.03,-131 165.03,-131 203.31,-131 203.31,-131 209.31,-131 215.31,-137 215.31,-143 215.31,-143 215.31,-155 215.31,-155 215.31,-161 209.31,-167 203.31,-167"/>
+<text xml:space="preserve" text-anchor="start" x="161.67" y="-145.55" font-family="Helvetica,sans-Serif" font-size="11.00">A</text>
+<text xml:space="preserve" text-anchor="start" x="169.17" y="-145.55" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="11.00">X</text>
+<text xml:space="preserve" text-anchor="start" x="175.17" y="-145.55" font-family="Helvetica,sans-Serif" font-size="11.00"> adults</text>
+</g>
+<!-- M&#45;&gt;AX -->
+<g id="edge1" class="edge">
+<title>M&#45;&gt;AX</title>
+<path fill="none" stroke="#444444" d="M76.7,-149C97.49,-149 123.31,-149 144.32,-149"/>
+<polygon fill="#444444" stroke="#444444" points="144.19,-151.45 151.19,-149 144.19,-146.55 144.19,-151.45"/>
+<text xml:space="preserve" text-anchor="start" x="94.53" y="-150.2" font-family="Helvetica,sans-Serif" font-size="9.00">ε(1 − A/K)</text>
+</g>
+<!-- AY -->
+<g id="node3" class="node">
+<title>AY</title>
+<path fill="#f4c7c3" stroke="#555555" d="M379.2,-192C379.2,-192 331.92,-192 331.92,-192 325.92,-192 319.92,-186 319.92,-180 319.92,-180 319.92,-168 319.92,-168 319.92,-162 325.92,-156 331.92,-156 331.92,-156 379.2,-156 379.2,-156 385.2,-156 391.2,-162 391.2,-168 391.2,-168 391.2,-180 391.2,-180 391.2,-186 385.2,-192 379.2,-192"/>
+<text xml:space="preserve" text-anchor="start" x="328.56" y="-175.55" font-family="Helvetica,sans-Serif" font-size="11.00">A</text>
+<text xml:space="preserve" text-anchor="start" x="336.06" y="-175.55" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="11.00">Y</text>
+<text xml:space="preserve" text-anchor="start" x="342.06" y="-175.55" font-family="Helvetica,sans-Serif" font-size="11.00"> infected</text>
+<text xml:space="preserve" text-anchor="start" x="341.31" y="-164.55" font-family="Helvetica,sans-Serif" font-size="11.00">adults</text>
+</g>
+<!-- AX&#45;&gt;AY -->
+<g id="edge2" class="edge">
+<title>AX&#45;&gt;AY</title>
+<path fill="none" stroke="#444444" d="M207.84,-167.36C215.47,-172.48 224.35,-177.36 233.31,-180 258.43,-187.39 287.73,-186.19 311.23,-183"/>
+<polygon fill="#444444" stroke="#444444" points="311.55,-185.43 318.11,-181.97 310.83,-180.59 311.55,-185.43"/>
+<text xml:space="preserve" text-anchor="start" x="233.31" y="-187.7" font-family="Helvetica,sans-Serif" font-size="9.00">ν</text>
+<text xml:space="preserve" text-anchor="start" x="238.56" y="-187.7" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">A</text>
+<text xml:space="preserve" text-anchor="start" x="243.81" y="-187.7" font-family="Helvetica,sans-Serif" font-size="9.00">Z, at the pond</text>
+</g>
+<!-- dAX -->
+<g id="node7" class="node">
+<title>dAX</title>
+<ellipse fill="#888888" stroke="#888888" cx="355.56" cy="-129" rx="2.16" ry="2.16"/>
+</g>
+<!-- AX&#45;&gt;dAX -->
+<g id="edge4" class="edge">
+<title>AX&#45;&gt;dAX</title>
+<path fill="none" stroke="#444444" d="M215.7,-134.43C221.43,-132.28 227.46,-130.41 233.31,-129.25 274.08,-121.17 324.08,-125.4 344.83,-127.76"/>
+<polygon fill="#444444" stroke="#444444" points="344.35,-130.17 351.6,-128.61 344.95,-125.31 344.35,-130.17"/>
+<text xml:space="preserve" text-anchor="start" x="261.06" y="-131.45" font-family="Helvetica,sans-Serif" font-size="9.00">μ</text>
+<text xml:space="preserve" text-anchor="start" x="266.31" y="-131.45" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">A</text>
+</g>
+<!-- AY&#45;&gt;AX -->
+<g id="edge3" class="edge">
+<title>AY&#45;&gt;AX</title>
+<path fill="none" stroke="#444444" d="M319.57,-168.84C291.62,-164.71 252.5,-158.94 223.67,-154.68"/>
+<polygon fill="#444444" stroke="#444444" points="224.23,-152.29 216.95,-153.69 223.52,-157.14 224.23,-152.29"/>
+<text xml:space="preserve" text-anchor="start" x="261.06" y="-167.4" font-family="Helvetica,sans-Serif" font-size="9.00">σ</text>
+<text xml:space="preserve" text-anchor="start" x="266.31" y="-167.4" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">A</text>
+</g>
+<!-- PX -->
+<g id="node5" class="node">
+<title>PX</title>
+<path fill="#f2f2f2" stroke="#555555" d="M581.15,-235C581.15,-235 530.87,-235 530.87,-235 524.87,-235 518.87,-229 518.87,-223 518.87,-223 518.87,-211 518.87,-211 518.87,-205 524.87,-199 530.87,-199 530.87,-199 581.15,-199 581.15,-199 587.15,-199 593.15,-205 593.15,-211 593.15,-211 593.15,-223 593.15,-223 593.15,-229 587.15,-235 581.15,-235"/>
+<text xml:space="preserve" text-anchor="start" x="527.51" y="-213.55" font-family="Helvetica,sans-Serif" font-size="11.00">P</text>
+<text xml:space="preserve" text-anchor="start" x="535.01" y="-213.55" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="11.00">X</text>
+<text xml:space="preserve" text-anchor="start" x="541.01" y="-213.55" font-family="Helvetica,sans-Serif" font-size="11.00"> tadpoles</text>
+</g>
+<!-- AY&#45;&gt;PX -->
+<g id="edge6" class="edge">
+<title>AY&#45;&gt;PX</title>
+<path fill="none" stroke="#444444" d="M391.57,-183.14C398.28,-184.82 405.25,-186.51 411.81,-188 444.68,-195.49 482.01,-203.02 510.31,-208.52"/>
+<polygon fill="#444444" stroke="#444444" points="509.59,-210.88 516.93,-209.81 510.52,-206.07 509.59,-210.88"/>
+<text xml:space="preserve" text-anchor="start" x="411.81" y="-205.64" font-family="Helvetica,sans-Serif" font-size="9.00">day 60: ιψ per adult</text>
+</g>
+<!-- Z -->
+<g id="node6" class="node">
+<title>Z</title>
+<ellipse fill="#e2efda" stroke="#555555" cx="556.01" cy="-86" rx="46.7" ry="18"/>
+<text xml:space="preserve" text-anchor="start" x="526.39" y="-81.55" font-family="Helvetica,sans-Serif" font-size="11.00">Z zoospores</text>
+</g>
+<!-- AY&#45;&gt;Z -->
+<g id="edge8" class="edge">
+<title>AY&#45;&gt;Z</title>
+<path fill="none" stroke="#999999" stroke-dasharray="5,2" d="M391.58,-158.47C426.7,-142.9 480.61,-118.99 516.81,-102.94"/>
+<polygon fill="#999999" stroke="#999999" points="517.46,-105.33 522.86,-100.26 515.47,-100.85 517.46,-105.33"/>
+<text xml:space="preserve" text-anchor="start" x="421.18" y="-150.2" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#666666">ρ</text>
+<text xml:space="preserve" text-anchor="start" x="426.43" y="-150.2" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00" fill="#666666">A</text>
+<text xml:space="preserve" text-anchor="start" x="431.68" y="-150.2" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#666666">, at the pond</text>
+</g>
+<!-- dAY -->
+<g id="node8" class="node">
+<title>dAY</title>
+<ellipse fill="#888888" stroke="#888888" cx="556.01" cy="-172" rx="2.16" ry="2.16"/>
+</g>
+<!-- AY&#45;&gt;dAY -->
+<g id="edge5" class="edge">
+<title>AY&#45;&gt;dAY</title>
+<path fill="none" stroke="#444444" d="M391.58,-173.65C438.13,-173.18 517.73,-172.38 545.28,-172.1"/>
+<polygon fill="#444444" stroke="#444444" points="545,-174.55 551.98,-172.03 544.95,-169.65 545,-174.55"/>
+<text xml:space="preserve" text-anchor="start" x="436.18" y="-175.61" font-family="Helvetica,sans-Serif" font-size="9.00">μ</text>
+<text xml:space="preserve" text-anchor="start" x="441.43" y="-175.61" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">A</text>
+<text xml:space="preserve" text-anchor="start" x="446.68" y="-175.61" font-family="Helvetica,sans-Serif" font-size="9.00"> + α</text>
+<text xml:space="preserve" text-anchor="start" x="461.68" y="-175.61" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="9.00">A</text>
+</g>
+<!-- PY -->
+<g id="node4" class="node">
+<title>PY</title>
+<path fill="#f4c7c3" stroke="#555555" d="M379.2,-36C379.2,-36 331.92,-36 331.92,-36 325.92,-36 319.92,-30 319.92,-24 319.92,-24 319.92,-12 319.92,-12 319.92,-6 325.92,0 331.92,0 331.92,0 379.2,0 379.2,0 385.2,0 391.2,-6 391.2,-12 391.2,-12 391.2,-24 391.2,-24 391.2,-30 385.2,-36 379.2,-36"/>
+<text xml:space="preserve" text-anchor="start" x="328.56" y="-19.55" font-family="Helvetica,sans-Serif" font-size="11.00">P</text>
+<text xml:space="preserve" text-anchor="start" x="336.06" y="-19.55" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="11.00">Y</text>
+<text xml:space="preserve" text-anchor="start" x="342.06" y="-19.55" font-family="Helvetica,sans-Serif" font-size="11.00"> infected</text>
+<text xml:space="preserve" text-anchor="start" x="335.31" y="-8.55" font-family="Helvetica,sans-Serif" font-size="11.00">tadpoles</text>
+</g>
+<!-- PY&#45;&gt;Z -->
+<g id="edge7" class="edge">
+<title>PY&#45;&gt;Z</title>
+<path fill="none" stroke="#999999" stroke-dasharray="5,2" d="M391.61,-26.76C419.07,-33.97 458.05,-44.97 491.31,-57.25 500.2,-60.53 509.6,-64.49 518.36,-68.4"/>
+<polygon fill="#999999" stroke="#999999" points="517.11,-70.52 524.5,-71.19 519.14,-66.06 517.11,-70.52"/>
+<text xml:space="preserve" text-anchor="start" x="448.93" y="-58.45" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#666666">ρ</text>
+</g>
+<!-- Z&#45;&gt;AX -->
+<g id="edge9" class="edge">
+<title>Z&#45;&gt;AX</title>
+<path fill="none" stroke="#999999" stroke-dasharray="5,2" d="M509.34,-83.37C445.38,-81.28 326.51,-83.33 233.31,-119 228.12,-120.99 222.88,-123.56 217.86,-126.35"/>
+<polygon fill="#999999" stroke="#999999" points="216.79,-124.14 212,-129.81 219.28,-128.36 216.79,-124.14"/>
+<text xml:space="preserve" text-anchor="start" x="317.31" y="-97.04" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#666666">infects, at the pond</text>
+</g>
+</g>
+</svg>

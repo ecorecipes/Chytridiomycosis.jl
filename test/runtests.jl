@@ -603,6 +603,8 @@ using Random: Xoshiro
     end
 
     @testset "Stochastic nested model (new)" begin
+        @test_throws ArgumentError StochasticNestedProblem(SchmidtParameters(:schmidt2017),
+            ChytridBiology(:wang2021), MicrobiomeTreatment(environmental = 1.0))
         p3 = Chytridiomycosis.with(SchmidtParameters(:schmidt2017); K = 3.0)
         sch = ChytridBiology(latent = true)
         @test_throws ArgumentError StochasticNestedProblem(p3, sch; area = 0.0)

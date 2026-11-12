@@ -37,6 +37,23 @@ function rewrite_sibling_links(text::AbstractString)
 end
 
 """
+Turn Pandoc's TeX math into Documenter's.
+
+Quarto's GitHub-flavoured Markdown keeps math as `\$\$ … \$\$` (display, starting a line) and
+`\$ … \$` (inline). Documenter's Markdown parser wants a fenced `math` block and double
+backticks. Inline code spans are left alone, and the inline rule follows Pandoc's: no space
+just inside the dollars, and no digit right after the closing one.
+"""
+function documenter_math(text::AbstractString)
+    s = replace(text,
+                r"^\$\$(.+?)\$\$[ \t]*$"ms =>
+                    m -> "```math\n" * strip(match(r"^\$\$(.+?)\$\$"s, m).captures[1]) *
+                         "\n```")
+    code_or_math = r"(`+).+?\1|(?<![\\$])\$[^\s$](?:[^$\n]*?[^\s$\\])?\$(?![$\d])"
+    return replace(s, code_or_math => m -> startswith(m, "`") ? m : "``" * m[2:(end - 1)] * "``")
+end
+
+"""
 Make the raw HTML in Quarto's GitHub-flavoured Markdown readable by Documenter.
 
 Pandoc writes a div with attributes as raw HTML lines (the reference list's
@@ -51,7 +68,7 @@ function documenter_html(text::AbstractString)
     out = IOBuffer()
     prose = IOBuffer()
     function flush_prose()
-        s = String(take!(prose))
+        s = documenter_math(String(take!(prose)))
         s = replace(s, r"<span[^>]*>(.*?)</span>"s => s"\1")
         s = replace(s,
                     r"^[ \t]*(?:<div\b[^>]*>|</div>)[ \t]*$"m =>

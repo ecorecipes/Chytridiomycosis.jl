@@ -43,8 +43,10 @@ systems it:
 5.  ends with **chance**: the last model of each part is run again with
     whole animals and random events, many times over.
 
-Each step adds one thing, and the step before it is recovered by
-switching that thing off. The final sections measure how much each
+Most steps add one thing, and the step before is recovered by switching
+it off. Where a step instead swaps a mechanism or sets an earlier
+addition aside, it says so; the equations at the start of each part list
+the settings every step uses. The final sections measure how much each
 addition moved the answer, and check with a factorial design whether the
 effect of one piece of realism depends on the others. A [second
 vignette](../02_nested_model/02_nested_model.md) repeats the exercise in
@@ -75,6 +77,7 @@ using Random: Xoshiro
 default(linewidth = 2, size = (720, 380), legendfontsize = 8, guidefontsize = 9,
     titlefontsize = 10, left_margin = 4Plots.mm, bottom_margin = 4Plots.mm)
 
+include("../diagram.jl")
 T(; kw...) = MicrobiomeTreatment(; kw...)
 
 # One row per step, filled in as we go. `untreated` and `treated` are the two outcomes;
@@ -212,10 +215,200 @@ step!("Bsal", "host", "+ larvae infected, carry-over 0.5", u3.mean_adults, t3.me
 
 This is the host model used for the rest of Part A.
 
+#### The host model in equations
+
+Densities are adult females and larvae per hectare; time is in years.
+Steps 0 and 1 use `ProbioticSLIProblem`, which has adults only. Step 1
+is the model of Schmidt et al. (2017):
+
+$$\begin{aligned}
+\frac{dS}{dt} &= b S - (d + \gamma N) S - \beta S I \\
+\frac{dL}{dt} &= \beta S I - (d + e + \gamma N) L \\
+\frac{dI}{dt} &= e L - (d + d_I + \gamma N) I
+\end{aligned}$$
+
+with $N = S + L + I$ and $\gamma = (b - d)/K$, so that without Bsal $S$
+settles at $K$. Only susceptible adults breed. Bsal enters as $I = 0.01$
+per hectare (one per square kilometre) at $t = 0$.
+
+- **Step 0** is the same system with $e = 5000$ per year, so that $L$
+  empties within hours and the model is in effect $S \to I$. The printed
+  $R_0 = \beta e K / ((b + e)(b + d_I))$, which tends to
+  $\beta K / (b + d_I)$ as $e$ grows.
+- **Step 1** sets $e$ to its published value: a latent period of about
+  one day.
+
+Steps 2 and 3 use `ProbioticLarvalProblem`, which adds uninfected and
+infected larvae, $W_S$ and $W_I$:
+
+$$\begin{aligned}
+\frac{dW_S}{dt} &= b' S - (m + \mu_W) W_S - \beta_{WA} I W_S \\
+\frac{dW_I}{dt} &= \beta_{WA} I W_S - (m + \mu_W) W_I \\
+\frac{dS}{dt} &= m W_S + (1 - c)\, m W_I - (d + \gamma N) S - \beta S I \\
+\frac{dL}{dt} &= c\, m W_I + \beta S I - (d + e + \gamma N) L \\
+\frac{dI}{dt} &= e L - (d + d_I + \gamma N) I
+\end{aligned}$$
+
+- **Step 2** replaces the recruitment term $b S$ in $dS/dt$ with births
+  into the larval stage, $b' S$ with $b' = b (m + \mu_W)/m$. Larvae
+  leave by metamorphosis at rate $m$ or die at rate $\mu_W$. The choice
+  of $b'$ keeps the Bsal-free state of step 1 ($S = K$, plus
+  $W_S = bK/m$ larvae). Here $\beta_{WA} = 0$ and $c = 0$, so $W_I$
+  stays at zero.
+- **Step 3** adds infection of larvae by infectious adults
+  ($\beta_{WA} I W_S$) and carry-over: an infected larva becomes a
+  latent adult with probability $c$, and a susceptible adult otherwise.
+  Infected larvae do not die of Bsal and, in Part A, infect no one. (The
+  code also has larva-to-larva and larva-to-adult transmission,
+  `larva_to_larva` and `larva_to_adult`; both are zero throughout Part
+  A.) The printed $R_0$ is the largest eigenvalue of the next-generation
+  matrix for $(W_I, L, I)$ at the Bsal-free state.
+
+![The host model after step 3. Solid arrows are flows, labelled with the
+per-capita rate; dashed arrows show who breeds and who infects whom. Not
+drawn: every adult class also dies at rate d + γN and every larval class
+at the larval death
+rate.](01_building_realism_files/figure-commonmark/cell-9-output-1.svg)
+
+| Symbol | Meaning | Value or source |
+|----|----|----|
+| $S, L, I$ | susceptible, latent and infectious adults (per ha) | start at $S = K$ |
+| $W_S, W_I$ | uninfected and infected larvae (per ha) | start at $W_S = bK/m$ |
+| $b$ | recruitment rate | 0.39 per yr, compendium (schmidt2017) |
+| $d$ | natural death rate | 0.125 per yr, compendium (schmidt2017) |
+| $d_I$ | death rate from Bsal | 52 per yr, compendium (schmidt2017) |
+| $e$ | latent to infectious | 364 per yr, compendium (schmidt2017); 5000 in step 0 |
+| $\beta$ | transmission between adults | 52 ha per yr, compendium (schmidt2017) |
+| $K$ | carrying capacity | 25 per ha, compendium (schmidt2017) |
+| $\gamma$ | density dependence | $(b - d)/K$ |
+| $m$ | metamorphosis rate, 1/larval period | 1/0.33 per yr, illustrative |
+| $\mu_W$ | larval death rate | 1 per yr, illustrative |
+| $b'$ | larvae born per susceptible adult | $b (m + \mu_W)/m$ |
+| $\beta_{WA}$ | transmission from adults to larvae | 0 in step 2; 5.2 ha per yr in step 3, illustrative |
+| $c$ | carry-over through metamorphosis | 0 in step 2; 0.5 in step 3, compendium (wang2021: 5 of 10 larvae) |
+
+The outcome is the mean of $(S + L + I)/K$ over the ten years after Bsal
+arrives.
+
 ### Treatment
 
 The reference treatment of step 3 is now made more realistic. Each step
 states what changed.
+
+#### The treatment in equations
+
+Every class is split into untreated ($U$) and treated ($T$). With all
+treatment terms present, the model of `ProbioticLarvalProblem` is, for
+adults,
+
+$$\begin{aligned}
+\frac{dS_U}{dt} &= m\,[W_{SU} + (1 - r) W_{ST}] + (1 - c)\, m\,[W_{IU} + (1 - r) W_{IT}] \\
+&\quad - (d + \gamma N) S_U - \lambda_A S_U + \omega S_T - a_A S_U \\
+\frac{dS_T}{dt} &= r\, m W_{ST} + (1 - c)\, r\, m W_{IT} - (d + \gamma N) S_T - (1 - \varepsilon) \lambda_A S_T - \omega S_T + a_A S_U \\
+\frac{dL_U}{dt} &= c\, m\,[W_{IU} + (1 - r) W_{IT}] + \lambda_A S_U - (d + e + \gamma N) L_U + \omega L_T - a_A L_U \\
+\frac{dL_T}{dt} &= c\, r\, m W_{IT} + (1 - \varepsilon) \lambda_A S_T - (d + e + \gamma N) L_T - \omega L_T + a_A L_U \\
+\frac{dI_U}{dt} &= e L_U - (d + d_I + \gamma N) I_U + \omega I_T - a_A I_U \\
+\frac{dI_T}{dt} &= e L_T - (d + (1 - \tau) d_I + \gamma N) I_T - \omega I_T + a_A I_U
+\end{aligned}$$
+
+and for larvae
+
+$$\begin{aligned}
+\frac{dW_{SU}}{dt} &= b'\,[S_U + S_T + \tau (L_T + I_T)] - (m + \mu_W) W_{SU} - \lambda_W W_{SU} + \omega W_{ST} - a_W W_{SU} \\
+\frac{dW_{ST}}{dt} &= -(m + \mu_W) W_{ST} - (1 - \varepsilon) \lambda_W W_{ST} - \omega W_{ST} + a_W W_{SU} \\
+\frac{dW_{IU}}{dt} &= \lambda_W W_{SU} - (m + \mu_W) W_{IU} + \omega W_{IT} - a_W W_{IU} \\
+\frac{dW_{IT}}{dt} &= (1 - \varepsilon) \lambda_W W_{ST} - (m + \mu_W) W_{IT} - \omega W_{IT} + a_W W_{IU}
+\end{aligned}$$
+
+with $N$ all adults and
+
+$$\begin{aligned}
+\lambda_A &= \beta\,[I_U + (1 - \sigma) I_T], \qquad \lambda_W = \beta_{WA}\,[I_U + (1 - \sigma) I_T], \\
+a_A &= \eta\, \frac{S_T + L_T + I_T}{N}, \qquad a_W = \eta\, \frac{W_{ST} + W_{IT}}{W_{SU} + W_{ST} + W_{IU} + W_{IT}}, \\
+\omega &= \frac{\ln 2}{h}, \qquad (\varepsilon, \tau, \sigma) = g(t - t_k)\,(\varepsilon_0, \tau_0, \sigma_0), \qquad g(a) = \frac{1 + 1/F}{1 + 2^{a/h_B}/F}.
+\end{aligned}$$
+
+Treatment itself is a pulse. At each treatment time $t_k$, a fraction
+$\phi$ (`coverage`) of every untreated class of the treated stage moves
+to the matching treated class, and the clock of $g$ restarts ($t_k$ is
+the most recent application). Bsal arrives just after any treatment at
+the same time. Recruits are born untreated. In steps 0 and 1
+(`ProbioticSLIProblem`, no larvae) the adult equations are the same
+without the metamorphosis terms, and recruits
+$b\,[S_U + S_T + \tau (L_T + I_T)]$ enter $S_U$ directly. Treated,
+infected adults breed in proportion to $\tau$: this is an assumption of
+the code, and with $\tau = 0$ it is Schmidt’s rule. (The code also has
+an environmental route of spread, `environmental`, and inheritance from
+treated mothers, `maternal`; both are zero throughout Part A and are
+left out above.)
+
+What each step switches on:
+
+- **Steps 0–3, reference treatment**: `efficacy = 0.99`, adults treated
+  once at $t = 0$ with $\phi = 1$. So $\varepsilon_0 = 0.99$ and
+  $\omega = \eta = \tau_0 = \sigma_0 = 0$, $g = 1$: treated adults are
+  infected at 1% of the untreated rate, for life.
+- **Step 4**, `half_life = 1.0`: $\omega = \ln 2$ per year; treated
+  animals revert to untreated.
+- **Step 5**, `direct = 50.0`: $\eta = 50$ per year. An untreated animal
+  acquires the bacteria in proportion to the treated fraction of its own
+  stage. The vignette prints the microbiome’s reproduction number
+  $R_m = \eta/(\omega + b)$, with adult turnover $b$, and the long-run
+  coverage $1 - 1/R_m$. Larvae are never treated in this step, so
+  recruits acquire the bacteria only from adults.
+- **Step 6**, `tolerance = 0.9` and no `efficacy`: $\varepsilon_0 = 0$,
+  $\tau_0 = 0.9$. A treated, infected adult dies of Bsal at
+  $(1 - \tau) d_I$, stays infectious, and breeds at $\tau$. The printed
+  reproduction number, with all adults treated, is
+  $R_0\,[1 - \phi + \phi M]$ with
+  $M = (1 - \varepsilon)(1 - \sigma)(b + d_I)/(b + (1 - \tau) d_I)$.
+  This uses the adults-only model and ignores gain or loss of the
+  bacteria during an infection.
+- **Step 7**, `load_reducing_treatment` with reduction in load $\rho$
+  and `death_exponent` $k$: $\sigma_0 = \rho$ and
+  $\tau_0 = 1 - (1 - \rho)^k$, with $\varepsilon_0 = 0$. The run uses
+  $\rho = 0.99$, $k = 1$, so $\sigma_0 = \tau_0 = 0.99$; loss and spread
+  as in step 5.
+- **Step 8**: back to $\varepsilon_0 = 0.99$ with $\omega = \eta = 0$.
+  `treat = :larvae` or `:both` applies the pulse to $W_{SU} \to W_{ST}$
+  and $W_{IU} \to W_{IT}$ as well, every quarter; `retention` is $r$.
+  Efficacy protects treated larvae too, through
+  $(1 - \varepsilon) \lambda_W$.
+- **Step 9**, `abundance_half_life = 5/365`, `protective_fold = 100`:
+  $g$ is no longer 1. It multiplies $\varepsilon_0$, $\tau_0$ and
+  $\sigma_0$ (here only $\varepsilon_0$ is non-zero), falls to one half
+  about $\log_2 F$ abundance half-lives after each application, and is
+  reset to 1 by the next. All treated animals share one clock.
+  `half_life` is left at its default, so $\omega = 0$.
+
+![Treatment of adults. Blue boxes are treated animals. Solid arrows are
+flows with per-capita rates; dashed arrows feed the force of infection.
+Not drawn: background death d + γN of every class, and the pulses of
+treatment that move a fraction φ from each untreated class up to the
+treated
+one.](01_building_realism_files/figure-commonmark/cell-10-output-1.svg)
+
+![Treatment of larvae and what happens at metamorphosis. All larvae are
+born uninfected and untreated, to susceptible adults and, in proportion
+to τ, to treated infected adults. The force of infection on larvae has
+the same form as on adults, with the adult-to-larva rate in place of β.
+Not drawn: larval
+death.](01_building_realism_files/figure-commonmark/cell-11-output-1.svg)
+
+| Symbol | Meaning | Value or source |
+|----|----|----|
+| $U, T$ | untreated, treated |  |
+| $\varepsilon_0$ | `efficacy`: reduction in the infection rate | 0.99 in steps 0–5, 8, 9; 0 in steps 6–7; illustrative |
+| $\tau_0$ | `tolerance`: reduction in death from Bsal | 0.9 in step 6; 0.99 in step 7; illustrative |
+| $\sigma_0$ | `shedding_reduction`: reduction in shedding | 0.99 in step 7; illustrative |
+| $h$, $\omega$ | `half_life` of treatment and loss rate $\ln 2 / h$ | $h$ = 1 yr in steps 4–7, otherwise none ($\omega = 0$); illustrative |
+| $\eta$ | `direct`: spread of the bacteria | 50 per yr in steps 5–7, otherwise 0; illustrative |
+| $\phi$ | `coverage` at each treatment | 1 |
+| $t_k$ | `treat_times` | 0 in steps 0–7; every quarter from 0 to 9.75 yr in steps 8–9 (monthly in one run) |
+| $r$ | `retention` at metamorphosis | 0 or 1 in step 8, 1 in step 9; illustrative, not measured |
+| $h_B$ | `abundance_half_life` of the applied bacteria | 5 days in step 9, from this project’s fits to Knapp et al. (2022) and Madison et al. (2025) |
+| $F$ | `protective_fold` | 100 in step 9 (10 and 1000 in the plot); illustrative, not measured |
+| $g$ | `protection`: share of the full effect left after time $a$ | 1 except in step 9 |
 
 #### Step 4. Protection is lost
 
@@ -298,7 +491,7 @@ plot(string.(reductions), R; yscale = :log10, marker = :circle, xlabel = "reduct
 hline!([1.0]; color = :black, linestyle = :dash, label = "threshold")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-13-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-16-output-1.svg)
 
 With death proportional to load (`k = 1`) the two effects nearly cancel:
 the animal sheds less but for longer.
@@ -330,7 +523,7 @@ bar(vals; orientation = :h, yticks = (1:4, first.(options)), yflip = true, legen
     left_margin = 6Plots.mm, size = (820, 230), color = :steelblue)
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-15-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-18-output-1.svg)
 
 ``` julia
 step!("Bsal", "treatment", "treat both stages, kept through metamorphosis", u3.mean_adults, vals[4],
@@ -363,14 +556,14 @@ end
 current()
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-17-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-20-output-1.svg)
 
 ``` julia
 waning = T(efficacy = 0.99, abundance_half_life = 5 / 365, protective_fold = 100.0)
 a = lar(stage, waning; coverage = 1.0, treat = :both, treat_times = quarterly, retention = 1.0)
 monthly = lar(stage, waning; coverage = 1.0, treat = :both, treat_times = 0:(1 / 12):9.95, retention = 1.0)
 @printf("dosed monthly instead of quarterly: %.2f\n", monthly.mean_adults)
-step!("Bsal", "treatment", "+ measured decay (half-life 5 days)", u3.mean_adults, a.mean_adults,
+step!("Bsal", "treatment", "+ fitted decay (half-life 5 days)", u3.mean_adults, a.mean_adults,
     "fails: protection lasts about a month")
 ```
 
@@ -386,6 +579,22 @@ back. The last step runs the same model with whole animals and random
 events (`StochasticNestedProblem`, which reproduces the equations when
 the population is large). Bsal arrives as one infected adult in 20
 hectares, 500 adults, and each case is run 100 times.
+
+In the stochastic version each class holds a whole number of animals in
+an area of 20 ha: 500 adults ($K \times 20$) and 64 larvae
+($bK/m \times 20$) at the start. Every term of the equations above
+becomes a per-animal rate, evaluated at densities (count divided by
+area). In each step of six hours ($\Delta t = 1/1460$ yr) an animal
+leaves its class with probability $1 - e^{-R \Delta t}$, where $R$ is
+the sum of its rates out, and goes to each destination with probability
+in proportion to that rate. Births are Poisson, with mean the birth term
+of the equations times the area times $\Delta t$. A treatment treats
+each untreated animal with probability $\phi$. The transitions come from
+the package’s nested model (`NestedChytridProblem`); with the latent
+class, larvae and larval infection switched on, as here, they are the
+equations above, so the two versions agree when the area is large. One
+difference from the equations: one infected adult in 20 ha is 0.05 per
+ha, against 0.01 per ha in steps 0–9.
 
 ``` julia
 using Random: Xoshiro
@@ -423,7 +632,7 @@ detail.
 ladder_plot("Bsal", "mean adults over 10 years, fraction of K")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-20-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-23-output-1.svg)
 
 ## Part B. Bd in common toads
 
@@ -441,6 +650,89 @@ Mitchell’s model is the simplest available for this system, though it is
 not as simple as step 0 of Part A: tadpoles are infected by zoospores in
 the pond, infected tadpoles are removed at metamorphosis, and juveniles
 and adults are never infected.
+
+The equations below are the host model as it stands after step 3. Time
+$t$ is in years and $T$ is the time of year. Between the yearly events,
+
+$$\begin{aligned}
+\frac{dP_X}{dt} &= -(\mu_P + \nu Z)\,P_X \\
+\frac{dP_Y}{dt} &= \nu Z\,P_X - (\mu_P + \alpha_P)\,P_Y \\
+\frac{dM}{dt} &= -(\mu_J + \varepsilon)\,M \\
+\frac{dA_X}{dt} &= \varepsilon M \left(1 - \frac{A_X + A_Y}{K}\right) - \mu_A A_X
+  - \chi(t)\,\nu_A Z A_X + \sigma_A A_Y \\
+\frac{dA_Y}{dt} &= \chi(t)\,\nu_A Z A_X - (\mu_A + \alpha_A + \sigma_A)\,A_Y \\
+\frac{dZ}{dt} &= \rho P_Y + \chi(t)\,\rho_A A_Y + \gamma Z e^{-\varphi Z} - \mu_Z Z
+\end{aligned}$$
+
+where $\chi(t) = 1$ while adults are at the pond
+($t_1 \le T < t_1 + d_A/365$) and 0 otherwise. Three events happen each
+year:
+
+$$\begin{aligned}
+T = t_1 &: \quad P_X \leftarrow P_X + \iota\psi\,(A_X + A_Y) \\
+T = t_2 &: \quad J_0 = P_X\,(1 - q + q\,s_J) + P_Y\,s_J, \qquad
+  q = 1 - e^{-\nu Z d_J / 365}, \qquad P_X,\ P_Y \leftarrow 0 \\
+\omega \text{ after } t_2 &: \quad M \leftarrow M + J_0\,e^{-\mu_J \omega}
+\end{aligned}$$
+
+At breeding, tadpoles are born to every adult. At metamorphosis the
+tadpoles leave the pond as a juvenile cohort $J_0$; $Z$ in $q$ is its
+value at that moment. A cohort only dies (at rate $\mu_J$) until it is
+$\omega$ old, and then joins the pool $M$ of juveniles that can mature
+into adults. $M$ is Mitchell’s $\int_\omega^\infty J\,da$: following
+each cohort in closed form solves the paper’s age-structured juvenile
+equation exactly.
+
+| Step | What it adds | Terms |
+|----|----|----|
+| 0 | Mitchell et al. (2008), equations (2.1) to (2.5) | $s_J = 0$, $d_J = 0$, no $A_Y$ ($\chi = 0$) |
+| 1 | infected metamorphs can survive | $s_J > 0$ |
+| 2 | metamorphs are exposed as they leave | $d_J > 0$, so $q > 0$ |
+| 3 | adults are infected at the pond, shed there and clear the infection | $A_Y$, $\chi(t)$, $\nu_A$, $\rho_A$, $\sigma_A$ |
+
+With steps 1 to 3 switched off, the equations are those of Mitchell et
+al. (2008), and the package reproduces the outcomes of their Fig. 2b to
+2d. Bd arrives as $Z_0$ zoospores at the start of year 0, after 100
+years without Bd. Following the paper, the toads are declared extinct
+(every stage set to zero) below 50 adults, and Bd below 100 zoospores.
+The package tests the toads at each yearly event, and Bd only at
+breeding, when there are no tadpoles. In step 3 Bd is not removed at
+breeding while an infected adult is present.
+
+| Symbol | Meaning | Value or source |
+|----|----|----|
+| $P_X$, $P_Y$ | uninfected and infected tadpoles |  |
+| $J_0$, $M$ | a juvenile cohort at metamorphosis; juveniles older than $\omega$ |  |
+| $A_X$, $A_Y$ | uninfected and infected adults |  |
+| $Z$ | free-living zoospores in the pond |  |
+| $t_1$, $t_2$ | day of breeding and of metamorphosis | days 60 and 155, compendium (mitchell2008) |
+| $\omega$ | age at which juveniles can start to mature | 500 days, compendium (mitchell2008) |
+| $\iota$, $\psi$ | mating couples per adult; eggs per couple | 0.14, 2000, compendium (mitchell2008) |
+| $\varepsilon$ | maturation rate of juveniles older than $\omega$ | 0.16 per year, compendium (mitchell2008) |
+| $\mu_P$, $\mu_J$, $\mu_A$ | natural death rates of tadpoles, juveniles, adults | 7.55, 0.73, 0.73 per year, compendium (mitchell2008) |
+| $K$ | limit on the number of adults | 14,000, compendium (mitchell2008) |
+| $\alpha_P$ | extra death rate of infected tadpoles | 1.62 per year, compendium (mitchell2008) |
+| $\nu$ | infection rate per zoospore | $2.3 \times 10^{-8}$ per zoospore per year, compendium (mitchell2008, Fig. 2d) |
+| $\rho$ | zoospores released per infected tadpole | $6 \times 10^{6}$ per tadpole per year, compendium (mitchell2008, Fig. 2d) |
+| $\mu_Z$ | zoospore death rate | 13 per year, compendium (mitchell2008) |
+| $\gamma$, $\varphi$ | saprobic growth of zoospores and its density dependence | 0 (so the term is off), $10^{-6}$, compendium (mitchell2008) |
+| $Z_0$ | zoospores introduced | $10^4$, package default |
+| $s_J$ | chance that an infected metamorph survives and clears Bd | 0 (step 0); $1 - 72/101 = 0.29$ from step 1, compendium (smith2022) |
+| $d_J$ | days metamorphs are exposed as they leave | 0 (steps 0, 1); 7 from step 2, illustrative |
+| $d_A$ | days adults spend at the pond from $t_1$ | 30 in step 3, illustrative |
+| $\nu_A$, $\rho_A$ | adult infection rate and shedding while at the pond | equal to $\nu$ and $\rho$ in step 3, illustrative |
+| $\sigma_A$ | adult clearance rate | 1 per year in step 3, illustrative |
+| $\alpha_A$ | extra death rate of infected adults | 0, illustrative |
+
+![Steps 0 to 2: the life cycle and infection of tadpoles. Mitchell et
+al. (2008) is the case $s_J = 0$ and $q = 0$. Breeding (day 60),
+metamorphosis (day 155) and maturation at age ω are yearly pulses;
+dashed arrows are shedding into and infection from the zoospore pool.
+$A = A_X + A_Y$.](01_building_realism_files/figure-commonmark/cell-24-output-1.svg)
+
+![Step 3: adults are infected, shed and clear Bd while at the pond, and
+infected adults breed like uninfected
+ones.](01_building_realism_files/figure-commonmark/cell-25-output-1.svg)
 
 ``` julia
 m = MitchellParameters(:mitchell2008; set = "fig2d")
@@ -466,7 +758,7 @@ plot(series(u)...; label = "no treatment", xlabel = "years since Bd arrived",
 plot!(series(t)...; label = "tadpoles treated every year")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-22-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-27-output-1.svg)
 
 Unlike Bsal, the simplest treatment works here: the infected stage is
 short and a new cohort can be treated each year. It does not prevent the
@@ -532,6 +824,87 @@ step!("Bd toad", "host", "+ adults carry Bd between years", r.A_mean / r.A_disea
 
 The host model of step 2 is used for the rest of Part B.
 
+Every “with treatment” outcome in Part B, including the reference
+treatment of steps 0 to 2, comes from the model below. From step 4 it
+sits on the step-2 host, so there are no infected adults ($A_Y = 0$).
+Tadpoles are split into untreated ($U$) and treated ($T$), uninfected
+and infected:
+
+$$\begin{aligned}
+\frac{dP_{XU}}{dt} &= -(\mu_P + \nu Z)\,P_{XU} + \lambda P_{XT} \\
+\frac{dP_{XT}}{dt} &= -\big(\mu_P + (1 - g\eta)\,\nu Z + \lambda\big)\,P_{XT} \\
+\frac{dP_{YU}}{dt} &= \nu Z\,P_{XU} - (\mu_P + \alpha_P)\,P_{YU} + \lambda P_{YT} \\
+\frac{dP_{YT}}{dt} &= (1 - g\eta)\,\nu Z\,P_{XT} - \big(\mu_P + (1 - g\tau)\,\alpha_P + \lambda\big)\,P_{YT} \\
+\frac{dZ}{dt} &= \rho\,\big(P_{YU} + (1 - g\kappa)\,P_{YT}\big) + \gamma Z e^{-\varphi Z} - \mu_Z Z
+\end{aligned}$$
+
+with $M$ and $A_X$ as before. A treated tadpole is infected less often
+(efficacy $\eta$), dies of infection less often (tolerance $\tau$) and
+sheds less (shedding reduction $\kappa$). It loses the bacteria at rate
+$\lambda = \ln 2 / h$. All three effects are scaled by the protection
+left since the last dose, $g = g(t - t_{\mathrm{dose}})$, where
+
+$$g(a) = \frac{1 + 1/F}{1 + 2^{a/h_B}/F}.$$
+
+$g = 1$ when the bacteria do not decline ($h_B = \infty$). Treatment
+enters through three events in each year from the arrival of Bd:
+
+$$\begin{aligned}
+T = t_1 &: \quad P_{XU} \leftarrow P_{XU} + \iota\psi A_X, \quad \text{then}\quad
+  P_{XT} \leftarrow P_{XT} + c\,P_{XU},\ \ P_{XU} \leftarrow (1 - c)\,P_{XU},\ \ t_{\mathrm{dose}} \leftarrow t \\
+T = t_1 + d_k/365 &: \quad P_{iT} \leftarrow P_{iT} + c\,P_{iU},\ \ P_{iU} \leftarrow (1 - c)\,P_{iU}
+  \ \ (i = X, Y),\ \ t_{\mathrm{dose}} \leftarrow t \\
+T = t_2 &: \quad J_0 = P_{XU}(1 - q_U + q_U s_U) + P_{XT}(1 - q_T + q_T s_T) + P_{YU} s_U + P_{YT} s_T
+\end{aligned}$$
+
+with $q_U = 1 - e^{-\nu Z d_J/365}$,
+$q_T = 1 - e^{-(1 - g\eta)\nu Z d_J/365}$, $s_U = s_J$ and
+$s_T = s_J + g\tau(1 - s_J)$. Tolerance therefore also raises the
+survival of infected metamorphs. Metamorphs lose the bacteria, so every
+juvenile and adult is untreated. With one dose at hatching and $h_B = 5$
+days, $F = 100$, the protection left at metamorphosis 95 days later is
+$g = 1.01/(1 + 2^{19}/100) \approx 0.0002$. Each extra dose also treats
+a share $c$ of the tadpoles still untreated, so after the dose at
+hatching and four more, all but $0.2^5$ (about 0.03%) of tadpoles have
+been treated.
+
+The steps do not all add to the one before: steps 5 to 7 change which
+effect the bacteria have.
+
+| Step | Treatment in the “with treatment” outcome |
+|----|----|
+| 0 to 2 (reference) | $\eta = 0.9$, $c = 0.8$, no loss of protection |
+| 3 | none (treatment is not yet combined with infected adults) |
+| 4 | $\eta = 0.9$, $h = 0.05$ years (18 days) |
+| 5 | $\tau = 0.7$ in place of $\eta$; no loss of protection |
+| 6 | $\tau = \kappa = 0.7$ (`load_reducing_treatment(0.7)`) |
+| 7 | $\tau = 0.7$, declining with $h_B = 5$ days and $F = 100$; one dose |
+| 8 | as step 7, with doses also on days $d_k$ = 20, 40, 60 and 80 |
+| 9 | as step 8, with chance |
+
+| Symbol | Meaning | Value or source |
+|----|----|----|
+| $c$ | share of untreated tadpoles treated at each dose | 0.8, illustrative |
+| $\eta$ | efficacy: reduction in the infection rate | 0.9 (reference, step 4); 0.5, 0.9, 0.99 compared in step 5; illustrative |
+| $\tau$ | tolerance: reduction in the extra death rate of infected tadpoles | 0.7 (steps 5 to 9); 0.3, 0.7, 1.0 compared in step 5; illustrative |
+| $\kappa$ | shedding reduction | 0.7 in step 6 (load 70% lower, death proportional to load), illustrative |
+| $h$, $\lambda$ | half-life of the treated state; $\lambda = \ln 2/h$ | 18 days in step 4, otherwise $\infty$; illustrative |
+| $h_B$ | half-life of the applied bacteria | 5 days, this project’s fit to Knapp et al. (2022) and Madison et al. (2025) (Part A, step 9) |
+| $F$ | starting abundance over the abundance giving half the effect | 100, illustrative |
+| $d_k$ | days after hatching of extra doses | 20, 40, 60, 80 in step 8, illustrative |
+| $g$ | share of the full effect left since the last dose | from $h_B$ and $F$ |
+
+The package can also spread the bacteria between tadpoles, through a
+pond reservoir, or from treated mothers, and can treat adults instead.
+All of these are off in Part B.
+
+![Treated tadpoles (steps 4 to 9). Each dose moves a share c of
+untreated tadpoles to the treated classes (doses after hatching from
+step 8); λ is loss of the bacteria (step 4); g is the protection left
+since the last dose. Juveniles and adults are as in the first diagram,
+and all are
+untreated.](01_building_realism_files/figure-commonmark/cell-31-output-1.svg)
+
 ### Treatment
 
 #### Step 4. Protection is lost
@@ -546,6 +919,11 @@ step!("Bd toad", "treatment", "+ protection lost, half-life 18 days", rel(u), re
 
 #### Step 5. Mechanism as in trials: survival, not fewer infections
 
+This step swaps the mechanism: treated tadpoles are infected as often as
+untreated ones but survive better. It also sets aside the loss of
+protection of step 4, so that the two mechanisms are compared on equal
+terms; steps 5 to 8 keep bacteria for life unless their decay is stated.
+
 ``` julia
 effs, tols = [0.5, 0.9, 0.99], [0.3, 0.7, 1.0]
 blocking = [rel(pond(T(efficacy = e); coverage = 0.8, stages = st2)) for e in effs]
@@ -557,7 +935,7 @@ plot!(["weak", "medium", "strong"], tolerating; marker = :square,
     label = "survives infection (0.3, 0.7, 1.0)")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-27-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-33-output-1.svg)
 
 ``` julia
 a = pond(T(tolerance = 0.7); coverage = 0.8, stages = st2)
@@ -583,8 +961,9 @@ step!("Bd toad", "treatment", "+ lower load (70%): also less shedding", rel(u), 
 
 #### Step 7. How long the bacteria really last
 
-With the measured decay, one dose at hatching wanes during the 95-day
-tadpole season.
+With the fitted decay (half-life 5 days), one dose at hatching wanes
+during the 95-day tadpole season. This step keeps the survival mechanism
+of step 5 but not the lower shedding of step 6.
 
 ``` julia
 waning_t = T(tolerance = 0.7, abundance_half_life = 5 / 365, protective_fold = 100.0)
@@ -596,10 +975,10 @@ bar(doses; orientation = :h, yticks = (1:4, first.(schedules)), yflip = true, le
     left_margin = 6Plots.mm, size = (820, 230), color = :steelblue)
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-30-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-36-output-1.svg)
 
 ``` julia
-step!("Bd toad", "treatment", "+ measured decay, one dose at hatching", rel(u), doses[1],
+step!("Bd toad", "treatment", "+ fitted decay, one dose at hatching", rel(u), doses[1],
     "protection gone before the season ends")
 ```
 
@@ -613,6 +992,11 @@ step!("Bd toad", "treatment", "+ five doses per season", rel(u), doses[4], "most
 
     (step = 8, untreated = 0.046, treated = 0.804)
 
+Each dose renews the protection of treated tadpoles and also treats 80%
+of those still untreated, infected ones included, so after five doses
+almost every tadpole has been treated. Part of the benefit comes from
+that higher coverage, not only from renewed protection.
+
 #### Step 9. Chance
 
 The same pond model with every tadpole, toad and zoospore a whole
@@ -620,6 +1004,19 @@ number, and every event random (`solve(problem; rng)`); 50 runs of each
 case. Mitchell et al.’s rule that toads are extinct below 50 adults, and
 Bd below 100 zoospores, is no longer needed: each goes extinct when its
 numbers reach zero.
+
+In terms of the equations, every flow above becomes a random event,
+drawn in steps of one day (tau-leaping). In each step every animal or
+zoospore leaves its class with probability $1 - e^{-Rh}$, where $R$ is
+the sum of its per-capita rates out of that class and $h$ is one day,
+and goes to each destination in proportion to that rate. New zoospores
+are a Poisson draw with mean $\rho\,(P_{YU} + (1 - g\kappa)P_{YT})\,h$.
+The yearly events become draws as well: hatchlings are Poisson with mean
+$\iota\psi A_X$, each dose treats a binomial share $c$ of untreated
+tadpoles, and an uninfected, untreated metamorph reaches age $\omega$
+with probability $(1 - q_U + q_U s_U)\,e^{-\mu_J\omega}$ (likewise for
+the other classes). The limits of 50 adults and 100 zoospores are not
+applied.
 
 ``` julia
 chanceB(tr; stages = st2, kw...) = [solve(ProbioticPondProblem(m, tr; stages, kw...); rng = Xoshiro(s)) for s in 1:50]
@@ -659,7 +1056,7 @@ changes a great deal:
 ladder_plot("Bd toad", "adults in years 25 to 35, fraction of disease-free")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-34-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-40-output-1.svg)
 
 ## Part C. Bd in frogs
 
@@ -676,9 +1073,60 @@ sporangia. Sporangia release zoospores into a shared pool, zoospores
 infect frogs, and a frog dies when its load reaches a lethal level.
 Loads run away when there are enough frogs to keep the pool topped up.
 
+The equations below are the model as it stands after step 2. Each live
+frog $i$ carries $S_i$ sporangia, and the pool holds $Z$ zoospores:
+
+$$\begin{aligned}
+\frac{dS_i}{dt} &= \frac{\nu\gamma}{V}\,Z + (\eta\nu f - \sigma)\,S_i - \frac{c_i\,S_i}{h + S_i}, \\
+\frac{dZ}{dt} &= \varepsilon + \eta(1 - f)\sum_{j\ \mathrm{alive}} S_j - \mu Z - \frac{\gamma}{V}\,N_{\mathrm{alive}}\,Z.
+\end{aligned}$$
+
+Zoospores meet each frog at rate $\gamma/V$, and a fraction $\nu$ of
+meetings start a sporangium. Each sporangium releases $\eta$ zoospores a
+day: a fraction $f$ reinfect the same frog and the rest go to the pool.
+A frog dies when $S_i$ reaches $S_{\max}$; from then on it sheds nothing
+and takes up no zoospores. All frogs start with no sporangia, and the
+pool starts at $\varepsilon/(\mu + \gamma N/V)$. On its own a frog’s
+load would decline, because $\eta\nu f$ (about 0.04 per day) is below
+$\sigma$; loads run away only when enough frogs feed the pool.
+
+What each step adds:
+
+- **Step 0** is the model of Briggs et al. (2010) with no clearance
+  ($c_i = 0$). The $S_i$ and $Z$ equations without $\varepsilon$ are
+  those of the paper. The outside input $\varepsilon$ is the paper’s
+  external source of zoospores (its Fig. 3D), here as a constant rate.
+- **Step 1** adds clearance by the frog, $c\,S_i/(h + S_i)$, the same
+  for every frog ($c_i = c$). This term is new in this package.
+- **Step 2** lets $c_i$ differ: the 80 values are evenly spaced
+  quantiles of a lognormal distribution with median $c$.
+
+| Symbol | Meaning | Value or source |
+|----|----|----|
+| $S_i$ | sporangia on frog $i$ | state (sporangia per frog) |
+| $Z$ | zoospores in the pool | state (zoospores per pool) |
+| $N_{\mathrm{alive}}$ | frogs alive | starts at $N = 80$ |
+| $V$ | pool volume | 1 volume unit; compendium (briggs2010) |
+| $\gamma$ | rate at which zoospores meet a frog | 0.01 volume units per day; compendium (briggs2010) |
+| $\nu$ | fraction of meetings that start a sporangium | 0.05; compendium (briggs2010) |
+| $f$ | fraction of released zoospores that reinfect the same frog | 0.05; compendium (briggs2010) |
+| $\eta$ | zoospores released per sporangium | 17.5 per day; compendium (briggs2010) |
+| $\sigma$ | loss of sporangia | 0.2 per day; compendium (briggs2010) |
+| $\mu$ | death of zoospores in the pool | 1 per day; compendium (briggs2010) |
+| $S_{\max}$ | lethal load | 10,000 sporangia; compendium (briggs2010) |
+| $\varepsilon$ | zoospores entering from outside | 1,000 per day; set in this vignette (the value Briggs et al. used for an external source) |
+| $c$ | maximum clearance (step 1) | 100 sporangia per day; illustrative |
+| $h$ | load at which clearance is half its maximum (step 1) | 500 sporangia; illustrative |
+| $c_i$ | clearance of frog $i$ (step 2) | lognormal, median $c$, log-scale sd 0.5; illustrative |
+
+![The load model for one frog $i$ and the shared zoospore pool.
+Clearance ($c_i$) is added in steps 1 and
+2.](01_building_realism_files/figure-commonmark/cell-41-output-1.svg)
+
 ``` julia
 pb = BriggsParameters(:briggs2010)
-N, hsat, ε = 80, 500.0, 1000.0
+N, hsat = 80, 500.0
+ε = parameter_set(:briggs2010; set = "fig3d").εZ    # zoospores from outside, per day
 tipping(c; n = N) = solve(LoadTippingProblem(pb; c, h = hsat, N = n, ε, tspan = (0.0, 730.0)))
 alive(r) = count(r.alive) / length(r.alive)
 
@@ -716,8 +1164,8 @@ step!("Bd frog", "host", "+ saturating clearance by the frog", alive(r1), NaN,
 #### Step 2. Frogs differ
 
 Frogs now differ in how strong their defences are (lognormal, same
-median). The reference treatment for Part C starts here: 40% of frogs
-carry bacteria that triple their clearance, for life.
+median). The reference treatment for Part C starts here: each frog, with
+probability 0.4, carries bacteria that triple its clearance, for life.
 
 ``` julia
 cs = quantile.(LogNormal(log(c), 0.5), ((1:N) .- 0.5) ./ N)
@@ -739,6 +1187,26 @@ host differences are not yet combined in the package.
 ### Treatment
 
 #### Step 3. A treated class
+
+Treated frogs clear sporangia faster. In the load equations above, with
+identical frogs,
+
+$$c_i = \begin{cases} c_T, & \text{frog } i \text{ treated}, \\ c, & \text{otherwise}. \end{cases}$$
+
+On day 0 each frog is treated with probability equal to the coverage, so
+the treated frogs differ from run to run. Loads follow the equations
+through each day. At the end of each day a treated frog stops being
+treated with probability $1 - e^{-\omega}$, where
+$\omega = \ln 2 / t_{1/2}$. In step 3, $t_{1/2}$ is infinite (treated
+for life); step 4 sets $t_{1/2} = 30$ days and treats every frog. The
+package can also let untreated frogs pick up the bacteria from treated
+ones; that is switched off here.
+
+| Symbol | Meaning | Value or source |
+|----|----|----|
+| $c_T$ | clearance of a treated frog | $3c$ = 300 sporangia per day; illustrative |
+| coverage | probability that a frog is treated on day 0 | 0.4 (step 3), 1 (step 4); illustrative |
+| $t_{1/2}$ | half-life of the treated state | infinite (step 3), 30 days (step 4); illustrative |
 
 ``` julia
 step!("Bd frog", "treatment", "treated class: 40% of frogs, lasts for life", alive(r1),
@@ -767,13 +1235,14 @@ step!("Bd frog", "treatment", "+ protection lost, half-life 30 days", alive(r1),
 #### Step 5. Bacteria as a state of each frog
 
 Until now every treated animal has been simply “treated”. Each frog now
-carries its own abundance of the applied bacteria. It declines at the
-measured rate (half-life 5 days), and frogs exchange bacteria through
-the pond. Exchange moves bacteria between frogs without creating any, so
-they spread but do not sustain themselves. That is what the field trial
-showed: eleven days after most frogs in a pond were bathed, frogs that
-were never bathed carried about 0.63 times as much of the bacterium as
-bathed ones, and it then declined in both.
+carries its own abundance of the applied bacteria. It declines with the
+half-life fitted to field data (5 days; this project’s own fit), and
+frogs exchange bacteria through the pond. Exchange moves bacteria
+between frogs without creating any, so they spread but do not sustain
+themselves. That is what the field trial showed: eleven days after most
+frogs in a pond were bathed, frogs that were never bathed carried about
+0.63 times as much of the bacterium as bathed ones, and it then declined
+in both.
 
 ``` julia
 baths(; x = 0.1, F = 100.0, coverage = 0.75, dose_days = [0], days = 730) =
@@ -793,9 +1262,43 @@ end
 An exchange rate of about 0.1 per day reproduces the field ratio and is
 used below.
 
+In equations, each frog $i$ now carries an abundance $B_i$ of the
+applied bacteria, in dose units. A bath sets $B_i = 1$ on every live
+frog in the bathed group (the first 75% of frogs, 60 of 80). Between
+baths
+
+$$\begin{aligned}
+\frac{dB_i}{dt} &= -\delta B_i + x\,(\bar{B} - B_i),
+  \qquad \delta = \frac{\ln 2}{t_B},
+  \qquad \bar{B} = \frac{1}{N_{\mathrm{alive}}}\sum_{j\ \mathrm{alive}} B_j, \\
+c_i &= c + (c_T - c)\,\frac{B_i}{B_i + 1/F},
+\end{aligned}$$
+
+and $S_i$ and $Z$ follow the equations of step 1 with this $c_i$. Summed
+over live frogs the exchange terms cancel, so the mean abundance falls
+at rate $\delta$ whatever $x$ is. With $F = 100$ a freshly bathed frog
+has 99% of the extra clearance, and keeps at least half of it until
+$B_i$ falls to $1/F$: about $\log_2 F \approx 6.6$ half-lives (33 days)
+without exchange. The treated class of steps 3 and 4 is not part of this
+model; protection now wanes through $B_i$. Step 6 repeats the bath on
+days 0, 90, 180, and so on.
+
+| Symbol | Meaning | Value or source |
+|----|----|----|
+| $B_i$ | abundance of applied bacteria on frog $i$ | state (dose units; 1 just after a bath) |
+| $t_B$ | half-life of the abundance | 5 days; this package’s fit to field data, not a published estimate |
+| $x$ | rate at which frogs exchange bacteria | 0.1 per day; chosen to match the field ratio above |
+| $F$ | protective fold: abundance after a bath divided by the abundance giving half the effect | 100; illustrative |
+| $c_T$ | clearance at full effect | $3c$ = 300 sporangia per day; illustrative |
+| coverage | share of frogs bathed | 0.75; illustrative |
+
+![Bacteria on frog $i$: set to 1 by a bath, lost at rate δ, exchanged
+with other frogs, and raising the clearance of sporangia
+(dashed).](01_building_realism_files/figure-commonmark/cell-48-output-1.svg)
+
 ``` julia
 one = baths()
-step!("Bd frog", "treatment", "+ bacteria on each frog, measured decay; one bath", alive(r1),
+step!("Bd frog", "treatment", "+ bacteria on each frog, fitted decay; one bath", alive(r1),
     one.alive[end] / N, "die-off delayed by about six weeks")
 ```
 
@@ -812,7 +1315,7 @@ plot!(every90.t, max.(every90.mean_load, 1.0); label = "a bath every 90 days")
 hline!([pb.Smax]; color = :black, linestyle = :dash, label = "lethal load")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-42-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-50-output-1.svg)
 
 ``` julia
 first_death(r) = any(>(0), r.death_day) ? minimum(filter(>(0), r.death_day)) : 0
@@ -855,6 +1358,21 @@ bacteria, bathing a small part of the population protects the rest.
 The same model with every sporangium on every frog, and every zoospore
 in the pool, a whole number, and every event random
 (`StochasticFrogProblem`); 20 runs of each case.
+
+Time moves in steps of $dt = 0.05$ days. In each step the random events
+have the rates of the equations, so on average they follow them:
+
+| Event in a step | Number drawn | Term in the equations |
+|----|----|----|
+| new sporangia on frog $i$ | Poisson with mean $\left(\frac{\nu\gamma}{V} Z + \eta\nu f S_i\right) dt$ | first two terms of $dS_i/dt$ |
+| sporangia lost from frog $i$ | Binomial($S_i$, $1 - e^{-(\sigma + c_i/(h + S_i))\,dt}$) | $\sigma S_i + c_i S_i/(h + S_i)$ |
+| zoospores released by frog $i$ | Poisson with mean $\eta(1 - f) S_i\,dt$ | $\eta(1 - f)\sum_j S_j$ |
+| zoospores lost from the pool | Binomial($Z$, $1 - e^{-(\mu + \gamma N_{\mathrm{alive}}/V)\,dt}$) | $\mu Z + (\gamma/V) N_{\mathrm{alive}} Z$ |
+| zoospores from outside | Poisson with mean $\varepsilon\,dt$ | $\varepsilon$ |
+
+A frog dies as soon as $S_i$ reaches $S_{\max}$. The bacteria $B_i$ stay
+continuous and follow the step-5 equation, solved exactly over each
+step.
 
 ``` julia
 bath_tr = T(abundance_half_life = 5.0, protective_fold = 100.0, direct = 0.1)
@@ -913,7 +1431,7 @@ bacteria is assumed, not measured.
 ladder_plot("Bd frog", "fraction of 80 frogs alive after 2 years")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-48-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-56-output-1.svg)
 
 ## How much did each step move the answer?
 
@@ -935,19 +1453,19 @@ end
 change_plot("Bsal")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-49-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-57-output-1.svg)
 
 ``` julia
 change_plot("Bd toad")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-50-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-58-output-1.svg)
 
 ``` julia
 change_plot("Bd frog")
 ```
 
-![](01_building_realism_files/figure-commonmark/cell-51-output-1.svg)
+![](01_building_realism_files/figure-commonmark/cell-59-output-1.svg)
 
 Large bars point both ways in every system. No single addition
 dominates, and the sign of a step depends on the system: the observed
@@ -963,7 +1481,7 @@ on and off in every combination for Bsal, on the full host model of step
 
 - **mechanism**: blocks infection (0.99), or survive but stay infected
   (0.99);
-- **duration**: lasts for life, or measured decay (half-life 5 days);
+- **duration**: lasts for life, or fitted decay (half-life 5 days);
 - **spread**: none, or between animals at 50 per year;
 - **stages**: adults once, or both stages every quarter with the
   bacteria kept through metamorphosis.
@@ -1031,7 +1549,7 @@ function effect(field, on)
 end
 println("| Switched on | Mean change | Smallest | Largest |")
 println("|---|---|---|---|")
-for (field, on, label) in ((:mech, "survive", "survive instead of block"), (:dur, "decays", "measured decay"),
+for (field, on, label) in ((:mech, "survive", "survive instead of block"), (:dur, "decays", "fitted decay"),
         (:spr, "spreads", "spread between animals"), (:stg, "both", "treat both stages"))
     d = effect(field, on)
     @printf("| %s | %+.2f | %+.2f | %+.2f |\n", label, sum(d) / length(d), minimum(d), maximum(d))
@@ -1041,7 +1559,7 @@ end
 | Switched on              | Mean change | Smallest | Largest |
 |--------------------------|-------------|----------|---------|
 | survive instead of block | -0.32       | -0.80    | -0.00   |
-| measured decay           | -0.47       | -0.95    | -0.09   |
+| fitted decay             | -0.47       | -0.95    | -0.09   |
 | spread between animals   | +0.10       | -0.00    | +0.67   |
 | treat both stages        | +0.10       | -0.01    | +0.67   |
 
@@ -1075,7 +1593,7 @@ end
 | Bsal | 6 | treatment | mechanism as in trials: survive, still infected | 0.04 | 0.02 | fails; survivors shed for longer, so transmission rises |
 | Bsal | 7 | treatment | \+ lower load (99%): also less shedding | 0.04 | 0.19 | partial; survivors remain infected |
 | Bsal | 8 | treatment | treat both stages, kept through metamorphosis | 0.04 | 1.00 | full protection with no spread at all |
-| Bsal | 9 | treatment | \+ measured decay (half-life 5 days) | 0.04 | 0.06 | fails: protection lasts about a month |
+| Bsal | 9 | treatment | \+ fitted decay (half-life 5 days) | 0.04 | 0.06 | fails: protection lasts about a month |
 | Bsal | 10 | chance | \+ chance: whole animals, 20 ha | 0.08 | 0.82 | the failed treatment of step 9 now keeps most of the population |
 | Bd toad | 0 | host | Mitchell 2008 pond model | 0.00 | 0.98 | untreated: toads and Bd both die out; treated: toads saved, Bd gone |
 | Bd toad | 1 | host | \+ infected metamorphs can survive (0.29) | 0.05 | 0.09 | toads no longer die out, so nor does Bd; treatment now protects poorly |
@@ -1084,7 +1602,7 @@ end
 | Bd toad | 4 | treatment | \+ protection lost, half-life 18 days | 0.05 | 0.06 | slightly worse |
 | Bd toad | 5 | treatment | mechanism as in trials: survive, still infected | 0.05 | 0.75 | much better than blocking here; Bd persists |
 | Bd toad | 6 | treatment | \+ lower load (70%): also less shedding | 0.05 | 0.75 | little changed: untreated tadpoles and the pond keep Bd going |
-| Bd toad | 7 | treatment | \+ measured decay, one dose at hatching | 0.05 | 0.06 | protection gone before the season ends |
+| Bd toad | 7 | treatment | \+ fitted decay, one dose at hatching | 0.05 | 0.06 | protection gone before the season ends |
 | Bd toad | 8 | treatment | \+ five doses per season | 0.05 | 0.80 | most of the benefit restored |
 | Bd toad | 9 | chance | \+ chance: whole animals | 0.07 | 0.82 | little change for this model; large changes elsewhere (see text) |
 | Bd frog | 0 | host | Briggs 2010 load model | 0.00 |  | all die: 80 frogs is above the threshold of 23 |
@@ -1092,7 +1610,7 @@ end
 | Bd frog | 2 | host | \+ frogs differ in their defences | 0.06 |  | a few of the best-defended survive |
 | Bd frog | 3 | treatment | treated class: 40% of frogs, lasts for life | 0.00 | 1.00 | all survive, including the untreated: protection is shared |
 | Bd frog | 4 | treatment | \+ protection lost, half-life 30 days | 0.00 | 0.00 | die-off delayed by about three months, not prevented |
-| Bd frog | 5 | treatment | \+ bacteria on each frog, measured decay; one bath | 0.00 | 0.00 | die-off delayed by about six weeks |
+| Bd frog | 5 | treatment | \+ bacteria on each frog, fitted decay; one bath | 0.00 | 0.00 | die-off delayed by about six weeks |
 | Bd frog | 6 | treatment | \+ a bath every 90 days | 0.00 | 1.00 | all survive: each bath resets the slow build-up of load |
 | Bd frog | 7 | chance | \+ chance: whole sporangia and zoospores | 0.00 | 1.00 | baths every 90 days still protect; less frequent or narrower bathing now fails |
 

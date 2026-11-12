@@ -2,6 +2,13 @@
 
 
 - [Why a second vignette](#why-a-second-vignette)
+- [The model](#the-model)
+  - [State](#state)
+  - [The simplest model](#the-simplest-model)
+  - [The full model](#the-full-model)
+  - [Treatment](#treatment)
+  - [Arrival and fade-out](#arrival-and-fade-out)
+  - [Symbols](#symbols)
 - [The outcomes](#the-outcomes)
 - [A ladder in one model](#a-ladder-in-one-model)
 - [Every combination](#every-combination)
@@ -41,9 +48,9 @@ can be turned on, so that:
 | `latent` | infected animals are not infectious at once |
 | `environment` | half of transmission goes through a pool of zoospores that outlasts the animals that shed them (total transmission unchanged) |
 | `load` | infections start light (little shedding, no disease death) and progress to heavy |
-| `recovery` | infected animals can clear the infection |
+| `recovery` | infected animals can clear the infection (with `load` on, only light infections) |
 | `larvae` | an aquatic larval stage between birth and adulthood |
-| `larval_infection` | larvae are infected by adults, without disease, and half carry the infection through metamorphosis |
+| `larval_infection` | larvae are infected by adults (and from the pool when `environment` is on), without disease, and half carry the infection through metamorphosis |
 
 > [!IMPORTANT]
 >
@@ -54,8 +61,220 @@ can be turned on, so that:
 > **Everything else is new work in this package and is not a published
 > result**, and the values attached to the other switches (pool
 > half-life 30 days, light infections shedding 10% as much and lasting
-> about two weeks, recovery at the same rate as progression, a
-> four-month larval stage) are illustrative.
+> about two weeks (one week when they can also recover), recovery at the
+> same rate as progression, a four-month larval stage) are illustrative.
+
+## The model
+
+### State
+
+Each animal is an adult or a larva, untreated (u) or treated (t), and in
+one infection class. Adults are susceptible (``S``), latent (``L``), lightly
+infected (``Y``) or heavily infected (``I``). Larvae are uninfected (``S^w``)
+or infected (``I^w``). With the zoospore pool ``Z`` this gives 17 variables.
+Densities are per hectare and time is in years. A class whose switch is
+off stays empty.
+
+### The simplest model
+
+With every switch off and no treatment, there are only susceptible and
+infectious adults:
+
+```math
+\begin{aligned}
+\frac{dS}{dt} &= bS - \beta I S - (d + \gamma N) S, \\
+\frac{dI}{dt} &= \beta I S - d_I I - (d + \gamma N) I,
+\end{aligned}
+```
+
+with ``N = S + I`` and ``\gamma = (b - d)/K``, so that the population
+without Bsal settles at ``K``. Only susceptible adults reproduce. Turning
+on `latent` puts the class ``L`` between ``S`` and ``I``, left at rate ``e``;
+this is equation 2.1 of Schmidt et al. (2017).
+
+### The full model
+
+![The nested model with every switch on, for untreated animals. Blue
+boxes and arrows belong to the switch named in brackets; the dotted
+arrow is used instead of the larval stage when `larvae` is off. Dashed
+grey arrows are influences, not flows: shedding H by light and heavy
+adults feeds the infectious pressure Q directly and, with `environment`
+on, through the zoospore pool Z. Natural deaths (rate D for adults, μw
+for larvae) leave every box and are not
+drawn.](02_nested_model_files/figure-commonmark/cell-3-output-1.svg)
+
+Adults shed zoospores, light infections a fraction ``\rho`` as much as
+heavy ones. Adults are infected at rate ``\beta Q`` per susceptible
+animal, larvae at ``\beta_w Q``, where
+
+```math
+\begin{aligned}
+H &= \sum_{\tau} h_\tau \left( \rho Y_\tau + I_\tau \right), \\
+Q &= (1 - \phi) H + \phi \mu_Z Z, \\
+\frac{dZ}{dt} &= H - \mu_Z Z.
+\end{aligned}
+```
+
+At equilibrium ``\mu_Z Z = H``, so the pool changes the timing of
+transmission but not its total. Larvae do not shed.
+
+For adults with treatment label ``\tau \in \{\mathrm{u}, \mathrm{t}\}``:
+
+```math
+\begin{aligned}
+\frac{dS_\tau}{dt} &= B^A_\tau + M^S_\tau - f_\tau \beta Q S_\tau + \sigma Y_\tau - D S_\tau + \Omega(S_\tau), \\
+\frac{dL_\tau}{dt} &= f_\tau \beta Q S_\tau + M^I_\tau - e L_\tau - D L_\tau + \Omega(L_\tau), \\
+\frac{dY_\tau}{dt} &= e L_\tau - (\nu + \sigma) Y_\tau - D Y_\tau + \Omega(Y_\tau), \\
+\frac{dI_\tau}{dt} &= \nu Y_\tau - k_\tau d_I I_\tau - D I_\tau + \Omega(I_\tau),
+\end{aligned}
+```
+
+where ``D = d + \gamma N_A`` and ``N_A`` is the density of all adults.
+Density dependence acts on adults only. For larvae:
+
+```math
+\begin{aligned}
+\frac{dS^w_\tau}{dt} &= B^w_\tau - f_\tau \beta_w Q S^w_\tau - (m + \mu_w) S^w_\tau + \Omega(S^w_\tau), \\
+\frac{dI^w_\tau}{dt} &= f_\tau \beta_w Q S^w_\tau - (m + \mu_w) I^w_\tau + \Omega(I^w_\tau).
+\end{aligned}
+```
+
+Births are
+
+```math
+B = b' \sum_{\tau} \left[ S_\tau + Y_\tau + (1 - k_\tau)(L_\tau + I_\tau) \right],
+```
+
+and all are untreated: ``B^w_{\mathrm{u}} = B`` with larvae,
+``B^A_{\mathrm{u}} = B`` without, and the other birth terms are zero.
+Without larvae ``b' = b``; with them ``b' = b (m + \mu_w)/m``, so that each
+adult still recruits ``b`` adults a year when there is no Bsal. Untreated
+latent and heavily infected adults do not reproduce, as in Schmidt et
+al. (2017). Light infections do. Treated latent and heavily infected
+adults reproduce in proportion to the treatment’s tolerance.
+
+At metamorphosis (rate ``m``) an infected larva stays infected with
+probability ``p`` and enters the latent class; otherwise it becomes a
+susceptible adult. Untreated larvae become untreated adults. A fraction
+``r`` (`retention`) of treated larvae keep the treatment and the rest lose
+it:
+
+```math
+\begin{aligned}
+M^S_{\mathrm{u}} &= m \left[ S^w_{\mathrm{u}} + (1 - p) I^w_{\mathrm{u}} \right] + (1 - r)\, m \left[ S^w_{\mathrm{t}} + (1 - p) I^w_{\mathrm{t}} \right], \\
+M^S_{\mathrm{t}} &= r\, m \left[ S^w_{\mathrm{t}} + (1 - p) I^w_{\mathrm{t}} \right], \\
+M^I_{\mathrm{u}} &= p\, m \left[ I^w_{\mathrm{u}} + (1 - r) I^w_{\mathrm{t}} \right], \\
+M^I_{\mathrm{t}} &= r\, p\, m\, I^w_{\mathrm{t}}.
+\end{aligned}
+```
+
+#### Switching pieces off
+
+Each switch removes terms; nothing else changes.
+
+- `latent` off: ``L`` is skipped. New infections, and infected larvae at
+  metamorphosis, enter ``Y`` (or ``I`` if `load` is also off).
+- `load` off: ``Y`` is skipped. Latent animals, or new infections, go
+  straight to ``I``, and recovery is from ``I`` to ``S`` at rate ``\sigma``.
+  Shedding is ``H = \sum_\tau h_\tau I_\tau``. With `load` on, only light
+  infections recover.
+- `recovery` off: ``\sigma = 0``.
+- `environment` off: ``\phi = 0``, so ``Q = H`` and ``Z`` plays no part.
+- `larvae` off: there are no larval classes and no ``M`` terms; births
+  enter ``S_{\mathrm{u}}`` and ``b' = b``.
+- `larval_infection` off: ``\beta_w = 0``, so larvae stay uninfected.
+
+Latent animals and infected larvae never recover, and infected larvae do
+not die of the disease.
+
+### Treatment
+
+Treatment scales three rates. Each effect is multiplied by the
+protection ``g`` that remains:
+
+```math
+f_{\mathrm{u}} = h_{\mathrm{u}} = k_{\mathrm{u}} = 1, \qquad
+f_{\mathrm{t}} = 1 - g\varepsilon, \qquad
+h_{\mathrm{t}} = 1 - g\zeta, \qquad
+k_{\mathrm{t}} = 1 - g\theta.
+```
+
+Efficacy ``\varepsilon`` cuts the infection rate, tolerance ``\theta`` cuts
+disease deaths (the animal stays infectious) and ``\zeta`` cuts shedding.
+The **block** treatment of this vignette is ``\varepsilon = 0.99``; the
+**survive** treatment is ``\theta = 0.99``. Protection can wane with the
+abundance of the applied bacteria,
+
+```math
+g(a) = \frac{1 + 1/\kappa}{1 + 2^{a / t_B} / \kappa},
+```
+
+where ``a`` is the time since the last application, ``t_B`` the bacteria’s
+half-life and ``\kappa`` their starting abundance over the abundance that
+gives half the effect. Without waning, as here, ``g = 1``.
+
+Animals also gain and lose the bacteria. For any class ``X`` in stage ``s``,
+
+```math
+\Omega(X_{\mathrm{u}}) = -\delta F_s X_{\mathrm{u}} + \omega X_{\mathrm{t}}, \qquad
+\Omega(X_{\mathrm{t}}) = \delta F_s X_{\mathrm{u}} - \omega X_{\mathrm{t}},
+```
+
+where ``F_s`` is the treated fraction of that stage, ``\delta`` the rate of
+spread and ``\omega = \ln 2 / (\text{half-life})`` the rate of loss. Both
+are zero in this vignette. At each treatment time a fraction ``c``
+(`coverage`) of the untreated animals of the treated stage becomes
+treated, and the clock ``a`` restarts.
+
+![The treatment layer. Every infection class X of the diagram above has
+an untreated (grey) and a treated (blue) copy. Treated animals gain and
+lose the bacteria within a stage; at metamorphosis a fraction r of
+treated larvae stay treated. In this vignette δ = ω = r = 0 and g =
+1.](02_nested_model_files/figure-commonmark/cell-4-output-1.svg)
+
+### Arrival and fade-out
+
+The population starts without Bsal: ``S_{\mathrm{u}} = K`` and, with
+larvae, ``S^w_{\mathrm{u}} = bK/m``. Bsal arrives as ``I_0 = 0.01`` heavily
+infected untreated adults per hectare (one per km², as in Schmidt et
+al. 2017), after any treatment at the same time. The fade-out rule, when
+used, is checked after every solver step with threshold ``n_{\min}``
+(`fadeout_density`): if all animals together fall below ``n_{\min}`` they
+are set to zero; otherwise, once Bsal has arrived, if
+``0 < \sum (\text{infected animals}) + \mu_Z Z < n_{\min}``, every
+infected class and the pool are set to zero. The infected animals are
+removed, not returned to the susceptible class.
+
+The growth rate reported below is the largest real part of the
+eigenvalues of the Jacobian of the infected classes (``L``, ``Y``, ``I``,
+``I^w`` and ``Z``, untreated) at this disease-free state.
+
+### Symbols
+
+| Symbol | Meaning | Value or source |
+|----|----|----|
+| ``b`` | recruitment, per adult | 0.39 per yr, compendium (schmidt2017) |
+| ``d`` | natural death | 0.125 per yr, compendium (schmidt2017) |
+| ``d_I`` | Bsal death of heavy infections | 52 per yr, compendium (schmidt2017) |
+| ``e`` | latent to infectious | 364 per yr, compendium (schmidt2017) |
+| ``\beta`` | transmission to adults | 52 ha per yr, compendium (schmidt2017) |
+| ``K`` | carrying capacity | 25 per ha, compendium (schmidt2017); also 3 and 1.5 below |
+| ``\gamma`` | density dependence | ``(b - d)/K`` |
+| ``\phi`` | share of transmission through the pool | 0.5, illustrative |
+| ``\mu_Z`` | pool decay | ``\ln 2`` / 30 days, illustrative |
+| ``\rho`` | shedding of a light infection relative to a heavy one | 0.1, illustrative |
+| ``\nu`` | light to heavy | 26 per yr, illustrative |
+| ``\sigma`` | recovery | 26 per yr, illustrative |
+| ``m`` | metamorphosis, 1/(larval period) | 1/(0.33 yr), illustrative |
+| ``\mu_w`` | larval death | 1 per yr, illustrative |
+| ``\beta_w`` | transmission from adults to larvae | 5.2 ha per yr, illustrative |
+| ``p`` | infected larvae still infected after metamorphosis | 0.5 (5 of 10), compendium (wang2021) |
+| ``\varepsilon``, ``\theta``, ``\zeta`` | treatment efficacy, tolerance, shedding reduction | 0.99 (block), 0.99 (survive), 0; illustrative |
+| ``g``, ``\kappa``, ``t_B`` | remaining protection and its waning | ``g = 1`` (no waning) |
+| ``\delta``, ``\omega`` | spread and loss of the bacteria | 0 |
+| ``c``, ``r`` | coverage, retention at metamorphosis | ``c = 1`` when treated, ``r = 0`` |
+| ``I_0`` | arriving infected adults | 0.01 per ha |
+| ``n_{\min}`` | fade-out threshold | ``10^{-4}`` per ha, illustrative |
 
 ``` julia
 using Chytridiomycosis, Plots, Printf
@@ -141,7 +360,7 @@ high = ladder_models(schmidt)
 ladder_figure(high, "Schmidt's density: 25 per ha, R0 = 24.8")
 ```
 
-![](02_nested_model_files/figure-commonmark/cell-5-output-1.svg)
+![](02_nested_model_files/figure-commonmark/cell-8-output-1.svg)
 
 ``` julia
 ladder_table(high)
@@ -220,7 +439,7 @@ res_high = all_models(schmidt)
 spread_figure(res_high, "48 models at 25 per ha (R0 = 24.8)")
 ```
 
-![](02_nested_model_files/figure-commonmark/cell-7-output-1.svg)
+![](02_nested_model_files/figure-commonmark/cell-10-output-1.svg)
 
 ``` julia
 effects_table(res_high)
@@ -252,7 +471,7 @@ res_mid, res_low = all_models(mid), all_models(low)
 spread_figure(res_mid, "48 models at 3 per ha (R0 = 3.0)")
 ```
 
-![](02_nested_model_files/figure-commonmark/cell-9-output-1.svg)
+![](02_nested_model_files/figure-commonmark/cell-12-output-1.svg)
 
 ``` julia
 effects_table(res_mid)
@@ -271,7 +490,7 @@ effects_table(res_mid)
 spread_figure(res_low, "48 models at 1.5 per ha (R0 = 1.5)")
 ```
 
-![](02_nested_model_files/figure-commonmark/cell-11-output-1.svg)
+![](02_nested_model_files/figure-commonmark/cell-14-output-1.svg)
 
 ``` julia
 effects_table(res_low)
@@ -297,7 +516,7 @@ The ladder at 3 per hectare:
 ladder_figure(ladder_models(mid), "3 per ha, R0 = 3.0")
 ```
 
-![](02_nested_model_files/figure-commonmark/cell-13-output-1.svg)
+![](02_nested_model_files/figure-commonmark/cell-16-output-1.svg)
 
 Three things stand out.
 
@@ -335,10 +554,11 @@ end
 The equations are deterministic, so a density can fall to a value that
 means far less than one animal and then grow back. Near the threshold
 that can decide the result. The model is therefore given a fade-out
-rule, itself a piece of realism: once infected animals fall below one
-per 100 km² (0.0001 per hectare) the pathogen is removed, and if all
-animals fall below that density the host population is removed. The
-threshold is illustrative.
+rule, itself a piece of realism: once infected animals (adults and
+larvae, with the zoospore pool counted in infectious-animal equivalents)
+fall below one per 100 km² (0.0001 per hectare) the pathogen is removed,
+and if all animals fall below that density the host population is
+removed. The threshold is illustrative.
 
 ``` julia
 fade = 1e-4
@@ -378,7 +598,7 @@ end
 spread_figure(fres_mid, "48 models at 3 per ha, with the fade-out rule")
 ```
 
-![](02_nested_model_files/figure-commonmark/cell-17-output-1.svg)
+![](02_nested_model_files/figure-commonmark/cell-20-output-1.svg)
 
 ``` julia
 effects_table(fres_mid)
@@ -459,10 +679,33 @@ a stochastic form, `StochasticNestedProblem`, in which animals are whole
 numbers in a given area and every transition happens at random. It draws
 its events from the same list of transitions as the equations, so with a
 large enough area it reproduces them, and with one infected animal its
-chance of a major outbreak matches the theoretical $1 - 1/R_0$ (both are
+chance of a major outbreak matches the theoretical ``1 - 1/R_0`` (both are
 checked in the package tests). Bsal now arrives as **one infected
 adult** in **20 hectares**: 500 adults at Schmidt’s density, 60 at 3 per
 hectare and 30 at 1.5. Each model is run 100 times.
+
+The stochastic version counts animals, ``n_i = A x_i`` in an area ``A``.
+Time moves in steps of ``\Delta t`` = 6 hours. At the start of each step
+every flow of the equations above is turned into a rate per animal,
+``\lambda_{ij}`` from class ``i`` to destination ``j`` (a death is one
+destination). Then
+
+```math
+\begin{aligned}
+O_i &\sim \text{Binomial}\left(n_i,\ 1 - e^{-\Lambda_i \Delta t}\right), \qquad \Lambda_i = \sum_j \lambda_{ij}, \\
+(O_{i \to j})_j &\sim \text{Multinomial}\left(O_i,\ (\lambda_{ij} / \Lambda_i)_j\right), \\
+\text{births} &\sim \text{Poisson}\left(A B \Delta t\right).
+\end{aligned}
+```
+
+The pool stays continuous and is updated exactly with shedding held at
+its value at the start of the step:
+``Z \leftarrow Z e^{-\mu_Z \Delta t} + (H/\mu_Z)(1 - e^{-\mu_Z \Delta t})``.
+At a treatment each untreated animal is treated with probability ``c``.
+The fade-out rule is not used. Bsal is lost when no animal is infected
+and the pool is expected to cause fewer than 0.05 more infections
+(``\beta \phi Z S < 0.05``, with ``S`` the number of susceptible animals);
+the pool is then emptied.
 
 ``` julia
 using Random: Xoshiro
@@ -505,7 +748,7 @@ end
 plt
 ```
 
-![](02_nested_model_files/figure-commonmark/cell-21-output-1.svg)
+![](02_nested_model_files/figure-commonmark/cell-24-output-1.svg)
 
 The runs and the equations disagree completely. With 99% of adults
 protected, the one infected animal infects about a quarter of an animal
@@ -539,7 +782,7 @@ end
 fate_figure("25 per ha")
 ```
 
-![](02_nested_model_files/figure-commonmark/cell-22-output-1.svg)
+![](02_nested_model_files/figure-commonmark/cell-25-output-1.svg)
 
 Red: the host population is lost within ten years. Green: Bsal is lost
 and the host remains. Yellow: both persist.
@@ -548,13 +791,13 @@ and the host remains. Yellow: both persist.
 fate_figure("3 per ha")
 ```
 
-![](02_nested_model_files/figure-commonmark/cell-23-output-1.svg)
+![](02_nested_model_files/figure-commonmark/cell-26-output-1.svg)
 
 ``` julia
 fate_figure("1.5 per ha")
 ```
 
-![](02_nested_model_files/figure-commonmark/cell-24-output-1.svg)
+![](02_nested_model_files/figure-commonmark/cell-27-output-1.svg)
 
 Mean adults over ten years, as a fraction of the starting number, and
 the share of introductions that never became an outbreak (fewer than ten
