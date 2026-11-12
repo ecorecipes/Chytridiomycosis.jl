@@ -754,4 +754,5 @@ using Random: Xoshiro
         @test prof[2] ≈ fd.loglik atol = 0.5
         @test all(prof .<= fd.loglik + 0.5)
     end
+    include("n5_identifiability.jl")
 end
