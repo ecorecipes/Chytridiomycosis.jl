@@ -1,0 +1,30 @@
+# Longo AV, Rodriguez D, da Silva Leite D, Toledo LF, Mendoza Almeralla C, Burrowes PA,
+# Zamudio KR (2013) ITS1 copy number varies among Batrachochytrium dendrobatidis strains:
+# implications for qPCR estimates of infection intensity from field-collected amphibian skin
+# swabs. PLoS ONE 8:e59499. https://doi.org/10.1371/journal.pone.0059499
+# Checked against the PDF, 2026-11-11. Eight Bd strains. Used by convert_load
+# (ITS1CopiesPerSwab <-> ZEPerSwab) to bound copies_per_zoospore.
+
+source = { ref = "longo2013", doi = "10.1371/journal.pone.0059499", review_ref = 12 }
+
+[[parameter]]
+symbol = "copies_per_zoospore_min"
+quantity = "lowest ITS1 copy number per zoospore among the strains"
+value = 10.0
+units = "copies zoospore^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", setting = "culture" }
+location = "Abstract; Results, Fig. 4A"
+verified = true
+
+[[parameter]]
+symbol = "copies_per_zoospore_max"
+quantity = "highest ITS1 copy number per zoospore among the strains"
+value = 144.0
+units = "copies zoospore^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "CLFT023", setting = "culture" }
+location = "Abstract; Results, Fig. 4A"
+verified = true

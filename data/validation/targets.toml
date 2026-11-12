@@ -1,0 +1,364 @@
+# Validation-target registry. Each [[target]] is a number or outcome published in a primary
+# paper, with the package call that reproduces it, a tolerance and a status. The test file
+# test/validation_targets.jl runs every target that is not pending.
+# Spec and human-readable table: lab/wiki/validation/targets.md
+#
+# status: reproduced | qualitative | discrepant | pending
+# tolerance: { digits = n } | { atol = x } | { rtol = x } | { lower = a, upper = b } | {} (exact)
+# regression (discrepant targets, or where the paper's number is approximate): our value and
+#   its tolerance, so a change in the implementation is caught.
+# Calls are evaluated in the Chytridiomycosis module; use Random.Xoshiro for seeded runs.
+# Published values used inside calls come from the compendium, never literals.
+
+# --- Schmidt et al. 2017, R Soc Open Sci 4:160801 (wiki R1–R3) ---------------------------
+
+[[target]]
+id = "schmidt2017_K_threshold"
+model = "bsal-schmidt2017-sli"
+source = { ref = "schmidt2017", location = "Results" }
+quantity = "invasion threshold K_threshold (adult females ha⁻¹)"
+published = 1.0086
+call = "invasion_threshold(SchmidtParameters(:schmidt2017))"
+tolerance = { digits = 4 }
+status = "reproduced"
+notes = "Wiki target R1."
+
+[[target]]
+id = "schmidt2017_removal"
+model = "bsal-schmidt2017-sli"
+source = { ref = "schmidt2017", location = "Results" }
+quantity = "fraction of hosts to remove to stop invasion (%)"
+published = 96.0
+call = "100 * removal_fraction(SchmidtParameters(:schmidt2017))"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = "Wiki target R2."
+
+[[target]]
+id = "schmidt2017_crash_time"
+model = "bsal-schmidt2017-sli"
+source = { ref = "schmidt2017", location = "Results" }
+quantity = "time to the population minimum after introduction (yr)"
+published = "two to three months"
+call = "population_crash(SchmidtParameters(:schmidt2017)).tmin"
+tolerance = { lower = 0.0833333, upper = 0.3333334 }
+status = "qualitative"
+notes = "Wiki target R2. Accepted between one and four months."
+
+[[target]]
+id = "schmidt2017_crash_depth"
+model = "bsal-schmidt2017-sli"
+source = { ref = "schmidt2017", location = "Results" }
+quantity = "population minimum as a fraction of K"
+published = "almost zero"
+call = """
+let p = SchmidtParameters(:schmidt2017)
+    population_crash(p).Smin / p.K
+end
+"""
+tolerance = { lower = -1.0, upper = 0.05 }
+status = "qualitative"
+notes = "Wiki target R2. Accepted below 5% of K."
+
+[[target]]
+id = "schmidt2017_S_eq"
+model = "bsal-schmidt2017-sli"
+source = { ref = "schmidt2017", location = "Results, eq. (2.3)" }
+quantity = "endemic equilibrium S_eq (adult females ha⁻¹)"
+published = 1.0027
+call = "endemic_equilibrium(SchmidtParameters(:schmidt2017)).S"
+tolerance = { digits = 4 }
+status = "discrepant"
+regression = { value = 1.0030, digits = 4 }
+notes = """
+Wiki target R2. Eq. (2.3) with the Table 1 values gives 1.0030, and the residual of the ODE
+right-hand side there is below 1e-10. Rounding of e, d_I or β does not explain the difference.
+The supplement offers no explanation."""
+
+[[target]]
+id = "schmidt2017_hopf"
+model = "bsal-schmidt2017-sli"
+source = { ref = "schmidt2017", location = "Results" }
+quantity = "carrying capacity K_H at the Hopf bifurcation (adult females ha⁻¹)"
+published = 9.5
+call = "hopf_threshold(SchmidtParameters(:schmidt2017))"
+tolerance = { atol = 0.1 }
+status = "discrepant"
+regression = { value = 10.21, atol = 0.01 }
+notes = """
+Wiki target R2. The Jacobian at the verified equilibrium gives 10.21, and simulation confirms
+it. Stability changes between K = 10.0 and 10.5."""
+
+[[target]]
+id = "schmidt2017_wave_speed"
+model = "bsal-schmidt2017-sli"
+source = { ref = "schmidt2017", location = "Results" }
+quantity = "travelling-wave speed c (km yr⁻¹)"
+published = 11.15
+call = "wave_speed(SchmidtParameters(:schmidt2017))"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "Wiki target R3 (D = 0.0625 km² yr⁻¹)."
+
+# --- Briggs, Knapp & Vredenburg 2010, PNAS 107:9695 (wiki R4) -----------------------------
+
+[[target]]
+id = "briggs2010_density_threshold"
+model = "bd-briggs2010-load"
+source = { ref = "briggs2010", location = "Fig. 2C legend" }
+quantity = "host density threshold N* (frogs per pool)"
+published = 20.0
+call = "host_density_threshold(BriggsParameters(:briggs2010))"
+tolerance = { atol = 5.0 }
+status = "reproduced"
+regression = { value = 23.15, digits = 2 }
+notes = """
+Wiki target R4. The legend says "a density of ∼20 frogs". The Fig. 2C values give
+N* = 23.15, which is the regression value."""
+
+[[target]]
+id = "briggs2010_fig2_clearance"
+model = "bd-briggs2010-load"
+source = { ref = "briggs2010", location = "Fig. 2C" }
+quantity = "below N*, every frog clears infection (10 frogs, 3 years)"
+published = true
+call = """
+let p = BriggsParameters(:briggs2010)
+    r = solve(BriggsLoadProblem(p; N = 10, S0 = fill(10.0, 10), tspan = (0.0, 1095.0));
+              abstol = 1e-8, reltol = 1e-8)
+    all(r.alive) && maximum(r.sol.u[end][1:10]) < 1e-6
+end
+"""
+status = "qualitative"
+
+[[target]]
+id = "briggs2010_fig2_dieoff"
+model = "bd-briggs2010-load"
+source = { ref = "briggs2010", location = "Fig. 2C" }
+quantity = "above N*, every frog reaches Smax and dies, sooner at higher density"
+published = true
+call = """
+let p = BriggsParameters(:briggs2010)
+    run(N) = solve(BriggsLoadProblem(p; N = N, S0 = fill(10.0, N), tspan = (0.0, 1095.0));
+                   abstol = 1e-8, reltol = 1e-8)
+    r30, r60 = run(30), run(60)
+    !any(r30.alive) && !any(r60.alive) && maximum(r30.death_time) > maximum(r60.death_time)
+end
+"""
+status = "qualitative"
+
+[[target]]
+id = "briggs2010_fig3a_band"
+model = "bd-briggs2010-load"
+source = { ref = "briggs2010", location = "Fig. 3A (starred point)" }
+quantity = "persistence probability at the starred point without a reservoir"
+published = "persistence in a narrow band only"
+call = """
+persistence_probability(BriggsSeasonalProblem(BriggsSeasonalParameters(:briggs2010; set = "fig3b"));
+                        nruns = 40, rng = Random.Xoshiro(7))
+"""
+tolerance = { lower = 0.3, upper = 0.95 }
+status = "qualitative"
+notes = "Δt and the Poisson cut-off are our choices; the paper gives maps, not numbers."
+
+[[target]]
+id = "briggs2010_fig3d_reservoir"
+model = "bd-briggs2010-load"
+source = { ref = "briggs2010", location = "Fig. 3D" }
+quantity = "with an external zoospore source, Bd persists with no adult deaths"
+published = true
+call = """
+let r = solve(BriggsSeasonalProblem(BriggsSeasonalParameters(:briggs2010; set = "fig3d"));
+              rng = Random.Xoshiro(1))
+    r.persisted && sum(r.deaths) == 0
+end
+"""
+status = "qualitative"
+
+[[target]]
+id = "briggs2010_fig3f_tadpoles"
+model = "bd-briggs2010-load"
+source = { ref = "briggs2010", location = "Fig. 3F" }
+quantity = "with long-lived tadpoles, Bd persists with no adult deaths"
+published = true
+call = """
+let r = solve(BriggsSeasonalProblem(BriggsSeasonalParameters(:briggs2010; set = "fig3f"));
+              rng = Random.Xoshiro(1))
+    r.persisted && sum(r.deaths) == 0
+end
+"""
+status = "qualitative"
+
+# --- Mitchell et al. 2008, Proc R Soc B 275:329 -------------------------------------------
+
+[[target]]
+id = "mitchell2008_disease_free_adults"
+model = "bd-mitchell2008-pond"
+source = { ref = "mitchell2008", location = "Fig. 2b–d" }
+quantity = "disease-free adult toads (about 10 × 10³)"
+published = 10000.0
+call = "solve(MitchellPondProblem(MitchellParameters(:mitchell2008))).A_disease_free"
+tolerance = { lower = 9500.0, upper = 11000.0 }
+status = "reproduced"
+
+[[target]]
+id = "mitchell2008_fig2b"
+model = "bd-mitchell2008-pond"
+source = { ref = "mitchell2008", location = "Fig. 2a point b, Fig. 2b" }
+quantity = "toads and Bd both persist 35 years after introduction"
+published = true
+call = """
+let r = solve(MitchellPondProblem(MitchellParameters(:mitchell2008; set = "fig2b")))
+    r.toads_persist && r.bd_persist
+end
+"""
+status = "qualitative"
+
+[[target]]
+id = "mitchell2008_fig2c"
+model = "bd-mitchell2008-pond"
+source = { ref = "mitchell2008", location = "Fig. 2a point c, Fig. 2c" }
+quantity = "toads persist and Bd fades out, after a deep crash and recovery"
+published = true
+call = """
+let r = solve(MitchellPondProblem(MitchellParameters(:mitchell2008; set = "fig2c")))
+    r.toads_persist && !r.bd_persist && r.A[end] > 0.95 * r.A_disease_free &&
+        minimum(r.A) < 0.2 * r.A_disease_free
+end
+"""
+status = "qualitative"
+
+[[target]]
+id = "mitchell2008_fig2d"
+model = "bd-mitchell2008-pond"
+source = { ref = "mitchell2008", location = "Fig. 2a point d, Fig. 2d" }
+quantity = "neither toads nor Bd persist"
+published = true
+call = """
+let r = solve(MitchellPondProblem(MitchellParameters(:mitchell2008; set = "fig2d")))
+    !r.toads_persist && !r.bd_persist
+end
+"""
+status = "qualitative"
+
+[[target]]
+id = "mitchell2008_table1"
+model = "bd-mitchell2008-pond"
+source = { ref = "mitchell2008", location = "Table 1, Fig. 2a" }
+quantity = "with the Table 1 values the pond is in the toads-only region"
+published = true
+call = """
+let r = solve(MitchellPondProblem(MitchellParameters(:mitchell2008)))
+    r.toads_persist && !r.bd_persist
+end
+"""
+status = "qualitative"
+
+# --- Thermal performance ------------------------------------------------------------------
+
+[[target]]
+id = "woodhams2008_lambda_23C"
+model = "thermal-performance"
+source = { ref = "woodhams2008", location = "Results, Modeled long-term population growth rate" }
+quantity = "long-term growth rate λ of Bd in culture at 23 °C (h⁻¹)"
+published = 0.044
+call = "intrinsic_growth_rate(WoodhamsParameters(:woodhams2008; set = \"23C\"))"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "Root of the characteristic equation (their Eq. 7) with the Table 2 values; we get 0.0442."
+
+[[target]]
+id = "woodhams2008_lambda_10C"
+model = "thermal-performance"
+source = { ref = "woodhams2008", location = "Results, Modeled long-term population growth rate" }
+quantity = "long-term growth rate λ of Bd in culture at 10 °C (h⁻¹)"
+published = 0.021
+call = "intrinsic_growth_rate(WoodhamsParameters(:woodhams2008; set = \"10C\"))"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "We get 0.0207."
+
+[[target]]
+id = "kelly2024_Topt_Eifel2019"
+model = "thermal-performance"
+source = { ref = "kelly2024", location = "Results; S1 Text Table E" }
+quantity = "optimal growth temperature of Bsal isolate Eifel2019 (°C)"
+published = 6.0
+call = "thermal_optimum(IsolateTPC(:kelly2024, \"Eifel2019\").curve; range = (0.0, 30.0))"
+tolerance = { atol = 0.5 }
+status = "reproduced"
+notes = "The optimum of the Table E polynomial is 6.06 °C."
+
+[[target]]
+id = "kelly2024_Topt_Luik2017"
+model = "thermal-performance"
+source = { ref = "kelly2024", location = "Results; S1 Text Table E" }
+quantity = "optimal growth temperature of Bsal isolate Luik2017 (°C)"
+published = 24.0
+call = "thermal_optimum(IsolateTPC(:kelly2024, \"Luik2017\").curve; range = (0.0, 30.0))"
+tolerance = { atol = 0.5 }
+status = "discrepant"
+regression = { value = 25.17, atol = 0.01 }
+notes = """
+The Table E quartic peaks at 25.17 °C on 0–30 °C, not at 24 °C. It has a second, lower local
+maximum near 4 °C. The paper reports R² = 0.17 for this fit, so the optimum is poorly
+determined either way."""
+
+[[target]]
+id = "blooi2015_heat_clearance"
+model = "thermal-performance"
+source = { ref = "blooi2015", location = "Results, Figs 3–4" }
+quantity = "10 days at 25 °C clears Bsal from fire salamanders; 7 days does not"
+published = true
+status = "pending"
+notes = "Needs an in-host Bsal load model driven by temperature. Values in the compendium (blooi2015)."
+
+# --- Pending: models not yet implemented (wiki R5–R10) ------------------------------------
+
+[[target]]
+id = "bozzuto2019_floquet_R0"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "" }
+quantity = "Floquet R₀ 8.27 vs 8.88; 1.92 vs 2.13 (review values, unverified)"
+status = "pending"
+notes = "Wiki target R5."
+
+[[target]]
+id = "tompros2022_beta_R0"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "" }
+quantity = "β = 0.230 day⁻¹ (frequency-dependent); R₀ = 4.9 (review values, unverified)"
+status = "pending"
+notes = "Wiki target R6."
+
+[[target]]
+id = "malagon2020_R0"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "" }
+quantity = "R₀ 1.9 (complex habitat) and 3.2 (simple habitat) (review values, unverified)"
+status = "pending"
+notes = "Wiki target R7."
+
+[[target]]
+id = "canessa2018_R0"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "" }
+quantity = "R₀ about 9.6 (5.8–14.3); 98% reduction at >80% coverage within 3 days (review values, unverified)"
+status = "pending"
+notes = "Wiki target R8."
+
+[[target]]
+id = "rumschlag2022_lifespan"
+model = "bd-rumschlag2022-zoospore-persistence"
+source = { ref = "rumschlag2022", location = "" }
+quantity = "zoospore lifespans 9.4–14.4 h (review values, unverified)"
+status = "pending"
+notes = "Wiki target R9."
+
+[[target]]
+id = "daversa2022_multihost"
+model = "bd-daversa2022-multihost"
+source = { ref = "daversa2022", location = "" }
+quantity = "total R₀ falls as the salamander fraction rises (review statement, unverified)"
+status = "pending"
+notes = "Wiki target R10."

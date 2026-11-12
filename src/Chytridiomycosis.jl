@@ -48,6 +48,12 @@ include("fitting/knapp2022.jl")
 include("models/schmidt2017_spatial.jl")
 include("models/briggs2010_stages.jl")
 
+# Phase 0 foundations
+include("models/woodhams2008.jl")
+include("units.jl")
+include("thermal.jl")
+include("validation.jl")
+
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
 export SchmidtParameters, SchmidtSLIProblem, to_ode_problem, invasion_threshold,
@@ -74,5 +80,15 @@ export MicrobiomeTreatment, load_reducing_treatment, protection, protection_dura
 # Schmidt spatial, Briggs stages
 export SchmidtPDEProblem, SchmidtColonyProblem, front_position, front_speed
 export BriggsLifeStages, BriggsStagedProblem, disease_free_stages
+
+# Phase 0 foundations
+export PathogenLoad, ZEPerSwab, ITS1CopiesPerSwab, Zoospores, SporangiaPerHost, load_value,
+       convert_load, parameter_load, convert_rate, in_time_unit, survival_to_hazard,
+       hazard_to_survival, time_unit
+export ThermalPerformanceCurve, Briere, CardinalTPC, GaussianQuadratic, SharpeSchoolfield,
+       Ratkowsky, PolynomialTPC, InterpolatedTPC, thermal_optimum, IsolateTPC, HostTPC,
+       thermal_data, SeasonalTemperature, temperature_dependent
+export WoodhamsParameters, intrinsic_growth_rate
+export ValidationTarget, validation_targets, validation_target, reproduce, check_target
 
 end # module Chytridiomycosis

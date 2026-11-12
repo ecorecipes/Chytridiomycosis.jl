@@ -1,0 +1,21 @@
+# Sheets CN, Schmidt DR, Hurtado PJ, Byrne AQ, Rosenblum EB, Richards-Zawacki CL, Voyles J
+# (2021) Thermal performance curves of multiple isolates of Batrachochytrium dendrobatidis, a
+# lethal pathogen of amphibians. Front Vet Sci 8:687084. https://doi.org/10.3389/fvets.2021.687084
+# Checked against the PDF, 2026-11-11. Five BdGPL isolates from the USA (LA, TN, VT, NM, OH),
+# grown at 4, 12, 17, 21, 25, 26 and 27 degC. The authors' Johnson-Lewin fits of r are in the
+# Supplementary Material, and the Discussion calls them unreliable (overfitted to mid-range
+# temperatures, giving "unrealistically high CTmax and Topt estimates"). They are not entered.
+
+source = { ref = "sheets2021", doi = "10.3389/fvets.2021.687084", review_ref = 22 }
+
+[[parameter]]
+symbol = "Topt_viability"
+quantity = "thermal optimum of population viability (MTT assay), shared by all five isolates"
+value = 21.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA, TN, VT, NM, OH (BdGPL)", setting = "culture" }
+location = "Abstract; Results, Differential Responses to Temperature"
+verified = true
+notes = "On the tested grid, so known only to within the 17 and 25 degC neighbours."

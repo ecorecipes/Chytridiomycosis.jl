@@ -1,0 +1,19 @@
+# Kinney VC, Heemeyer JL, Pessier AP, Lannoo MJ (2011) Seasonal pattern of Batrachochytrium
+# dendrobatidis infection and mortality in Lithobates areolatus: affirmation of Vredenburg's
+# "10,000 zoospore rule". PLoS ONE 6:e16708. https://doi.org/10.1371/journal.pone.0016708
+# Checked against the PDF, 2026-11-11. The threshold is Vredenburg et al.'s (2010), which
+# Kinney et al. state and support; vredenburg2010 itself was not obtained.
+
+source = { ref = "kinney2011", doi = "10.1371/journal.pone.0016708", review_ref = 27 }
+
+[[parameter]]
+symbol = "crash_load"
+quantity = "infection intensity near or above which frogs die (Vredenburg's 10,000 zoospore rule)"
+value = 10000.0
+units = "ZE swab^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Lithobates areolatus", setting = "field" }
+location = "Abstract; Introduction"
+verified = true
+notes = "Five of eight frogs with ZE per swab near or above 10,000 are known to have died. Loads are ZE per swab (Methods)."
