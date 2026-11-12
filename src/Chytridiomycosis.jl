@@ -23,7 +23,8 @@ using TOML
 
 The `SciMLBase.ODEProblem` that `solve(prob)` integrates, for the problems that lower to a
 single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
-[`LoadTippingProblem`](@ref) and [`BsalLarvalProblem`](@ref). Use it to solve with other
+[`LoadTippingProblem`](@ref), [`BsalLarvalProblem`](@ref) and
+[`MultiHostPoolProblem`](@ref) (with its inoculation callback). Use it to solve with other
 options or to pass the model to other SciML tools.
 """
 function to_ode_problem end
@@ -53,6 +54,8 @@ include("models/woodhams2008.jl")
 include("units.jl")
 include("thermal.jl")
 include("validation.jl")
+# Daversa et al. 2022: several host species sharing one zoospore pool
+include("models/daversa2022.jl")
 
 # N5
 using LinearAlgebra: svd, eigen, Symmetric, Diagonal
@@ -94,6 +97,9 @@ export ThermalPerformanceCurve, Briere, CardinalTPC, GaussianQuadratic, SharpeSc
        Ratkowsky, PolynomialTPC, InterpolatedTPC, thermal_optimum, IsolateTPC, HostTPC,
        thermal_data, SeasonalTemperature, temperature_dependent
 export WoodhamsParameters, intrinsic_growth_rate
+export DaversaParameters, MultiHostPoolProblem, daversa_doses, species_reproduction_numbers,
+       next_generation_matrix, daversa2022_path, MesocosmTank, load_daversa2022,
+       observed_infected, predicted_infected, daversa_loglikelihood, tank_reproduction_numbers
 export ValidationTarget, validation_targets, validation_target, reproduce, check_target
 
 # N5
