@@ -100,6 +100,45 @@ tolerance = { digits = 2 }
 status = "reproduced"
 notes = "Wiki target R3 (D = 0.0625 km² yr⁻¹)."
 
+[[target]]
+id = "schmidt2017_colony_area_1yr"
+model = "bsal-schmidt2017-sli"
+source = { ref = "schmidt2017", location = "ESM fig. S1e" }
+quantity = "scattered-colony area A(1) after one year, eq. (2.5) (km²)"
+published = 560.0
+call = "scattered_colony_area(SchmidtParameters(:schmidt2017), 1.0)"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = "Read off fig. S1e (≈560). Confirms that eq. (2.5) is in km²."
+
+[[target]]
+id = "schmidt2017_habitat_share_mu1"
+model = "bsal-schmidt2017-sli"
+source = { ref = "schmidt2017", location = "Results; ESM fig. S3" }
+quantity = "share of the German habitat infected after 8 years by scattered colonies, μ = 1 yr⁻¹"
+published = 0.09
+call = "scattered_colony_area(SchmidtParameters(:schmidt2017), 8.0) / parameter_set(:schmidt2017).habitat_area"
+tolerance = { rtol = 0.05 }
+status = "discrepant"
+regression = { value = 8.966, rtol = 0.001 }
+notes = """
+The paper reports ≈9%. Eq. (2.5) divided by the habitat area gives 8.97: fig. S3 plots the
+ratio A/H labelled as a percentage. Read correctly, eq. (2.5) exceeds the whole habitat ninefold,
+so its no-overlap assumption has failed; the explicit jump process (SchmidtColonyProblem) gives
+about 93% of the habitat infected (wiki bsal-schmidt2017-sli)."""
+
+[[target]]
+id = "schmidt2017_habitat_share_mu01"
+model = "bsal-schmidt2017-sli"
+source = { ref = "schmidt2017", location = "Results; ESM fig. S3" }
+quantity = "share of the German habitat infected after 8 years by scattered colonies, μ = 0.1 yr⁻¹"
+published = 0.001
+call = "scattered_colony_area(SchmidtParameters(:schmidt2017), 8.0; μ = parameter_set(:schmidt2017; set = \"figS3_low\").μ) / parameter_set(:schmidt2017).habitat_area"
+tolerance = { rtol = 0.05 }
+status = "discrepant"
+regression = { value = 0.1284, rtol = 0.001 }
+notes = "The paper reports ≈0.1%; eq. (2.5) gives the ratio 0.128 (12.8%), as for μ = 1."
+
 # --- Briggs, Knapp & Vredenburg 2010, PNAS 107:9695 (wiki R4) -----------------------------
 
 [[target]]
