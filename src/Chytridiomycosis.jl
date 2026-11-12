@@ -24,9 +24,9 @@ using TOML
 The `SciMLBase.ODEProblem` that `solve(prob)` integrates, for the problems that lower to a
 single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
 [`LoadTippingProblem`](@ref), [`BsalLarvalProblem`](@ref),
-[`MultiHostPoolProblem`](@ref) (with its inoculation callback) and
-[`ZoosporePersistenceProblem`](@ref). Use it to solve with other
-options or to pass the model to other SciML tools.
+[`MultiHostPoolProblem`](@ref) (with its inoculation callback),
+[`ZoosporePersistenceProblem`](@ref) and [`RefugiaODEProblem`](@ref). Use it to solve with
+other options or to pass the model to other SciML tools.
 """
 function to_ode_problem end
 
@@ -67,6 +67,11 @@ include("fitting/rumschlag2022.jl")
 using LinearAlgebra: svd, eigen, Symmetric, Diagonal
 using Distributions: pdf
 include("novel/swab_edna.jl")
+
+# Miller et al. 2025 refugia CTMC
+using Distributions: median, quantile
+include("models/miller2025.jl")
+include("fitting/miller2025_abc.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -122,5 +127,11 @@ export BriggsMomentProblem, SurveyPond, SurveySample, SurveyObservation, SurveyM
 # Bayesian Knapp fit
 export KnappPosterior, knapp_prior, observed_swabs, pointwise_loglikelihood, psis_loo, waic,
        elpd_difference, turing_model
+
+# Miller et al. 2025 refugia CTMC
+export RefugiaParameters, RefugiaCTMCProblem, RefugiaODEProblem, transmissibility,
+       refugia_initial_state, refugia_rates, refugia_stoichiometry, refugia_observation_weeks,
+       RefugiaMesocosmData, miller2025_path, load_miller2025, loss_rate, RefugiaPrior,
+       refugia_distance, refugia_abc, refugia_abc_summary
 
 end # module Chytridiomycosis

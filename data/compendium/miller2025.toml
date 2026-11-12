@@ -1,0 +1,562 @@
+# Miller CM, Lydeamore MJ, Flegg JA, Berger L, Skerratt LF, Waddle AW, Campbell PT (2025)
+# Sunlight-heated refugia protect frogs from chytridiomycosis: a mathematical modelling study.
+# arXiv:2503.06846. https://doi.org/10.48550/arXiv.2503.06846
+# Checked against arXiv v3 (5 May 2025; lab/papers/miller2025.pdf). Table 3 and Table S1 are
+# the same in v1 (10 Mar 2025). Not peer reviewed as of 2026-11-12: arXiv shows no journal
+# reference. It is also Monash EBS working paper 6/25.
+# Code-only constants were checked against the authors' code, Zenodo "Chytrid Model v1.0"
+# (https://doi.org/10.5281/zenodo.15179344, 2025-04-09; lab/papers/code/miller2025/code).
+# Their locators name the R file and line.
+# Time unit: weeks (Table S1: "All rates are per week"). Frogs are counts per mesocosm.
+# The base set holds the values the model runs at: the fixed constants and the Table 3
+# posterior means. Named sets:
+# - "code_priors": the priors in the Zenodo code, which differ from the paper's.
+# - "synthetic": Table S2, the truth for Supplement S2.
+# - "synthetic_posterior": Table S3.
+
+source = { ref = "miller2025", doi = "10.48550/arXiv.2503.06846", review_ref = 14 }
+
+# --- fixed natural-history constants (Table S1, from the laboratory data of Waddle et al. 2024)
+
+[[parameter]]
+symbol = "γ1"
+quantity = "rate I_k,1 -> I_k,2 (mean 2.5 weeks in I_k,1), k = U, V"
+value = 0.4
+units = "week^-1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "lab" }
+location = "§2.2.1; Table S1 (1/2.5 per week); code fns_stochastic_model.R l. 15"
+verified = true
+
+[[parameter]]
+symbol = "γ2"
+quantity = "rate I_k,2 -> I_k,3 (mean 4.5 weeks in I_k,2), k = U, V"
+value = 0.2222222222222222
+units = "week^-1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "lab" }
+location = "§2.2.1; Table S1 (1/4.5 per week); code fns_stochastic_model.R l. 16"
+verified = true
+notes = "1/4.5 exactly."
+
+[[parameter]]
+symbol = "m_U1"
+quantity = "infectiousness of I_U,1 relative to I_U,3"
+value = 10.0
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "lab" }
+location = "Table S1; code fns_stochastic_model.R l. 18 (m_int)"
+verified = true
+
+[[parameter]]
+symbol = "m_U2"
+quantity = "infectiousness of I_U,2 relative to I_U,3"
+value = 100.0
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "lab" }
+location = "Table S1; code fns_stochastic_model.R l. 17 (h_int)"
+verified = true
+
+[[parameter]]
+symbol = "m_U3"
+quantity = "infectiousness of I_U,3 (the reference, 1 by definition)"
+value = 1.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea" }
+location = "§2.1.1; Table S1 note; code fns_stochastic_model.R l. 47 (coefficient 1 on I3)"
+verified = true
+
+[[parameter]]
+symbol = "m_V1"
+quantity = "infectiousness of I_V,1 relative to I_U,3"
+value = 1.0
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "lab" }
+location = "Table S1; code fns_stochastic_model.R l. 20 (m_intv)"
+verified = true
+
+[[parameter]]
+symbol = "m_V2"
+quantity = "infectiousness of I_V,2 relative to I_U,3"
+value = 10.0
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "lab" }
+location = "Table S1; code fns_stochastic_model.R l. 19 (h_intv)"
+verified = true
+
+[[parameter]]
+symbol = "m_V3"
+quantity = "infectiousness of I_V,3 relative to I_U,3"
+value = 0.1
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "lab" }
+location = "Table S1; code fns_stochastic_model.R l. 21 (l_intv)"
+verified = true
+
+[[parameter]]
+symbol = "L_I2_U"
+quantity = "infection-intensity threshold for the high-load state I_U,2 (state assignment)"
+value = 1.0e5
+units = "load (basis not stated in the paper)"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea" }
+location = "§2.2.1; Table 2"
+verified = true
+notes = "Used only to build exp_data.csv. The paper says 'infection intensity' without a unit."
+
+[[parameter]]
+symbol = "L_I2_V"
+quantity = "infection-intensity threshold for the high-load state I_V,2 (state assignment)"
+value = 1.0e4
+units = "load (basis not stated in the paper)"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea" }
+location = "§2.2.1; Table 2"
+verified = true
+notes = "Used only to build exp_data.csv. The paper says 'infection intensity' without a unit."
+
+# --- design: initial state and duration (§2.1.2, §2.3)
+
+[[parameter]]
+symbol = "S_U0"
+quantity = "initial naive uninfected frogs per mesocosm"
+value = 5.0
+units = "frogs"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm" }
+location = "§2.1.2; code fns_stochastic_model.R l. 25 (x0)"
+verified = true
+
+[[parameter]]
+symbol = "I_U1_0"
+quantity = "initial naive inoculated frogs per mesocosm (start in I_U,1)"
+value = 5.0
+units = "frogs"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm" }
+location = "§2.1.2; code fns_stochastic_model.R l. 25 (x0)"
+verified = true
+
+[[parameter]]
+symbol = "S_V0"
+quantity = "initial previously infected ('vaccinated') uninfected frogs per mesocosm"
+value = 5.0
+units = "frogs"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm" }
+location = "§2.1.2; code fns_stochastic_model.R l. 26 (x0)"
+verified = true
+
+[[parameter]]
+symbol = "I_V1_0"
+quantity = "initial vaccinated inoculated frogs per mesocosm (start in I_V,1)"
+value = 5.0
+units = "frogs"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm" }
+location = "§2.1.2; code fns_stochastic_model.R l. 26 (x0)"
+verified = true
+notes = "In exp_data.csv, mesocosms 2, 3 and 6 have 1 to 3 of these frogs in IV2 at week 0."
+
+[[parameter]]
+symbol = "T_f"
+quantity = "duration of the experiment and of each simulation"
+value = 15.0
+units = "week"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm" }
+location = "§2.3, §3.1; code fns_stochastic_model.R l. 104 (tf = 15)"
+verified = true
+
+# --- loss rate (§3.1, Eq. 3)
+
+[[parameter]]
+symbol = "N_Tf"
+quantity = "mean number of frogs found per mesocosm at the final survey (week 15)"
+value = 14.5
+units = "frogs"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm" }
+location = "§3.1"
+verified = true
+notes = "Recomputed from exp_data.csv: (16+11+17+9+17+17+12+17)/8 = 14.5."
+
+[[parameter]]
+symbol = "μ"
+quantity = "loss rate of frogs (death or not found), all states, both environments"
+value = 0.021
+units = "week^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm" }
+location = "§3.1, Eq. (3); Table S1; code simulate_samples.R l. 21"
+verified = true
+notes = "μ = -log(N_Tf/20)/T_f = 0.02144, reported to three decimals; the code fixes 0.021."
+
+# --- ABC (§2.3, Table 3)
+
+[[parameter]]
+symbol = "abc_samples"
+quantity = "number of prior samples in the ABC rejection run"
+value = 1.0e6
+units = "1"
+provenance = "A"
+role = "structural"
+location = "§2.3; code model_setup.R l. 2"
+verified = true
+
+[[parameter]]
+symbol = "abc_acceptance"
+quantity = "fraction of prior samples accepted (those with the smallest summary statistic)"
+value = 0.002
+units = "1"
+provenance = "A"
+role = "structural"
+location = "§2.3; code model_setup.R l. 3"
+verified = true
+notes = "2,000 of 10^6 samples."
+
+[[parameter]]
+symbol = "β_prior_max"
+quantity = "upper bound of the uniform prior on β_sh and β_un"
+value = 2.0
+units = "week^-1"
+provenance = "A"
+role = "structural"
+location = "Table 3 (U(0, 2))"
+verified = true
+notes = "The Zenodo code uses U(0, 1): set code_priors."
+
+[[parameter]]
+symbol = "α_prior_max"
+quantity = "upper bound of the uniform prior on α"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "structural"
+location = "Table 3 (U(0, 0.5)); code model_setup.R l. 18"
+verified = true
+
+[[parameter]]
+symbol = "ω_prior_max"
+quantity = "upper bound of the uniform prior on ω"
+value = 2.0
+units = "week^-1"
+provenance = "A"
+role = "structural"
+location = "Table 3 (U(0, 2))"
+verified = true
+notes = "The Zenodo code uses U(0, 10): set code_priors."
+
+# --- posterior (Table 3: posterior means; medians and 95% CrI in notes)
+
+[[parameter]]
+symbol = "β_sh"
+quantity = "transmissibility with shaded refugia (posterior mean)"
+value = 0.675
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm, shaded refugia" }
+location = "Table 3"
+verified = true
+notes = "Median 0.505, 95% CrI (0.025, 1.876). Prior U(0, 2)."
+
+[[parameter]]
+symbol = "β_un"
+quantity = "transmissibility with sunlight-heated (unshaded) refugia (posterior mean)"
+value = 0.401
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm, sunlight-heated refugia" }
+location = "Table 3"
+verified = true
+notes = "Median 0.192, 95% CrI (0.008, 1.767). Prior U(0, 2)."
+
+[[parameter]]
+symbol = "α"
+quantity = "susceptibility of vaccinated (previously infected) frogs relative to naive (posterior mean)"
+value = 0.072
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm" }
+location = "Table 3"
+verified = true
+notes = "Median 0.029, 95% CrI (0.003, 0.373). Prior U(0, 0.5). Only αβ is identifiable (§3.1)."
+
+[[parameter]]
+symbol = "ω"
+quantity = "recovery rate I_k,3 -> S_V (posterior mean)"
+value = 0.569
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm" }
+location = "Table 3"
+verified = true
+notes = "Median 0.433, 95% CrI (0.122, 1.688). Prior U(0, 2)."
+
+[[parameter]]
+symbol = "αβ_sh"
+quantity = "transmissibility to vaccinated frogs, shaded (posterior mean of the product)"
+value = 0.018
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm, shaded refugia" }
+location = "Table 3"
+verified = true
+notes = "Median 0.014, 95% CrI (0.001, 0.061)."
+
+[[parameter]]
+symbol = "αβ_un"
+quantity = "transmissibility to vaccinated frogs, sunlight-heated (posterior mean of the product)"
+value = 0.009
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Litoria aurea", setting = "outdoor mesocosm, sunlight-heated refugia" }
+location = "Table 3"
+verified = true
+notes = "Median 0.007, 95% CrI (0.000, 0.031)."
+
+[[parameter]]
+symbol = "refugia_effect"
+quantity = "reduction in transmissibility with sunlight-heated refugia, 1 - mean(β_un)/mean(β_sh)"
+value = 0.406
+units = "1"
+provenance = "D"
+role = "estimated"
+location = "§3.2, Eq. (5)"
+verified = true
+notes = "1 - 0.401/0.675 = 0.4059."
+
+[[parameter]]
+symbol = "vaccination_effect_sh"
+quantity = "reduction in susceptibility after prior infection, shaded, 1 - mean(αβ_sh)/mean(β_sh)"
+value = 0.973
+units = "1"
+provenance = "D"
+role = "estimated"
+location = "§3.2, Eq. (4)"
+verified = true
+notes = "1 - 0.018/0.675 = 0.9733. A ratio of posterior means, not 1 - mean(α)."
+
+[[parameter]]
+symbol = "vaccination_effect_un"
+quantity = "reduction in susceptibility after prior infection, sunlight-heated, 1 - mean(αβ_un)/mean(β_un)"
+value = 0.978
+units = "1"
+provenance = "D"
+role = "estimated"
+location = "§3.2, Eq. (4)"
+verified = true
+notes = "1 - 0.009/0.401 = 0.9776."
+
+# --- priors in the Zenodo code (differ from Table 3)
+
+[[parameter]]
+set = "code_priors"
+symbol = "β_prior_max"
+quantity = "upper bound of the uniform prior on β_sh and β_un, as coded"
+value = 1.0
+units = "week^-1"
+provenance = "A"
+role = "structural"
+location = "code model_setup.R l. 16-17"
+verified = true
+notes = "The paper (Table 3) states U(0, 2), and its 95% CrI for β_sh reaches 1.876 > 1."
+
+[[parameter]]
+set = "code_priors"
+symbol = "ω_prior_max"
+quantity = "upper bound of the uniform prior on ω, as coded"
+value = 10.0
+units = "week^-1"
+provenance = "A"
+role = "structural"
+location = "code model_setup.R l. 19"
+verified = true
+notes = "The paper (Table 3) states U(0, 2)."
+
+# --- synthetic-data study (Supplement S2)
+
+[[parameter]]
+set = "synthetic"
+symbol = "β_sh"
+quantity = "transmissibility, shaded: truth for the synthetic data (fit of the ODE model)"
+value = 0.05
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+location = "Table S2; code fns_stochastic_model.R l. 30 (lsfitparams)"
+verified = true
+notes = "95% CI (0.027, 0.072)."
+
+[[parameter]]
+set = "synthetic"
+symbol = "β_un"
+quantity = "transmissibility, sunlight-heated: truth for the synthetic data"
+value = 0.02
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+location = "Table S2; code fns_stochastic_model.R l. 31"
+verified = true
+notes = "95% CI (0.011, 0.029)."
+
+[[parameter]]
+set = "synthetic"
+symbol = "α"
+quantity = "relative susceptibility of vaccinated frogs: truth for the synthetic data"
+value = 0.177
+units = "1"
+provenance = "F"
+role = "estimated"
+location = "Table S2; code fns_stochastic_model.R l. 32"
+verified = true
+notes = "95% CI (0.087, 0.267)."
+
+[[parameter]]
+set = "synthetic"
+symbol = "ω"
+quantity = "recovery rate: truth for the synthetic data"
+value = 0.258
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+location = "Table S2; code fns_stochastic_model.R l. 33"
+verified = true
+notes = "95% CI (0.173, 0.342)."
+
+[[parameter]]
+set = "synthetic"
+symbol = "μ"
+quantity = "loss rate: truth for the synthetic data, and the value the code fixes in its synthetic ABC"
+value = 0.029
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+location = "Table S2; code fns_stochastic_model.R l. 34; simulate_samples.R l. 22-24"
+verified = true
+notes = "95% CI (0.025, 0.033). §S2.2 says the synthetic ABC used μ = 0.033 from Eq. (3); the code uses 0.029."
+
+[[parameter]]
+set = "synthetic_posterior"
+symbol = "N_Tf"
+quantity = "mean number of frogs per synthetic mesocosm at week 15"
+value = 12.1
+units = "frogs"
+provenance = "M"
+role = "estimated"
+location = "§S2.2"
+verified = true
+notes = "Recomputed from syn_data.csv: 97/8 = 12.125."
+
+[[parameter]]
+set = "synthetic_posterior"
+symbol = "μ"
+quantity = "loss rate estimated from the synthetic data by Eq. (3)"
+value = 0.033
+units = "week^-1"
+provenance = "D"
+role = "estimated"
+location = "§S2.2"
+verified = true
+notes = "-log(12.1/20)/15 = 0.0335. The code's synthetic ABC fixes μ = 0.029 instead."
+
+[[parameter]]
+set = "synthetic_posterior"
+symbol = "β_sh"
+quantity = "posterior mean of β_sh, synthetic data"
+value = 0.557
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+location = "Table S3"
+verified = true
+notes = "Median 0.315, 95% CrI (0.017, 1.845); truth 0.050."
+
+[[parameter]]
+set = "synthetic_posterior"
+symbol = "β_un"
+quantity = "posterior mean of β_un, synthetic data"
+value = 0.294
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+location = "Table S3"
+verified = true
+notes = "Median 0.103, 95% CrI (0.008, 1.615); truth 0.020."
+
+[[parameter]]
+set = "synthetic_posterior"
+symbol = "α"
+quantity = "posterior mean of α, synthetic data"
+value = 0.057
+units = "1"
+provenance = "F"
+role = "estimated"
+location = "Table S3"
+verified = true
+notes = "Median 0.019, 95% CrI (0.001, 0.330); truth 0.177."
+
+[[parameter]]
+set = "synthetic_posterior"
+symbol = "αβ_sh"
+quantity = "posterior mean of αβ_sh, synthetic data"
+value = 0.009
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+location = "Table S3"
+verified = true
+notes = "Median 0.007, 95% CrI (0.000, 0.032); truth 0.009."
+
+[[parameter]]
+set = "synthetic_posterior"
+symbol = "αβ_un"
+quantity = "posterior mean of αβ_un, synthetic data"
+value = 0.004
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+location = "Table S3"
+verified = true
+notes = "Median 0.003, 95% CrI (0.000, 0.015); truth 0.004."
+
+[[parameter]]
+set = "synthetic_posterior"
+symbol = "ω"
+quantity = "posterior mean of ω, synthetic data"
+value = 0.581
+units = "week^-1"
+provenance = "F"
+role = "estimated"
+location = "Table S3"
+verified = true
+notes = "Median 0.422, 95% CrI (0.080, 1.823); truth 0.258."
