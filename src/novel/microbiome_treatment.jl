@@ -340,19 +340,24 @@ end
 #     (1 − shedding_reduction) ρ, and a fraction `tolerance` of them survives metamorphosis
 #     (untreated infected metamorphs all die)
 #   tadpoles: treated -> untreated at ω; untreated -> treated at a = direct P_T/P + environmental E
-#   adults:   treated -> untreated at ω (adults are not infected in this model)
+#   adults:   treated -> untreated at ω
 #   dE/dt = δ (P_T/P_ref − E), with P_T = P_XT + P_YT and P_ref = ιψK, the largest yearly cohort
 #   at breeding: a fraction `maternal × A_T/A` of tadpoles is born treated, and the reservoir
 #                gains `adult_seeding × A_T/A`
 # Metamorphs lose the "treated" label (the skin community is assumed to turn over at
 # metamorphosis), so new adults are untreated.
+# With `stages` (PostMetamorphicInfection, toad_postmetamorphic.jl) untreated adults can also be
+# infected (A_Y, state 10) while at the pond, exactly as in ToadStageProblem:
+#   A_U -> A_Y at ν_A Z, A_Y -> A_U at σ_A, A_Y dies at μA + α_A, A_Y sheds ρ_A at the pond,
+#   and infected adults breed like uninfected ones. Infected adults are never treated, so
+#   this is not combined with `stage = :adults`.
 
 # Every transition of the pond model, listed once: `emit(from, to, flow)` with `from = 0` a
 # birth and `to = 0` a death (flows in animals or zoospores per year). The ODE sums the flows
 # and the stochastic version (`solve(...; rng)`) draws events from them. Returns dE/dt.
 function probiotic_pond_flows(emit::F, u, q, t) where {F}
-    p, tr, Pref, clock = q
-    PXU, PXT, PYU, M, AU, AT, Z, E, PYT = (max(x, 0.0) for x in u)
+    p, tr, Pref, clock, st, present = q
+    PXU, PXT, PYU, M, AU, AT, Z, E, PYT, AY = (max(x, 0.0) for x in u)
     g = protection(tr, t - clock[])
     ω, δ, e, τ = reversion_rate(tr), reservoir_rate(tr), g * tr.efficacy, g * tr.tolerance
     P = PXU + PXT + PYU + PYT
@@ -363,12 +368,16 @@ function probiotic_pond_flows(emit::F, u, q, t) where {F}
     emit(2, 0, p.μP * PXT); emit(2, 9, (1 - e) * p.ν * Z * PXT); emit(2, 1, ω * PXT)
     emit(3, 0, (p.μP + p.αP) * PYU); emit(3, 9, a * PYU)
     emit(9, 0, (p.μP + (1 - τ) * p.αP) * PYT); emit(9, 3, ω * PYT)
-    # juveniles old enough to mature (4) and adults (5 untreated, 6 treated)
-    recruit = max(1 - (AU + AT) / p.K, 0.0)
+    # juveniles old enough to mature (4) and adults (5 untreated, 6 treated, 10 infected)
+    recruit = max(1 - (AU + AT + AY) / p.K, 0.0)
     emit(4, 5, p.ε * recruit * M); emit(4, 0, (p.μJ + p.ε * (1 - recruit)) * M)
     emit(5, 0, p.μA * AU); emit(6, 0, p.μA * AT); emit(6, 5, ω * AT)
+    on = present[] ? 1.0 : 0.0                  # adults at the pond
+    emit(5, 10, on * st.adult_relative_susceptibility * p.ν * Z * AU)
+    emit(10, 5, st.adult_clearance * AY); emit(10, 0, (p.μA + st.adult_disease_death) * AY)
     # zoospores (7)
-    emit(0, 7, p.ρ * (PYU + (1 - g * tr.shedding_reduction) * PYT) + p.γ * Z * exp(-p.φ * Z))
+    emit(0, 7, p.ρ * (PYU + (1 - g * tr.shedding_reduction) * PYT) +
+               on * st.adult_relative_shedding * p.ρ * AY + p.γ * Z * exp(-p.φ * Z))
     emit(7, 0, p.μZ * Z)
     return δ * (PT / Pref - E)
 end
@@ -448,7 +457,9 @@ breeding when all adults are treated). Time in years.
 `stages` adds infection after metamorphosis ([`PostMetamorphicInfection`](@ref)): an infected
 metamorph survives with probability `s_J = metamorph_survival`, or `s_J + tolerance (1 − s_J)`
 if treated, and metamorphs leaving the pond are exposed for `metamorph_exposure_days`
-(treated ones at `1 − efficacy` times the rate). Infected adults are not supported here yet.
+(treated ones at `1 − efficacy` times the rate). Untreated adults can be infected while at
+the pond, as in [`ToadStageProblem`](@ref) (`adult_exposure_days > 0`); they are never treated,
+so this needs `stage = :tadpoles`. With no treatment the model is then `ToadStageProblem`.
 
 `redose_days` (for `stage = :tadpoles`) are days after hatching at which, in each treatment
 year, treated tadpoles are dosed again and a fraction `coverage` of the untreated ones is
@@ -486,9 +497,11 @@ function ProbioticPondProblem(p::MitchellParameters, treatment::MicrobiomeTreatm
         treat_years = 0:(years - 1), maternal = 0.0, adult_seeding = 0.0,
         spinup::Integer = 100, Z0 = 1e4, A0 = p.K / 2, toad_limit = 50.0, bd_limit = 100.0,
         stages::PostMetamorphicInfection = PostMetamorphicInfection(), redose_days = Float64[])
-    stages.adult_exposure_days == 0 || throw(ArgumentError(
-        "infected adults (adult_exposure_days > 0) are not supported with treatment yet"))
     stage in (:tadpoles, :adults) || throw(ArgumentError("stage must be :tadpoles or :adults"))
+    (stages.adult_exposure_days == 0 || stage === :tadpoles) || throw(ArgumentError(
+        "infected adults (adult_exposure_days > 0) are untreated; use stage = :tadpoles"))
+    stages.adult_exposure_days < 365 ||
+        throw(ArgumentError("adult_exposure_days must be less than a year"))
     (0 <= coverage <= 1 && 0 <= maternal <= 1 && adult_seeding >= 0) ||
         throw(ArgumentError("need coverage, maternal in [0, 1] and adult_seeding ≥ 0"))
     return ProbioticPondProblem(p, treatment, stage, float(coverage), collect(Int, treat_years),
@@ -505,12 +518,19 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
     count_(m) = chance ? float(rand(rng, Poisson(m))) : m
     0 <= p.t1 < p.t2 < 1 || throw(ArgumentError("need 0 ≤ t1 < t2 < 1 (fractions of a year)"))
     clock = Ref(float(-prob.spinup))
-    q = (p, tr, p.ι * p.ψ * p.K, clock)
-    u = [0.0, 0.0, 0.0, 0.0, prob.A0, 0.0, 0.0, 0.0, 0.0]   # PXU, PXT, PYU, M, AU, AT, Z, E, PYT
+    st = prob.stages
+    stay = st.adult_exposure_days / 365          # adults at the pond from t1 for `stay` years
+    present = Ref(false)
+    q = (p, tr, p.ι * p.ψ * p.K, clock, st, present)
+    # PXU, PXT, PYU, M, AU, AT, Z, E, PYT, AY
+    u = [0.0, 0.0, 0.0, 0.0, prob.A0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    # infected adults that shed keep Bd going over the winter
+    carriers() = stay > 0 && st.adult_relative_shedding > 0 && u[10] >= 1
     cohorts = Tuple{Float64,Float64}[]
     events = Tuple{Float64,Symbol,Int}[]
     for y in -prob.spinup:(prob.years - 1)
         push!(events, (y + p.t1, :birth, y), (y + p.t2, :metamorphosis, y))
+        stay > 0 && push!(events, (y + p.t1 + stay, :adults_leave, y))
         if prob.stage === :tadpoles && y in prob.treat_years
             for d in prob.redose_days
                 0 < d / 365 < p.t2 - p.t1 || throw(ArgumentError(
@@ -520,6 +540,7 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
         end
     end
     push!(events, (0.0, :introduce, 0), (float(prob.years), :stop, prob.years))
+    filter!(e -> e[1] <= prob.years, events)
     sort!(events; by = first)
     out = (t = Float64[], A = Float64[], A_treated = Float64[], Z = Float64[],
         tadpoles_treated = Float64[])
@@ -537,15 +558,16 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
         t = step!(t, te)
         treating = y in prob.treat_years
         if kind === :birth
-            !chance && 0 < u[7] < prob.bd_limit && (u[7] = 0.0)
+            !chance && 0 < u[7] < prob.bd_limit && !carriers() && (u[7] = 0.0)
             treating && (clock[] = te)
             if treating && prob.stage === :adults
                 moved = share(u[5], prob.coverage)
                 u[5] -= moved
                 u[6] += moved
             end
-            A = u[5] + u[6]
+            A = u[5] + u[6] + u[10]                 # infected adults breed like uninfected ones
             carried = A > 0 ? u[6] / A : 0.0
+            present[] = stay > 0
             births = count_(p.ι * p.ψ * A)
             born_treated = share(births, prob.maternal * carried)
             u[1] += births - born_treated
@@ -563,8 +585,9 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
                 u[i] -= moved
                 u[j] += moved
             end
+        elseif kind === :adults_leave
+            present[] = false
         elseif kind === :metamorphosis
-            st = prob.stages
             g = protection(tr, te - clock[])
             exposure = p.ν * u[7] * st.metamorph_exposure_days / 365
             qU, qT = -expm1(-exposure), -expm1(-(1 - g * tr.efficacy) * exposure)
@@ -576,21 +599,21 @@ function CommonSolve.solve(prob::ProbioticPondProblem, alg = Tsit5(); abstol = 1
             push!(cohorts, (te + p.ω, survivors))
             u[1] = u[2] = u[3] = u[9] = 0.0
         elseif kind === :introduce
-            A_disease_free = u[5] + u[6]
+            A_disease_free = u[5] + u[6] + u[10]
             u[7] += prob.Z0
         end
-        if !chance && 0 < u[5] + u[6] < prob.toad_limit
-            u[1] = u[2] = u[3] = u[4] = u[5] = u[6] = u[9] = 0.0
+        if !chance && 0 < u[5] + u[6] + u[10] < prob.toad_limit
+            u[1] = u[2] = u[3] = u[4] = u[5] = u[6] = u[9] = u[10] = 0.0
             empty!(cohorts)
         end
-        push!(out.t, te); push!(out.A, u[5] + u[6]); push!(out.A_treated, u[6])
+        push!(out.t, te); push!(out.A, u[5] + u[6] + u[10]); push!(out.A_treated, u[6])
         push!(out.Z, u[7])
         push!(out.tadpoles_treated, u[1] + u[2] > 0 ? u[2] / (u[1] + u[2]) : 0.0)
     end
     late = findall(>=(prob.years - 10), out.t)
-    bd_now = chance ? u[7] >= 1 || u[3] + u[9] >= 1 : u[7] >= prob.bd_limit
-    return merge(out, (toads_persist = u[5] + u[6] > 0, bd_persist = bd_now,
-        A_disease_free = A_disease_free, A_final = u[5] + u[6],
+    bd_now = (chance ? u[7] >= 1 || u[3] + u[9] >= 1 : u[7] >= prob.bd_limit) || carriers()
+    return merge(out, (toads_persist = u[5] + u[6] + u[10] > 0, bd_persist = bd_now,
+        A_disease_free = A_disease_free, A_final = u[5] + u[6] + u[10],
         A_mean = sum(out.A[late]) / length(late)))
 end
 
@@ -624,8 +647,10 @@ end
                          coverage = 0, treat_days = [0], days = 365)
 
 Load tipping model for `N` frogs sharing a pool, starting uninfected, in which a treated
-frog has clearance `c_treated` instead of `c`. On each of `treat_days` every untreated frog
-is treated with probability `coverage`. Time in days (so `treatment` rates are per day).
+frog has clearance `c_treated` instead of `c`. `c` and `c_treated` are one value for every
+frog or a vector with one value per frog, so frogs can differ in their defences. On each of
+`treat_days` every untreated frog is treated with probability `coverage`. Time in days (so
+`treatment` rates are per day).
 
 `solve(prob; rng)` returns daily `alive`, `treated` and `mean_load`, and `death_day` for each
 frog (`0` for survivors).
@@ -633,8 +658,8 @@ frog (`0` for survivors).
 struct ProbioticLoadProblem{P<:BriggsParameters}
     p::P
     treatment::MicrobiomeTreatment
-    c::Float64
-    c_treated::Float64
+    c::Vector{Float64}
+    c_treated::Vector{Float64}
     h::Float64
     N::Int
     ε::Float64
@@ -645,9 +670,11 @@ end
 function ProbioticLoadProblem(p::BriggsParameters, treatment::MicrobiomeTreatment; c,
         c_treated, h, N::Integer, ε = 0.0, coverage = 0.0, treat_days = [0],
         days::Integer = 365)
-    (c >= 0 && c_treated >= 0 && h > 0 && ε >= 0 && 0 <= coverage <= 1 && N > 0) ||
+    N > 0 || throw(ArgumentError("need N > 0"))
+    cs, cts = per_host(c, N, "c"), per_host(c_treated, N, "c_treated")
+    (all(>=(0), cs) && all(>=(0), cts) && h > 0 && ε >= 0 && 0 <= coverage <= 1) ||
         throw(ArgumentError("need c, c_treated, ε ≥ 0, h > 0, N > 0, coverage in [0, 1]"))
-    return ProbioticLoadProblem(p, treatment, float(c), float(c_treated), float(h), Int(N),
+    return ProbioticLoadProblem(p, treatment, cs, cts, float(h), Int(N),
         float(ε), float(coverage), collect(Int, treat_days), Int(days))
 end
 
@@ -672,7 +699,7 @@ function CommonSolve.solve(prob::ProbioticLoadProblem, alg = Tsit5();
                 treated[i] || (treated[i] = rand(rng) < prob.coverage)
             end
         end
-        c = [treated[i] ? prob.c_treated : prob.c for i in 1:n]
+        c = [treated[i] ? prob.c_treated[ids[i]] : prob.c[ids[i]] for i in 1:n]
         r = solve(LoadTippingProblem(p; c, h = prob.h, N = n, ε = prob.ε, S0 = S, Z0 = Z,
             tspan = (0.0, 1.0)), alg; abstol, reltol, save_everystep = false, kwargs...)
         SciMLBase.successful_retcode(r.sol) || error("treated load model: solver failed on day $day")

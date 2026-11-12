@@ -409,6 +409,11 @@ using Random: Xoshiro
         @test un.alive[end] == 0 && all(==(0), un.treated)
         @test frogs(MicrobiomeTreatment()).alive[end] == 80                 # lasting treatment
         @test frogs(MicrobiomeTreatment(); cov = 0.4).alive[end] == 80      # herd protection
+        # one clearance per frog: identical values reproduce the scalar model
+        vec = solve(ProbioticLoadProblem(p, MicrobiomeTreatment(); kw..., c = fill(100.0, 80),
+            c_treated = fill(300.0, 80), coverage = 0.4, days = 400); rng = Xoshiro(1))
+        @test vec.alive == frogs(MicrobiomeTreatment(); cov = 0.4).alive
+        @test_throws ArgumentError ProbioticLoadProblem(p, MicrobiomeTreatment(); kw..., c = fill(100.0, 79))
         short = frogs(MicrobiomeTreatment(half_life = 30.0))
         @test short.alive[end] == 0 &&
               minimum(short.death_day) > maximum(un.death_day) + 50        # delayed, not prevented
@@ -498,8 +503,23 @@ using Random: Xoshiro
         blocked, tolerant = pond(MicrobiomeTreatment(efficacy = 0.9)), pond(MicrobiomeTreatment(tolerance = 0.7))
         @test blocked.bd_persist && blocked.A_mean < 0.2 * blocked.A_disease_free
         @test tolerant.A_mean > 0.6 * tolerant.A_disease_free
-        @test_throws ArgumentError ProbioticPondProblem(pd, MicrobiomeTreatment();
-            stages = PostMetamorphicInfection(adult_exposure_days = 14.0))
+        # infected adults: untreated, so not with adult treatment; with no treatment the pond
+        # model is the toad stage model
+        adults = PostMetamorphicInfection(metamorph_survival = stages.metamorph_survival,
+            metamorph_exposure_days = 7.0, adult_exposure_days = 30.0,
+            adult_relative_shedding = 1.0, adult_clearance = 1.0)
+        @test_throws ArgumentError ProbioticPondProblem(pd, MicrobiomeTreatment(); stage = :adults,
+            stages = adults)
+        ref = solve(ToadStageProblem(pd, adults))
+        same = solve(ProbioticPondProblem(pd, MicrobiomeTreatment(); stages = adults))
+        @test isapprox(same.A_mean, ref.A_mean; rtol = 1e-4) && same.bd_persist == ref.bd_persist
+        @test isapprox(same.A_disease_free, ref.A_disease_free; rtol = 1e-6)
+        treated = solve(ProbioticPondProblem(pd, MicrobiomeTreatment(tolerance = 0.7);
+            coverage = 0.8, stages = adults))
+        @test treated.A_mean > same.A_mean
+        chance = solve(ProbioticPondProblem(pd, MicrobiomeTreatment(tolerance = 0.7); coverage = 0.8,
+            stages = adults); rng = Xoshiro(2))
+        @test isfinite(chance.A_mean) && chance.A_mean >= 0
     end
 
     @testset "Waning protection (new)" begin
@@ -534,6 +554,9 @@ using Random: Xoshiro
         old = solve(ProbioticLoadProblem(p, MicrobiomeTreatment(); kw..., days = 365); rng = Xoshiro(1))
         @test none.alive[end] == 0 && maximum(none.death_day) == maximum(old.death_day)   # same die-off
         @test all(isfinite, none.mean_load[1:100])
+        same = ab(coverage = 0.75, days = 60)
+        @test ab(coverage = 0.75, days = 60, c = fill(100.0, 80), c_treated = fill(300.0, 80)).mean_load ≈
+              same.mean_load
         # abundance: the mean declines at the half-life whatever the exchange rate; exchange
         # evens it out between bathed and unbathed frogs
         apart, mixed = ab(coverage = 0.75, x = 0.0, days = 30), ab(coverage = 0.75, x = 0.2, days = 30)

@@ -19,8 +19,8 @@
 struct AbundanceODEParams{P<:BriggsParameters}
     p::P
     hosts::BriggsHostState
-    c::Float64
-    c_treated::Float64
+    c::Vector{Float64}
+    c_treated::Vector{Float64}
     h::Float64
     ε::Float64
     decay::Float64
@@ -44,7 +44,7 @@ function abundance_rhs!(du, u, q::AbundanceODEParams, t)
     @inbounds for i in 1:N
         if alive[i]
             S, B = max(u[i], 0.0), max(u[N + i], 0.0)
-            c = q.c + (q.c_treated - q.c) * (q.B50 > 0 ? B / (B + q.B50) : (B > 0 ? 1.0 : 0.0))
+            c = q.c[i] + (q.c_treated[i] - q.c[i]) * (q.B50 > 0 ? B / (B + q.B50) : (B > 0 ? 1.0 : 0.0))
             du[i] = infection + selfgrowth * S - c * S / (q.h + S)
             du[N + i] = -q.decay * B + q.exchange * (Bbar - B)
             load += S
@@ -64,8 +64,9 @@ Load tipping model for `N` frogs sharing a pool, in which each frog carries its 
 of the applied bacteria. A bath on each of `dose_days` sets the abundance of the bathed group
 (the first `coverage × N` frogs) to 1. Abundance declines with
 `treatment.abundance_half_life` and is exchanged between frogs at rate `treatment.direct`;
-clearance rises from `c` toward `c_treated` as `B/(B + 1/treatment.protective_fold)`. Time in
-days. The other fields of `treatment` are not used.
+clearance rises from `c` toward `c_treated` as `B/(B + 1/treatment.protective_fold)`. `c` and
+`c_treated` are one value for every frog or a vector with one value per frog. Time in days.
+The other fields of `treatment` are not used.
 
 `solve` returns daily `t`, `alive`, `mean_load`, `abundance_bathed` and `abundance_unbathed`
 (means over live frogs in each group), and `death_day` for each frog (`0` for survivors).
@@ -73,8 +74,8 @@ days. The other fields of `treatment` are not used.
 struct ProbioticAbundanceProblem{P<:BriggsParameters}
     p::P
     treatment::MicrobiomeTreatment
-    c::Float64
-    c_treated::Float64
+    c::Vector{Float64}
+    c_treated::Vector{Float64}
     h::Float64
     N::Int
     ε::Float64
@@ -84,9 +85,11 @@ struct ProbioticAbundanceProblem{P<:BriggsParameters}
 end
 function ProbioticAbundanceProblem(p::BriggsParameters, treatment::MicrobiomeTreatment; c,
         c_treated, h, N::Integer, ε = 0.0, coverage = 0.0, dose_days = [0], days::Integer = 365)
-    (c >= 0 && c_treated >= 0 && h > 0 && ε >= 0 && 0 <= coverage <= 1 && N > 0) ||
+    N > 0 || throw(ArgumentError("need N > 0"))
+    cs, cts = per_host(c, N, "c"), per_host(c_treated, N, "c_treated")
+    (all(>=(0), cs) && all(>=(0), cts) && h > 0 && ε >= 0 && 0 <= coverage <= 1) ||
         throw(ArgumentError("need c, c_treated, ε ≥ 0, h > 0, N > 0, coverage in [0, 1]"))
-    return ProbioticAbundanceProblem(p, treatment, float(c), float(c_treated), float(h), Int(N),
+    return ProbioticAbundanceProblem(p, treatment, cs, cts, float(h), Int(N),
         float(ε), float(coverage), sort!(collect(Float64, dose_days)), Int(days))
 end
 
