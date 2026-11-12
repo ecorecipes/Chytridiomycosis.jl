@@ -755,3 +755,6 @@ using Random: Xoshiro
         @test all(prof .<= fd.loglik + 0.5)
     end
 end
+
+include("schmidt2017_spatial.jl")
+include("briggs2010_stages.jl")

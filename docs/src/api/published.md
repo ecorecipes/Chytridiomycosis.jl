@@ -22,6 +22,20 @@ scattered_colony_area
 population_crash
 ```
 
+### Spatial spread and long-distance jumps
+
+The reaction–diffusion version (§2.2) is discretised by finite volumes and lowered to an
+`ODEProblem`; its front speed converges to [`wave_speed`](@ref). The scattered-colony model
+behind eq. (2.5) is simulated as a jump process with colonies placed in a square habitat, so
+that overlaps can be counted.
+
+```@docs
+SchmidtPDEProblem
+front_position
+front_speed
+SchmidtColonyProblem
+```
+
 ## Bd loads in frogs (Briggs et al. 2010)
 
 ```@docs
@@ -39,6 +53,15 @@ BriggsStage
 BriggsSeasonalParameters
 BriggsSeasonalProblem
 persistence_probability
+```
+
+The six-stage *R. muscosa*/*R. sierrae* model of Fig. 4 (three tadpole and two subadult year
+classes plus adults):
+
+```@docs
+BriggsLifeStages
+BriggsStagedProblem
+disease_free_stages
 ```
 
 ## Bd in common toads at a pond (Mitchell et al. 2008)
