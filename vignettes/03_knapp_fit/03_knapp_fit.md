@@ -13,6 +13,12 @@
 - [Comparing the four](#comparing-the-four)
 - [How well are the parameters
   determined?](#how-well-are-the-parameters-determined)
+- [A Bayesian view](#a-bayesian-view)
+  - [Comparing mechanisms by
+    prediction](#comparing-mechanisms-by-prediction)
+  - [What the posterior says about $h$, $K$ and
+    $\tau$](#what-the-posterior-says-about-h-k-and-tau)
+  - [Uncertainty in the fitted loads](#uncertainty-in-the-fitted-loads)
 - [What the fit shows](#what-the-fit-shows)
 - [Limits](#limits)
 - [References](#references)
@@ -314,7 +320,7 @@ on treated frogs and every 5.4 days on wild and control frogs.
   the species than treated frogs and had high loads, so the abundance
   measured by this assay cannot by itself explain the protection.
 - **The applied bacteria fit slightly better than a waning drug** (ΔAIC
-  about 6), but the next section shows that this preference rests on
+  about 6), but the next two sections show that this preference rests on
   very little.
 
 ## How well are the parameters determined?
@@ -349,6 +355,197 @@ plot(profile_plot(fd, :τ, τs; xlabel = "τ (days), step 2"),
   last *J. lividum* vanishing, and that coincidence is all step 3 uses.
 - **The saturating load $h$ is not identified.** No group’s load passes
   through the saturating range slowly enough to measure it.
+
+## A Bayesian view
+
+Profiles show how far each parameter can move on its own. A Bayesian fit
+shows what the parameters can do together, and how sure the comparison
+of mechanisms is. Each parameter gets a weakly informative lognormal
+prior on its natural scale (`knapp_prior`), with medians at plausible
+orders of magnitude and spreads covering several of them. $r_0$ stays
+fixed. NUTS samples the posterior through the package’s Turing
+extension.
+
+``` julia
+using Turing: Turing, NUTS, MCMCThreads, sample, InitFromParams
+using MCMCDiagnosticTools: ess, rhat
+using Random: Xoshiro
+bayes_mechs = (:none, :decay, :applied)
+target = (none = 0.9, decay = 0.9, applied = 0.99)   # `applied` diverges at 0.9
+nchains, ndraws = 4, 500
+draws = Dict{Symbol,Matrix{Float64}}()
+diagnostics = Dict{Symbol,Any}()
+for mech in bayes_mechs
+    post = KnappPosterior(models[mech])
+    x0 = fits[mech].x
+    inits = [InitFromParams((; x = x0 .+ 0.3 .* randn(Xoshiro(i), length(x0)))) for i in 1:nchains]
+    chn = sample(Xoshiro(1), turing_model(post), NUTS(ndraws, target[mech]), MCMCThreads(),
+        ndraws, nchains; initial_params = inits, progress = false)
+    A = Array(chn)                                   # draw × chain × log parameter
+    draws[mech] = reshape(A, :, size(A, 3))
+    diagnostics[mech] = (rhat = maximum(rhat(A)), ess = minimum(ess(A)),
+        divergences = Int(sum(Array(chn[:numerical_error]))))
+end
+nothing
+```
+
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+    ┌ Info: Found initial step size
+    └   ϵ = 0.05
+
+``` julia
+println("| Mechanism | Max R-hat | Min ESS | Divergences |")
+println("|---|---|---|---|")
+for mech in bayes_mechs
+    d = diagnostics[mech]
+    @printf("| `%s` | %.3f | %.0f | %d |\n", mech, d.rhat, d.ess, d.divergences)
+end
+```
+
+| Mechanism | Max R-hat | Min ESS | Divergences |
+|-----------|-----------|---------|-------------|
+| `none`    | 1.010     | 1630    | 0           |
+| `decay`   | 1.006     | 971     | 0           |
+| `applied` | 1.006     | 678     | 0           |
+
+An R-hat near 1 and effective sample sizes in the hundreds or more mean
+the chains agree and the summaries below are stable.
+
+### Comparing mechanisms by prediction
+
+PSIS-LOO estimates how well each mechanism predicts a swab left out of
+the fit (the expected log predictive density, elpd). Unlike AIC, the
+difference between two mechanisms comes with a standard error, computed
+from the swab-by-swab differences.
+
+``` julia
+loos = Dict(mech => psis_loo(pointwise_loglikelihood(models[mech], draws[mech]))
+            for mech in bayes_mechs)
+println("| Mechanism | ΔAIC | elpd | Δelpd vs `applied` (SE) | max Pareto k |")
+println("|---|---|---|---|---|")
+for mech in bayes_mechs
+    d = elpd_difference(loos[mech], loos[:applied])
+    @printf("| `%s` | %.1f | %.1f | %.1f (%.1f) | %.2f |\n", mech, fits[mech].aic - best,
+        loos[mech].elpd, d.difference, d.se, maximum(loos[mech].k))
+end
+```
+
+| Mechanism | ΔAIC  | elpd    | Δelpd vs `applied` (SE) | max Pareto k |
+|-----------|-------|---------|-------------------------|--------------|
+| `none`    | 178.8 | -5755.1 | -89.7 (11.0)            | 0.28         |
+| `decay`   | 6.2   | -5668.6 | -3.2 (2.8)              | 0.26         |
+| `applied` | 0.0   | -5665.4 | 0.0 (0.0)               | 0.36         |
+
+- **Extra clearance on treated frogs is needed by any measure.** `none`
+  loses about 90 elpd, many standard errors.
+- **`decay` and `applied` cannot be told apart.** The difference is
+  about one standard error. A ΔAIC of 6 looks like a preference, but it
+  rests on a handful of swabs (mostly treated frogs on day 37).
+- Pareto $k$ below 0.7 for every swab means the LOO estimates are
+  reliable.
+
+### What the posterior says about $h$, $K$ and $\tau$
+
+``` julia
+using Distributions: Normal, pdf
+function posterior_panel(mech, name; xlabel = "log₁₀ " * string(name))
+    j = findfirst(==(name), parameter_names(models[mech]))
+    v = draws[mech][:, j] ./ log(10)
+    pr = knapp_prior(models[mech])[name]
+    p = histogram(v; normalize = :pdf, bins = 40, color = :steelblue, alpha = 0.6,
+        label = "posterior", xlabel = xlabel, ylabel = "density")
+    xs = range(minimum(v) - 1, maximum(v) + 1; length = 200)
+    plot!(p, xs, pdf.(Normal(pr.μ / log(10), pr.σ / log(10)), xs); color = :black,
+        linestyle = :dash, label = "prior")
+end
+
+plot(posterior_panel(:decay, :τ; xlabel = "log₁₀ τ (days), decay"),
+     posterior_panel(:applied, :K; xlabel = "log₁₀ K (J. lividum), applied"),
+     posterior_panel(:applied, :h; xlabel = "log₁₀ h (copies), applied");
+     layout = (1, 3), size = (900, 300))
+```
+
+![](03_knapp_fit_files/figure-commonmark/cell-18-output-1.svg)
+
+``` julia
+q(v, p) = sort(v)[clamp(round(Int, p * length(v)), 1, length(v))]
+nm = parameter_names(models[:applied])
+Xa = draws[:applied]
+K = exp.(Xa[:, findfirst(==(:K), nm)])
+ratio = exp.(Xa[:, findfirst(==(:Δc), nm)] .- Xa[:, findfirst(==(:h), nm)])
+τ = exp.(draws[:decay][:, end])
+@printf("Under `applied`, P(K < 1) = %.2f and P(K < 3) = %.2f. ", count(<(1), K) / length(K),
+    count(<(3), K) / length(K))
+@printf("The clearance rate at low load, Δc/h, is %.0f per day (95%% interval %.0f–%.0f). ",
+    q(ratio, 0.5), q(ratio, 0.025), q(ratio, 0.975))
+@printf("Under `decay`, τ is %.0f days (%.0f–%.0f).\n", q(τ, 0.5), q(τ, 0.025), q(τ, 0.975))
+```
+
+Under `applied`, P(K \< 1) = 0.85 and P(K \< 3) = 0.99. The clearance
+rate at low load, Δc/h, is 89 per day (95% interval 39–421). Under
+`decay`, τ is 41 days (18–114).
+
+- **$h$ is weakly identified.** It moves together with $\Delta c$ along
+  a ridge. Their ratio $\Delta c/h$, the clearance rate when loads are
+  low, is well determined. Values of $h$ below a few hundred copies are
+  ruled out, and the prior shapes the upper tail.
+- **$K$ has an upper bound only.** The bacteria must protect until they
+  are nearly undetectable. Below about 0.1 genomic equivalents, the
+  posterior follows the prior.
+- **$\tau$ lies between about 20 and 100 days.** That is narrower than
+  the profile interval, partly because the prior (median 14 days)
+  discourages very long waning times and partly because the posterior
+  averages over the other parameters instead of optimising them.
+
+### Uncertainty in the fitted loads
+
+``` julia
+function band_panel(mech)
+    X = draws[mech]
+    idx = 1:max(1, size(X, 1) ÷ 200):size(X, 1)
+    paths = reduce(hcat, [predicted_loads(models[mech], X[i, :]; days = fine).treated.bd
+                          for i in idx])
+    keep = fine .>= 0
+    lo = [q(log10.(1 .+ paths[t, :]), 0.025) for t in eachindex(fine)]
+    hi = [q(log10.(1 .+ paths[t, :]), 0.975) for t in eachindex(fine)]
+    md = [q(log10.(1 .+ paths[t, :]), 0.5) for t in eachindex(fine)]
+    p = data_panel(:treated; title = "treated, $(mech)")
+    plot!(p, fine[keep], md[keep]; ribbon = (md[keep] .- lo[keep], hi[keep] .- md[keep]),
+        color = :firebrick, fillalpha = 0.25, label = "posterior median and 95%")
+end
+plot(band_panel(:decay), band_panel(:applied); layout = (1, 2), size = (800, 330))
+```
+
+![](03_knapp_fit_files/figure-commonmark/cell-20-output-1.svg)
+
+The two mechanisms agree at the visits but take different paths between
+them. `decay` lets loads rise steadily from day 0. `applied` holds them
+flat until the *J. lividum* is nearly gone, after about day 37, and then
+lets them rise faster. With swabs only on days 12, 37 and 56, the data
+cannot tell these paths apart. Swabs are treated as independent here
+too, so all of these intervals are too narrow if swabs from the same
+frogs are correlated.
 
 ## What the fit shows
 
