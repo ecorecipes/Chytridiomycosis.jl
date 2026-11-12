@@ -760,6 +760,7 @@ using Random: Xoshiro
     include("thermal.jl")
     include("validation_targets.jl")
     include("n5_identifiability.jl")
+    include("knapp_bayes.jl")
 end
 
 include("schmidt2017_spatial.jl")

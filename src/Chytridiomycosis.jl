@@ -101,4 +101,8 @@ export BriggsMomentProblem, SurveyPond, SurveySample, SurveyObservation, SurveyM
        simulate_survey, sensitivity_rank, expected_information, observed_information,
        identifiable_combinations
 
+# Bayesian Knapp fit
+export KnappPosterior, knapp_prior, observed_swabs, pointwise_loglikelihood, psis_loo, waic,
+       elpd_difference, turing_model
+
 end # module Chytridiomycosis

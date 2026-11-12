@@ -14,6 +14,12 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
 TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 
+[weakdeps]
+Turing = "fce5fe82-541a-59a6-adf8-730c64b5f9a0"
+
+[extensions]
+ChytridiomycosisTuringExt = "Turing"
+
 [compat]
 CommonSolve = "0.2.14"
 Dates = "1.11.0"
@@ -25,10 +31,12 @@ Random = "1"
 SciMLBase = "3.58.0"
 TOML = "1.0.3"
 Test = "1"
+Turing = "0.49"
 julia = "1.12"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Turing = "fce5fe82-541a-59a6-adf8-730c64b5f9a0"
 
 [targets]
-test = ["Test"]
+test = ["Test", "Turing"]
