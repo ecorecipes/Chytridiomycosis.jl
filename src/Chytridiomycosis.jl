@@ -54,6 +54,11 @@ include("units.jl")
 include("thermal.jl")
 include("validation.jl")
 
+# N5
+using LinearAlgebra: svd, eigen, Symmetric, Diagonal
+using Distributions: pdf
+include("novel/swab_edna.jl")
+
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
 export SchmidtParameters, SchmidtSLIProblem, to_ode_problem, invasion_threshold,
@@ -90,5 +95,10 @@ export ThermalPerformanceCurve, Briere, CardinalTPC, GaussianQuadratic, SharpeSc
        thermal_data, SeasonalTemperature, temperature_dependent
 export WoodhamsParameters, intrinsic_growth_rate
 export ValidationTarget, validation_targets, validation_target, reproduce, check_target
+
+# N5
+export BriggsMomentProblem, SurveyPond, SurveySample, SurveyObservation, SurveyModel,
+       simulate_survey, sensitivity_rank, expected_information, observed_information,
+       identifiable_combinations
 
 end # module Chytridiomycosis

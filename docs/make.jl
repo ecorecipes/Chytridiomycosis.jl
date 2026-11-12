@@ -26,7 +26,8 @@ makedocs(;
                                       "Fitting to field data" => "api/fitting.md",
                                       "Units and loads" => "api/units.md",
                                       "Thermal performance" => "api/thermal.md",
-                                      "Validation targets" => "api/validation.md"]])
+                                      "Validation targets" => "api/validation.md",
+                                      "Swabs, eDNA and identifiability" => "api/identifiability.md"]])
 
 if get(ENV, "CI", "false") == "true"
     deploydocs(; repo = "github.com/ecorecipes/Chytridiomycosis.jl.git", push_preview = true)
