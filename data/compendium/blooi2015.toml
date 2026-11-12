@@ -1,0 +1,40 @@
+# Blooi M, Martel A, Haesebrouck F, Vercammen F, Bonte D, Pasmans F (2015) Treatment of
+# urodelans based on temperature dependent infection dynamics of Batrachochytrium
+# salamandrivorans. Sci Rep 5:8037. https://doi.org/10.1038/srep08037
+# Checked against the PDF, 2026-11-11. Fire salamanders (Salamandra salamandra), in vivo.
+
+source = { ref = "blooi2015", doi = "10.1038/srep08037", review_ref = 102 }
+
+[[parameter]]
+symbol = "T_treatment"
+quantity = "ambient temperature of the heat treatment"
+value = 25.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult", setting = "lab" }
+location = "Results; Figs 3-4"
+verified = true
+
+[[parameter]]
+symbol = "days_clearing"
+quantity = "days at T_treatment that eliminated infection in all animals"
+value = 10.0
+units = "day"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult", setting = "lab" }
+location = "Results; Figs 3-4"
+verified = true
+notes = "Also 26 of 30 wild-caught infected animals cured by 10 days at 25 degC (2 died)."
+
+[[parameter]]
+symbol = "days_insufficient"
+quantity = "days at T_treatment that did not eliminate infection"
+value = 7.0
+units = "day"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult", setting = "lab" }
+location = "Results; Fig. 4"
+verified = true

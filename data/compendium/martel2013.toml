@@ -1,0 +1,88 @@
+# Martel A, Spitzen-van der Sluijs A, Blooi M, et al. (2013) Batrachochytrium salamandrivorans
+# sp. nov. causes lethal chytridiomycosis in amphibians. PNAS 110:15325-15329.
+# https://doi.org/10.1073/pnas.1307356110
+# Checked against the PMC full text (PMC3780879) through a summarising fetch that quoted the
+# sentences, 2026-11-11. The PDF was not obtained. Culture plates were incubated at 5, 10,
+# 15, 20, 22, 23, 24, 25 and/or 30 degC for 10 days. Cardinal brackets, not a fitted curve.
+
+source = { ref = "martel2013", doi = "10.1073/pnas.1307356110", review_ref = 6 }
+
+[[parameter]]
+symbol = "T_growth_min_observed"
+quantity = "lowest temperature with growth"
+value = 5.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", setting = "culture" }
+location = "Results and Discussion; Taxonomy"
+verified = true
+notes = "'grew at temperatures as low as 5 degC'"
+
+[[parameter]]
+symbol = "T_growth_max_observed"
+quantity = "highest temperature with growth"
+value = 22.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", setting = "culture" }
+location = "Taxonomy (in vitro)"
+verified = true
+notes = "'Growth at 5, 10, 15, 20, and 22 degC, but not at temperatures >=24 degC'"
+
+[[parameter]]
+symbol = "T_no_growth"
+quantity = "lowest temperature without growth"
+value = 24.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", setting = "culture" }
+location = "Taxonomy (in vitro)"
+verified = true
+
+[[parameter]]
+symbol = "Topt_lo"
+quantity = "lower end of the optimal growth range"
+value = 10.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", setting = "culture" }
+location = "Results and Discussion"
+verified = true
+
+[[parameter]]
+symbol = "Topt_hi"
+quantity = "upper end of the optimal growth range"
+value = 15.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", setting = "culture" }
+location = "Results and Discussion"
+verified = true
+
+[[parameter]]
+symbol = "T_lethal"
+quantity = "temperature that kills thalli in culture"
+value = 25.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", setting = "culture" }
+location = "Taxonomy (in vitro)"
+verified = true
+notes = "'Death of thalli after 5 d at 25 degC'; the Results say 'death at >= 25 degC'."
+
+[[parameter]]
+symbol = "lethal_days"
+quantity = "exposure at T_lethal that kills thalli"
+value = 5.0
+units = "day"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", setting = "culture" }
+location = "Taxonomy (in vitro)"
+verified = true

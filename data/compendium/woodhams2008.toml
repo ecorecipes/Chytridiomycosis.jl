@@ -1,0 +1,203 @@
+# Woodhams DC, Alford RA, Briggs CJ, Johnson M, Rollins-Smith LA (2008) Life-history trade-offs
+# influence disease in changing climates: strategies of an amphibian pathogen. Ecology
+# 89:1627-1639. https://doi.org/10.1890/06-1842.1
+# Checked against the PDF (James Cook University repository copy), 2026-11-11.
+# Bd isolate 98-1469/10 (from Limnodynastes dumerilii), in culture. Time unit: hours.
+# Sets "10C" and "23C": Table 2, the best estimates used in the population model (Eq. 7).
+# Sets "table1_*": Table 1, zoospore death and encystment rates at four temperatures.
+# Note: the Results text gives F = 160.5 "at 9 degC"; Table 2 lists it under 10 degC.
+
+source = { ref = "woodhams2008", doi = "10.1890/06-1842.1", review_ref = 101 }
+
+[[parameter]]
+set = "10C"
+symbol = "F"
+quantity = "viable zoospores produced per zoosporangium"
+value = 160.5
+units = "zoospores sporangium^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 10.0, setting = "culture" }
+location = "Table 2"
+verified = true
+notes = "Least-squares fit of Eq. 3 to the zoospore time series (Fig. 2B). The text says 9 degC."
+
+[[parameter]]
+set = "10C"
+symbol = "s"
+quantity = "mean time to sporulation"
+value = 222.7
+units = "h"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 10.0, setting = "culture" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "10C"
+symbol = "dZ"
+quantity = "per capita zoospore mortality"
+value = 0.003
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 10.0, setting = "culture" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "10C"
+symbol = "mZ"
+quantity = "per capita zoospore encystment"
+value = 0.04
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 10.0, setting = "culture" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "23C"
+symbol = "F"
+quantity = "viable zoospores produced per zoosporangium"
+value = 64.8
+units = "zoospores sporangium^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 23.0, setting = "culture" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "23C"
+symbol = "s"
+quantity = "mean time to sporulation"
+value = 87.7
+units = "h"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 23.0, setting = "culture" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "23C"
+symbol = "dZ"
+quantity = "per capita zoospore mortality"
+value = 0.0161
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 23.0, setting = "culture" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "23C"
+symbol = "mZ"
+quantity = "per capita zoospore encystment"
+value = 0.178
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 23.0, setting = "culture" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "table1_4C"
+symbol = "dZ"
+quantity = "zoospore death rate"
+value = 2.7e-3
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 4.0, setting = "culture" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "table1_4C"
+symbol = "mZ"
+quantity = "zoospore encystment rate"
+value = 3.4e-2
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 4.0, setting = "culture" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "table1_14.5C"
+symbol = "dZ"
+quantity = "zoospore death rate"
+value = 3.5e-3
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 14.5, setting = "culture" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "table1_14.5C"
+symbol = "mZ"
+quantity = "zoospore encystment rate"
+value = 5.2e-2
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 14.5, setting = "culture" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "table1_23C"
+symbol = "dZ"
+quantity = "zoospore death rate"
+value = 1.6e-2
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 23.0, setting = "culture" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "table1_23C"
+symbol = "mZ"
+quantity = "zoospore encystment rate"
+value = 0.18
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 23.0, setting = "culture" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "table1_28C"
+symbol = "dZ"
+quantity = "zoospore death rate"
+value = 4.1e-2
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 28.0, setting = "culture" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "table1_28C"
+symbol = "mZ"
+quantity = "zoospore encystment rate"
+value = 0.21
+units = "h^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "98-1469/10", temperature_C = 28.0, setting = "culture" }
+location = "Table 1"
+verified = true

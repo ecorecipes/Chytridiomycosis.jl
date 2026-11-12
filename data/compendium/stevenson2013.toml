@@ -1,0 +1,93 @@
+# Stevenson LA, Alford RA, Bell SC, Roznik EA, Berger L, Pike DA (2013) Variation in thermal
+# performance of a widespread pathogen, the amphibian chytrid fungus Batrachochytrium
+# dendrobatidis. PLoS ONE 8:e73830. https://doi.org/10.1371/journal.pone.0073830
+# Checked against the PDF, 2026-11-11. Three Australian Bd isolates (QLD, NSW, TAS) grown at
+# 13, 15, 17, 19, 21, 23, 25, 26, 27 and 28 degC. The paper reports cardinal brackets, not a
+# fitted curve. Named sets are isolates.
+# Not from this paper: the "4-25 degC range, 17-25 degC optimum" the review attributes to it is
+# cited by Stevenson et al. as earlier work (their ref. 13, Piotrowski et al. 2004).
+
+source = { ref = "stevenson2013", doi = "10.1371/journal.pone.0073830", review_ref = 21 }
+
+[[parameter]]
+symbol = "T_no_growth"
+quantity = "temperature at which no isolate grew, even after transfer to 23 degC (pilot study)"
+value = 29.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", setting = "culture" }
+location = "Results, Growth and recovery of Bd isolates at high temperatures"
+verified = true
+
+[[parameter]]
+set = "QLD"
+symbol = "T_lethal_lo"
+quantity = "lower bound of the lethal maximum thermal limit"
+value = 28.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2 (tadpole)-2010-CO (QLD)", setting = "culture" }
+location = "Results, Growth and recovery of Bd isolates at high temperatures"
+verified = true
+
+[[parameter]]
+set = "QLD"
+symbol = "T_lethal_hi"
+quantity = "upper bound of the lethal maximum thermal limit"
+value = 29.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2 (tadpole)-2010-CO (QLD)", setting = "culture" }
+location = "Results, Growth and recovery of Bd isolates at high temperatures"
+verified = true
+
+[[parameter]]
+set = "NSW"
+symbol = "T_lethal_lo"
+quantity = "lower bound of the lethal maximum thermal limit"
+value = 26.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "AbercrombieR-Lbooroolongensis-09-LB1 (NSW)", setting = "culture" }
+location = "Results, Growth and recovery of Bd isolates at high temperatures"
+verified = true
+
+[[parameter]]
+set = "NSW"
+symbol = "T_lethal_hi"
+quantity = "upper bound of the lethal maximum thermal limit"
+value = 27.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "AbercrombieR-Lbooroolongensis-09-LB1 (NSW)", setting = "culture" }
+location = "Results, Growth and recovery of Bd isolates at high temperatures"
+verified = true
+
+[[parameter]]
+set = "TAS"
+symbol = "T_lethal_lo"
+quantity = "lower bound of the lethal maximum thermal limit"
+value = 27.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "MtWellington-Lewingii (tadpole)-2012-RW1 (TAS)", setting = "culture" }
+location = "Results, Growth and recovery of Bd isolates at high temperatures"
+verified = true
+
+[[parameter]]
+set = "TAS"
+symbol = "T_lethal_hi"
+quantity = "upper bound of the lethal maximum thermal limit"
+value = 28.0
+units = "degC"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "MtWellington-Lewingii (tadpole)-2012-RW1 (TAS)", setting = "culture" }
+location = "Results, Growth and recovery of Bd isolates at high temperatures"
+verified = true

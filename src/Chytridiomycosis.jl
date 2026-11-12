@@ -44,6 +44,11 @@ include("novel/frog_stochastic.jl")
 include("novel/nested.jl")
 include("novel/nested_stochastic.jl")
 include("fitting/knapp2022.jl")
+# Phase 0 foundations
+include("models/woodhams2008.jl")
+include("units.jl")
+include("thermal.jl")
+include("validation.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -68,5 +73,14 @@ export KnappSwab, knapp2022_path, load_knapp2022, KnappLoadModel, parameter_name
 export MicrobiomeTreatment, load_reducing_treatment, protection, protection_duration, reversion_rate, microbiome_reproduction_number,
        equilibrium_coverage, treatment_efficacy, mortality_reduction, effective_reproduction_number,
        critical_coverage, ProbioticSLIProblem, ProbioticPondProblem, ProbioticLoadProblem
+# Phase 0 foundations
+export PathogenLoad, ZEPerSwab, ITS1CopiesPerSwab, Zoospores, SporangiaPerHost, load_value,
+       convert_load, parameter_load, convert_rate, in_time_unit, survival_to_hazard,
+       hazard_to_survival, time_unit
+export ThermalPerformanceCurve, Briere, CardinalTPC, GaussianQuadratic, SharpeSchoolfield,
+       Ratkowsky, PolynomialTPC, InterpolatedTPC, thermal_optimum, IsolateTPC, HostTPC,
+       thermal_data, SeasonalTemperature, temperature_dependent
+export WoodhamsParameters, intrinsic_growth_rate
+export ValidationTarget, validation_targets, validation_target, reproduce, check_target
 
 end # module Chytridiomycosis

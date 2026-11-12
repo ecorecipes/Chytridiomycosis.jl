@@ -754,4 +754,9 @@ using Random: Xoshiro
         @test prof[2] ≈ fd.loglik atol = 0.5
         @test all(prof .<= fd.loglik + 0.5)
     end
+
+    # Phase 0 foundations
+    include("units.jl")
+    include("thermal.jl")
+    include("validation_targets.jl")
 end
