@@ -352,6 +352,136 @@ published = true
 status = "pending"
 notes = "Needs an in-host Bsal load model driven by temperature. Values in the compendium (blooi2015)."
 
+# --- Miller et al. 2025, arXiv:2503.06846 v3 (refugia CTMC; wiki bd-miller2025-ctmc-refugia) --
+# The posterior targets run an ABC with 10^5 draws (0.2% accepted) and seed 1. This takes a
+# few seconds on one thread. Each tolerance is about 3 sd of its Monte Carlo spread over 20
+# seeds (scripts/miller2025_abc.jl, data/miller2025/abc_reproduction.toml).
+# The paper's run used 10^6 draws. Twenty such runs give (mean ± sd over seeds):
+# β_sh 0.694 ± 0.013, β_un 0.414 ± 0.009, α 0.069 ± 0.002, ω 0.565 ± 0.010, and a refugia
+# effect of 0.404 ± 0.014.
+
+[[target]]
+id = "miller2025_loss_rate"
+model = "bd-miller2025-ctmc-refugia"
+source = { ref = "miller2025", location = "§3.1, Eq. (3)" }
+quantity = "loss rate μ from the mean final count (week⁻¹)"
+published = 0.021
+call = "loss_rate(load_miller2025(:exp))"
+tolerance = { digits = 3 }
+status = "reproduced"
+regression = { value = 0.02144, digits = 5 }
+notes = "N(T_f) = 14.5 frogs, N0 = 20, T_f = 15 weeks."
+
+[[target]]
+id = "miller2025_beta_sh"
+model = "bd-miller2025-ctmc-refugia"
+source = { ref = "miller2025", location = "Table 3" }
+quantity = "posterior mean of β_sh, shaded refugia (week⁻¹)"
+published = 0.675
+call = "refugia_abc_summary(refugia_abc(load_miller2025(); nsamples = 10^5, seed = 1)).β_sh.mean"
+tolerance = { atol = 0.15 }
+status = "reproduced"
+regression = { value = 0.6518, atol = 1e-4 }
+
+[[target]]
+id = "miller2025_beta_un"
+model = "bd-miller2025-ctmc-refugia"
+source = { ref = "miller2025", location = "Table 3" }
+quantity = "posterior mean of β_un, sunlight-heated refugia (week⁻¹)"
+published = 0.401
+call = "refugia_abc_summary(refugia_abc(load_miller2025(); nsamples = 10^5, seed = 1)).β_un.mean"
+tolerance = { atol = 0.11 }
+status = "reproduced"
+regression = { value = 0.4414, atol = 1e-4 }
+
+[[target]]
+id = "miller2025_alpha"
+model = "bd-miller2025-ctmc-refugia"
+source = { ref = "miller2025", location = "Table 3" }
+quantity = "posterior mean of α, relative susceptibility after prior infection"
+published = 0.072
+call = "refugia_abc_summary(refugia_abc(load_miller2025(); nsamples = 10^5, seed = 1)).α.mean"
+tolerance = { atol = 0.018 }
+status = "reproduced"
+regression = { value = 0.07497, atol = 1e-5 }
+
+[[target]]
+id = "miller2025_alphabeta_sh"
+model = "bd-miller2025-ctmc-refugia"
+source = { ref = "miller2025", location = "Table 3" }
+quantity = "posterior mean of αβ_sh (week⁻¹)"
+published = 0.018
+call = "refugia_abc_summary(refugia_abc(load_miller2025(); nsamples = 10^5, seed = 1)).αβ_sh.mean"
+tolerance = { atol = 0.003 }
+status = "reproduced"
+regression = { value = 0.018, atol = 1e-5 }
+
+[[target]]
+id = "miller2025_omega"
+model = "bd-miller2025-ctmc-refugia"
+source = { ref = "miller2025", location = "Table 3" }
+quantity = "posterior mean of ω, recovery rate (week⁻¹)"
+published = 0.569
+call = "refugia_abc_summary(refugia_abc(load_miller2025(); nsamples = 10^5, seed = 1)).ω.mean"
+tolerance = { atol = 0.09 }
+status = "reproduced"
+regression = { value = 0.6048, atol = 1e-4 }
+
+[[target]]
+id = "miller2025_refugia_effect"
+model = "bd-miller2025-ctmc-refugia"
+source = { ref = "miller2025", location = "§3.2, Eq. (5); abstract (40%)" }
+quantity = "reduction in transmissibility with sunlight-heated refugia, 1 − mean(β_un)/mean(β_sh)"
+published = 0.406
+call = "refugia_abc_summary(refugia_abc(load_miller2025(); nsamples = 10^5, seed = 1)).refugia_effect"
+tolerance = { atol = 0.16 }
+status = "reproduced"
+regression = { value = 0.3228, atol = 1e-4 }
+notes = """
+This is a ratio of posterior means, and both posteriors stay close to their priors. The
+posterior probability that β_un < β_sh is in the wiki page."""
+
+[[target]]
+id = "miller2025_vaccination_effect_sh"
+model = "bd-miller2025-ctmc-refugia"
+source = { ref = "miller2025", location = "§3.2, Eq. (4)" }
+quantity = "reduction in susceptibility after prior infection, shaded, 1 − mean(αβ_sh)/mean(β_sh)"
+published = 0.973
+call = "refugia_abc_summary(refugia_abc(load_miller2025(); nsamples = 10^5, seed = 1)).vaccination_effect_sh"
+tolerance = { atol = 0.005 }
+status = "reproduced"
+regression = { value = 0.97238, atol = 1e-5 }
+
+[[target]]
+id = "miller2025_vaccination_effect_un"
+model = "bd-miller2025-ctmc-refugia"
+source = { ref = "miller2025", location = "§3.2, Eq. (4)" }
+quantity = "reduction in susceptibility after prior infection, sunlight-heated, 1 − mean(αβ_un)/mean(β_un)"
+published = 0.978
+call = "refugia_abc_summary(refugia_abc(load_miller2025(); nsamples = 10^5, seed = 1)).vaccination_effect_un"
+tolerance = { atol = 0.005 }
+status = "reproduced"
+regression = { value = 0.97751, atol = 1e-5 }
+
+[[target]]
+id = "miller2025_alphabeta_identifiable"
+model = "bd-miller2025-ctmc-refugia"
+source = { ref = "miller2025", location = "§3.1; Supplement S2" }
+quantity = "αβ is identifiable, α and β separately are not (posterior/prior SD ratios)"
+published = true
+call = """
+let r = refugia_abc(load_miller2025(); nsamples = 10^5, seed = 1)
+    pr = refugia_abc(load_miller2025(); nsamples = 10^4, acceptance = 1.0, seed = 2).accepted
+    A = r.accepted
+    sd(v) = sqrt(sum(abs2, v .- sum(v) / length(v)) / (length(v) - 1))
+    sdr(v, w) = sd(v) / sd(w)
+    sdr(A[:, 1] .* A[:, 3], pr[:, 1] .* pr[:, 3]) < 0.2 &&
+        sdr(A[:, 1], pr[:, 1]) > 0.8 && sdr(A[:, 3], pr[:, 3]) > 0.5
+end
+"""
+status = "qualitative"
+notes = "SD ratios in the run with 10^6 draws: αβ_sh 0.08, α 0.64, β_sh 0.98."
+
 # --- Pending: models not yet implemented (wiki R5–R10) ------------------------------------
 
 [[target]]

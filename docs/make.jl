@@ -28,7 +28,8 @@ makedocs(;
                                       "Thermal performance" => "api/thermal.md",
                                       "Validation targets" => "api/validation.md",
                                       "Swabs, eDNA and identifiability" => "api/identifiability.md",
-                                      "Bayesian fit to field data" => "api/knapp_bayes.md"]])
+                                      "Bayesian fit to field data" => "api/knapp_bayes.md",
+                                      "Refugia CTMC (Miller 2025)" => "api/miller2025.md"]])
 
 if get(ENV, "CI", "false") == "true"
     deploydocs(; repo = "github.com/ecorecipes/Chytridiomycosis.jl.git", push_preview = true)
