@@ -1,0 +1,37 @@
+tank,Ss,Bs,Hm,treatment
+X10,17,5,3,random
+X11,12,4,8,random
+X12,20,4,3,random
+X13,18,11,3,random
+X14,12,5,5,random
+X19,18,5,3,random
+X2,11,6,5,random
+X4,10,15,3,random
+X8,18,3,3,random
+Ri1,16,8,5,random
+Ri13,16,3,4,random
+Ri14,6,7,11,random
+Ri15,15,4,7,random
+Ri2,14,6,4,random
+Ri4,7,9,8,random
+Ri5,15,3,5,random
+X1,24,0,0,Ss (control)
+X9,24,0,0,Ss (control)
+Ri16,24,0,0,Ss (control)
+Ri7,24,0,0,Ss (control)
+Ri9,24,0,0,Ss (control)
+X15,12,12,0,Ss + Bs
+X18,12,12,0,Ss + Bs
+Ao8,12,12,0,Ss + Bs
+Ri17,12,12,0,Ss + Bs
+Ri8,12,12,0,Ss + Bs
+X16,12,6,6,Ss + Bs + Hm
+X20,12,6,6,Ss + Bs + Hm
+Ri12,12,6,6,Ss + Bs + Hm
+Ri18,12,6,6,Ss + Bs + Hm
+SN,12,6,6,Ss + Bs + Hm
+X17,12,0,12,Ss + Hm
+X3,12,0,12,Ss + Hm
+X5,12,0,12,Ss + Hm
+Ri10,12,0,12,Ss + Hm
+Ri6,12,0,12,Ss + Hm

@@ -1,0 +1,326 @@
+# Daversa DR, Bosch J, Manica A, Garner TWJ, Fenton A (2022) Host identity matters, up to a
+# point: the community context of Batrachochytrium dendrobatidis transmission. Am Nat 200(4).
+# https://doi.org/10.1086/720638
+# Checked 2026-11-12 against the PDF (lab/papers/daversa2022.pdf) and against the authors' R
+# code (Zenodo, https://doi.org/10.5281/zenodo.5068208, saved as lab/papers/daversa2022_si1.Rmd).
+# The supplemental PDF (tables S1-S8) could not be obtained: the publisher, eScholarship and
+# UCL Discovery all returned 403 to scripted requests.
+#
+# Fitted values: the paper gives no numerical estimates, only Fig. 4a (posterior medians with
+# 95% CIs). The values below were digitised from the embedded raster of Fig. 4a (page 10,
+# 2250 x 2637 px at 385 ppi). Tick marks and marker centres were located by pixel analysis.
+# One pixel is 2.9e-9 for β, 2.9e3 for λ and 0.0029 for σ. Because they are digitised, they
+# have verified = false. The ratios they imply match the text: β_S is ~80% below the anurans,
+# and λ_F is ~4 × λ_S.
+#
+# Species index: S salamanders (Salamandra salamandra larvae), T toads (Bufo spinosus larvae),
+# F frogs (Hyla molleri larvae). Time unit: day. Z is the number of zoospores in an 80 L tank,
+# not a density.
+# Model equations (p. 5):
+#   dH_i/dt = -μ_i H_i
+#   dI_i/dt = β_i (H_i - I_i) Z - I_i (μ_i + σ_i)
+#   dZ/dt   = Σ_k λ_k I_k + Φ(t) - Z (γ + Σ_k H_k β_k)
+# μ_i is tank-specific, ln(H_i(0)/H_i(T))/T, and is computed from the data, not stored here.
+
+source = { ref = "daversa2022", doi = "10.1086/720638" }
+
+[[parameter]]
+symbol = "γ"
+quantity = "zoospore mortality rate (spores last 1 day on average)"
+value = 1.0
+units = "day^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "mesocosm" }
+location = "p. 5, Methods, Species-Specific Contributions to Transmission (citing Longcore et al. 1999); R code Part 4 `gamma <- 1`"
+verified = true
+
+[[parameter]]
+symbol = "β_S"
+quantity = "transmission rate, salamander larvae (posterior median)"
+value = 8.1e-8
+units = "zoospore^-1 day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd GPL", host = "Salamandra salamandra", stage = "yearling larva", temperature_C = 18, setting = "mesocosm" }
+location = "Fig. 4a (digitised)"
+verified = false
+uncertainty = { kind = "ci95", lo = 1.3e-8, hi = 2.15e-7 }
+notes = "Digitised from Fig. 4a; 95% CI 1.3e-8 to 2.15e-7 (also digitised)."
+
+[[parameter]]
+symbol = "β_T"
+quantity = "transmission rate, toad larvae (posterior median)"
+value = 3.44e-7
+units = "zoospore^-1 day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd GPL", host = "Bufo spinosus", stage = "larva", temperature_C = 18, setting = "mesocosm" }
+location = "Fig. 4a (digitised)"
+verified = false
+uncertainty = { kind = "ci95", lo = 6.1e-8, hi = 8.06e-7 }
+notes = "Digitised from Fig. 4a; 95% CI 6.1e-8 to 8.06e-7."
+
+[[parameter]]
+symbol = "β_F"
+quantity = "transmission rate, tree frog larvae (posterior median)"
+value = 3.18e-7
+units = "zoospore^-1 day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd GPL", host = "Hyla molleri", stage = "larva", temperature_C = 18, setting = "mesocosm" }
+location = "Fig. 4a (digitised)"
+verified = false
+uncertainty = { kind = "ci95", lo = 5.9e-8, hi = 7.57e-7 }
+notes = "Digitised from Fig. 4a; 95% CI 5.9e-8 to 7.57e-7."
+
+[[parameter]]
+symbol = "λ_S"
+quantity = "zoospore shedding rate per infected salamander larva (posterior median)"
+value = 9.3e4
+units = "zoospore host^-1 day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd GPL", host = "Salamandra salamandra", stage = "yearling larva", temperature_C = 18, setting = "mesocosm" }
+location = "Fig. 4a (digitised)"
+verified = false
+uncertainty = { kind = "ci95", lo = 7.0e3, hi = 4.49e5 }
+notes = "Digitised from Fig. 4a; 95% CI 7e3 to 4.49e5."
+
+[[parameter]]
+symbol = "λ_T"
+quantity = "zoospore shedding rate per infected toad larva (posterior median)"
+value = 9.3e4
+units = "zoospore host^-1 day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd GPL", host = "Bufo spinosus", stage = "larva", temperature_C = 18, setting = "mesocosm" }
+location = "Fig. 4a (digitised)"
+verified = false
+uncertainty = { kind = "ci95", lo = 7.0e3, hi = 3.19e5 }
+notes = "Digitised from Fig. 4a; 95% CI 7e3 to 3.19e5. The marker sits at the same height as the salamander marker."
+
+[[parameter]]
+symbol = "λ_F"
+quantity = "zoospore shedding rate per infected tree frog larva (posterior median)"
+value = 3.99e5
+units = "zoospore host^-1 day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd GPL", host = "Hyla molleri", stage = "larva", temperature_C = 18, setting = "mesocosm" }
+location = "Fig. 4a (digitised)"
+verified = false
+uncertainty = { kind = "ci95", lo = 1.43e5, hi = 8.34e5 }
+notes = "Digitised from Fig. 4a; 95% CI 1.43e5 to 8.34e5. Text p. 6: 'shedding rates of frogs were ~4 times higher than salamanders'."
+
+[[parameter]]
+symbol = "σ_S"
+quantity = "recovery rate, salamander larvae (posterior median)"
+value = 0.693
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd GPL", host = "Salamandra salamandra", stage = "yearling larva", temperature_C = 18, setting = "mesocosm" }
+location = "Fig. 4a (digitised)"
+verified = false
+uncertainty = { kind = "ci95", lo = 0.158, hi = 0.986 }
+notes = "Digitised from Fig. 4a; 95% CI 0.158 to 0.986. The prior is Beta(1,1) on (0, 1) day^-1, so the upper limit sits at the prior bound."
+
+[[parameter]]
+symbol = "σ_T"
+quantity = "recovery rate, toad larvae (posterior median)"
+value = 0.713
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd GPL", host = "Bufo spinosus", stage = "larva", temperature_C = 18, setting = "mesocosm" }
+location = "Fig. 4a (digitised)"
+verified = false
+uncertainty = { kind = "ci95", lo = 0.131, hi = 0.986 }
+notes = "Digitised from Fig. 4a; 95% CI 0.131 to 0.986."
+
+[[parameter]]
+symbol = "σ_F"
+quantity = "recovery rate, tree frog larvae (posterior median)"
+value = 0.694
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd GPL", host = "Hyla molleri", stage = "larva", temperature_C = 18, setting = "mesocosm" }
+location = "Fig. 4a (digitised)"
+verified = false
+uncertainty = { kind = "ci95", lo = 0.143, hi = 0.986 }
+notes = "Digitised from Fig. 4a; 95% CI 0.143 to 0.986."
+
+# --- Spore inputs Φ(t) as used in the fit (authors' R code, Part 4) ------------------------
+# The paper (p. 3) says zoospores were added on days 1, 11 and 18, to 18,000-24,000 zoospores
+# per litre. The code that produced the estimates instead starts with Z(0) = 1.65e6 and adds
+# three more doses on days 10, 17 and 25: four inputs, not three.
+
+[[parameter]]
+symbol = "Z0"
+quantity = "zoospores in each tank at the start of the simulation (first inoculation)"
+value = 1.65e6
+units = "zoospores"
+provenance = "M"
+role = "structural"
+location = "R code Part 4, `sporevals[1]` (Zenodo 10.5281/zenodo.5068208)"
+verified = true
+
+[[parameter]]
+symbol = "dose_t1"
+quantity = "day of the second inoculation in the fitted model"
+value = 10.0
+units = "day"
+provenance = "M"
+role = "structural"
+location = "R code Part 4, `sporetime`"
+verified = true
+notes = "The paper text gives inoculation days 1, 11 and 18."
+
+[[parameter]]
+symbol = "dose_n1"
+quantity = "zoospores added at dose_t1"
+value = 1.94e6
+units = "zoospores"
+provenance = "M"
+role = "structural"
+location = "R code Part 4, `sporevals[2]`"
+verified = true
+
+[[parameter]]
+symbol = "dose_t2"
+quantity = "day of the third inoculation in the fitted model"
+value = 17.0
+units = "day"
+provenance = "M"
+role = "structural"
+location = "R code Part 4, `sporetime`"
+verified = true
+
+[[parameter]]
+symbol = "dose_n2"
+quantity = "zoospores added at dose_t2"
+value = 1.45e6
+units = "zoospores"
+provenance = "M"
+role = "structural"
+location = "R code Part 4, `sporevals[3]`"
+verified = true
+
+[[parameter]]
+symbol = "dose_t3"
+quantity = "day of the fourth inoculation in the fitted model"
+value = 25.0
+units = "day"
+provenance = "M"
+role = "structural"
+location = "R code Part 4, `sporetime`"
+verified = true
+
+[[parameter]]
+symbol = "dose_n3"
+quantity = "zoospores added at dose_t3"
+value = 1.95e6
+units = "zoospores"
+provenance = "M"
+role = "structural"
+location = "R code Part 4, `sporevals[4]`"
+verified = true
+
+# --- Experimental design, from the paper text -------------------------------------------
+
+[[parameter]]
+symbol = "tank_volume"
+quantity = "river water per mesocosm"
+value = 80.0
+units = "L"
+provenance = "M"
+role = "structural"
+location = "p. 3, Experimental Approach"
+verified = true
+
+[[parameter]]
+symbol = "dose_conc_lo"
+quantity = "lower target zoospore concentration per inoculation"
+value = 18000.0
+units = "zoospore L^-1"
+provenance = "M"
+role = "structural"
+location = "p. 3, Experimental Approach"
+verified = true
+notes = "x 80 L = 1.44e6 zoospores; the code's doses are 1.45e6 to 1.95e6."
+
+[[parameter]]
+symbol = "dose_conc_hi"
+quantity = "upper target zoospore concentration per inoculation"
+value = 24000.0
+units = "zoospore L^-1"
+provenance = "M"
+role = "structural"
+location = "p. 3, Experimental Approach"
+verified = true
+notes = "x 80 L = 1.92e6 zoospores."
+
+[[parameter]]
+symbol = "hosts_per_tank"
+quantity = "initial number of larvae per tank (all treatments)"
+value = 24.0
+units = "hosts"
+provenance = "M"
+role = "structural"
+location = "p. 3, Experimental Approach; design.csv"
+verified = true
+
+[[parameter]]
+symbol = "duration"
+quantity = "length of the experiment"
+value = 30.0
+units = "day"
+provenance = "M"
+role = "structural"
+location = "p. 3 (July 4 to August 2, 2017)"
+verified = true
+notes = "The fitted model runs to the final sampling day of each tank, day 28 or 29 counted from 2017-07-04."
+
+[[parameter]]
+symbol = "temperature"
+quantity = "room temperature during the experiment"
+value = 18.0
+units = "degC"
+provenance = "M"
+role = "structural"
+location = "p. 3"
+verified = true
+
+# --- Prior bounds of the fit (R code: Beta(1,1) priors on the scaled parameters) ----------
+
+[[parameter]]
+symbol = "β_max"
+quantity = "upper bound of the uniform prior on each β_i"
+value = 1.0e-5
+units = "zoospore^-1 day^-1"
+provenance = "A"
+role = "structural"
+location = "R code Part 4, `betaadj` and `createBetaPrior(1, 1, lower = 0, upper = 1)`"
+verified = true
+
+[[parameter]]
+symbol = "λ_max"
+quantity = "upper bound of the uniform prior on each λ_i"
+value = 1.0e6
+units = "zoospore host^-1 day^-1"
+provenance = "A"
+role = "structural"
+location = "R code Part 4, `lamadj`"
+verified = true
+
+[[parameter]]
+symbol = "σ_max"
+quantity = "upper bound of the uniform prior on each σ_i"
+value = 1.0
+units = "day^-1"
+provenance = "A"
+role = "structural"
+location = "R code Part 4, `sigadj`"
+verified = true

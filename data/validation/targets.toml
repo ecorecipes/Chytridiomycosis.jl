@@ -394,10 +394,179 @@ quantity = "zoospore lifespans 9.4–14.4 h (review values, unverified)"
 status = "pending"
 notes = "Wiki target R9."
 
+# --- Daversa et al. 2022, Am Nat 200(4) (wiki target R10) --------------------------------
+# DaversaParameters(:daversa2022) holds posterior medians digitised from Fig. 4a, because the
+# paper prints no numbers. R0 values are therefore point estimates at those medians, whereas
+# the paper reports medians over 3,000 posterior draws. The tolerances allow for this.
+
 [[target]]
 id = "daversa2022_multihost"
 model = "bd-daversa2022-multihost"
-source = { ref = "daversa2022", location = "" }
-quantity = "total R₀ falls as the salamander fraction rises (review statement, unverified)"
-status = "pending"
-notes = "Wiki target R10."
+source = { ref = "daversa2022", location = "Results p. 6; Fig. 4c" }
+quantity = "R0_TOT falls as the initial salamander:other ratio rises (Pearson r over the 21 tanks)"
+published = "strong negative correlation"
+call = """
+let tanks = load_daversa2022(; three_species_only = true)
+    R = sum.(tank_reproduction_numbers(DaversaParameters(:daversa2022), tanks))
+    _pearson([t.H0[1] / (24 - t.H0[1]) for t in tanks], R)
+end
+"""
+tolerance = { lower = -1.0, upper = -0.5 }
+status = "qualitative"
+regression = { value = -0.699, atol = 0.002 }
+notes = """
+Wiki target R10. The x-axis Ss/(24 − Ss) is taken from the R code. The Fig. 4d medians
+digitised from the paper give r = −0.69, and ours give −0.70."""
+
+[[target]]
+id = "daversa2022_fit_r"
+model = "bd-daversa2022-multihost"
+source = { ref = "daversa2022", location = "Results p. 6; Fig. S7" }
+quantity = "correlation between observed and predicted final numbers infected (63 points)"
+published = 0.70
+call = "_daversa_fit_correlation(DaversaParameters(:daversa2022))"
+tolerance = { atol = 0.02 }
+status = "reproduced"
+regression = { value = 0.710, atol = 0.002 }
+notes = """
+Predictions are at the digitised posterior medians, not medians of predictions over draws.
+The authors' code comment says 0.71."""
+
+[[target]]
+id = "daversa2022_fit_R2"
+model = "bd-daversa2022-multihost"
+source = { ref = "daversa2022", location = "Results p. 6; Fig. S7" }
+quantity = "R² of observed vs predicted final numbers infected"
+published = 0.50
+call = "_daversa_fit_correlation(DaversaParameters(:daversa2022))^2"
+tolerance = { atol = 0.02 }
+status = "reproduced"
+regression = { value = 0.505, atol = 0.002 }
+
+[[target]]
+id = "daversa2022_R0_salamander"
+model = "bd-daversa2022-multihost"
+source = { ref = "daversa2022", location = "Fig. 4b (median, digitised)" }
+quantity = "median salamander contribution to R0 over the 21 three-species tanks"
+published = 0.143
+call = "_median(getindex.(tank_reproduction_numbers(DaversaParameters(:daversa2022)), 1))"
+tolerance = { rtol = 0.15 }
+status = "reproduced"
+regression = { value = 0.130, atol = 0.001 }
+notes = "Fig. 4b pools 3,000 draws × 21 tanks; this is the median over tanks at the median parameters."
+
+[[target]]
+id = "daversa2022_R0_toad"
+model = "bd-daversa2022-multihost"
+source = { ref = "daversa2022", location = "Fig. 4b (median, digitised)" }
+quantity = "median toad contribution to R0 over the 21 three-species tanks"
+published = 0.247
+call = "_median(getindex.(tank_reproduction_numbers(DaversaParameters(:daversa2022)), 2))"
+tolerance = { rtol = 0.15 }
+status = "reproduced"
+regression = { value = 0.268, atol = 0.001 }
+
+[[target]]
+id = "daversa2022_R0_frog"
+model = "bd-daversa2022-multihost"
+source = { ref = "daversa2022", location = "Fig. 4b (median, digitised)" }
+quantity = "median frog contribution to R0 over the 21 three-species tanks"
+published = 0.911
+call = "_median(getindex.(tank_reproduction_numbers(DaversaParameters(:daversa2022)), 3))"
+tolerance = { rtol = 0.15 }
+status = "reproduced"
+regression = { value = 0.906, atol = 0.001 }
+
+[[target]]
+id = "daversa2022_R0tot_tanks"
+model = "bd-daversa2022-multihost"
+source = { ref = "daversa2022", location = "Fig. 4c–d (per-tank medians, digitised)" }
+quantity = "correlation of our per-tank R0_TOT with the Fig. 4c–d medians"
+published = "per-tank medians (21 tanks)"
+call = """
+let tanks = load_daversa2022(; three_species_only = true), pub = _daversa_fig4_medians()
+    R = sum.(tank_reproduction_numbers(DaversaParameters(:daversa2022), tanks))
+    _pearson(R, [pub[t.tank] for t in tanks])
+end
+"""
+tolerance = { lower = 0.99, upper = 1.0 }
+status = "reproduced"
+regression = { value = 0.9996, atol = 0.0003 }
+notes = """
+Ours are 5–10% below the published medians in every tank (ratio 0.905–0.948, mean 0.93), as
+expected when a sum of skewed contributions is evaluated at the median parameters. Digitised
+values: data/daversa2022/fig4cd_R0tot_digitised.csv."""
+
+[[target]]
+id = "daversa2022_salamander_negligible"
+model = "bd-daversa2022-multihost"
+source = { ref = "daversa2022", location = "Fig. 4b legend; Discussion" }
+quantity = "largest salamander share R0_S/R0_TOT over the 21 tanks"
+published = "salamanders contribute very little to the R0 of Bd in each tank"
+call = """
+let R = tank_reproduction_numbers(DaversaParameters(:daversa2022))
+    maximum(r[1] / sum(r) for r in R)
+end
+"""
+tolerance = { lower = 0.0, upper = 0.25 }
+status = "qualitative"
+regression = { value = 0.228, atol = 0.002 }
+notes = """
+The median share is 0.10. R0_S < R0_F in all 21 tanks, but R0_S > R0_T in 4 salamander-heavy
+tanks."""
+
+[[target]]
+id = "daversa2022_frog_toad_ratio"
+model = "bd-daversa2022-multihost"
+source = { ref = "daversa2022", location = "Results p. 6; Fig. 4d" }
+quantity = "Pearson r between R0_TOT and the initial frog:toad ratio over the 21 tanks"
+published = "little consequence for R0_TOT (|r| < 0.3 taken as negligible)"
+call = """
+let tanks = load_daversa2022(; three_species_only = true)
+    R = sum.(tank_reproduction_numbers(DaversaParameters(:daversa2022), tanks))
+    _pearson([t.H0[3] / t.H0[2] for t in tanks], R)
+end
+"""
+tolerance = { lower = -0.3, upper = 0.3 }
+status = "discrepant"
+regression = { value = 0.449, atol = 0.002 }
+notes = """
+This is an interpretation, not a number. The paper's own Fig. 4d medians (digitised) give
+r = 0.44, and ours give 0.45. At the median parameters a frog contributes about four times as
+much as a toad, so swapping toads for frogs raises R0_TOT. The wide credible intervals in
+Fig. 4d are what make the effect look small."""
+
+[[target]]
+id = "daversa2022_printed_R0"
+model = "bd-daversa2022-multihost"
+source = { ref = "daversa2022", location = "p. 6, R0 formula; Fig. 4b" }
+quantity = "median salamander R0 contribution with the formula as printed (denominator μ_i only)"
+published = 0.143
+call = """
+_median(getindex.(tank_reproduction_numbers(DaversaParameters(:daversa2022); μ = :tank,
+    as_printed = true), 1))
+"""
+tolerance = { rtol = 0.15 }
+status = "discrepant"
+regression = { value = 4.26, atol = 0.01 }
+notes = """
+The printed formula R0_i = β_i λ_i H_i / (μ_i (γ + Σ H_k β_k)) omits recovery. It gives ~30×
+the Fig. 4b values, and Inf where no host of a species was lost. The authors' code (R0calc)
+and the next-generation matrix both use μ_i + σ_i, which reproduces Fig. 4b. A typesetting
+slip in the paper."""
+
+[[target]]
+id = "daversa2022_rate_ratios"
+model = "bd-daversa2022-multihost"
+source = { ref = "daversa2022", location = "Results p. 6" }
+quantity = "β_S / mean(β_T, β_F) of the digitised medians (text: salamander β ~80% lower)"
+published = 0.2
+call = """
+let p = DaversaParameters(:daversa2022)
+    p.β[1] / ((p.β[2] + p.β[3]) / 2)
+end
+"""
+tolerance = { lower = 0.1, upper = 0.3 }
+status = "qualitative"
+regression = { value = 0.245, atol = 0.002 }
+notes = "Checks the digitisation against the text. λ_F/λ_S = 4.3 (text: ~4) is tested in test/daversa2022.jl."

@@ -19,6 +19,7 @@ makedocs(;
                                   "Fitting to a field trial" => "tutorials/03_knapp_fit.md"],
                   "API reference" => ["Parameter compendium" => "api/compendium.md",
                                       "Published models" => "api/published.md",
+                                      "Several hosts, one pool" => "api/daversa2022.md",
                                       "Load models" => "api/load.md",
                                       "Microbiome treatment" => "api/treatment.md",
                                       "Life stages" => "api/stages.md",

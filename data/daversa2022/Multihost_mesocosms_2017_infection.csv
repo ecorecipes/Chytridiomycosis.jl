@@ -1,0 +1,1293 @@
+ID,date,tank,sp,timepoint.no,timepoint.name,sample.type,treatment,fate,bd.load
+1.1.1,04/07/2017,1,Ss,1,initial,swab,Ss (control),euthanased,0
+1.1.10,04/07/2017,1,Ss,1,initial,swab,Ss (control),euthanased,0
+1.1.2,04/07/2017,1,Ss,1,initial,swab,Ss (control),euthanased,0.012133648
+1.1.3,04/07/2017,1,Ss,1,initial,swab,Ss (control),euthanased,0
+1.1.4,04/07/2017,1,Ss,1,initial,swab,Ss (control),euthanased,0.2733282
+1.1.5,04/07/2017,1,Ss,1,initial,swab,Ss (control),euthanased,0
+1.1.6,04/07/2017,1,Ss,1,initial,swab,Ss (control),euthanased,0
+1.1.7,04/07/2017,1,Ss,1,initial,swab,Ss (control),euthanased,0
+1.1.8,04/07/2017,1,Ss,1,initial,swab,Ss (control),euthanased,0
+1.1.9,04/07/2017,1,Ss,1,initial,swab,Ss (control),euthanased,0
+10.1.1,04/07/2017,10,Ss,1,initial,swab,random,euthanased,0
+10.1.10,04/07/2017,10,Ss,1,initial,swab,random,euthanased,0.00812998
+10.1.2,04/07/2017,10,Ss,1,initial,swab,random,euthanased,0
+10.1.3,04/07/2017,10,Ss,1,initial,swab,random,euthanased,0
+10.1.4,04/07/2017,10,Ss,1,initial,swab,random,euthanased,0.068355892
+10.1.5,04/07/2017,10,Ss,1,initial,swab,random,euthanased,1.448213458
+10.1.6,04/07/2017,10,Ss,1,initial,swab,random,euthanased,0
+10.1.7,04/07/2017,10,Ss,1,initial,swab,random,euthanased,0.029015748
+10.1.8,04/07/2017,10,Ss,1,initial,swab,random,euthanased,0.004848598
+10.1.9,04/07/2017,10,Ss,1,initial,swab,random,euthanased,0
+11.1.1,04/07/2017,11,Ss,1,initial,swab,random,euthanased,0
+11.1.10,04/07/2017,11,Ss,1,initial,swab,random,euthanased,0.00451328
+11.1.2,04/07/2017,11,Ss,1,initial,swab,random,euthanased,0
+11.1.3,04/07/2017,11,Ss,1,initial,swab,random,euthanased,0
+11.1.4,04/07/2017,11,Ss,1,initial,swab,random,euthanased,0
+11.1.5,04/07/2017,11,Ss,1,initial,swab,random,euthanased,0
+11.1.6,04/07/2017,11,Ss,1,initial,swab,random,euthanased,0.068264492
+11.1.7,04/07/2017,11,Ss,1,initial,swab,random,euthanased,0
+11.1.8,04/07/2017,11,Ss,1,initial,swab,random,euthanased,0.005091482
+11.1.9,04/07/2017,11,Ss,1,initial,swab,random,euthanased,0
+12.1.1,04/07/2017,12,Ss,1,initial,swab,random,euthanased,0
+12.1.10,04/07/2017,12,Ss,1,initial,swab,random,euthanased,0
+12.1.2,04/07/2017,12,Ss,1,initial,swab,random,euthanased,0.469891056
+12.1.3,04/07/2017,12,Ss,1,initial,swab,random,euthanased,0
+12.1.4,04/07/2017,12,Ss,1,initial,swab,random,euthanased,0
+12.1.5,04/07/2017,12,Ss,1,initial,swab,random,euthanased,0
+12.1.6,04/07/2017,12,Ss,1,initial,swab,random,euthanased,0.011121847
+12.1.7,04/07/2017,12,Ss,1,initial,swab,random,euthanased,0
+12.1.8,04/07/2017,12,Ss,1,initial,swab,random,euthanased,0
+12.1.9,04/07/2017,12,Ss,1,initial,swab,random,euthanased,0
+13.1.1,04/07/2017,13,Ss,1,initial,swab,random,euthanased,0.062004747
+13.1.10,04/07/2017,13,Ss,1,initial,swab,random,euthanased,0.007865406
+13.1.2,04/07/2017,13,Ss,1,initial,swab,random,euthanased,0
+13.1.3,04/07/2017,13,Ss,1,initial,swab,random,euthanased,0
+13.1.4,04/07/2017,13,Ss,1,initial,swab,random,euthanased,0
+13.1.5,04/07/2017,13,Ss,1,initial,swab,random,euthanased,0.174639076
+13.1.6,04/07/2017,13,Ss,1,initial,swab,random,euthanased,0.027621782
+13.1.7,04/07/2017,13,Ss,1,initial,swab,random,euthanased,0.004247048
+13.1.8,04/07/2017,13,Ss,1,initial,swab,random,euthanased,0.031770889
+13.1.9,04/07/2017,13,Ss,1,initial,swab,random,euthanased,0.055289641
+14.1.1,04/07/2017,14,Ss,1,initial,swab,random,euthanased,0.060254312
+14.1.10,04/07/2017,14,Ss,1,initial,swab,random,euthanased,0
+14.1.2,04/07/2017,14,Ss,1,initial,swab,random,euthanased,1.08732909
+14.1.3,04/07/2017,14,Ss,1,initial,swab,random,euthanased,0
+14.1.4,04/07/2017,14,Ss,1,initial,swab,random,euthanased,0.032106258
+14.1.5,04/07/2017,14,Ss,1,initial,swab,random,euthanased,1.127279848
+14.1.6,04/07/2017,14,Ss,1,initial,swab,random,euthanased,0.00918165
+14.1.7,04/07/2017,14,Ss,1,initial,swab,random,euthanased,0.034830244
+14.1.8,04/07/2017,14,Ss,1,initial,swab,random,euthanased,0
+14.1.9,04/07/2017,14,Ss,1,initial,swab,random,euthanased,0.042200461
+15.1.1,04/07/2017,15,Ss,1,initial,swab,Ss + Bs,euthanased,0.020052399
+15.1.10,04/07/2017,15,Ss,1,initial,swab,Ss + Bs,euthanased,0
+15.1.2,04/07/2017,15,Ss,1,initial,swab,Ss + Bs,euthanased,0
+15.1.3,04/07/2017,15,Ss,1,initial,swab,Ss + Bs,euthanased,0
+15.1.4,04/07/2017,15,Ss,1,initial,swab,Ss + Bs,euthanased,0
+15.1.5,04/07/2017,15,Ss,1,initial,swab,Ss + Bs,euthanased,0.103657711
+15.1.6,04/07/2017,15,Ss,1,initial,swab,Ss + Bs,euthanased,0
+15.1.7,04/07/2017,15,Ss,1,initial,swab,Ss + Bs,euthanased,0
+15.1.8,04/07/2017,15,Ss,1,initial,swab,Ss + Bs,euthanased,0.013729974
+15.1.9,04/07/2017,15,Ss,1,initial,swab,Ss + Bs,euthanased,0.011200099
+16.1.1,04/07/2017,16,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+16.1.10,04/07/2017,16,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.157359391
+16.1.2,04/07/2017,16,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.032073732
+16.1.3,04/07/2017,16,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+16.1.4,04/07/2017,16,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+16.1.5,04/07/2017,16,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+16.1.6,04/07/2017,16,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+16.1.7,04/07/2017,16,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.019931523
+16.1.8,04/07/2017,16,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.002745199
+16.1.9,04/07/2017,16,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+17.1.1,04/07/2017,17,Ss,1,initial,swab,Ss + Hm,euthanased,0
+17.1.10,04/07/2017,17,Ss,1,initial,swab,Ss + Hm,euthanased,0.001571382
+17.1.2,04/07/2017,17,Ss,1,initial,swab,Ss + Hm,euthanased,0
+17.1.3,04/07/2017,17,Ss,1,initial,swab,Ss + Hm,euthanased,0
+17.1.4,04/07/2017,17,Ss,1,initial,swab,Ss + Hm,euthanased,0
+17.1.5,04/07/2017,17,Ss,1,initial,swab,Ss + Hm,euthanased,0
+17.1.6,04/07/2017,17,Ss,1,initial,swab,Ss + Hm,euthanased,0.034942341
+17.1.7,04/07/2017,17,Ss,1,initial,swab,Ss + Hm,euthanased,0
+17.1.8,04/07/2017,17,Ss,1,initial,swab,Ss + Hm,euthanased,0
+17.1.9,04/07/2017,17,Ss,1,initial,swab,Ss + Hm,euthanased,0
+18.1.1,04/07/2017,18,Ss,1,initial,swab,Ss + Bs,euthanased,0
+18.1.10,04/07/2017,18,Ss,1,initial,swab,Ss + Bs,euthanased,0.003078532
+18.1.2,04/07/2017,18,Ss,1,initial,swab,Ss + Bs,euthanased,0
+18.1.3,04/07/2017,18,Ss,1,initial,swab,Ss + Bs,euthanased,0
+18.1.4,04/07/2017,18,Ss,1,initial,swab,Ss + Bs,euthanased,0.060882252
+18.1.5,04/07/2017,18,Ss,1,initial,swab,Ss + Bs,euthanased,0.005115111
+18.1.6,04/07/2017,18,Ss,1,initial,swab,Ss + Bs,euthanased,0.008818448
+18.1.7,04/07/2017,18,Ss,1,initial,swab,Ss + Bs,euthanased,0
+18.1.8,04/07/2017,18,Ss,1,initial,swab,Ss + Bs,euthanased,0
+18.1.9,04/07/2017,18,Ss,1,initial,swab,Ss + Bs,euthanased,0
+19.1.1,04/07/2017,19,Ss,1,initial,swab,random,euthanased,0.017095342
+19.1.10,04/07/2017,19,Ss,1,initial,swab,random,euthanased,0.015797893
+19.1.2,04/07/2017,19,Ss,1,initial,swab,random,euthanased,0.270268209
+19.1.3,04/07/2017,19,Ss,1,initial,swab,random,euthanased,0
+19.1.4,04/07/2017,19,Ss,1,initial,swab,random,euthanased,0
+19.1.5,04/07/2017,19,Ss,1,initial,swab,random,euthanased,0.033543273
+19.1.6,04/07/2017,19,Ss,1,initial,swab,random,euthanased,0
+19.1.7,04/07/2017,19,Ss,1,initial,swab,random,euthanased,0
+19.1.8,04/07/2017,19,Ss,1,initial,swab,random,euthanased,0
+19.1.9,04/07/2017,19,Ss,1,initial,swab,random,euthanased,0
+2.1.1,04/07/2017,2,Ss,1,initial,swab,random,euthanased,0
+2.1.10,04/07/2017,2,Ss,1,initial,swab,random,euthanased,0
+2.1.2,04/07/2017,2,Ss,1,initial,swab,random,euthanased,0.453539006
+2.1.3,04/07/2017,2,Ss,1,initial,swab,random,euthanased,0
+2.1.4,04/07/2017,2,Ss,1,initial,swab,random,euthanased,0.196142904
+2.1.5,04/07/2017,2,Ss,1,initial,swab,random,euthanased,0
+2.1.6,04/07/2017,2,Ss,1,initial,swab,random,euthanased,0.004896586
+2.1.7,04/07/2017,2,Ss,1,initial,swab,random,euthanased,0
+2.1.8,04/07/2017,2,Ss,1,initial,swab,random,euthanased,0
+2.1.9,04/07/2017,2,Ss,1,initial,swab,random,euthanased,0
+20.1.1,04/07/2017,20,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+20.1.10,04/07/2017,20,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+20.1.2,04/07/2017,20,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+20.1.3,04/07/2017,20,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+20.1.4,04/07/2017,20,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.052331528
+20.1.5,04/07/2017,20,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.020887309
+20.1.6,04/07/2017,20,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.003121736
+20.1.7,04/07/2017,20,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+20.1.8,04/07/2017,20,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.162230823
+20.1.9,04/07/2017,20,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.079453615
+3.1.1,04/07/2017,3,Ss,1,initial,swab,Ss + Hm,euthanased,0
+3.1.10,04/07/2017,3,Ss,1,initial,swab,Ss + Hm,euthanased,0
+3.1.2,04/07/2017,3,Ss,1,initial,swab,Ss + Hm,euthanased,0
+3.1.3,04/07/2017,3,Ss,1,initial,swab,Ss + Hm,euthanased,0.282020066
+3.1.4,04/07/2017,3,Ss,1,initial,swab,Ss + Hm,euthanased,0
+3.1.5,04/07/2017,3,Ss,1,initial,swab,Ss + Hm,euthanased,0.013906045
+3.1.6,04/07/2017,3,Ss,1,initial,swab,Ss + Hm,euthanased,0
+3.1.7,04/07/2017,3,Ss,1,initial,swab,Ss + Hm,euthanased,0
+3.1.8,04/07/2017,3,Ss,1,initial,swab,Ss + Hm,euthanased,0.002592091
+3.1.9,04/07/2017,3,Ss,1,initial,swab,Ss + Hm,euthanased,0.008902702
+4.1.1,04/07/2017,4,Ss,1,initial,swab,random,euthanased,0.255511366
+4.1.10,04/07/2017,4,Ss,1,initial,swab,random,euthanased,0
+4.1.2,04/07/2017,4,Ss,1,initial,swab,random,euthanased,0
+4.1.3,04/07/2017,4,Ss,1,initial,swab,random,euthanased,0
+4.1.4,04/07/2017,4,Ss,1,initial,swab,random,euthanased,0
+4.1.5,04/07/2017,4,Ss,1,initial,swab,random,euthanased,0
+4.1.6,04/07/2017,4,Ss,1,initial,swab,random,euthanased,0
+4.1.7,04/07/2017,4,Ss,1,initial,swab,random,euthanased,0
+4.1.8,04/07/2017,4,Ss,1,initial,swab,random,euthanased,0
+4.1.9,04/07/2017,4,Ss,1,initial,swab,random,euthanased,0
+5.1.1,04/07/2017,5,Ss,1,initial,swab,Ss + Hm,euthanased,0
+5.1.10,04/07/2017,5,Ss,1,initial,swab,Ss + Hm,euthanased,0
+5.1.2,04/07/2017,5,Ss,1,initial,swab,Ss + Hm,euthanased,0
+5.1.3,04/07/2017,5,Ss,1,initial,swab,Ss + Hm,euthanased,0
+5.1.4,04/07/2017,5,Ss,1,initial,swab,Ss + Hm,euthanased,0
+5.1.5,04/07/2017,5,Ss,1,initial,swab,Ss + Hm,euthanased,0
+5.1.6,04/07/2017,5,Ss,1,initial,swab,Ss + Hm,euthanased,0
+5.1.7,04/07/2017,5,Ss,1,initial,swab,Ss + Hm,euthanased,0.001978045
+5.1.8,04/07/2017,5,Ss,1,initial,swab,Ss + Hm,euthanased,0
+5.1.9,04/07/2017,5,Ss,1,initial,swab,Ss + Hm,euthanased,0
+8.1.1,04/07/2017,8,Ss,1,initial,swab,random,euthanased,0
+8.1.10,04/07/2017,8,Ss,1,initial,swab,random,euthanased,0
+8.1.2,04/07/2017,8,Ss,1,initial,swab,random,euthanased,0
+8.1.3,04/07/2017,8,Ss,1,initial,swab,random,euthanased,0
+8.1.4,04/07/2017,8,Ss,1,initial,swab,random,euthanased,0
+8.1.5,04/07/2017,8,Ss,1,initial,swab,random,euthanased,0
+8.1.6,04/07/2017,8,Ss,1,initial,swab,random,euthanased,0
+8.1.7,04/07/2017,8,Ss,1,initial,swab,random,euthanased,0
+8.1.8,04/07/2017,8,Ss,1,initial,swab,random,euthanased,0
+8.1.9,04/07/2017,8,Ss,1,initial,swab,random,euthanased,0.013884138
+9.1.1,04/07/2017,9,Ss,1,initial,swab,Ss (control),euthanased,0
+9.1.10,04/07/2017,9,Ss,1,initial,swab,Ss (control),euthanased,0
+9.1.2,04/07/2017,9,Ss,1,initial,swab,Ss (control),euthanased,0
+9.1.3,04/07/2017,9,Ss,1,initial,swab,Ss (control),euthanased,0.071661291
+9.1.4,04/07/2017,9,Ss,1,initial,swab,Ss (control),euthanased,0
+9.1.5,04/07/2017,9,Ss,1,initial,swab,Ss (control),euthanased,0
+9.1.6,04/07/2017,9,Ss,1,initial,swab,Ss (control),euthanased,0.068630371
+9.1.7,04/07/2017,9,Ss,1,initial,swab,Ss (control),euthanased,0
+9.1.8,04/07/2017,9,Ss,1,initial,swab,Ss (control),euthanased,0
+9.1.9,04/07/2017,9,Ss,1,initial,swab,Ss (control),euthanased,0.001671398
+Ao8.1.1,04/07/2017,Ao8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ao8.1.10,04/07/2017,Ao8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ao8.1.2,04/07/2017,Ao8,Ss,1,initial,swab,Ss + Bs,euthanased,6.902675629
+Ao8.1.3,04/07/2017,Ao8,Ss,1,initial,swab,Ss + Bs,euthanased,0.097215297
+Ao8.1.4,04/07/2017,Ao8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ao8.1.5,04/07/2017,Ao8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ao8.1.6,04/07/2017,Ao8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ao8.1.7,04/07/2017,Ao8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ao8.1.8,04/07/2017,Ao8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ao8.1.9,04/07/2017,Ao8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ri1.1.1,04/07/2017,Ri1,Ss,1,initial,swab,random,euthanased,0.013580438
+Ri1.1.10,04/07/2017,Ri1,Ss,1,initial,swab,random,euthanased,0
+Ri1.1.2,04/07/2017,Ri1,Ss,1,initial,swab,random,euthanased,0
+Ri1.1.3,04/07/2017,Ri1,Ss,1,initial,swab,random,euthanased,0
+Ri1.1.4,04/07/2017,Ri1,Ss,1,initial,swab,random,euthanased,0.122037856
+Ri1.1.5,04/07/2017,Ri1,Ss,1,initial,swab,random,euthanased,0
+Ri1.1.6,04/07/2017,Ri1,Ss,1,initial,swab,random,euthanased,0.013323425
+Ri1.1.7,04/07/2017,Ri1,Ss,1,initial,swab,random,euthanased,0.034481024
+Ri1.1.8,04/07/2017,Ri1,Ss,1,initial,swab,random,euthanased,0
+Ri1.1.9,04/07/2017,Ri1,Ss,1,initial,swab,random,euthanased,0
+Ri10.1.1,04/07/2017,Ri10,Ss,1,initial,swab,Ss + Hm,euthanased,0.176273379
+Ri10.1.10,04/07/2017,Ri10,Ss,1,initial,swab,Ss + Hm,euthanased,0.010186167
+Ri10.1.2,04/07/2017,Ri10,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri10.1.3,04/07/2017,Ri10,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri10.1.4,04/07/2017,Ri10,Ss,1,initial,swab,Ss + Hm,euthanased,0.048805741
+Ri10.1.5,04/07/2017,Ri10,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri10.1.6,04/07/2017,Ri10,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri10.1.7,04/07/2017,Ri10,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri10.1.8,04/07/2017,Ri10,Ss,1,initial,swab,Ss + Hm,euthanased,0.017831773
+Ri10.1.9,04/07/2017,Ri10,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri12.1.1,04/07/2017,Ri12,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.030039975
+Ri12.1.10,04/07/2017,Ri12,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri12.1.2,04/07/2017,Ri12,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri12.1.3,04/07/2017,Ri12,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.042198966
+Ri12.1.4,04/07/2017,Ri12,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.037384466
+Ri12.1.5,04/07/2017,Ri12,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.105885081
+Ri12.1.6,04/07/2017,Ri12,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri12.1.7,04/07/2017,Ri12,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri12.1.8,04/07/2017,Ri12,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri12.1.9,04/07/2017,Ri12,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri13.1.1,04/07/2017,Ri13,Ss,1,initial,swab,random,euthanased,0.110722566
+Ri13.1.10,04/07/2017,Ri13,Ss,1,initial,swab,random,euthanased,0
+Ri13.1.2,04/07/2017,Ri13,Ss,1,initial,swab,random,euthanased,0
+Ri13.1.3,04/07/2017,Ri13,Ss,1,initial,swab,random,euthanased,0.071745613
+Ri13.1.4,04/07/2017,Ri13,Ss,1,initial,swab,random,euthanased,0
+Ri13.1.5,04/07/2017,Ri13,Ss,1,initial,swab,random,euthanased,0.02562026
+Ri13.1.6,04/07/2017,Ri13,Ss,1,initial,swab,random,euthanased,0
+Ri13.1.7,04/07/2017,Ri13,Ss,1,initial,swab,random,euthanased,0.005146603
+Ri13.1.8,04/07/2017,Ri13,Ss,1,initial,swab,random,euthanased,0
+Ri13.1.9,04/07/2017,Ri13,Ss,1,initial,swab,random,euthanased,0.239523761
+Ri14.1.1,04/07/2017,Ri14,Ss,1,initial,swab,random,euthanased,0
+Ri14.1.2,04/07/2017,Ri14,Ss,1,initial,swab,random,euthanased,0
+Ri14.1.3,04/07/2017,Ri14,Ss,1,initial,swab,random,euthanased,0.190315787
+Ri14.1.4,04/07/2017,Ri14,Ss,1,initial,swab,random,euthanased,0
+Ri14.1.5,04/07/2017,Ri14,Ss,1,initial,swab,random,euthanased,0.640712306
+Ri14.1.6,04/07/2017,Ri14,Ss,1,initial,swab,random,euthanased,0
+Ri15.1.1,04/07/2017,Ri15,Ss,1,initial,swab,random,euthanased,0.313202851
+Ri15.1.10,04/07/2017,Ri15,Ss,1,initial,swab,random,euthanased,0
+Ri15.1.2,04/07/2017,Ri15,Ss,1,initial,swab,random,euthanased,0.375982337
+Ri15.1.3,04/07/2017,Ri15,Ss,1,initial,swab,random,euthanased,0.402326472
+Ri15.1.4,04/07/2017,Ri15,Ss,1,initial,swab,random,euthanased,0.073348517
+Ri15.1.5,04/07/2017,Ri15,Ss,1,initial,swab,random,euthanased,0.425356477
+Ri15.1.6,04/07/2017,Ri15,Ss,1,initial,swab,random,euthanased,0
+Ri15.1.7,04/07/2017,Ri15,Ss,1,initial,swab,random,euthanased,0.040357574
+Ri15.1.8,04/07/2017,Ri15,Ss,1,initial,swab,random,euthanased,0
+Ri15.1.9,04/07/2017,Ri15,Ss,1,initial,swab,random,euthanased,0
+Ri16.1.1,04/07/2017,Ri16,Ss,1,initial,swab,Ss (control),euthanased,0.057294392
+Ri16.1.10,04/07/2017,Ri16,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri16.1.2,04/07/2017,Ri16,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri16.1.3,04/07/2017,Ri16,Ss,1,initial,swab,Ss (control),euthanased,0.13520278
+Ri16.1.4,04/07/2017,Ri16,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri16.1.5,04/07/2017,Ri16,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri16.1.6,04/07/2017,Ri16,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri16.1.7,04/07/2017,Ri16,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri16.1.8,04/07/2017,Ri16,Ss,1,initial,swab,Ss (control),euthanased,0.049732965
+Ri16.1.9,04/07/2017,Ri16,Ss,1,initial,swab,Ss (control),euthanased,0.093398634
+Ri17.1.1,04/07/2017,Ri17,Ss,1,initial,swab,Ss + Bs,euthanased,0.204363465
+Ri17.1.10,04/07/2017,Ri17,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ri17.1.2,04/07/2017,Ri17,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ri17.1.3,04/07/2017,Ri17,Ss,1,initial,swab,Ss + Bs,euthanased,0.454241857
+Ri17.1.4,04/07/2017,Ri17,Ss,1,initial,swab,Ss + Bs,euthanased,1.262804568
+Ri17.1.5,04/07/2017,Ri17,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ri17.1.6,04/07/2017,Ri17,Ss,1,initial,swab,Ss + Bs,euthanased,0.025323967
+Ri17.1.7,04/07/2017,Ri17,Ss,1,initial,swab,Ss + Bs,euthanased,0.852387622
+Ri17.1.8,04/07/2017,Ri17,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ri17.1.9,04/07/2017,Ri17,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ri18.1.1,04/07/2017,Ri18,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri18.1.10,04/07/2017,Ri18,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.018725625
+Ri18.1.2,04/07/2017,Ri18,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri18.1.3,04/07/2017,Ri18,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri18.1.4,04/07/2017,Ri18,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri18.1.5,04/07/2017,Ri18,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri18.1.6,04/07/2017,Ri18,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri18.1.7,04/07/2017,Ri18,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri18.1.8,04/07/2017,Ri18,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+Ri18.1.9,04/07/2017,Ri18,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.00898176
+Ri2.1.1,04/07/2017,Ri2,Ss,1,initial,swab,random,euthanased,0.058009215
+Ri2.1.10,04/07/2017,Ri2,Ss,1,initial,swab,random,euthanased,0
+Ri2.1.2,04/07/2017,Ri2,Ss,1,initial,swab,random,euthanased,0.046744943
+Ri2.1.3,04/07/2017,Ri2,Ss,1,initial,swab,random,euthanased,0
+Ri2.1.4,04/07/2017,Ri2,Ss,1,initial,swab,random,euthanased,0
+Ri2.1.5,04/07/2017,Ri2,Ss,1,initial,swab,random,euthanased,0.127179408
+Ri2.1.6,04/07/2017,Ri2,Ss,1,initial,swab,random,euthanased,0
+Ri2.1.7,04/07/2017,Ri2,Ss,1,initial,swab,random,euthanased,0
+Ri2.1.8,04/07/2017,Ri2,Ss,1,initial,swab,random,euthanased,0
+Ri2.1.9,04/07/2017,Ri2,Ss,1,initial,swab,random,euthanased,0
+Ri4.1.1,04/07/2017,Ri4,Ss,1,initial,swab,random,euthanased,0
+Ri4.1.2,04/07/2017,Ri4,Ss,1,initial,swab,random,euthanased,0.055591869
+Ri4.1.3,04/07/2017,Ri4,Ss,1,initial,swab,random,euthanased,0
+Ri4.1.4,04/07/2017,Ri4,Ss,1,initial,swab,random,euthanased,0
+Ri4.1.5,04/07/2017,Ri4,Ss,1,initial,swab,random,euthanased,0
+Ri4.1.6,04/07/2017,Ri4,Ss,1,initial,swab,random,euthanased,0
+Ri4.1.7,04/07/2017,Ri4,Ss,1,initial,swab,random,euthanased,0
+Ri5.1.1,04/07/2017,Ri5,Ss,1,initial,swab,random,euthanased,0.118308989
+Ri5.1.10,04/07/2017,Ri5,Ss,1,initial,swab,random,euthanased,0
+Ri5.1.2,04/07/2017,Ri5,Ss,1,initial,swab,random,euthanased,0.47200799
+Ri5.1.3,04/07/2017,Ri5,Ss,1,initial,swab,random,euthanased,1.570777744
+Ri5.1.4,04/07/2017,Ri5,Ss,1,initial,swab,random,euthanased,0.597458258
+Ri5.1.5,04/07/2017,Ri5,Ss,1,initial,swab,random,euthanased,0.225906558
+Ri5.1.6,04/07/2017,Ri5,Ss,1,initial,swab,random,euthanased,0.030251765
+Ri5.1.7,04/07/2017,Ri5,Ss,1,initial,swab,random,euthanased,0.369021334
+Ri5.1.8,04/07/2017,Ri5,Ss,1,initial,swab,random,euthanased,0.090863826
+Ri5.1.9,04/07/2017,Ri5,Ss,1,initial,swab,random,euthanased,0.020363424
+Ri6.1.1,04/07/2017,Ri6,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri6.1.10,04/07/2017,Ri6,Ss,1,initial,swab,Ss + Hm,euthanased,0.004970385
+Ri6.1.2,04/07/2017,Ri6,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri6.1.3,04/07/2017,Ri6,Ss,1,initial,swab,Ss + Hm,euthanased,0.061222333
+Ri6.1.4,04/07/2017,Ri6,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri6.1.5,04/07/2017,Ri6,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri6.1.6,04/07/2017,Ri6,Ss,1,initial,swab,Ss + Hm,euthanased,0.926179066
+Ri6.1.7,04/07/2017,Ri6,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri6.1.8,04/07/2017,Ri6,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri6.1.9,04/07/2017,Ri6,Ss,1,initial,swab,Ss + Hm,euthanased,0
+Ri7.1.1,04/07/2017,Ri7,Ss,1,initial,swab,Ss (control),euthanased,0.414669961
+Ri7.1.10,04/07/2017,Ri7,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri7.1.2,04/07/2017,Ri7,Ss,1,initial,swab,Ss (control),euthanased,0.127047226
+Ri7.1.3,04/07/2017,Ri7,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri7.1.4,04/07/2017,Ri7,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri7.1.5,04/07/2017,Ri7,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri7.1.6,04/07/2017,Ri7,Ss,1,initial,swab,Ss (control),euthanased,0.388286561
+Ri7.1.7,04/07/2017,Ri7,Ss,1,initial,swab,Ss (control),euthanased,0.13809476
+Ri7.1.8,04/07/2017,Ri7,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri7.1.9,04/07/2017,Ri7,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri8.1.1,04/07/2017,Ri8,Ss,1,initial,swab,Ss + Bs,euthanased,0.126883034
+Ri8.1.10,04/07/2017,Ri8,Ss,1,initial,swab,Ss + Bs,euthanased,0.016511099
+Ri8.1.2,04/07/2017,Ri8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ri8.1.3,04/07/2017,Ri8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ri8.1.4,04/07/2017,Ri8,Ss,1,initial,swab,Ss + Bs,euthanased,1.589553058
+Ri8.1.5,04/07/2017,Ri8,Ss,1,initial,swab,Ss + Bs,euthanased,0.10250479
+Ri8.1.6,04/07/2017,Ri8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ri8.1.7,04/07/2017,Ri8,Ss,1,initial,swab,Ss + Bs,euthanased,0.034377524
+Ri8.1.8,04/07/2017,Ri8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ri8.1.9,04/07/2017,Ri8,Ss,1,initial,swab,Ss + Bs,euthanased,0
+Ri9.1.1,04/07/2017,Ri9,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri9.1.10,04/07/2017,Ri9,Ss,1,initial,swab,Ss (control),euthanased,0.019279735
+Ri9.1.2,04/07/2017,Ri9,Ss,1,initial,swab,Ss (control),euthanased,0.162920412
+Ri9.1.3,04/07/2017,Ri9,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri9.1.4,04/07/2017,Ri9,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri9.1.5,04/07/2017,Ri9,Ss,1,initial,swab,Ss (control),euthanased,0.001118515
+Ri9.1.6,04/07/2017,Ri9,Ss,1,initial,swab,Ss (control),euthanased,0.612064339
+Ri9.1.7,04/07/2017,Ri9,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri9.1.8,04/07/2017,Ri9,Ss,1,initial,swab,Ss (control),euthanased,0
+Ri9.1.9,04/07/2017,Ri9,Ss,1,initial,swab,Ss (control),euthanased,0
+SN.1.1,04/07/2017,SN,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+SN.1.10,04/07/2017,SN,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.046468531
+SN.1.2,04/07/2017,SN,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.118283387
+SN.1.3,04/07/2017,SN,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+SN.1.4,04/07/2017,SN,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+SN.1.5,04/07/2017,SN,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+SN.1.6,04/07/2017,SN,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0.247632749
+SN.1.7,04/07/2017,SN,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+SN.1.8,04/07/2017,SN,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+SN.1.9,04/07/2017,SN,Ss,1,initial,swab,Ss + Bs + Hm,euthanased,0
+1.2.1,18/07/2017,1,Ss,2,intermediate,swab,Ss (control),euthanased,0
+1.2.10,18/07/2017,1,Ss,2,intermediate,swab,Ss (control),euthanased,0
+1.2.2,18/07/2017,1,Ss,2,intermediate,swab,Ss (control),euthanased,0
+1.2.3,18/07/2017,1,Ss,2,intermediate,swab,Ss (control),euthanased,0
+1.2.4,18/07/2017,1,Ss,2,intermediate,swab,Ss (control),euthanased,0
+1.2.5,18/07/2017,1,Ss,2,intermediate,swab,Ss (control),euthanased,0
+1.2.6,18/07/2017,1,Ss,2,intermediate,swab,Ss (control),euthanased,0
+1.2.7,18/07/2017,1,Ss,2,intermediate,swab,Ss (control),euthanased,0
+1.2.8,18/07/2017,1,Ss,2,intermediate,swab,Ss (control),euthanased,0
+1.2.9,18/07/2017,1,Ss,2,intermediate,swab,Ss (control),euthanased,0
+10.2.1,18/07/2017,10,Ss,2,intermediate,swab,random,euthanased,0
+10.2.10,18/07/2017,10,Ss,2,intermediate,swab,random,euthanased,0
+10.2.2,18/07/2017,10,Ss,2,intermediate,swab,random,euthanased,0
+10.2.3,18/07/2017,10,Ss,2,intermediate,swab,random,euthanased,0
+10.2.4,18/07/2017,10,Ss,2,intermediate,swab,random,euthanased,0
+10.2.5,18/07/2017,10,Ss,2,intermediate,swab,random,euthanased,0
+10.2.6,18/07/2017,10,Ss,2,intermediate,swab,random,euthanased,0
+10.2.7,18/07/2017,10,Ss,2,intermediate,swab,random,euthanased,0
+10.2.8,18/07/2017,10,Ss,2,intermediate,swab,random,euthanased,0.068932814
+10.2.9,18/07/2017,10,Ss,2,intermediate,swab,random,euthanased,0
+11.2.1,18/07/2017,11,Ss,2,intermediate,swab,random,euthanased,0
+11.2.10,18/07/2017,11,Ss,2,intermediate,swab,random,euthanased,0
+11.2.2,18/07/2017,11,Ss,2,intermediate,swab,random,euthanased,0
+11.2.3,18/07/2017,11,Ss,2,intermediate,swab,random,euthanased,0
+11.2.4,18/07/2017,11,Ss,2,intermediate,swab,random,euthanased,0
+11.2.5,18/07/2017,11,Ss,2,intermediate,swab,random,euthanased,0
+11.2.6,18/07/2017,11,Ss,2,intermediate,swab,random,euthanased,0
+11.2.7,18/07/2017,11,Ss,2,intermediate,swab,random,euthanased,0
+11.2.8,18/07/2017,11,Ss,2,intermediate,swab,random,euthanased,0
+11.2.9,18/07/2017,11,Ss,2,intermediate,swab,random,euthanased,0
+12.2.1,18/07/2017,12,Ss,2,intermediate,swab,random,euthanased,0
+12.2.10,18/07/2017,12,Ss,2,intermediate,swab,random,euthanased,0
+12.2.2,18/07/2017,12,Ss,2,intermediate,swab,random,euthanased,0
+12.2.3,18/07/2017,12,Ss,2,intermediate,swab,random,euthanased,0
+12.2.4,18/07/2017,12,Ss,2,intermediate,swab,random,euthanased,0
+12.2.5,18/07/2017,12,Ss,2,intermediate,swab,random,euthanased,0
+12.2.6,18/07/2017,12,Ss,2,intermediate,swab,random,euthanased,0
+12.2.7,18/07/2017,12,Ss,2,intermediate,swab,random,euthanased,0
+12.2.8,18/07/2017,12,Ss,2,intermediate,swab,random,euthanased,0
+12.2.9,18/07/2017,12,Ss,2,intermediate,swab,random,euthanased,0
+13.2.1,18/07/2017,13,Ss,2,intermediate,swab,random,euthanased,0
+13.2.10,18/07/2017,13,Ss,2,intermediate,swab,random,euthanased,0
+13.2.2,18/07/2017,13,Ss,2,intermediate,swab,random,euthanased,0
+13.2.3,18/07/2017,13,Ss,2,intermediate,swab,random,euthanased,0
+13.2.4,18/07/2017,13,Ss,2,intermediate,swab,random,euthanased,1.40064925
+13.2.5,18/07/2017,13,Ss,2,intermediate,swab,random,euthanased,0.177921578
+13.2.6,18/07/2017,13,Ss,2,intermediate,swab,random,euthanased,0.211244486
+13.2.7,18/07/2017,13,Ss,2,intermediate,swab,random,euthanased,0
+13.2.8,18/07/2017,13,Ss,2,intermediate,swab,random,euthanased,0
+13.2.9,18/07/2017,13,Ss,2,intermediate,swab,random,euthanased,0
+14.2.1,18/07/2017,14,Ss,2,intermediate,swab,random,euthanased,0
+14.2.10,18/07/2017,14,Ss,2,intermediate,swab,random,euthanased,0
+14.2.2,18/07/2017,14,Ss,2,intermediate,swab,random,euthanased,0
+14.2.3,18/07/2017,14,Ss,2,intermediate,swab,random,euthanased,0
+14.2.4,18/07/2017,14,Ss,2,intermediate,swab,random,euthanased,0
+14.2.5,18/07/2017,14,Ss,2,intermediate,swab,random,euthanased,0.099097928
+14.2.6,18/07/2017,14,Ss,2,intermediate,swab,random,euthanased,0
+14.2.7,18/07/2017,14,Ss,2,intermediate,swab,random,euthanased,0
+14.2.8,18/07/2017,14,Ss,2,intermediate,swab,random,euthanased,0
+14.2.9,18/07/2017,14,Ss,2,intermediate,swab,random,euthanased,0
+15.2.1,18/07/2017,15,Ss,2,intermediate,swab,Ss + Bs,euthanased,0.142601421
+15.2.10,18/07/2017,15,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+15.2.2,18/07/2017,15,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+15.2.3,18/07/2017,15,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+15.2.4,18/07/2017,15,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+15.2.5,18/07/2017,15,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+15.2.6,18/07/2017,15,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+15.2.7,18/07/2017,15,Ss,2,intermediate,swab,Ss + Bs,euthanased,1.259072721
+15.2.8,18/07/2017,15,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+15.2.9,18/07/2017,15,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+16.2.1,18/07/2017,16,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+16.2.10,18/07/2017,16,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+16.2.2,18/07/2017,16,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+16.2.3,18/07/2017,16,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0.880114883
+16.2.4,18/07/2017,16,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0.120026069
+16.2.5,18/07/2017,16,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+16.2.6,18/07/2017,16,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+16.2.7,18/07/2017,16,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+16.2.8,18/07/2017,16,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+16.2.9,18/07/2017,16,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+17.2.1,18/07/2017,17,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+17.2.10,18/07/2017,17,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+17.2.2,18/07/2017,17,Ss,2,intermediate,swab,Ss + Hm,euthanased,0.259602629
+17.2.3,18/07/2017,17,Ss,2,intermediate,swab,Ss + Hm,euthanased,4.519522786
+17.2.4,18/07/2017,17,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+17.2.5,18/07/2017,17,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+17.2.6,18/07/2017,17,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+17.2.7,18/07/2017,17,Ss,2,intermediate,swab,Ss + Hm,euthanased,1.975614876
+17.2.8,18/07/2017,17,Ss,2,intermediate,swab,Ss + Hm,euthanased,0.172200575
+17.2.9,18/07/2017,17,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+18.2.1,18/07/2017,18,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+18.2.10,18/07/2017,18,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+18.2.2,18/07/2017,18,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+18.2.3,18/07/2017,18,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+18.2.4,18/07/2017,18,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+18.2.5,18/07/2017,18,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+18.2.6,18/07/2017,18,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+18.2.7,18/07/2017,18,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+18.2.8,18/07/2017,18,Ss,2,intermediate,swab,Ss + Bs,euthanased,1.919924766
+18.2.9,18/07/2017,18,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+19.2.1,18/07/2017,19,Ss,2,intermediate,swab,random,euthanased,0
+19.2.10,18/07/2017,19,Ss,2,intermediate,swab,random,euthanased,0
+19.2.2,18/07/2017,19,Ss,2,intermediate,swab,random,euthanased,0
+19.2.3,18/07/2017,19,Ss,2,intermediate,swab,random,euthanased,0
+19.2.4,18/07/2017,19,Ss,2,intermediate,swab,random,euthanased,0
+19.2.5,18/07/2017,19,Ss,2,intermediate,swab,random,euthanased,0
+19.2.6,18/07/2017,19,Ss,2,intermediate,swab,random,euthanased,1.151358485
+19.2.7,18/07/2017,19,Ss,2,intermediate,swab,random,euthanased,0
+19.2.8,18/07/2017,19,Ss,2,intermediate,swab,random,euthanased,0.474111401
+19.2.9,18/07/2017,19,Ss,2,intermediate,swab,random,euthanased,0
+2.2.1,18/07/2017,2,Ss,2,intermediate,swab,random,euthanased,0
+2.2.10,18/07/2017,2,Ss,2,intermediate,swab,random,euthanased,0
+2.2.2,18/07/2017,2,Ss,2,intermediate,swab,random,euthanased,0
+2.2.3,18/07/2017,2,Ss,2,intermediate,swab,random,euthanased,0
+2.2.4,18/07/2017,2,Ss,2,intermediate,swab,random,euthanased,0
+2.2.5,18/07/2017,2,Ss,2,intermediate,swab,random,euthanased,0
+2.2.6,18/07/2017,2,Ss,2,intermediate,swab,random,euthanased,0
+2.2.7,18/07/2017,2,Ss,2,intermediate,swab,random,euthanased,0
+2.2.8,18/07/2017,2,Ss,2,intermediate,swab,random,euthanased,0.08235951
+2.2.9,18/07/2017,2,Ss,2,intermediate,swab,random,euthanased,0
+20.2.1,18/07/2017,20,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+20.2.2,18/07/2017,20,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+20.2.3,18/07/2017,20,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+20.2.4,18/07/2017,20,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+20.2.5,18/07/2017,20,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0.715683401
+20.2.6,18/07/2017,20,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+20.2.7,18/07/2017,20,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+20.2.8,18/07/2017,20,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+20.2.9,18/07/2017,20,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+3.2.1,18/07/2017,3,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+3.2.10,18/07/2017,3,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+3.2.2,18/07/2017,3,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+3.2.3,18/07/2017,3,Ss,2,intermediate,swab,Ss + Hm,euthanased,0.246316716
+3.2.4,18/07/2017,3,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+3.2.5,18/07/2017,3,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+3.2.6,18/07/2017,3,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+3.2.7,18/07/2017,3,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+3.2.8,18/07/2017,3,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+3.2.9,18/07/2017,3,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+4.2.1,18/07/2017,4,Ss,2,intermediate,swab,random,euthanased,0
+4.2.10,18/07/2017,4,Ss,2,intermediate,swab,random,euthanased,0
+4.2.2,18/07/2017,4,Ss,2,intermediate,swab,random,euthanased,0
+4.2.3,18/07/2017,4,Ss,2,intermediate,swab,random,euthanased,0
+4.2.4,18/07/2017,4,Ss,2,intermediate,swab,random,euthanased,0
+4.2.5,18/07/2017,4,Ss,2,intermediate,swab,random,euthanased,0
+4.2.6,18/07/2017,4,Ss,2,intermediate,swab,random,euthanased,0
+4.2.7,18/07/2017,4,Ss,2,intermediate,swab,random,euthanased,0
+4.2.8,18/07/2017,4,Ss,2,intermediate,swab,random,euthanased,0
+4.2.9,18/07/2017,4,Ss,2,intermediate,swab,random,euthanased,0
+5.2.1,18/07/2017,5,Ss,2,intermediate,swab,Ss + Hm,euthanased,0.104250312
+5.2.10,18/07/2017,5,Ss,2,intermediate,swab,Ss + Hm,euthanased,0.113756415
+5.2.2,18/07/2017,5,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+5.2.3,18/07/2017,5,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+5.2.4,18/07/2017,5,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+5.2.5,18/07/2017,5,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+5.2.6,18/07/2017,5,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+5.2.7,18/07/2017,5,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+5.2.8,18/07/2017,5,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+5.2.9,18/07/2017,5,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+8.2.1,18/07/2017,8,Ss,2,intermediate,swab,random,euthanased,0
+8.2.10,18/07/2017,8,Ss,2,intermediate,swab,random,euthanased,0
+8.2.2,18/07/2017,8,Ss,2,intermediate,swab,random,euthanased,0
+8.2.3,18/07/2017,8,Ss,2,intermediate,swab,random,euthanased,0
+8.2.4,18/07/2017,8,Ss,2,intermediate,swab,random,euthanased,0
+8.2.5,18/07/2017,8,Ss,2,intermediate,swab,random,euthanased,0
+8.2.6,18/07/2017,8,Ss,2,intermediate,swab,random,euthanased,0
+8.2.7,18/07/2017,8,Ss,2,intermediate,swab,random,euthanased,0
+8.2.8,18/07/2017,8,Ss,2,intermediate,swab,random,euthanased,0
+8.2.9,18/07/2017,8,Ss,2,intermediate,swab,random,euthanased,0
+9.2.1,18/07/2017,9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+9.2.10,18/07/2017,9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+9.2.2,18/07/2017,9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+9.2.3,18/07/2017,9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+9.2.4,18/07/2017,9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+9.2.5,18/07/2017,9,Ss,2,intermediate,swab,Ss (control),euthanased,0.330748148
+9.2.6,18/07/2017,9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+9.2.7,18/07/2017,9,Ss,2,intermediate,swab,Ss (control),euthanased,0.103990212
+9.2.8,18/07/2017,9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+9.2.9,18/07/2017,9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ao8.2.1,18/07/2017,Ao8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ao8.2.10,18/07/2017,Ao8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ao8.2.2,18/07/2017,Ao8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ao8.2.3,18/07/2017,Ao8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ao8.2.4,18/07/2017,Ao8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ao8.2.5,18/07/2017,Ao8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0.216871276
+Ao8.2.6,18/07/2017,Ao8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ao8.2.7,18/07/2017,Ao8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ao8.2.8,18/07/2017,Ao8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ao8.2.9,18/07/2017,Ao8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri1.2.1,18/07/2017,Ri1,Ss,2,intermediate,swab,random,euthanased,0
+Ri1.2.10,18/07/2017,Ri1,Ss,2,intermediate,swab,random,euthanased,0
+Ri1.2.2,18/07/2017,Ri1,Ss,2,intermediate,swab,random,euthanased,0
+Ri1.2.3,18/07/2017,Ri1,Ss,2,intermediate,swab,random,euthanased,0.895837545
+Ri1.2.4,18/07/2017,Ri1,Ss,2,intermediate,swab,random,euthanased,0
+Ri1.2.5,18/07/2017,Ri1,Ss,2,intermediate,swab,random,euthanased,0
+Ri1.2.6,18/07/2017,Ri1,Ss,2,intermediate,swab,random,euthanased,0
+Ri1.2.7,18/07/2017,Ri1,Ss,2,intermediate,swab,random,euthanased,0
+Ri1.2.8,18/07/2017,Ri1,Ss,2,intermediate,swab,random,euthanased,0
+Ri1.2.9,18/07/2017,Ri1,Ss,2,intermediate,swab,random,euthanased,0.050621871
+Ri10.2.1,18/07/2017,Ri10,Ss,2,intermediate,swab,Ss + Hm,euthanased,0.032957941
+Ri10.2.10,18/07/2017,Ri10,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri10.2.2,18/07/2017,Ri10,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri10.2.3,18/07/2017,Ri10,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri10.2.4,18/07/2017,Ri10,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri10.2.5,18/07/2017,Ri10,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri10.2.6,18/07/2017,Ri10,Ss,2,intermediate,swab,Ss + Hm,euthanased,0.000645244
+Ri10.2.7,18/07/2017,Ri10,Ss,2,intermediate,swab,Ss + Hm,euthanased,0.013465025
+Ri10.2.8,18/07/2017,Ri10,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri10.2.9,18/07/2017,Ri10,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri12.2.1,18/07/2017,Ri12,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri12.2.10,18/07/2017,Ri12,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri12.2.2,18/07/2017,Ri12,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri12.2.3,18/07/2017,Ri12,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri12.2.4,18/07/2017,Ri12,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri12.2.5,18/07/2017,Ri12,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri12.2.6,18/07/2017,Ri12,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri12.2.7,18/07/2017,Ri12,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri12.2.8,18/07/2017,Ri12,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri12.2.9,18/07/2017,Ri12,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri13.2.1,18/07/2017,Ri13,Ss,2,intermediate,swab,random,euthanased,0
+Ri13.2.10,18/07/2017,Ri13,Ss,2,intermediate,swab,random,euthanased,0
+Ri13.2.2,18/07/2017,Ri13,Ss,2,intermediate,swab,random,euthanased,0
+Ri13.2.3,18/07/2017,Ri13,Ss,2,intermediate,swab,random,euthanased,0
+Ri13.2.4,18/07/2017,Ri13,Ss,2,intermediate,swab,random,euthanased,0
+Ri13.2.5,18/07/2017,Ri13,Ss,2,intermediate,swab,random,euthanased,0
+Ri13.2.6,18/07/2017,Ri13,Ss,2,intermediate,swab,random,euthanased,0
+Ri13.2.7,18/07/2017,Ri13,Ss,2,intermediate,swab,random,euthanased,0
+Ri13.2.8,18/07/2017,Ri13,Ss,2,intermediate,swab,random,euthanased,0
+Ri13.2.9,18/07/2017,Ri13,Ss,2,intermediate,swab,random,euthanased,0.014733607
+Ri14.2.1,18/07/2017,Ri14,Ss,2,intermediate,swab,random,euthanased,0
+Ri14.2.2,18/07/2017,Ri14,Ss,2,intermediate,swab,random,euthanased,0
+Ri14.2.3,18/07/2017,Ri14,Ss,2,intermediate,swab,random,euthanased,0
+Ri14.2.4,18/07/2017,Ri14,Ss,2,intermediate,swab,random,euthanased,0
+Ri15.2.1,18/07/2017,Ri15,Ss,2,intermediate,swab,random,euthanased,0
+Ri15.2.10,18/07/2017,Ri15,Ss,2,intermediate,swab,random,euthanased,0
+Ri15.2.2,18/07/2017,Ri15,Ss,2,intermediate,swab,random,euthanased,0
+Ri15.2.3,18/07/2017,Ri15,Ss,2,intermediate,swab,random,euthanased,0
+Ri15.2.4,18/07/2017,Ri15,Ss,2,intermediate,swab,random,euthanased,0
+Ri15.2.5,18/07/2017,Ri15,Ss,2,intermediate,swab,random,euthanased,0
+Ri15.2.6,18/07/2017,Ri15,Ss,2,intermediate,swab,random,euthanased,0
+Ri15.2.7,18/07/2017,Ri15,Ss,2,intermediate,swab,random,euthanased,0
+Ri15.2.8,18/07/2017,Ri15,Ss,2,intermediate,swab,random,euthanased,0
+Ri15.2.9,18/07/2017,Ri15,Ss,2,intermediate,swab,random,euthanased,0
+Ri16.2.1,18/07/2017,Ri16,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri16.2.10,18/07/2017,Ri16,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri16.2.2,18/07/2017,Ri16,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri16.2.3,18/07/2017,Ri16,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri16.2.4,18/07/2017,Ri16,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri16.2.5,18/07/2017,Ri16,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri16.2.6,18/07/2017,Ri16,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri16.2.7,18/07/2017,Ri16,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri16.2.8,18/07/2017,Ri16,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri16.2.9,18/07/2017,Ri16,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri17.2.1,18/07/2017,Ri17,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri17.2.10,18/07/2017,Ri17,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri17.2.2,18/07/2017,Ri17,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri17.2.3,18/07/2017,Ri17,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri17.2.4,18/07/2017,Ri17,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri17.2.5,18/07/2017,Ri17,Ss,2,intermediate,swab,Ss + Bs,euthanased,0.082486784
+Ri17.2.6,18/07/2017,Ri17,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri17.2.7,18/07/2017,Ri17,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri17.2.8,18/07/2017,Ri17,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri17.2.9,18/07/2017,Ri17,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri18.2.1,18/07/2017,Ri18,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri18.2.10,18/07/2017,Ri18,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri18.2.2,18/07/2017,Ri18,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri18.2.3,18/07/2017,Ri18,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri18.2.4,18/07/2017,Ri18,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri18.2.5,18/07/2017,Ri18,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0.056196428
+Ri18.2.6,18/07/2017,Ri18,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri18.2.7,18/07/2017,Ri18,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri18.2.8,18/07/2017,Ri18,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri18.2.9,18/07/2017,Ri18,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+Ri2.2.1,18/07/2017,Ri2,Ss,2,intermediate,swab,random,euthanased,0
+Ri2.2.10,18/07/2017,Ri2,Ss,2,intermediate,swab,random,euthanased,0
+Ri2.2.2,18/07/2017,Ri2,Ss,2,intermediate,swab,random,euthanased,0
+Ri2.2.3,18/07/2017,Ri2,Ss,2,intermediate,swab,random,euthanased,0
+Ri2.2.4,18/07/2017,Ri2,Ss,2,intermediate,swab,random,euthanased,0
+Ri2.2.5,18/07/2017,Ri2,Ss,2,intermediate,swab,random,euthanased,0
+Ri2.2.6,18/07/2017,Ri2,Ss,2,intermediate,swab,random,euthanased,0
+Ri2.2.7,18/07/2017,Ri2,Ss,2,intermediate,swab,random,euthanased,0
+Ri2.2.8,18/07/2017,Ri2,Ss,2,intermediate,swab,random,euthanased,0
+Ri2.2.9,18/07/2017,Ri2,Ss,2,intermediate,swab,random,euthanased,0
+Ri4.2.1,18/07/2017,Ri4,Ss,2,intermediate,swab,random,euthanased,0
+Ri4.2.2,18/07/2017,Ri4,Ss,2,intermediate,swab,random,euthanased,0
+Ri4.2.3,18/07/2017,Ri4,Ss,2,intermediate,swab,random,euthanased,0.103254914
+Ri4.2.4,18/07/2017,Ri4,Ss,2,intermediate,swab,random,euthanased,0
+Ri4.2.5,18/07/2017,Ri4,Ss,2,intermediate,swab,random,euthanased,0
+Ri4.2.6,18/07/2017,Ri4,Ss,2,intermediate,swab,random,euthanased,0
+Ri5.2.1,18/07/2017,Ri5,Ss,2,intermediate,swab,random,euthanased,0
+Ri5.2.10,18/07/2017,Ri5,Ss,2,intermediate,swab,random,euthanased,0
+Ri5.2.2,18/07/2017,Ri5,Ss,2,intermediate,swab,random,euthanased,0
+Ri5.2.3,18/07/2017,Ri5,Ss,2,intermediate,swab,random,euthanased,0
+Ri5.2.4,18/07/2017,Ri5,Ss,2,intermediate,swab,random,euthanased,0
+Ri5.2.5,18/07/2017,Ri5,Ss,2,intermediate,swab,random,euthanased,0.353496894
+Ri5.2.6,18/07/2017,Ri5,Ss,2,intermediate,swab,random,euthanased,0
+Ri5.2.7,18/07/2017,Ri5,Ss,2,intermediate,swab,random,euthanased,0
+Ri5.2.8,18/07/2017,Ri5,Ss,2,intermediate,swab,random,euthanased,0
+Ri5.2.9,18/07/2017,Ri5,Ss,2,intermediate,swab,random,euthanased,0
+Ri6.2.1,18/07/2017,Ri6,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri6.2.2,18/07/2017,Ri6,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri6.2.3,18/07/2017,Ri6,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri6.2.4,18/07/2017,Ri6,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri6.2.5,18/07/2017,Ri6,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri6.2.6,18/07/2017,Ri6,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri6.2.7,18/07/2017,Ri6,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri6.2.8,18/07/2017,Ri6,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri6.2.9,18/07/2017,Ri6,Ss,2,intermediate,swab,Ss + Hm,euthanased,0
+Ri7.2.1,18/07/2017,Ri7,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri7.2.10,18/07/2017,Ri7,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri7.2.2,18/07/2017,Ri7,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri7.2.3,18/07/2017,Ri7,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri7.2.4,18/07/2017,Ri7,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri7.2.5,18/07/2017,Ri7,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri7.2.6,18/07/2017,Ri7,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri7.2.7,18/07/2017,Ri7,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri7.2.8,18/07/2017,Ri7,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri7.2.9,18/07/2017,Ri7,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri8.2.1,18/07/2017,Ri8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri8.2.10,18/07/2017,Ri8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri8.2.2,18/07/2017,Ri8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri8.2.3,18/07/2017,Ri8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri8.2.4,18/07/2017,Ri8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri8.2.5,18/07/2017,Ri8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0.370275825
+Ri8.2.6,18/07/2017,Ri8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0.229886342
+Ri8.2.7,18/07/2017,Ri8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri8.2.8,18/07/2017,Ri8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0
+Ri8.2.9,18/07/2017,Ri8,Ss,2,intermediate,swab,Ss + Bs,euthanased,0.258920733
+Ri9.2.1,18/07/2017,Ri9,Ss,2,intermediate,swab,Ss (control),euthanased,0.784057975
+Ri9.2.10,18/07/2017,Ri9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri9.2.2,18/07/2017,Ri9,Ss,2,intermediate,swab,Ss (control),euthanased,9
+Ri9.2.3,18/07/2017,Ri9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri9.2.4,18/07/2017,Ri9,Ss,2,intermediate,swab,Ss (control),euthanased,0.02281358
+Ri9.2.5,18/07/2017,Ri9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri9.2.6,18/07/2017,Ri9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri9.2.7,18/07/2017,Ri9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri9.2.8,18/07/2017,Ri9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+Ri9.2.9,18/07/2017,Ri9,Ss,2,intermediate,swab,Ss (control),euthanased,0
+SN.2.1,18/07/2017,SN,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+SN.2.10,18/07/2017,SN,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+SN.2.2,18/07/2017,SN,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+SN.2.3,18/07/2017,SN,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+SN.2.4,18/07/2017,SN,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0.704626665
+SN.2.5,18/07/2017,SN,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+SN.2.6,18/07/2017,SN,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+SN.2.7,18/07/2017,SN,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+SN.2.8,18/07/2017,SN,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+SN.2.9,18/07/2017,SN,Ss,2,intermediate,swab,Ss + Bs + Hm,euthanased,0
+10.Bs.mouth1,02/08/2017,10,Bs,3,final,mouth,random,N/A,69.86915588
+10.Bs.mouth2,02/08/2017,10,Bs,3,final,mouth,random,N/A,0
+10.Bs.mouth3,02/08/2017,10,Bs,3,final,mouth,random,N/A,0.78439191
+10.Bs.toe1,02/08/2017,10,Bs,3,final,toe,random,N/A,0
+11.Bs.mouth1,01/08/2017,11,Bs,3,final,mouth,random,N/A,0
+11.Bs.mouth2,01/08/2017,11,Bs,3,final,mouth,random,N/A,0
+11.Bs.tail1,01/08/2017,11,Bs,3,final,tail,random,N/A,0.031185977
+11.Bs.toe1,01/08/2017,11,Bs,3,final,toe,random,N/A,0
+12.Bs.mouth1,02/08/2017,12,Bs,3,final,mouth,random,N/A,0
+12.Bs.mouth2,02/08/2017,12,Bs,3,final,mouth,random,N/A,0
+12.Bs.mouth3,02/08/2017,12,Bs,3,final,mouth,random,N/A,0
+12.Bs.mouth4,02/08/2017,12,Bs,3,final,mouth,random,N/A,0
+13.Bs.mouth1,01/08/2017,13,Bs,3,final,mouth,random,N/A,0
+13.Bs.mouth2,01/08/2017,13,Bs,3,final,mouth,random,N/A,3.70844841
+13.Bs.mouth3,01/08/2017,13,Bs,3,final,mouth,random,N/A,0
+13.Bs.mouth4,01/08/2017,13,Bs,3,final,mouth,random,N/A,0
+13.Bs.mouth5,01/08/2017,13,Bs,3,final,mouth,random,N/A,0
+13.Bs.mouth6,01/08/2017,13,Bs,3,final,mouth,random,N/A,0
+13.Bs.tail1,01/08/2017,13,Bs,3,final,tail,random,N/A,0
+13.Bs.tail2,01/08/2017,13,Bs,3,final,tail,random,N/A,0
+13.Bs.tail3,01/08/2017,13,Bs,3,final,tail,random,N/A,0
+14.Bs.mouth1,01/08/2017,14,Bs,3,final,mouth,random,N/A,0
+14.Bs.mouth2,01/08/2017,14,Bs,3,final,mouth,random,N/A,5.884333253
+14.Bs.mouth3,01/08/2017,14,Bs,3,final,mouth,random,N/A,0
+14.Bs.mouth4,01/08/2017,14,Bs,3,final,mouth,random,N/A,0
+14.Bs.mouth5,01/08/2017,14,Bs,3,final,mouth,random,N/A,0
+15.Bs.mouth1,02/08/2017,15,Bs,3,final,mouth,Ss + Bs,N/A,0
+15.Bs.mouth2,02/08/2017,15,Bs,3,final,mouth,Ss + Bs,N/A,6.16404891
+15.Bs.mouth3,02/08/2017,15,Bs,3,final,mouth,Ss + Bs,N/A,0
+15.Bs.mouth4,02/08/2017,15,Bs,3,final,mouth,Ss + Bs,N/A,0
+15.Bs.mouth5,02/08/2017,15,Bs,3,final,mouth,Ss + Bs,N/A,0
+15.Bs.mouth6,02/08/2017,15,Bs,3,final,mouth,Ss + Bs,N/A,0
+15.Bs.mouth7,02/08/2017,15,Bs,3,final,mouth,Ss + Bs,N/A,0
+15.Bs.mouth8,02/08/2017,15,Bs,3,final,mouth,Ss + Bs,N/A,0.24008235
+15.Bs.tail1,02/08/2017,15,Bs,3,final,tail,Ss + Bs,N/A,0
+15.Bs.toe1,02/08/2017,15,Bs,3,final,toe,Ss + Bs,N/A,0
+15.Bs.toe2,02/08/2017,15,Bs,3,final,toe,Ss + Bs,N/A,0
+16.Bs.mouth1,01/08/2017,16,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0.078926738
+16.Bs.mouth2,01/08/2017,16,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0.149363587
+16.Bs.mouth3,01/08/2017,16,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+16.Bs.mouth4,01/08/2017,16,Bs,3,final,mouth,Ss + Bs + Hm,N/A,67.02669144
+16.Bs.toe1,01/08/2017,16,Bs,3,final,toe,Ss + Bs + Hm,N/A,0
+18.Bs.mouth1,01/08/2017,18,Bs,3,final,mouth,Ss + Bs,N/A,0
+18.Bs.mouth2,01/08/2017,18,Bs,3,final,mouth,Ss + Bs,N/A,0
+18.Bs.mouth3,01/08/2017,18,Bs,3,final,mouth,Ss + Bs,N/A,0
+18.Bs.mouth4,01/08/2017,18,Bs,3,final,mouth,Ss + Bs,N/A,0
+18.Bs.mouth5,01/08/2017,18,Bs,3,final,mouth,Ss + Bs,N/A,12.56689072
+18.Bs.mouth6,01/08/2017,18,Bs,3,final,mouth,Ss + Bs,N/A,49.1724968
+18.Bs.mouth7,01/08/2017,18,Bs,3,final,mouth,Ss + Bs,N/A,0.239315517
+18.Bs.tail1,01/08/2017,18,Bs,3,final,tail,Ss + Bs,N/A,0
+18.Bs.toe1,01/08/2017,18,Bs,3,final,toe,Ss + Bs,N/A,0
+18.Bs.toe2,01/08/2017,18,Bs,3,final,toe,Ss + Bs,N/A,0
+18.Bs.toe3,01/08/2017,18,Bs,3,final,toe,Ss + Bs,N/A,0
+18.Bs.toe4,01/08/2017,18,Bs,3,final,toe,Ss + Bs,N/A,0
+19.Bs.mouth1,02/08/2017,19,Bs,3,final,mouth,random,N/A,0.979670659
+19.Bs.mouth2,02/08/2017,19,Bs,3,final,mouth,random,N/A,241.6090584
+19.Bs.mouth3,02/08/2017,19,Bs,3,final,mouth,random,N/A,3.086633682
+19.Bs.tail1,02/08/2017,19,Bs,3,final,tail,random,N/A,0.030730574
+19.Bs.toe1,02/08/2017,19,Bs,3,final,toe,random,N/A,0
+2.Bs.mouth1,01/08/2017,2,Bs,3,final,mouth,random,N/A,0.020295514
+2.Bs.mouth2,01/08/2017,2,Bs,3,final,mouth,random,N/A,0
+2.Bs.mouth3,01/08/2017,2,Bs,3,final,mouth,random,N/A,0
+2.Bs.mouth4,01/08/2017,2,Bs,3,final,mouth,random,N/A,0
+2.Bs.mouth5,01/08/2017,2,Bs,3,final,mouth,random,N/A,0.0280066
+2.Bs.mouth6,01/08/2017,2,Bs,3,final,mouth,random,N/A,0
+20.Bs.mouth1,02/08/2017,20,Bs,3,final,mouth,Ss + Bs + Hm,N/A,10.54507732
+20.Bs.mouth2,02/08/2017,20,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+20.Bs.mouth3,02/08/2017,20,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+20.Bs.mouth4,02/08/2017,20,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+20.Bs.tail1,02/08/2017,20,Bs,3,final,tail,Ss + Bs + Hm,N/A,0
+4.Bs.mouth1,01/08/2017,4,Bs,3,final,mouth,random,N/A,0
+4.Bs.mouth2,01/08/2017,4,Bs,3,final,mouth,random,N/A,0
+4.Bs.mouth3,01/08/2017,4,Bs,3,final,mouth,random,N/A,0
+4.Bs.mouth4,01/08/2017,4,Bs,3,final,mouth,random,N/A,0.228683073
+4.Bs.mouth5,01/08/2017,4,Bs,3,final,mouth,random,N/A,0
+4.Bs.mouth6,01/08/2017,4,Bs,3,final,mouth,random,N/A,0
+4.Bs.toe1,01/08/2017,4,Bs,3,final,toe,random,N/A,0
+4.Bs.toe2,01/08/2017,4,Bs,3,final,toe,random,N/A,0
+4.Bs.toe3,01/08/2017,4,Bs,3,final,toe,random,N/A,0.253781974
+4.Bs.toe4,01/08/2017,4,Bs,3,final,toe,random,N/A,0
+4.Bs.toe5,01/08/2017,4,Bs,3,final,toe,random,N/A,0
+8.Bs.toe1,02/08/2017,8,Bs,3,final,toe,random,N/A,0
+8.Bs.toe2,02/08/2017,8,Bs,3,final,toe,random,N/A,0
+8.Bs.toe3,02/08/2017,8,Bs,3,final,toe,random,N/A,0.271354504
+Ao8.Bs.mouth1,01/08/2017,Ao8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ao8.Bs.mouth2,01/08/2017,Ao8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ao8.Bs.mouth3,01/08/2017,Ao8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ao8.Bs.toe1,01/08/2017,Ao8,Bs,3,final,toe,Ss + Bs,N/A,0
+Ao8.Bs.toe2,01/08/2017,Ao8,Bs,3,final,toe,Ss + Bs,N/A,0
+Ri1.Bs.mouth1,01/08/2017,Ri1,Bs,3,final,mouth,random,N/A,367.8524017
+Ri1.Bs.mouth2,01/08/2017,Ri1,Bs,3,final,mouth,random,N/A,433.0954742
+Ri1.Bs.mouth3,01/08/2017,Ri1,Bs,3,final,mouth,random,N/A,0.010151671
+Ri1.Bs.mouth4,01/08/2017,Ri1,Bs,3,final,mouth,random,N/A,44.05138969
+Ri1.Bs.mouth5,01/08/2017,Ri1,Bs,3,final,mouth,random,N/A,0
+Ri1.Bs.mouth6,01/08/2017,Ri1,Bs,3,final,mouth,random,N/A,0
+Ri1.Bs.mouth7,01/08/2017,Ri1,Bs,3,final,mouth,random,N/A,8.376395702
+Ri1.Bs.toe1,01/08/2017,Ri1,Bs,3,final,toe,random,N/A,0
+Ri12.Bs.mouth1,01/08/2017,Ri12,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0.337481014
+Ri12.Bs.mouth2,01/08/2017,Ri12,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri12.Bs.mouth3,01/08/2017,Ri12,Bs,3,final,mouth,Ss + Bs + Hm,N/A,24.26069736
+Ri12.Bs.mouth4,01/08/2017,Ri12,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri12.Bs.mouth5,01/08/2017,Ri12,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri12.Bs.toe1,01/08/2017,Ri12,Bs,3,final,toe,Ss + Bs + Hm,N/A,0
+Ri13.Bs.mouth1,01/08/2017,Ri13,Bs,3,final,mouth,random,N/A,2.061203718
+Ri13.Bs.mouth2,01/08/2017,Ri13,Bs,3,final,mouth,random,N/A,279.4903183
+Ri13.Bs.mouth3,01/08/2017,Ri13,Bs,3,final,mouth,random,N/A,0.41870296
+Ri14.Bs.mouth1,02/08/2017,Ri14,Bs,3,final,mouth,random,N/A,1437.468567
+Ri14.Bs.mouth2,02/08/2017,Ri14,Bs,3,final,mouth,random,N/A,1.763903648
+Ri14.Bs.mouth3,02/08/2017,Ri14,Bs,3,final,mouth,random,N/A,8.082280159
+Ri14.Bs.mouth4,02/08/2017,Ri14,Bs,3,final,mouth,random,N/A,8.909293413
+Ri14.Bs.mouth5,02/08/2017,Ri14,Bs,3,final,mouth,random,N/A,0.006001946
+Ri14.Bs.mouth6,02/08/2017,Ri14,Bs,3,final,mouth,random,N/A,0
+Ri14.Bs.mouth7,02/08/2017,Ri14,Bs,3,final,mouth,random,N/A,0.514255427
+Ri15.Bs.mouth1,01/08/2017,Ri15,Bs,3,final,mouth,random,N/A,0
+Ri15.Bs.mouth2,01/08/2017,Ri15,Bs,3,final,mouth,random,N/A,0.017292821
+Ri15.Bs.mouth3,01/08/2017,Ri15,Bs,3,final,mouth,random,N/A,0
+Ri17.Bs.mouth1,02/08/2017,Ri17,Bs,3,final,mouth,Ss + Bs,N/A,1.218836382
+Ri17.Bs.mouth2,02/08/2017,Ri17,Bs,3,final,mouth,Ss + Bs,N/A,86.46867752
+Ri17.Bs.mouth3,02/08/2017,Ri17,Bs,3,final,mouth,Ss + Bs,N/A,0.132791763
+Ri17.Bs.mouth4,02/08/2017,Ri17,Bs,3,final,mouth,Ss + Bs,N/A,4.79788959
+Ri17.Bs.mouth5,02/08/2017,Ri17,Bs,3,final,mouth,Ss + Bs,N/A,0.029018531
+Ri17.Bs.mouth6,02/08/2017,Ri17,Bs,3,final,mouth,Ss + Bs,N/A,6.081340313
+Ri17.Bs.mouth7,02/08/2017,Ri17,Bs,3,final,mouth,Ss + Bs,N/A,3.062580824
+Ri17.Bs.toe1,02/08/2017,Ri17,Bs,3,final,toe,Ss + Bs,N/A,0
+Ri17.Bs.toe2,02/08/2017,Ri17,Bs,3,final,toe,Ss + Bs,N/A,0
+Ri17.Bs.toe3,02/08/2017,Ri17,Bs,3,final,toe,Ss + Bs,N/A,0
+Ri17.Bs.toe4,02/08/2017,Ri17,Bs,3,final,toe,Ss + Bs,N/A,0
+Ri17.Bs.toe5,02/08/2017,Ri17,Bs,3,final,toe,Ss + Bs,N/A,0
+Ri18.Bs.mouth1,02/08/2017,Ri18,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0.01311254
+Ri18.Bs.mouth2,02/08/2017,Ri18,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri18.Bs.mouth3,02/08/2017,Ri18,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri18.Bs.mouth4,02/08/2017,Ri18,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri18.Bs.mouth5,02/08/2017,Ri18,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri18.Bs.mouth6,02/08/2017,Ri18,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri2.Bs.mouth1,01/08/2017,Ri2,Bs,3,final,mouth,random,N/A,0
+Ri2.Bs.toe1,01/08/2017,Ri2,Bs,3,final,toe,random,N/A,0
+Ri2.Bs.toe2,01/08/2017,Ri2,Bs,3,final,toe,random,N/A,0
+Ri2.Bs.toe3,01/08/2017,Ri2,Bs,3,final,toe,random,N/A,0
+Ri2.Bs.toe4,01/08/2017,Ri2,Bs,3,final,toe,random,N/A,0.047980645
+Ri2.Bs.toe5,01/08/2017,Ri2,Bs,3,final,toe,random,N/A,0
+Ri4.Bs.mouth1,02/08/2017,Ri4,Bs,3,final,mouth,random,N/A,147.2830772
+Ri4.Bs.mouth2,02/08/2017,Ri4,Bs,3,final,mouth,random,N/A,133.8799477
+Ri4.Bs.mouth3,02/08/2017,Ri4,Bs,3,final,mouth,random,N/A,533.0147552
+Ri4.Bs.mouth4,02/08/2017,Ri4,Bs,3,final,mouth,random,N/A,15.58158159
+Ri4.Bs.mouth5,02/08/2017,Ri4,Bs,3,final,mouth,random,N/A,103.2433128
+Ri4.Bs.mouth6,02/08/2017,Ri4,Bs,3,final,mouth,random,N/A,35.00914812
+Ri4.Bs.mouth7,02/08/2017,Ri4,Bs,3,final,mouth,random,N/A,463.559494
+Ri4.Bs.mouth8,02/08/2017,Ri4,Bs,3,final,mouth,random,N/A,53.01232815
+Ri4.Bs.mouth9,02/08/2017,Ri4,Bs,3,final,mouth,random,N/A,51.53430939
+Ri5.Bs.mouth1,01/08/2017,Ri5,Bs,3,final,mouth,random,N/A,0
+Ri5.Bs.mouth2,01/08/2017,Ri5,Bs,3,final,mouth,random,N/A,0
+Ri5.Bs.mouth3,01/08/2017,Ri5,Bs,3,final,mouth,random,N/A,0
+Ri8.Bs.mouth1,02/08/2017,Ri8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ri8.Bs.mouth10,02/08/2017,Ri8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ri8.Bs.mouth11,02/08/2017,Ri8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ri8.Bs.mouth2,02/08/2017,Ri8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ri8.Bs.mouth3,02/08/2017,Ri8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ri8.Bs.mouth4,02/08/2017,Ri8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ri8.Bs.mouth5,02/08/2017,Ri8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ri8.Bs.mouth6,02/08/2017,Ri8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ri8.Bs.mouth7,02/08/2017,Ri8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ri8.Bs.mouth8,02/08/2017,Ri8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ri8.Bs.mouth9,02/08/2017,Ri8,Bs,3,final,mouth,Ss + Bs,N/A,0
+Ri8.Bs.toe1,02/08/2017,Ri8,Bs,3,final,toe,Ss + Bs,N/A,0
+SN.Bs.mouth1,02/08/2017,SN,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+SN.Bs.mouth2,02/08/2017,SN,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+SN.Bs.mouth3,02/08/2017,SN,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+SN.Bs.mouth4,02/08/2017,SN,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+SN.Bs.mouth5,02/08/2017,SN,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+SN.Bs.mouth6,02/08/2017,SN,Bs,3,final,mouth,Ss + Bs + Hm,N/A,0
+10.Hm.mouth1,02/08/2017,10,Hm,3,final,mouth,random,N/A,0.072622923
+10.Hm.mouth2,02/08/2017,10,Hm,3,final,mouth,random,N/A,0
+10.Hm.toe1,02/08/2017,10,Hm,3,final,toe,random,N/A,0
+11.Hm.mouth1,01/08/2017,11,Hm,3,final,mouth,random,N/A,0
+11.Hm.mouth2,01/08/2017,11,Hm,3,final,mouth,random,N/A,0
+11.Hm.mouth3,01/08/2017,11,Hm,3,final,mouth,random,N/A,0
+11.Hm.mouth4,01/08/2017,11,Hm,3,final,mouth,random,N/A,0
+11.Hm.mouth5,01/08/2017,11,Hm,3,final,mouth,random,N/A,315.717659
+11.Hm.mouth6,01/08/2017,11,Hm,3,final,mouth,random,N/A,26.63610458
+11.Hm.mouth7,01/08/2017,11,Hm,3,final,mouth,random,N/A,0
+11.Hm.mouth8,01/08/2017,11,Hm,3,final,mouth,random,N/A,0
+12.Hm.mouth1,02/08/2017,12,Hm,3,final,mouth,random,N/A,0
+12.Hm.mouth2,02/08/2017,12,Hm,3,final,mouth,random,N/A,0
+13.Hm.mouth1,01/08/2017,13,Hm,3,final,mouth,random,N/A,2.323490679
+13.Hm.mouth2,01/08/2017,13,Hm,3,final,mouth,random,N/A,19.96296406
+13.Hm.toe1,01/08/2017,13,Hm,3,final,toe,random,N/A,0
+14.Hm.mouth1,01/08/2017,14,Hm,3,final,mouth,random,N/A,0
+14.Hm.mouth2,01/08/2017,14,Hm,3,final,mouth,random,N/A,0
+14.Hm.mouth3,01/08/2017,14,Hm,3,final,mouth,random,N/A,0
+14.Hm.mouth4,01/08/2017,14,Hm,3,final,mouth,random,N/A,0.167770181
+16.Hm.mouth1,01/08/2017,16,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+16.Hm.mouth2,01/08/2017,16,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+16.Hm.mouth3,01/08/2017,16,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+16.Hm.mouth4,01/08/2017,16,Hm,3,final,mouth,Ss + Bs + Hm,N/A,368.7333679
+16.Hm.mouth5,01/08/2017,16,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+16.Hm.mouth6,01/08/2017,16,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+17.Hm.mouth1,02/08/2017,17,Hm,3,final,mouth,Ss + Hm,N/A,0
+17.Hm.mouth10,02/08/2017,17,Hm,3,final,mouth,Ss + Hm,N/A,0
+17.Hm.mouth2,02/08/2017,17,Hm,3,final,mouth,Ss + Hm,N/A,0.046499637
+17.Hm.mouth3,02/08/2017,17,Hm,3,final,mouth,Ss + Hm,N/A,0
+17.Hm.mouth4,02/08/2017,17,Hm,3,final,mouth,Ss + Hm,N/A,0
+17.Hm.mouth5,02/08/2017,17,Hm,3,final,mouth,Ss + Hm,N/A,7.163401842
+17.Hm.mouth6,02/08/2017,17,Hm,3,final,mouth,Ss + Hm,N/A,0
+17.Hm.mouth7,02/08/2017,17,Hm,3,final,mouth,Ss + Hm,N/A,12.87389636
+17.Hm.mouth8,02/08/2017,17,Hm,3,final,mouth,Ss + Hm,N/A,0
+17.Hm.mouth9,02/08/2017,17,Hm,3,final,mouth,Ss + Hm,N/A,0
+19.Hm.mouth1,02/08/2017,19,Hm,3,final,mouth,random,N/A,0
+19.Hm.mouth2,02/08/2017,19,Hm,3,final,mouth,random,N/A,0.412215814
+2.Hm.mouth1,01/08/2017,2,Hm,3,final,mouth,random,N/A,0
+2.Hm.mouth2,01/08/2017,2,Hm,3,final,mouth,random,N/A,0
+2.Hm.mouth3,01/08/2017,2,Hm,3,final,mouth,random,N/A,0.005190198
+20.Hm.mouth1,02/08/2017,20,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+20.Hm.mouth2,02/08/2017,20,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+20.Hm.mouth3,02/08/2017,20,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+20.Hm.mouth4,02/08/2017,20,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0.148069896
+20.Hm.mouth5,02/08/2017,20,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+20.Hm.mouth6,02/08/2017,20,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+3.Hm.mouth1,01/08/2017,3,Hm,3,final,mouth,Ss + Hm,N/A,0.573102497
+3.Hm.mouth2,01/08/2017,3,Hm,3,final,mouth,Ss + Hm,N/A,0
+3.Hm.mouth3,01/08/2017,3,Hm,3,final,mouth,Ss + Hm,N/A,0
+3.Hm.mouth4,01/08/2017,3,Hm,3,final,mouth,Ss + Hm,N/A,0
+3.Hm.mouth5,01/08/2017,3,Hm,3,final,mouth,Ss + Hm,N/A,0
+3.Hm.mouth6,01/08/2017,3,Hm,3,final,mouth,Ss + Hm,N/A,0.015628135
+3.Hm.mouth7,01/08/2017,3,Hm,3,final,mouth,Ss + Hm,N/A,0.027862154
+3.Hm.mouth8,01/08/2017,3,Hm,3,final,mouth,Ss + Hm,N/A,0.357598141
+3.Hm.toe1,01/08/2017,3,Hm,3,final,toe,Ss + Hm,N/A,0
+4.Hm.dead1,01/08/2017,4,Hm,3,final,dead,random,N/A,0
+4.Hm.mouth1,01/08/2017,4,Hm,3,final,mouth,random,N/A,0
+4.Hm.mouth2,01/08/2017,4,Hm,3,final,mouth,random,N/A,14.88577604
+4.Hm.mouth3,01/08/2017,4,Hm,3,final,mouth,random,N/A,0
+5.Hm.mouth1,02/08/2017,5,Hm,3,final,mouth,Ss + Hm,N/A,0
+5.Hm.mouth2,02/08/2017,5,Hm,3,final,mouth,Ss + Hm,N/A,0
+5.Hm.mouth3,02/08/2017,5,Hm,3,final,mouth,Ss + Hm,N/A,0
+5.Hm.mouth4,02/08/2017,5,Hm,3,final,mouth,Ss + Hm,N/A,0
+5.Hm.mouth5,02/08/2017,5,Hm,3,final,mouth,Ss + Hm,N/A,0
+5.Hm.mouth6,02/08/2017,5,Hm,3,final,mouth,Ss + Hm,N/A,0
+5.Hm.mouth7,02/08/2017,5,Hm,3,final,mouth,Ss + Hm,N/A,0
+8.Hm.mouth1,02/08/2017,8,Hm,3,final,mouth,random,N/A,0
+8.Hm.mouth2,02/08/2017,8,Hm,3,final,mouth,random,N/A,0
+8.Hm.toe1,02/08/2017,8,Hm,3,final,toe,random,N/A,0
+Ri1.Hm.mouth1,01/08/2017,Ri1,Hm,3,final,mouth,random,N/A,21.72519207
+Ri1.Hm.mouth2,01/08/2017,Ri1,Hm,3,final,mouth,random,N/A,16.303581
+Ri1.Hm.mouth3,01/08/2017,Ri1,Hm,3,final,mouth,random,N/A,0.991641879
+Ri1.Hm.mouth4,01/08/2017,Ri1,Hm,3,final,mouth,random,N/A,3.036778867
+Ri10.Hm.mouth1,02/08/2017,Ri10,Hm,3,final,mouth,Ss + Hm,N/A,0.027618273
+Ri10.Hm.mouth10,02/08/2017,Ri10,Hm,3,final,mouth,Ss + Hm,N/A,10.78911066
+Ri10.Hm.mouth2,02/08/2017,Ri10,Hm,3,final,mouth,Ss + Hm,N/A,0.013498965
+Ri10.Hm.mouth3,02/08/2017,Ri10,Hm,3,final,mouth,Ss + Hm,N/A,14.80320454
+Ri10.Hm.mouth4,02/08/2017,Ri10,Hm,3,final,mouth,Ss + Hm,N/A,5.73439002
+Ri10.Hm.mouth5,02/08/2017,Ri10,Hm,3,final,mouth,Ss + Hm,N/A,15.41951895
+Ri10.Hm.mouth6,02/08/2017,Ri10,Hm,3,final,mouth,Ss + Hm,N/A,0.287646521
+Ri10.Hm.mouth7,02/08/2017,Ri10,Hm,3,final,mouth,Ss + Hm,N/A,0.015301022
+Ri10.Hm.mouth8,02/08/2017,Ri10,Hm,3,final,mouth,Ss + Hm,N/A,12.87910938
+Ri10.Hm.mouth9,02/08/2017,Ri10,Hm,3,final,mouth,Ss + Hm,N/A,1.199324578
+Ri10.Hm.toe1,02/08/2017,Ri10,Hm,3,final,toe,Ss + Hm,N/A,0
+Ri12.Hm.mouth1,01/08/2017,Ri12,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri12.Hm.mouth2,01/08/2017,Ri12,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0.946712419
+Ri12.Hm.mouth3,01/08/2017,Ri12,Hm,3,final,mouth,Ss + Bs + Hm,N/A,22.83542633
+Ri12.Hm.mouth4,01/08/2017,Ri12,Hm,3,final,mouth,Ss + Bs + Hm,N/A,39.11120415
+Ri12.Hm.mouth5,01/08/2017,Ri12,Hm,3,final,mouth,Ss + Bs + Hm,N/A,60.48233986
+Ri12.Hm.toe1,01/08/2017,Ri12,Hm,3,final,toe,Ss + Bs + Hm,N/A,0
+Ri13.Hm.mouth1,01/08/2017,Ri13,Hm,3,final,mouth,random,N/A,0
+Ri13.Hm.mouth2,01/08/2017,Ri13,Hm,3,final,mouth,random,N/A,0.521859229
+Ri13.Hm.mouth3,01/08/2017,Ri13,Hm,3,final,mouth,random,N/A,40.84600449
+Ri14.Hm.mouth1,02/08/2017,Ri14,Hm,3,final,mouth,random,N/A,0
+Ri14.Hm.mouth10,02/08/2017,Ri14,Hm,3,final,mouth,random,N/A,0.018675157
+Ri14.Hm.mouth11,02/08/2017,Ri14,Hm,3,final,mouth,random,N/A,0.055027935
+Ri14.Hm.mouth2,02/08/2017,Ri14,Hm,3,final,mouth,random,N/A,0.026534593
+Ri14.Hm.mouth3,02/08/2017,Ri14,Hm,3,final,mouth,random,N/A,0.032468319
+Ri14.Hm.mouth4,02/08/2017,Ri14,Hm,3,final,mouth,random,N/A,16.60240769
+Ri14.Hm.mouth5,02/08/2017,Ri14,Hm,3,final,mouth,random,N/A,1.723151803
+Ri14.Hm.mouth6,02/08/2017,Ri14,Hm,3,final,mouth,random,N/A,0
+Ri14.Hm.mouth7,02/08/2017,Ri14,Hm,3,final,mouth,random,N/A,0
+Ri14.Hm.mouth8,02/08/2017,Ri14,Hm,3,final,mouth,random,N/A,0.079675838
+Ri14.Hm.mouth9,02/08/2017,Ri14,Hm,3,final,mouth,random,N/A,0
+Ri15.Hm.mouth1,01/08/2017,Ri15,Hm,3,final,mouth,random,N/A,68.95433426
+Ri15.Hm.mouth2,01/08/2017,Ri15,Hm,3,final,mouth,random,N/A,0.077822297
+Ri18.Hm.mouth1,02/08/2017,Ri18,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri18.Hm.mouth2,02/08/2017,Ri18,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri18.Hm.mouth3,02/08/2017,Ri18,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri18.Hm.mouth4,02/08/2017,Ri18,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+Ri2.Hm.mouth1,01/08/2017,Ri2,Hm,3,final,mouth,random,N/A,15.1696527
+Ri2.Hm.mouth2,01/08/2017,Ri2,Hm,3,final,mouth,random,N/A,17.94079542
+Ri2.Hm.mouth3,01/08/2017,Ri2,Hm,3,final,mouth,random,N/A,0
+Ri2.Hm.mouth4,01/08/2017,Ri2,Hm,3,final,mouth,random,N/A,0.0174741
+Ri2.Hm.toe1,01/08/2017,Ri2,Hm,3,final,toe,random,N/A,0
+Ri4.Hm.mouth1,02/08/2017,Ri4,Hm,3,final,mouth,random,N/A,1.083254144
+Ri4.Hm.mouth2,02/08/2017,Ri4,Hm,3,final,mouth,random,N/A,15.42408466
+Ri4.Hm.mouth3,02/08/2017,Ri4,Hm,3,final,mouth,random,N/A,52.93340683
+Ri4.Hm.mouth4,02/08/2017,Ri4,Hm,3,final,mouth,random,N/A,0.250586644
+Ri4.Hm.mouth5,02/08/2017,Ri4,Hm,3,final,mouth,random,N/A,6.75032258
+Ri4.Hm.mouth6,02/08/2017,Ri4,Hm,3,final,mouth,random,N/A,0
+Ri4.Hm.mouth7,02/08/2017,Ri4,Hm,3,final,mouth,random,N/A,13.67128372
+Ri5.Hm.mouth1,01/08/2017,Ri5,Hm,3,final,mouth,random,N/A,0
+Ri5.Hm.mouth2,01/08/2017,Ri5,Hm,3,final,mouth,random,N/A,0
+Ri5.Hm.mouth3,01/08/2017,Ri5,Hm,3,final,mouth,random,N/A,0
+Ri5.Hm.toe1,01/08/2017,Ri5,Hm,3,final,toe,random,N/A,0
+Ri6.Hm.mouth1,01/08/2017,Ri6,Hm,3,final,mouth,Ss + Hm,N/A,0
+Ri6.Hm.mouth10,01/08/2017,Ri6,Hm,3,final,mouth,Ss + Hm,N/A,0
+Ri6.Hm.mouth11,01/08/2017,Ri6,Hm,3,final,mouth,Ss + Hm,N/A,0
+Ri6.Hm.mouth2,01/08/2017,Ri6,Hm,3,final,mouth,Ss + Hm,N/A,0
+Ri6.Hm.mouth3,01/08/2017,Ri6,Hm,3,final,mouth,Ss + Hm,N/A,0
+Ri6.Hm.mouth4,01/08/2017,Ri6,Hm,3,final,mouth,Ss + Hm,N/A,0
+Ri6.Hm.mouth5,01/08/2017,Ri6,Hm,3,final,mouth,Ss + Hm,N/A,0
+Ri6.Hm.mouth6,01/08/2017,Ri6,Hm,3,final,mouth,Ss + Hm,N/A,0
+Ri6.Hm.mouth7,01/08/2017,Ri6,Hm,3,final,mouth,Ss + Hm,N/A,0
+Ri6.Hm.mouth8,01/08/2017,Ri6,Hm,3,final,mouth,Ss + Hm,N/A,0
+Ri6.Hm.mouth9,01/08/2017,Ri6,Hm,3,final,mouth,Ss + Hm,N/A,0
+Ri6.Hm.toe.1,01/08/2017,Ri6,Hm,3,final,toe,Ss + Hm,N/A,0
+SN.Hm.mouth1,02/08/2017,SN,Hm,3,final,mouth,Ss + Bs + Hm,N/A,0
+1.3.1,01/08/2017,1,Ss,3,final,swab,Ss (control),euthanased,0
+1.3.10,01/08/2017,1,Ss,3,final,swab,Ss (control),euthanased,0
+1.3.2,01/08/2017,1,Ss,3,final,swab,Ss (control),euthanased,0
+1.3.3,01/08/2017,1,Ss,3,final,swab,Ss (control),euthanased,0
+1.3.4,01/08/2017,1,Ss,3,final,swab,Ss (control),euthanased,0
+1.3.5,01/08/2017,1,Ss,3,final,swab,Ss (control),euthanased,0
+1.3.6,01/08/2017,1,Ss,3,final,swab,Ss (control),euthanased,0
+1.3.7,01/08/2017,1,Ss,3,final,swab,Ss (control),euthanased,0
+1.3.8,01/08/2017,1,Ss,3,final,swab,Ss (control),euthanased,0
+1.3.9,01/08/2017,1,Ss,3,final,swab,Ss (control),euthanased,0
+10.3.1,02/08/2017,10,Ss,3,final,swab,random,euthanased,0
+10.3.2,02/08/2017,10,Ss,3,final,swab,random,euthanased,0
+10.3.3,02/08/2017,10,Ss,3,final,swab,random,euthanased,0
+10.3.4,02/08/2017,10,Ss,3,final,swab,random,euthanased,0.086301761
+10.3.5,02/08/2017,10,Ss,3,final,swab,random,euthanased,0
+10.3.6,02/08/2017,10,Ss,3,final,swab,random,euthanased,0
+10.3.7,02/08/2017,10,Ss,3,final,swab,random,euthanased,0
+10.3.8,02/08/2017,10,Ss,3,final,swab,random,euthanased,0
+10.3.9,02/08/2017,10,Ss,3,final,swab,random,euthanased,0
+11.3.1,01/08/2017,11,Ss,3,final,swab,random,euthanased,0.422312692
+11.3.2,01/08/2017,11,Ss,3,final,swab,random,euthanased,0.513737649
+11.3.3,01/08/2017,11,Ss,3,final,swab,random,euthanased,0
+11.3.4,01/08/2017,11,Ss,3,final,swab,random,euthanased,0
+11.3.5,01/08/2017,11,Ss,3,final,swab,random,euthanased,0
+11.3.6,01/08/2017,11,Ss,3,final,swab,random,euthanased,0
+12.3.1,02/08/2017,12,Ss,3,final,swab,random,euthanased,0
+12.3.10,02/08/2017,12,Ss,3,final,swab,random,euthanased,0
+12.3.2,02/08/2017,12,Ss,3,final,swab,random,euthanased,0
+12.3.3,02/08/2017,12,Ss,3,final,swab,random,euthanased,0
+12.3.4,02/08/2017,12,Ss,3,final,swab,random,euthanased,0
+12.3.5,02/08/2017,12,Ss,3,final,swab,random,euthanased,0
+12.3.6,02/08/2017,12,Ss,3,final,swab,random,euthanased,0
+12.3.7,02/08/2017,12,Ss,3,final,swab,random,euthanased,0
+12.3.8,02/08/2017,12,Ss,3,final,swab,random,euthanased,0
+12.3.9,02/08/2017,12,Ss,3,final,swab,random,euthanased,0
+13.3.1,01/08/2017,13,Ss,3,final,swab,random,euthanased,0.111342063
+13.3.2,01/08/2017,13,Ss,3,final,swab,random,euthanased,0
+13.3.3,01/08/2017,13,Ss,3,final,swab,random,euthanased,0
+13.3.4,01/08/2017,13,Ss,3,final,swab,random,euthanased,0.501170196
+13.3.5,01/08/2017,13,Ss,3,final,swab,random,euthanased,0
+13.3.6,01/08/2017,13,Ss,3,final,swab,random,euthanased,0
+13.3.7,01/08/2017,13,Ss,3,final,swab,random,euthanased,0
+13.3.8,01/08/2017,13,Ss,3,final,swab,random,euthanased,0
+13.3.9,01/08/2017,13,Ss,3,final,swab,random,euthanased,0
+14.3.1,01/08/2017,14,Ss,3,final,swab,random,euthanased,0
+14.3.2,01/08/2017,14,Ss,3,final,swab,random,euthanased,0
+14.3.3,01/08/2017,14,Ss,3,final,swab,random,euthanased,0
+14.3.4,01/08/2017,14,Ss,3,final,swab,random,euthanased,0
+14.3.5,01/08/2017,14,Ss,3,final,swab,random,euthanased,0
+15.3.1,02/08/2017,15,Ss,3,final,swab,Ss + Bs,euthanased,0
+15.3.2,02/08/2017,15,Ss,3,final,swab,Ss + Bs,euthanased,0
+15.3.3,02/08/2017,15,Ss,3,final,swab,Ss + Bs,euthanased,0
+15.3.4,02/08/2017,15,Ss,3,final,swab,Ss + Bs,euthanased,0
+16.3.1,01/08/2017,16,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0.109596569
+16.3.2,01/08/2017,16,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+16.3.3,01/08/2017,16,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+17.3.1,02/08/2017,17,Ss,3,final,swab,Ss + Hm,euthanased,0
+17.3.2,02/08/2017,17,Ss,3,final,swab,Ss + Hm,euthanased,0
+17.3.3,02/08/2017,17,Ss,3,final,swab,Ss + Hm,euthanased,0
+17.3.4,02/08/2017,17,Ss,3,final,swab,Ss + Hm,euthanased,0
+18.3.1,01/08/2017,18,Ss,3,final,swab,Ss + Bs,euthanased,0
+18.3.2,01/08/2017,18,Ss,3,final,swab,Ss + Bs,euthanased,0
+18.3.3,01/08/2017,18,Ss,3,final,swab,Ss + Bs,euthanased,0.67631118
+18.3.4,01/08/2017,18,Ss,3,final,swab,Ss + Bs,euthanased,0
+18.3.5,01/08/2017,18,Ss,3,final,swab,Ss + Bs,euthanased,0.108355191
+19.3.1,02/08/2017,19,Ss,3,final,swab,random,euthanased,0.140287699
+19.3.2,02/08/2017,19,Ss,3,final,swab,random,euthanased,1.435720772
+19.3.3,02/08/2017,19,Ss,3,final,swab,random,euthanased,0
+19.3.4,02/08/2017,19,Ss,3,final,swab,random,euthanased,0
+19.3.5,02/08/2017,19,Ss,3,final,swab,random,euthanased,0
+2.3.1,01/08/2017,2,Ss,3,final,swab,random,euthanased,0
+2.3.2,01/08/2017,2,Ss,3,final,swab,random,euthanased,0
+2.3.3,01/08/2017,2,Ss,3,final,swab,random,euthanased,0
+2.3.4,01/08/2017,2,Ss,3,final,swab,random,euthanased,0
+2.3.5,01/08/2017,2,Ss,3,final,swab,random,euthanased,0
+2.3.6,01/08/2017,2,Ss,3,final,swab,random,euthanased,0
+2.3.7,01/08/2017,2,Ss,3,final,swab,random,euthanased,0
+2.3.8,01/08/2017,2,Ss,3,final,swab,random,euthanased,0
+2.3.9,01/08/2017,2,Ss,3,final,swab,random,euthanased,0
+20.3.1,02/08/2017,20,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+20.3.2,02/08/2017,20,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0.043091336
+20.3.3,02/08/2017,20,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+20.3.4,02/08/2017,20,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+3.3.1,01/08/2017,3,Ss,3,final,swab,Ss + Hm,euthanased,0
+3.3.2,01/08/2017,3,Ss,3,final,swab,Ss + Hm,euthanased,0
+3.3.3,01/08/2017,3,Ss,3,final,swab,Ss + Hm,euthanased,0.832850933
+3.3.4,01/08/2017,3,Ss,3,final,swab,Ss + Hm,euthanased,0
+4.3.1,01/08/2017,4,Ss,3,final,swab,random,euthanased,0
+4.3.2,01/08/2017,4,Ss,3,final,swab,random,euthanased,0
+4.3.3,01/08/2017,4,Ss,3,final,swab,random,euthanased,0
+4.3.4,01/08/2017,4,Ss,3,final,swab,random,euthanased,0
+4.3.5,01/08/2017,4,Ss,3,final,swab,random,euthanased,0
+5.3.1,02/08/2017,5,Ss,3,final,swab,Ss + Hm,euthanased,0
+5.3.2,02/08/2017,5,Ss,3,final,swab,Ss + Hm,euthanased,0
+5.3.3,02/08/2017,5,Ss,3,final,swab,Ss + Hm,euthanased,0
+5.3.4,02/08/2017,5,Ss,3,final,swab,Ss + Hm,euthanased,0
+5.3.5,02/08/2017,5,Ss,3,final,swab,Ss + Hm,euthanased,0
+5.3.6,02/08/2017,5,Ss,3,final,swab,Ss + Hm,euthanased,0
+8.3.1,02/08/2017,8,Ss,3,final,swab,random,euthanased,4.268828034
+8.3.10,02/08/2017,8,Ss,3,final,swab,random,euthanased,0
+8.3.2,02/08/2017,8,Ss,3,final,swab,random,euthanased,0
+8.3.3,02/08/2017,8,Ss,3,final,swab,random,euthanased,0
+8.3.4,02/08/2017,8,Ss,3,final,swab,random,euthanased,0
+8.3.5,02/08/2017,8,Ss,3,final,swab,random,euthanased,0.215117931
+8.3.6,02/08/2017,8,Ss,3,final,swab,random,euthanased,0
+8.3.7,02/08/2017,8,Ss,3,final,swab,random,euthanased,0
+8.3.8,02/08/2017,8,Ss,3,final,swab,random,euthanased,0
+8.3.9,02/08/2017,8,Ss,3,final,swab,random,euthanased,0
+9.3.1,02/08/2017,9,Ss,3,final,swab,Ss (control),euthanased,0
+9.3.10,02/08/2017,9,Ss,3,final,swab,Ss (control),euthanased,0
+9.3.2,02/08/2017,9,Ss,3,final,swab,Ss (control),euthanased,0
+9.3.3,02/08/2017,9,Ss,3,final,swab,Ss (control),euthanased,0
+9.3.4,02/08/2017,9,Ss,3,final,swab,Ss (control),euthanased,0
+9.3.5,02/08/2017,9,Ss,3,final,swab,Ss (control),euthanased,0
+9.3.6,02/08/2017,9,Ss,3,final,swab,Ss (control),euthanased,0
+9.3.7,02/08/2017,9,Ss,3,final,swab,Ss (control),euthanased,0
+9.3.8,02/08/2017,9,Ss,3,final,swab,Ss (control),euthanased,0
+9.3.9,02/08/2017,9,Ss,3,final,swab,Ss (control),euthanased,0
+Ao8.3.1,01/08/2017,Ao8,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ao8.3.2,01/08/2017,Ao8,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ao8.3.3,01/08/2017,Ao8,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ao8.3.4,01/08/2017,Ao8,Ss,3,final,swab,Ss + Bs,euthanased,0.025048638
+Ao8.3.5,01/08/2017,Ao8,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ao8.3.6,01/08/2017,Ao8,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ao8.3.7,01/08/2017,Ao8,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ao8.3.8,01/08/2017,Ao8,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ao8.3.9,01/08/2017,Ao8,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ri1.3.1,01/08/2017,Ri1,Ss,3,final,swab,random,euthanased,0
+Ri1.3.2,01/08/2017,Ri1,Ss,3,final,swab,random,euthanased,0.069171637
+Ri1.3.3,01/08/2017,Ri1,Ss,3,final,swab,random,euthanased,0
+Ri1.3.4,01/08/2017,Ri1,Ss,3,final,swab,random,euthanased,0
+Ri1.3.5,01/08/2017,Ri1,Ss,3,final,swab,random,euthanased,0
+Ri1.3.6,01/08/2017,Ri1,Ss,3,final,swab,random,euthanased,0
+Ri1.3.7,01/08/2017,Ri1,Ss,3,final,swab,random,euthanased,0
+Ri1.3.8,01/08/2017,Ri1,Ss,3,final,swab,random,euthanased,0
+Ri1.3.9,01/08/2017,Ri1,Ss,3,final,swab,random,euthanased,0
+Ri10.3.1,02/08/2017,Ri10,Ss,3,final,swab,Ss + Hm,euthanased,0
+Ri10.3.2,02/08/2017,Ri10,Ss,3,final,swab,Ss + Hm,euthanased,0
+Ri10.3.3,02/08/2017,Ri10,Ss,3,final,swab,Ss + Hm,euthanased,0
+Ri10.3.4,02/08/2017,Ri10,Ss,3,final,swab,Ss + Hm,euthanased,0
+Ri10.3.5,02/08/2017,Ri10,Ss,3,final,swab,Ss + Hm,euthanased,0
+Ri10.3.6,02/08/2017,Ri10,Ss,3,final,swab,Ss + Hm,euthanased,0
+Ri12.3.1,01/08/2017,Ri12,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri12.3.10,01/08/2017,Ri12,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri12.3.2,01/08/2017,Ri12,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri12.3.3,01/08/2017,Ri12,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri12.3.4,01/08/2017,Ri12,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0.017919278
+Ri12.3.5,01/08/2017,Ri12,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri12.3.6,01/08/2017,Ri12,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri12.3.7,01/08/2017,Ri12,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0.027979354
+Ri12.3.8,01/08/2017,Ri12,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri12.3.9,01/08/2017,Ri12,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri13.3.1,01/08/2017,Ri13,Ss,3,final,swab,random,euthanased,0
+Ri13.3.2,01/08/2017,Ri13,Ss,3,final,swab,random,euthanased,0
+Ri13.3.3,01/08/2017,Ri13,Ss,3,final,swab,random,euthanased,0
+Ri13.3.4,01/08/2017,Ri13,Ss,3,final,swab,random,euthanased,0
+Ri13.3.5,01/08/2017,Ri13,Ss,3,final,swab,random,euthanased,0.131151117
+Ri13.3.6,01/08/2017,Ri13,Ss,3,final,swab,random,euthanased,0
+Ri13.3.7,01/08/2017,Ri13,Ss,3,final,swab,random,euthanased,0
+Ri14.3.1,02/08/2017,Ri14,Ss,3,final,swab,random,euthanased,0.301082414
+Ri14.3.2,02/08/2017,Ri14,Ss,3,final,swab,random,euthanased,0
+Ri14.3.3,02/08/2017,Ri14,Ss,3,final,swab,random,euthanased,0
+Ri15.3.1,01/08/2017,Ri15,Ss,3,final,swab,random,euthanased,0
+Ri15.3.10,01/08/2017,Ri15,Ss,3,final,swab,random,euthanased,0
+Ri15.3.2,01/08/2017,Ri15,Ss,3,final,swab,random,euthanased,0
+Ri15.3.3,01/08/2017,Ri15,Ss,3,final,swab,random,euthanased,0
+Ri15.3.4,01/08/2017,Ri15,Ss,3,final,swab,random,euthanased,0
+Ri15.3.5,01/08/2017,Ri15,Ss,3,final,swab,random,euthanased,0
+Ri15.3.6,01/08/2017,Ri15,Ss,3,final,swab,random,euthanased,0
+Ri15.3.7,01/08/2017,Ri15,Ss,3,final,swab,random,euthanased,0.004615583
+Ri15.3.8,01/08/2017,Ri15,Ss,3,final,swab,random,euthanased,0
+Ri15.3.9,01/08/2017,Ri15,Ss,3,final,swab,random,euthanased,0
+Ri16.3.1,01/08/2017,Ri16,Ss,3,final,swab,Ss (control),euthanased,0
+Ri16.3.10,01/08/2017,Ri16,Ss,3,final,swab,Ss (control),euthanased,0
+Ri16.3.2,01/08/2017,Ri16,Ss,3,final,swab,Ss (control),euthanased,0
+Ri16.3.3,01/08/2017,Ri16,Ss,3,final,swab,Ss (control),euthanased,0
+Ri16.3.4,01/08/2017,Ri16,Ss,3,final,swab,Ss (control),euthanased,0
+Ri16.3.5,01/08/2017,Ri16,Ss,3,final,swab,Ss (control),euthanased,0
+Ri16.3.6,01/08/2017,Ri16,Ss,3,final,swab,Ss (control),euthanased,0
+Ri16.3.7,01/08/2017,Ri16,Ss,3,final,swab,Ss (control),euthanased,0
+Ri16.3.8,01/08/2017,Ri16,Ss,3,final,swab,Ss (control),euthanased,0
+Ri16.3.9,01/08/2017,Ri16,Ss,3,final,swab,Ss (control),euthanased,0.088647557
+Ri17.3.1,02/08/2017,Ri17,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ri17.3.2,02/08/2017,Ri17,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ri17.3.3,02/08/2017,Ri17,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ri17.3.4,02/08/2017,Ri17,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ri17.3.5,02/08/2017,Ri17,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ri17.3.6,02/08/2017,Ri17,Ss,3,final,swab,Ss + Bs,euthanased,0.010033732
+Ri18.3.1,02/08/2017,Ri18,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri18.3.2,02/08/2017,Ri18,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri18.3.3,02/08/2017,Ri18,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri18.3.4,02/08/2017,Ri18,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri18.3.5,02/08/2017,Ri18,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ri2.3.1,01/08/2017,Ri2,Ss,3,final,swab,random,euthanased,0.074648559
+Ri2.3.2,01/08/2017,Ri2,Ss,3,final,swab,random,euthanased,0
+Ri2.3.3,01/08/2017,Ri2,Ss,3,final,swab,random,euthanased,0
+Ri2.3.4,01/08/2017,Ri2,Ss,3,final,swab,random,euthanased,0
+Ri2.3.5,01/08/2017,Ri2,Ss,3,final,swab,random,euthanased,0
+Ri2.3.6,01/08/2017,Ri2,Ss,3,final,swab,random,euthanased,0
+Ri2.3.7,01/08/2017,Ri2,Ss,3,final,swab,random,euthanased,0
+Ri4.3.1,02/08/2017,Ri4,Ss,3,final,swab,random,euthanased,0
+Ri4.3.2,02/08/2017,Ri4,Ss,3,final,swab,random,euthanased,0
+Ri4.3.3,02/08/2017,Ri4,Ss,3,final,swab,random,euthanased,0.081850868
+Ri4.3.4,02/08/2017,Ri4,Ss,3,final,swab,random,euthanased,0
+Ri5.3.1,01/08/2017,Ri5,Ss,3,final,swab,random,euthanased,0
+Ri5.3.10,01/08/2017,Ri5,Ss,3,final,swab,random,euthanased,0
+Ri5.3.2,01/08/2017,Ri5,Ss,3,final,swab,random,euthanased,0
+Ri5.3.3,01/08/2017,Ri5,Ss,3,final,swab,random,euthanased,0
+Ri5.3.4,01/08/2017,Ri5,Ss,3,final,swab,random,euthanased,0
+Ri5.3.5,01/08/2017,Ri5,Ss,3,final,swab,random,euthanased,0
+Ri5.3.6,01/08/2017,Ri5,Ss,3,final,swab,random,euthanased,0
+Ri5.3.7,01/08/2017,Ri5,Ss,3,final,swab,random,euthanased,0
+Ri5.3.8,01/08/2017,Ri5,Ss,3,final,swab,random,euthanased,0
+Ri5.3.9,01/08/2017,Ri5,Ss,3,final,swab,random,euthanased,0.215151329
+Ri6.3.1,01/08/2017,Ri6,Ss,3,final,swab,Ss + Hm,euthanased,0
+Ri6.3.2,01/08/2017,Ri6,Ss,3,final,swab,Ss + Hm,euthanased,0.235680901
+Ri6.3.3,01/08/2017,Ri6,Ss,3,final,swab,Ss + Hm,euthanased,0
+Ri6.3.4,01/08/2017,Ri6,Ss,3,final,swab,Ss + Hm,euthanased,0
+Ri6.3.5,01/08/2017,Ri6,Ss,3,final,swab,Ss + Hm,euthanased,0
+Ri6.3.6,01/08/2017,Ri6,Ss,3,final,swab,Ss + Hm,euthanased,0
+Ri7.3.1,02/08/2017,Ri7,Ss,3,final,swab,Ss (control),euthanased,0
+Ri7.3.10,02/08/2017,Ri7,Ss,3,final,swab,Ss (control),euthanased,0
+Ri7.3.2,02/08/2017,Ri7,Ss,3,final,swab,Ss (control),euthanased,0
+Ri7.3.3,02/08/2017,Ri7,Ss,3,final,swab,Ss (control),euthanased,0
+Ri7.3.4,02/08/2017,Ri7,Ss,3,final,swab,Ss (control),euthanased,0
+Ri7.3.5,02/08/2017,Ri7,Ss,3,final,swab,Ss (control),euthanased,0
+Ri7.3.6,02/08/2017,Ri7,Ss,3,final,swab,Ss (control),euthanased,0
+Ri7.3.7,02/08/2017,Ri7,Ss,3,final,swab,Ss (control),euthanased,0.130604263
+Ri7.3.8,02/08/2017,Ri7,Ss,3,final,swab,Ss (control),euthanased,0
+Ri7.3.9,02/08/2017,Ri7,Ss,3,final,swab,Ss (control),euthanased,0
+Ri8.3.1,02/08/2017,Ri8,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ri8.3.2,02/08/2017,Ri8,Ss,3,final,swab,Ss + Bs,euthanased,0.048219641
+Ri8.3.3,02/08/2017,Ri8,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ri8.3.4,02/08/2017,Ri8,Ss,3,final,swab,Ss + Bs,euthanased,0
+Ri9.3.1,02/08/2017,Ri9,Ss,3,final,swab,Ss (control),euthanased,0
+Ri9.3.10,02/08/2017,Ri9,Ss,3,final,swab,Ss (control),euthanased,0
+Ri9.3.2,02/08/2017,Ri9,Ss,3,final,swab,Ss (control),euthanased,0.029944628
+Ri9.3.3,02/08/2017,Ri9,Ss,3,final,swab,Ss (control),euthanased,0
+Ri9.3.4,02/08/2017,Ri9,Ss,3,final,swab,Ss (control),euthanased,0
+Ri9.3.5,02/08/2017,Ri9,Ss,3,final,swab,Ss (control),euthanased,0
+Ri9.3.6,02/08/2017,Ri9,Ss,3,final,swab,Ss (control),euthanased,0
+Ri9.3.7,02/08/2017,Ri9,Ss,3,final,swab,Ss (control),euthanased,0
+Ri9.3.8,02/08/2017,Ri9,Ss,3,final,swab,Ss (control),euthanased,0
+Ri9.3.9,02/08/2017,Ri9,Ss,3,final,swab,Ss (control),euthanased,0
+SN.3.1,02/08/2017,SN,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+SN.3.2,02/08/2017,SN,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+SN.3.3,02/08/2017,SN,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+SN.3.4,02/08/2017,SN,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+SN.3.5,02/08/2017,SN,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+SN.3.6,02/08/2017,SN,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+SN.3.7,02/08/2017,SN,Ss,3,final,swab,Ss + Bs + Hm,euthanased,0
+Ac12,28/07/2017,20,Bs,4,accidental,tail,Ss + Bs + Hm,metamorphosed,0
+Ac13,24/07/2017,4,Bs,4,accidental,tail,random,metamorphosed,0
+Ac6,28/07/2017,16,Bs,4,accidental,tail,Ss + Bs + Hm,metamorphosed,0
+Ac7,28/07/2017,4,Bs,4,accidental,tail,random,metamorphosed,0
+Ac8,28/07/2017,13,Bs,4,accidental,tail,random,metamorphosed,0
+Ac9,28/07/2017,4,Bs,4,accidental,tail,random,metamorphosed,0
+Ac1,24/07/2017,SN,Hm,4,accidental,mouth,Ss + Bs + Hm,dead,0
+Ac10,24/07/2017,Ri15,Hm,4,accidental,mouth,random,dead,0
+Ac11,24/07/2017,Ri15,Hm,4,accidental,mouth,random,dead,0
+Ac14,25/07/2017,Ri15,Hm,4,accidental,mouth,random,dead,0
+Ac15,25/07/2017,Ri15,Hm,4,accidental,mouth,random,dead,0.08212666
+Ac16,25/07/2017,Ri13,Hm,4,accidental,mouth,random,dead,0
+Ac17,28/07/2017,Ri15,Hm,4,accidental,mouth,random,dead,0
+Ac18,25/07/2017,2,Hm,4,accidental,mouth,random,dead,0
+Ac19,20/07/2017,Ri18,Hm,4,accidental,mouth,Ss + Bs + Hm,dead,0
+Ac2,28/07/2017,3,Hm,4,accidental,mouth,Ss + Hm,dead,0
+Ac3,25/07/2017,Ri5,Hm,4,accidental,mouth,random,dead,0.493603647
+Ac4,28/07/2017,5,Hm,4,accidental,mouth,Ss + Hm,dead,0
+Ac5,20/07/2017,SN,Hm,4,accidental,mouth,Ss + Bs + Hm,dead,0
+Ac20,24/07/2017,2,Ss,4,accidental,toe,random,dead,0
+Ac21,24/07/2017,2,Ss,4,accidental,toe,random,dead,0
+Ac22,24/07/2017,2,Ss,4,accidental,toe,random,dead,0
+Ac23,02/08/2017,Ri7,Ss,4,accidental,toe,Ss (control),dead,0
+Ac24,01/08/2017,Ri16,Ss,4,accidental,toe,Ss (control),dead,0
+Ac25,24/07/2017,11,Ss,4,accidental,toe,random,dead,0.647277609
+Ac26,18/07/2017,9,Ss,4,accidental,toe,Ss (control),dead,0.488808751
+Ac27,24/07/2017,9,Ss,4,accidental,toe,Ss (control),dead,0
+Ac28,17/07/2017,19,Ss,4,accidental,toe,random,dead,0
+Ac29,20/07/2017,Ri7,Ss,4,accidental,toe,Ss (control),dead,4.728439152
+Ac30,20/07/2017,9,Ss,4,accidental,toe,Ss (control),dead,0
