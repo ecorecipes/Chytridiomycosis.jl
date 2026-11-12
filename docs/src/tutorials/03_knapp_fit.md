@@ -521,7 +521,7 @@ rate at low load, Δc/h, is 89 per day (95% interval 39–421). Under
 - **``K`` has an upper bound only.** The bacteria must protect until they
   are nearly undetectable. Below about 0.1 genomic equivalents, the
   posterior follows the prior.
-- **``\tau`` lies between about 20 and 100 days.** That is narrower than
+- **``\tau`` lies between about 20 and 110 days.** That is narrower than
   the profile interval, partly because the prior (median 14 days)
   discourages very long waning times and partly because the posterior
   averages over the other parameters instead of optimising them.
