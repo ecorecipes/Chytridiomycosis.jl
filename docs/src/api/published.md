@@ -42,7 +42,7 @@ SchmidtColonyProblem
 BriggsParameters
 BriggsLoadProblem
 transmission_rate
-load_growth_rate
+load_growth_rate(::BriggsParameters, ::Any)
 host_density_threshold
 ```
 

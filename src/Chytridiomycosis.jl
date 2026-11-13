@@ -27,8 +27,8 @@ single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
 [`MultiHostPoolProblem`](@ref) (with its inoculation callback),
 [`ZoosporePersistenceProblem`](@ref), [`RefugiaODEProblem`](@ref),
 [`SeasonalBsalProblem`](@ref) (with its inflow switch times as `tstops`),
-[`TransmissionSLIProblem`](@ref), [`SusceptibleChainProblem`](@ref) and
-[`CohabitationProblem`](@ref). Use it to solve with
+[`TransmissionSLIProblem`](@ref), [`SusceptibleChainProblem`](@ref),
+[`CohabitationProblem`](@ref) and [`DrawertODEProblem`](@ref). Use it to solve with
 other options or to pass the model to other SciML tools.
 """
 function to_ode_problem end
@@ -82,6 +82,8 @@ include("models/bozzuto2019.jl")
 include("models/bsal_transmission.jl")
 include("fitting/malagon2020.jl")
 include("fitting/tompros2022.jl")
+# Drawert et al. 2017 stochastic individual-based Bd model with one-time interventions
+include("models/drawert2017.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -162,5 +164,11 @@ export TransmissionFunction, DensityDependent, FrequencyDependent, PowerLaw,
        TomprosTank, load_tompros2022, load_tompros_swabs, clean_infection_series,
        tompros_status, tompros_counts, TomprosModel, transmission_function,
        tompros_model_selection, likelihood_interval, tompros_negloglik
+# Drawert et al. 2017 stochastic individual-based Bd model
+export DrawertParameters, DrawertIBMProblem, DrawertODEProblem, DrawertIntervention,
+       drawert_interventions, drawert_variant, model_variant, encystment_probability,
+       sporangium_loss_rate, nondimensional_parameters, nondimensional_ranges,
+       nondimensional_distance, equilibrium_load_ratio, drawert2017_path, load_drawert2017,
+       drawert_summary, outcome_class, survival_group, intervention_effect
 
 end # module Chytridiomycosis

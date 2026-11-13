@@ -1,0 +1,360 @@
+# Drawert et al. (2017) reproduction summary, written by scripts/drawert2017_summarise.jl.
+# Do not edit by hand. Seeds and designs are in scripts/drawert2017_*.jl.
+[baseline_sample]
+authors_cpu_seconds_same_points = 91892.7
+cpu_seconds = 9954.1
+days_to_first_death_difference_mean = 0.1615
+days_to_first_death_difference_median = 0.0166
+"fisher_frogs_extinct_p_below_0.05" = 0
+mean_surviving_correlation = 0.9968
+mean_surviving_difference_mean = 0.0048
+mean_surviving_difference_mean_abs = 0.0165
+n_points = 116
+runs_per_point = 30
+same_class = 113
+same_group = 105
+seed = 20170480
+"welch_mean_surviving_p_below_0.05" = 5
+
+    [baseline_sample.by_authors_group.A]
+    "fisher_p_below_0.05" = 0
+    mean_surviving_authors = 0.0
+    mean_surviving_ours = 0.0
+    n = 25
+    same_group = 25
+    "welch_p_below_0.05" = 0
+
+    [baseline_sample.by_authors_group.B]
+    "fisher_p_below_0.05" = 0
+    mean_surviving_authors = 0.0126
+    mean_surviving_ours = 0.0214
+    n = 15
+    same_group = 10
+    "welch_p_below_0.05" = 0
+
+    [baseline_sample.by_authors_group.C]
+    "fisher_p_below_0.05" = 0
+    mean_surviving_authors = 0.4385
+    mean_surviving_ours = 0.4523
+    n = 30
+    same_group = 25
+    "welch_p_below_0.05" = 1
+
+    [baseline_sample.by_authors_group.D]
+    "fisher_p_below_0.05" = 0
+    mean_surviving_authors = 0.9502
+    mean_surviving_ours = 0.9506
+    n = 40
+    same_group = 39
+    "welch_p_below_0.05" = 4
+
+    [baseline_sample.by_authors_group.E]
+    "fisher_p_below_0.05" = 0
+    mean_surviving_authors = 0.2616
+    mean_surviving_ours = 0.2601
+    n = 6
+    same_group = 6
+    "welch_p_below_0.05" = 0
+
+    [baseline_sample.class_weighted_authors_same_points]
+    coexistence = 0.0
+    frog_extinction = 0.6501
+    fungal_extinction = 0.2491
+    variable = 0.1008
+
+    [baseline_sample.class_weighted_ours]
+    coexistence = 0.0
+    frog_extinction = 0.6535
+    fungal_extinction = 0.2423
+    variable = 0.1042
+
+    [baseline_sample.class_weighted_ours_se]
+    coexistence = 0.0
+    frog_extinction = 0.0032
+    fungal_extinction = 0.0091
+    variable = 0.0097
+
+    [baseline_sample.group_weighted_ours]
+    A = 0.6535
+    B = 0.0479
+    C = 0.1047
+    D = 0.1846
+    E = 0.0094
+
+    [baseline_sample.group_weighted_ours_se]
+    A = 0.0032
+    B = 0.0085
+    C = 0.0098
+    D = 0.0055
+    E = 0.0
+
+[deterministic]
+first_death_day_max = 275.0
+first_death_day_min = 14.0
+frogs_extinct_baseline = 2132
+"frogs_extinct_nu_1.2" = 2132
+frogs_extinct_nu_2 = 2132
+"frogs_extinct_sigma_1.2" = 2132
+frogs_extinct_sigma_2 = 2132
+last_death_max = 567.061
+last_death_min = 19.5837
+last_death_outside_window = 71
+max_abs_lambda_difference = 1.0000000000287557e-6
+n_points = 2132
+nearest_neighbour_median = 0.0935
+nearest_neighbour_min = 0.0901
+nearest_neighbour_printed_median = 0.1301
+nearest_neighbour_printed_min = 0.0919
+"printed_nu_Sstar_below_1_at_1.2" = 270
+printed_nu_Sstar_below_1_at_2 = 153
+
+[interventions.grid_182]
+baseline_mean_surviving = 0.6141
+
+    [interventions.grid_182.clean_environment]
+    day = [14.0, 14.0, 14.0, 28.0, 28.0, 28.0, 56.0, 56.0, 56.0]
+    delta = [-0.0918, -0.0235, 0.0608, -0.0314, -0.0235, -0.0592, -0.0827, -0.1624, -0.1106]
+    fraction = [0.25, 0.5, 0.75, 0.25, 0.5, 0.75, 0.25, 0.5, 0.75]
+    negative = 2
+    positive = 0
+
+    [interventions.grid_182.clean_environment_as_coded]
+    day = [14.0, 14.0, 14.0, 28.0, 28.0, 28.0, 56.0, 56.0, 56.0]
+    delta = [-0.142, 0.0169, 0.1231, -0.0165, -0.0937, -0.0561, -0.0867, -0.0278, -0.16]
+    fraction = [0.25, 0.5, 0.75, 0.25, 0.5, 0.75, 0.25, 0.5, 0.75]
+    negative = 2
+    positive = 1
+
+    [interventions.grid_182.clean_frogs]
+    day = [14.0, 14.0, 14.0, 28.0, 28.0, 28.0, 56.0, 56.0, 56.0]
+    delta = [-0.0914, 0.0722, 0.2608, 0.0824, 0.0506, 0.12, -0.0702, 0.0302, 0.2114]
+    fraction = [0.25, 0.5, 0.75, 0.25, 0.5, 0.75, 0.25, 0.5, 0.75]
+    negative = 0
+    positive = 3
+
+    [interventions.grid_182.cull_frogs]
+    day = [14.0, 14.0, 14.0, 28.0, 28.0, 28.0, 56.0, 56.0, 56.0]
+    delta = [0.0294, -0.1698, -0.3694, 0.0373, -0.102, -0.26, 0.0643, -0.1278, -0.111]
+    fraction = [0.25, 0.5, 0.75, 0.25, 0.5, 0.75, 0.25, 0.5, 0.75]
+    negative = 6
+    positive = 0
+
+[interventions.grid_982]
+baseline_mean_surviving = 0.9615
+
+    [interventions.grid_982.clean_environment]
+    day = [14.0, 14.0, 14.0, 28.0, 28.0, 28.0, 56.0, 56.0, 56.0]
+    delta = [0.0054, -0.0089, -0.0305, -0.0002, -0.0052, 0.0061, -0.0045, -0.0319, 0.0129]
+    fraction = [0.25, 0.5, 0.75, 0.25, 0.5, 0.75, 0.25, 0.5, 0.75]
+    negative = 0
+    positive = 0
+
+    [interventions.grid_982.clean_environment_as_coded]
+    day = [14.0, 14.0, 14.0, 28.0, 28.0, 28.0, 56.0, 56.0, 56.0]
+    delta = [-0.0237, -0.008, -0.007, -0.0073, -0.0251, -0.0026, 0.0012, -0.0235, -0.0117]
+    fraction = [0.25, 0.5, 0.75, 0.25, 0.5, 0.75, 0.25, 0.5, 0.75]
+    negative = 0
+    positive = 0
+
+    [interventions.grid_982.clean_frogs]
+    day = [14.0, 14.0, 14.0, 28.0, 28.0, 28.0, 56.0, 56.0, 56.0]
+    delta = [-0.0131, 0.0326, 0.0319, -0.0038, 0.0103, 0.0143, -0.0167, 0.0188, 0.0153]
+    fraction = [0.25, 0.5, 0.75, 0.25, 0.5, 0.75, 0.25, 0.5, 0.75]
+    negative = 0
+    positive = 0
+
+    [interventions.grid_982.cull_frogs]
+    day = [14.0, 14.0, 14.0, 28.0, 28.0, 28.0, 56.0, 56.0, 56.0]
+    delta = [-0.2249, -0.466, -0.72, -0.1545, -0.238, -0.3862, -0.1289, -0.307, -0.3171]
+    fraction = [0.25, 0.5, 0.75, 0.25, 0.5, 0.75, 0.25, 0.5, 0.75]
+    negative = 9
+    positive = 0
+
+[interventions.sample_A_clean_environment]
+mean_delta = 0.0
+n = 1
+negative = 0
+positive = 0
+
+[interventions.sample_A_clean_environment_as_coded]
+mean_delta = 0.0
+n = 1
+negative = 0
+positive = 0
+
+[interventions.sample_A_clean_frogs]
+mean_delta = 0.0
+n = 1
+negative = 0
+positive = 0
+
+[interventions.sample_A_cull_frogs]
+mean_delta = 0.0
+n = 1
+negative = 0
+positive = 0
+
+[interventions.sample_A_placebo]
+mean_delta = 0.0
+n = 1
+negative = 0
+positive = 0
+
+[interventions.sample_B_clean_environment]
+mean_delta = 0.0118
+n = 6
+negative = 0
+positive = 0
+
+[interventions.sample_B_clean_environment_as_coded]
+mean_delta = 0.0115
+n = 6
+negative = 0
+positive = 0
+
+[interventions.sample_B_clean_frogs]
+mean_delta = 0.204
+n = 6
+negative = 0
+positive = 4
+
+[interventions.sample_B_cull_frogs]
+mean_delta = 0.1462
+n = 6
+negative = 0
+positive = 3
+
+[interventions.sample_B_placebo]
+mean_delta = 0.0004
+n = 6
+negative = 0
+positive = 0
+
+[interventions.sample_C_clean_environment]
+mean_delta = -0.0162
+n = 20
+negative = 4
+positive = 0
+
+[interventions.sample_C_clean_environment_as_coded]
+mean_delta = 0.009
+n = 20
+negative = 2
+positive = 3
+
+[interventions.sample_C_clean_frogs]
+mean_delta = 0.1916
+n = 20
+negative = 0
+positive = 12
+
+[interventions.sample_C_cull_frogs]
+mean_delta = -0.0879
+n = 20
+negative = 8
+positive = 5
+
+[interventions.sample_C_placebo]
+mean_delta = -0.0362
+n = 20
+negative = 5
+positive = 0
+
+[interventions.sample_D_clean_environment]
+mean_delta = 0.0002
+n = 40
+negative = 0
+positive = 0
+
+[interventions.sample_D_clean_environment_as_coded]
+mean_delta = -0.0001
+n = 40
+negative = 0
+positive = 0
+
+[interventions.sample_D_clean_frogs]
+mean_delta = 0.0171
+n = 40
+negative = 0
+positive = 2
+
+[interventions.sample_D_cull_frogs]
+mean_delta = -0.3017
+n = 40
+negative = 26
+positive = 0
+
+[interventions.sample_D_placebo]
+mean_delta = -0.0025
+n = 40
+negative = 0
+positive = 0
+
+[variants]
+runs_per_point = 10
+
+    [variants."groupCD_nu_1.2"]
+    baseline_authors_mean_surviving = 0.7309
+    baseline_authors_runs_frogs_extinct = 0.0443
+    baseline_authors_runs_persistence = 0.0476
+    mean_surviving = 0.5048
+    n_points = 70
+    points_with_persistence = 4
+    runs_frogs_extinct = 0.2929
+    runs_fungus_extinct = 0.7014
+    runs_persistence = 0.0057
+
+    [variants."groupCD_sigma_1.2"]
+    baseline_authors_mean_surviving = 0.7309
+    baseline_authors_runs_frogs_extinct = 0.0443
+    baseline_authors_runs_persistence = 0.0476
+    mean_surviving = 0.5637
+    n_points = 70
+    points_with_persistence = 4
+    runs_frogs_extinct = 0.2114
+    runs_fungus_extinct = 0.78
+    runs_persistence = 0.0086
+
+    [variants."random_nu_1.2"]
+    baseline_authors_mean_surviving = 0.014
+    baseline_authors_runs_frogs_extinct = 0.9167
+    baseline_authors_runs_persistence = 0.0
+    mean_surviving = 0.0813
+    n_points = 12
+    points_with_persistence = 3
+    runs_frogs_extinct = 0.8167
+    runs_fungus_extinct = 0.0
+    runs_persistence = 0.1833
+
+    [variants.random_nu_2]
+    baseline_authors_mean_surviving = 0.014
+    baseline_authors_runs_frogs_extinct = 0.9167
+    baseline_authors_runs_persistence = 0.0
+    mean_surviving = 0.0403
+    n_points = 12
+    points_with_persistence = 1
+    runs_frogs_extinct = 0.9167
+    runs_fungus_extinct = 0.0417
+    runs_persistence = 0.0417
+
+    [variants."random_sigma_1.2"]
+    baseline_authors_mean_surviving = 0.014
+    baseline_authors_runs_frogs_extinct = 0.9167
+    baseline_authors_runs_persistence = 0.0
+    mean_surviving = 0.0932
+    n_points = 12
+    points_with_persistence = 4
+    runs_frogs_extinct = 0.6833
+    runs_fungus_extinct = 0.0
+    runs_persistence = 0.3167
+
+    [variants.random_sigma_2]
+    baseline_authors_mean_surviving = 0.014
+    baseline_authors_runs_frogs_extinct = 0.9167
+    baseline_authors_runs_persistence = 0.0
+    mean_surviving = 0.0417
+    n_points = 12
+    points_with_persistence = 1
+    runs_frogs_extinct = 0.9167
+    runs_fungus_extinct = 0.025
+    runs_persistence = 0.0583
