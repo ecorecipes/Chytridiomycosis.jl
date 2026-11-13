@@ -293,6 +293,7 @@ or `:year`. Declared so far:
 - [`WoodhamsParameters`](@ref): `:hour`
 - [`RumschlagParameters`](@ref): `:day`
 - [`RefugiaParameters`](@ref): `:week`
+- [`MalagonParameters`](@ref) and [`TomprosParameters`](@ref): `:day`
 
 A new model declares its own with
 `Chytridiomycosis.time_unit(::Type{<:MyParameters}) = :day`.

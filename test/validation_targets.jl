@@ -8,7 +8,7 @@
     @test validation_target("schmidt2017_K_threshold").source === :schmidt2017
     @test_throws ArgumentError validation_target("no_such_target")
     @test_throws ArgumentError reproduce(validation_target("blooi2015_heat_clearance"))
-    @test length(validation_targets(; status = :discrepant)) == 9
+    @test length(validation_targets(; status = :discrepant)) == 14
     @test all(t -> t.source === :schmidt2017, validation_targets(; source = :schmidt2017))
     @testset "$(t.id)" for t in filter(t -> t.status !== :pending, ts)
         r = check_target(t)

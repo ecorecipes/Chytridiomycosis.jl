@@ -1,0 +1,437 @@
+# Malagon DA, Melara LA, Prosper OF, Lenhart S, Carter ED, Fordyce JA, Peterson AC, Miller DL,
+# Gray MJ (2020) Host density and habitat structure influence host contact rates and
+# Batrachochytrium salamandrivorans transmission. Sci Rep 10:5584.
+# https://doi.org/10.1038/s41598-020-62351-x
+#
+# Every record was read on 2026-11-12 from the published article (lab/papers/malagon2020.pdf),
+# Supplementary File 1 (malagon2020_si1.docx: "Expanded Modeling Description" and Table S1,
+# an embedded image) and, where marked, Supplementary File 2 (the authors' data and MATLAB
+# code, malagon2020_si2.zip).
+#
+# System: adult eastern newts (Notophthalmus viridescens) from Tennessee. Experiment 1
+# (contacts) at 20-22 °C in 1-m² pools; Experiment 2 (cohabitation and transmission) at 14 °C.
+# Model time unit: days.
+#
+# Units of c. The paper calls f(N) = cN/(K+N) the "per capita newt contacts per hour" and
+# prints the bounds 0 ≤ c ≤ 100, 0 ≤ K ≤ 18e4. The authors' code fits the hourly rate and
+# reports c × 24, so the Table S1 values of c are contacts per newt per DAY (89.7 and 24.5
+# per hour). The code's bounds are c ≤ 1.8e5 (hourly) and K ≤ 100, the reverse of the print.
+#
+# Named sets: "simple" (no plants) and "complex" (plants) hold c and K; rows of Table S1 are
+# "<habitat>_day<disease state>_<cohabitation>min" and hold β and γ. The paper's Fig. 6 uses
+# the day-12, 10-minute rows. Records without a set: the death rate and the experiment's
+# scaling. R₀ (1.9 and 3.2) is an output, recorded in data/validation/targets.toml.
+
+source = { ref = "malagon2020", doi = "10.1038/s41598-020-62351-x", review_ref = 41 }
+
+[[parameter]]
+symbol = "d"
+quantity = "disease-induced death rate of infectious newts"
+value = 0.0223
+units = "day^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab" }
+location = "Supplementary Information, Expanded Modeling Description"
+verified = true
+notes = "d = −ln(0.8)/10 = 0.022314: about 20% of infected newts died within 10 days. The SI calls it μ and gives 1/μ ≈ 45 days. Tompros et al. (2022) reuse it as their mortality rate."
+
+[[parameter]]
+symbol = "death_time_code"
+quantity = "mean time to death 1/d used in the authors' MATLAB code"
+value = 42.75
+units = "day"
+provenance = "A"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab" }
+location = "Supplementary File 2, SEIParameterStructure4.m (par.d = 1/42.75)"
+verified = true
+notes = "Differs from the published d = 0.0223 day^-1 (1/44.8 days). The code comment keeps −log(0.8)/10 commented out. It changes only the deaths, not C(t)/S(0) or the fits."
+
+[[parameter]]
+symbol = "N_cohabitation"
+quantity = "newt density equivalent to the Experiment 2 container (2 newts in 0.015 m²)"
+value = 133.0
+units = "m^-2"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab" }
+location = "Supplementary Information, Expanded Modeling Description"
+verified = true
+notes = "2/0.015 ≈ 133. The code (SolveSEImodel6.m) starts the cohabitation model with N0 = 133 and 0.5·N0 introduced infected newts."
+
+[[parameter]]
+symbol = "cohabitation"
+quantity = "cohabitation time modelled (χ_[0,10] window)"
+value = 10.0
+units = "min"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab" }
+location = "Methods, Epidemiological model; Supplementary Information"
+verified = true
+notes = "The code fixes the window at 10 min (par.cohab = 10/(60*24) days) for the 30-min treatments too."
+
+[[parameter]]
+set = "simple"
+symbol = "c"
+quantity = "asymptotic contact rate of the Holling type II function f(N) = cN/(K+N), no plants"
+value = 2153.29
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 21.0, setting = "lab, 1-m² pools without plants (Experiment 1) plus the Experiment 2 point at 133 m^-2" }
+location = "Supplementary Information, Table S1 (C, No Plants)"
+verified = true
+notes = "Contacts per newt per day (the code multiplies the hourly fit by 24); the paper's text says per hour. Units string: contacts newt^-1 day^-1."
+
+[[parameter]]
+set = "simple"
+symbol = "K"
+quantity = "half-saturation density of the contact function, no plants"
+value = 79.55
+units = "m^-2"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 21.0, setting = "lab, 1-m² pools without plants" }
+location = "Supplementary Information, Table S1 (K, No Plants)"
+verified = true
+notes = "Newts per m²."
+
+[[parameter]]
+set = "complex"
+symbol = "c"
+quantity = "asymptotic contact rate of the Holling type II function, plants in"
+value = 587.31
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 21.0, setting = "lab, 1-m² pools with 9 artificial plants" }
+location = "Supplementary Information, Table S1 (C, Plants In)"
+verified = true
+notes = "Contacts per newt per day. MasterRun.m keeps an older pair (c = 9144.5, K = 2.1521) in a comment."
+
+[[parameter]]
+set = "complex"
+symbol = "K"
+quantity = "half-saturation density of the contact function, plants in"
+value = 52.78
+units = "m^-2"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 21.0, setting = "lab, 1-m² pools with 9 artificial plants" }
+location = "Supplementary Information, Table S1 (K, Plants In)"
+verified = true
+notes = "Newts per m²."
+
+[[parameter]]
+set = "simple_day12_10min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 12, 10-min cohabitation, no plants"
+value = 0.95
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day12, 10min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.04."
+
+[[parameter]]
+set = "simple_day12_10min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 12, 10-min cohabitation, no plants"
+value = 0.11
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day12, 10min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.04."
+
+[[parameter]]
+set = "simple_day12_30min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 12, 30-min cohabitation, no plants"
+value = 0.98
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day12, 30min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.02."
+
+[[parameter]]
+set = "simple_day12_30min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 12, 30-min cohabitation, no plants"
+value = 0.09
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day12, 30min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.02."
+
+[[parameter]]
+set = "simple_day18_10min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 18, 10-min cohabitation, no plants"
+value = 0.98
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day18, 10min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.11."
+
+[[parameter]]
+set = "simple_day18_10min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 18, 10-min cohabitation, no plants"
+value = 0.11
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day18, 10min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.11."
+
+[[parameter]]
+set = "simple_day18_30min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 18, 30-min cohabitation, no plants"
+value = 0.98
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day18, 30min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.03."
+
+[[parameter]]
+set = "simple_day18_30min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 18, 30-min cohabitation, no plants"
+value = 0.13
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day18, 30min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.03."
+
+[[parameter]]
+set = "simple_day24_10min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 24, 10-min cohabitation, no plants"
+value = 0.98
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day24, 10min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.07."
+
+[[parameter]]
+set = "simple_day24_10min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 24, 10-min cohabitation, no plants"
+value = 0.15
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day24, 10min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.07."
+
+[[parameter]]
+set = "simple_day24_30min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 24, 30-min cohabitation, no plants"
+value = 0.98
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day24, 30min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.07."
+
+[[parameter]]
+set = "simple_day24_30min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 24, 30-min cohabitation, no plants"
+value = 0.15
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from no plants" }
+location = "Supplementary Information, Table S1 (row Day24, 30min, No Plants)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.07."
+
+[[parameter]]
+set = "complex_day12_10min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 12, 10-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.98
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day12, 10min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.07."
+
+[[parameter]]
+set = "complex_day12_10min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 12, 10-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.23
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day12, 10min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.07."
+
+[[parameter]]
+set = "complex_day12_30min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 12, 30-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.98
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day12, 30min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.08."
+
+[[parameter]]
+set = "complex_day12_30min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 12, 30-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.16
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day12, 30min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.08."
+
+[[parameter]]
+set = "complex_day18_10min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 18, 10-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.93
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day18, 10min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.24."
+
+[[parameter]]
+set = "complex_day18_10min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 18, 10-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.16
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day18, 10min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.24."
+
+[[parameter]]
+set = "complex_day18_30min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 18, 30-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.98
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day18, 30min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.16."
+
+[[parameter]]
+set = "complex_day18_30min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 18, 30-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.21
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day18, 30min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.16."
+
+[[parameter]]
+set = "complex_day24_10min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 24, 10-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.98
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day24, 10min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.23."
+
+[[parameter]]
+set = "complex_day24_10min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 24, 10-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.24
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day24, 10min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.23."
+
+[[parameter]]
+set = "complex_day24_30min"
+symbol = "β"
+quantity = "probability of Bsal transmission given contact; disease state day 24, 30-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.98
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day24, 30min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:0.98; 0.98 is the upper end of the grid, so 0.98 is a boundary value. Table S1 SSR = 0.23."
+
+[[parameter]]
+set = "complex_day24_30min"
+symbol = "γ"
+quantity = "rate from exposed to infectious (two qPCR-positive swabs); disease state day 24, 30-min cohabitation, plants in (9 artificial plants per m2)"
+value = 0.24
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab cohabitation (Experiment 2); contact function from plants in (9 artificial plants per m2)" }
+location = "Supplementary Information, Table S1 (row Day24, 30min, Plants In)"
+verified = true
+notes = "Grid search over 0:0.01:2 day^-1. Table S1 SSR = 0.23."

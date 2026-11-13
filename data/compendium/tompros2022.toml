@@ -1,0 +1,286 @@
+# Tompros A, Dean AD, Fenton A, Wilber MQ, Carter ED, Gray MJ (2022) Frequency-dependent
+# transmission of Batrachochytrium salamandrivorans in eastern newts. Transbound Emerg Dis
+# 69:731-741. https://doi.org/10.1111/tbed.14043 (published online 2021).
+#
+# Every record was read on 2026-11-12 from the published article (lab/papers/tompros2022.pdf:
+# Table 2, sections 2.7, 3.2 and 3.4) and its appendix (tompros2022_si1.pdf, eqs 4-8).
+#
+# System: adult eastern newts (Notophthalmus viridescens) from Tennessee in twenty 1-m²
+# flow-through mesocosms at 14 °C, 2-32 newts per tank, initial prevalence 12.5-50%. Time
+# unit: days. S, I and N are NUMBERS of newts per tank, so φ is in day^-1. The paper states
+# that every κ "has unit time" because S, I and N are treated as dimensionless; with counts
+# made explicit, κ₀ is day·newt², κ₁ (and κ_S, κ_I) day·newt and κ₂ day in the quadratic
+# form (for structural saturation κ₂ multiplies S·I and is in day).
+#
+# Named sets hold the maximum likelihood estimates of Table 2 for each candidate function:
+# "frequency" (the selected model; also the base β), "quadratic", "power", "structural",
+# "prevalence", "prevalence_power", "prevalence_quadratic". Density dependence "failed to
+# converge" in the paper and has no estimate. A value of 1e-6 is the optimiser's lower
+# bound, which the paper says means zero.
+#
+# R₀ = β/(μ + σ) = 4.9 (section 3.4) is an output, recorded in data/validation/targets.toml.
+
+source = { ref = "tompros2022", doi = "10.1111/tbed.14043", review_ref = 42 }
+
+[[parameter]]
+symbol = "β"
+quantity = "frequency-dependent transmission rate (α_{S,N} = β), the best-supported model"
+value = 0.230
+units = "day^-1"
+uncertainty = { kind = "ci95", lo = 0.181, hi = 0.293, as_printed = "95% of the profile area in β ∈ [0.181, 0.293]" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "1-m² flow-through mesocosms, 2-32 newts" }
+location = "Table 2 (frequency-dependent); section 3.2; Fig. 3"
+verified = true
+notes = "Fitted to qPCR status on days 0, 2 and 5. The interval is the central 95% of the normalised likelihood (a flat-prior credible interval), not a likelihood-ratio interval. NLL 63.2, AIC 128.3."
+
+[[parameter]]
+symbol = "μ"
+quantity = "disease-induced mortality rate of infected newts used for R₀"
+value = 0.0223
+units = "day^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab (Malagon et al. 2020)" }
+location = "Section 2.7"
+verified = true
+notes = "Taken from Malagon et al. (2020), whose SI derives it as −ln(0.8)/10; see data/compendium/malagon2020.toml."
+
+[[parameter]]
+symbol = "recovery_time"
+quantity = "mean time for an infected newt that does not die to recover (σ = 1/40)"
+value = 40.0
+units = "day"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab" }
+location = "Section 2.7 (D. Malagon, pers. comm.)"
+verified = true
+notes = "σ = 1/40 = 0.025 day^-1. Not measured in this study."
+
+[[parameter]]
+set = "frequency"
+symbol = "β"
+quantity = "frequency-dependent: φ = β S I / N"
+value = 0.230
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 1"
+verified = true
+notes = "NLL 63.2, AIC 128.3."
+
+[[parameter]]
+set = "quadratic"
+symbol = "κ₀"
+quantity = "quadratic saturation: φ = S I / (κ₀ + κ₁ N + κ₂ N²)"
+value = 0.026
+units = "day"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 2; Fig. 4 (κ₀ ∈ [0, 34.2])"
+verified = true
+notes = "NLL 62.2, AIC 130.3. Units with counts explicit: day newt^2."
+
+[[parameter]]
+set = "quadratic"
+symbol = "κ₁"
+quantity = "quadratic saturation: coefficient of N"
+value = 2.79
+units = "day"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 2; Fig. 4 (κ₁ ∈ [0, 4.59])"
+verified = true
+notes = "Units with counts explicit: day newt."
+
+[[parameter]]
+set = "quadratic"
+symbol = "κ₂"
+quantity = "quadratic saturation: coefficient of N²"
+value = 0.085
+units = "day"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 2; Fig. 4 (κ₂ ∈ [0, 0.238])"
+verified = true
+
+[[parameter]]
+set = "power"
+symbol = "β"
+quantity = "power law: φ = β Sᵃ Iᵇ"
+value = 0.176
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 3"
+verified = true
+notes = "NLL 63.2, AIC 132.4."
+
+[[parameter]]
+set = "power"
+symbol = "a"
+quantity = "power law: exponent of S"
+value = 0.362
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 3"
+verified = true
+
+[[parameter]]
+set = "power"
+symbol = "b"
+quantity = "power law: exponent of I"
+value = 0.382
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 3"
+verified = true
+
+[[parameter]]
+set = "structural"
+symbol = "κ₀"
+quantity = "structural saturation: φ = S I / (κ₀ + κ_S S + κ_I I + κ₂ S I)"
+value = 1e-6
+units = "day"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 4"
+verified = true
+notes = "At the optimiser's lower bound (zero). NLL 62.5, AIC 132.9."
+
+[[parameter]]
+set = "structural"
+symbol = "κ_S"
+quantity = "structural saturation: coefficient of S"
+value = 2.55
+units = "day"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 4"
+verified = true
+
+[[parameter]]
+set = "structural"
+symbol = "κ_I"
+quantity = "structural saturation: coefficient of I"
+value = 3.36
+units = "day"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 4"
+verified = true
+
+[[parameter]]
+set = "structural"
+symbol = "κ₂"
+quantity = "structural saturation: coefficient of S I"
+value = 0.366
+units = "day"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 4"
+verified = true
+
+[[parameter]]
+set = "prevalence"
+symbol = "β"
+quantity = "simple prevalence: φ = β x y, x = S/N, y = I/N"
+value = 3.39
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 5"
+verified = true
+notes = "NLL 68.7, AIC 139.3."
+
+[[parameter]]
+set = "prevalence_power"
+symbol = "β"
+quantity = "power law in prevalence: φ = β xᵃ yᵇ"
+value = 4.29
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 6"
+verified = true
+notes = "NLL 68.4, AIC 142.8."
+
+[[parameter]]
+set = "prevalence_power"
+symbol = "a"
+quantity = "power law in prevalence: exponent of x"
+value = 1.27
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 6"
+verified = true
+
+[[parameter]]
+set = "prevalence_power"
+symbol = "b"
+quantity = "power law in prevalence: exponent of y"
+value = 1.04
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 6"
+verified = true
+
+[[parameter]]
+set = "prevalence_quadratic"
+symbol = "κ₀"
+quantity = "quadratic saturation in prevalence: φ = x y / (κ₀ + κ₁ x + κ₂ x²)"
+value = 0.295
+units = "day"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 7"
+verified = true
+notes = "1/κ₀ = 3.39, the simple-prevalence β. NLL 68.7, AIC 143.3."
+
+[[parameter]]
+set = "prevalence_quadratic"
+symbol = "κ₁"
+quantity = "quadratic saturation in prevalence: coefficient of x"
+value = 1e-6
+units = "day"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 7"
+verified = true
+notes = "At the lower bound (zero)."
+
+[[parameter]]
+set = "prevalence_quadratic"
+symbol = "κ₂"
+quantity = "quadratic saturation in prevalence: coefficient of x²"
+value = 1e-6
+units = "day"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "mesocosm" }
+location = "Table 2, row 7"
+verified = true
+notes = "At the lower bound (zero)."

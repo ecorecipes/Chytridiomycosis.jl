@@ -25,7 +25,9 @@ The `SciMLBase.ODEProblem` that `solve(prob)` integrates, for the problems that 
 single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
 [`LoadTippingProblem`](@ref), [`BsalLarvalProblem`](@ref),
 [`MultiHostPoolProblem`](@ref) (with its inoculation callback),
-[`ZoosporePersistenceProblem`](@ref) and [`RefugiaODEProblem`](@ref). Use it to solve with
+[`ZoosporePersistenceProblem`](@ref), [`RefugiaODEProblem`](@ref),
+[`TransmissionSLIProblem`](@ref), [`SusceptibleChainProblem`](@ref) and
+[`CohabitationProblem`](@ref). Use it to solve with
 other options or to pass the model to other SciML tools.
 """
 function to_ode_problem end
@@ -72,6 +74,11 @@ include("novel/swab_edna.jl")
 using Distributions: median, quantile
 include("models/miller2025.jl")
 include("fitting/miller2025_abc.jl")
+
+# Bsal transmission functions: Malagon et al. 2020 and Tompros et al. 2022
+include("models/bsal_transmission.jl")
+include("fitting/malagon2020.jl")
+include("fitting/tompros2022.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -133,5 +140,18 @@ export RefugiaParameters, RefugiaCTMCProblem, RefugiaODEProblem, transmissibilit
        refugia_initial_state, refugia_rates, refugia_stoichiometry, refugia_observation_weeks,
        RefugiaMesocosmData, miller2025_path, load_miller2025, loss_rate, RefugiaPrior,
        refugia_distance, refugia_abc, refugia_abc_summary
+
+# Bsal transmission functions (Malagon et al. 2020; Tompros et al. 2022)
+export TransmissionFunction, DensityDependent, FrequencyDependent, PowerLaw,
+       QuadraticSaturation, StructuralSaturation, PrevalenceDependent, PrevalencePowerLaw,
+       PrevalenceSaturation, HollingContact, infection_rate, force_of_infection,
+       transmission_coefficient, TransmissionSLIProblem, SusceptibleChainProblem,
+       susceptible_distribution, expected_susceptibles, MalagonParameters, contact_rate,
+       CohabitationProblem, cohabitation_curve, final_size_reproduction_number,
+       TomprosParameters, malagon2020_path, load_malagon2020, contact_means, contact_anova,
+       fit_contact_function, fit_cohabitation, malagon_table_s1, tompros2022_path,
+       TomprosTank, load_tompros2022, load_tompros_swabs, clean_infection_series,
+       tompros_status, tompros_counts, TomprosModel, transmission_function,
+       tompros_model_selection, likelihood_interval, tompros_negloglik
 
 end # module Chytridiomycosis
