@@ -103,7 +103,7 @@ instantaneous_reproduction_number
 ## Seasonal coefficients
 
 ```@docs
-contact_rate
+contact_rate(::BozzutoParameters, ::Any)
 contact_scaling
 transmission_probability
 bsal_mortality

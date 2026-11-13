@@ -485,22 +485,6 @@ notes = "SD ratios in the run with 10^6 draws: αβ_sh 0.08, α 0.64, β_sh 0.98
 # --- Pending: models not yet implemented (wiki R5–R10) ------------------------------------
 
 [[target]]
-id = "tompros2022_beta_R0"
-model = "bsal-transmission-functions"
-source = { ref = "tompros2022", location = "" }
-quantity = "β = 0.230 day⁻¹ (frequency-dependent); R₀ = 4.9 (review values, unverified)"
-status = "pending"
-notes = "Wiki target R6."
-
-[[target]]
-id = "malagon2020_R0"
-model = "bsal-transmission-functions"
-source = { ref = "malagon2020", location = "" }
-quantity = "R₀ 1.9 (complex habitat) and 3.2 (simple habitat) (review values, unverified)"
-status = "pending"
-notes = "Wiki target R7."
-
-[[target]]
 id = "canessa2018_R0"
 model = "bsal-canessa2018-ipm-decision"
 source = { ref = "canessa2018", location = "" }
@@ -1064,3 +1048,313 @@ end)
 tolerance = { lower = 1.0, upper = 10.0 }
 status = "qualitative"
 regression = { value = 1.581, atol = 2e-3 }
+# --- Malagon et al. 2020 Sci Rep 10:5584 and Tompros et al. 2022 Transbound Emerg Dis 69:731
+# (wiki R6, R7; bsal-transmission-functions). Checked against the published articles,
+# Malagon's Supplementary Information (Table S1) and Tompros's appendix. Refits use the
+# authors' deposits: Malagon Supplementary File 2 (data/malagon2020) and the Tompros TRACE
+# deposit doi:10.7290/xw8yy2RBeu (data/tompros2022).
+
+[[target]]
+id = "malagon2020_contact_c_simple"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "Supplementary Table S1" }
+quantity = "Holling contact asymptote c, no plants (contacts newt⁻¹ day⁻¹)"
+published = 2153.29
+call = "_malagon_row(:simple, 12, 10).c"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = """
+Least squares on the code's inputs (back-transformed Experiment 1 means at 2, 4, 8 newts plus
+7466 contacts h⁻¹ at 133 m⁻²), times 24. The text calls f a rate per hour."""
+
+[[target]]
+id = "malagon2020_contact_K_simple"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "Supplementary Table S1" }
+quantity = "Holling half-saturation density K, no plants (newts m⁻²)"
+published = 79.55
+call = "_malagon_row(:simple, 12, 10).K"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "Ours 79.548."
+
+[[target]]
+id = "malagon2020_contact_c_complex"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "Supplementary Table S1" }
+quantity = "Holling contact asymptote c, plants (contacts newt⁻¹ day⁻¹)"
+published = 587.31
+call = "_malagon_row(:complex, 12, 10).c"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "K = 52.78 is reproduced too (test/bsal_transmission.jl)."
+
+[[target]]
+id = "malagon2020_table_s1_rows"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "Supplementary Table S1" }
+quantity = "rows of Table S1 (of 12) whose grid estimates β and γ are both reproduced"
+published = 12
+call = """
+let recs = parameter_records(:malagon2020)
+    v(sym, set) = only(filter(r -> r.symbol === sym && r.set == set, recs)).value
+    count(r -> (s = "$(r.habitat)_day$(r.disease_state)_$(r.cohabitation)min";
+        r.β == v(:β, s) && r.γ == v(:γ, s)), _malagon_reference_table())
+end
+"""
+status = "discrepant"
+regression = { value = 11 }
+notes = """
+All 12 γ and all 12 SSR values match. β matches in 11 rows. In the row Plants In, day 18,
+10 min the table prints β = 0.93, but the sum of squares falls monotonically to the grid edge
+0.98, where it equals the printed SSR (0.24); the best SSR at β = 0.93 is 0.26. Probably a
+typo for 0.98."""
+
+[[target]]
+id = "malagon2020_anova_density"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "Results, para. 1" }
+quantity = "F statistic of the density effect on contacts without plants (F₂,₈₁)"
+published = 199.3
+call = "contact_anova().density_simple.F"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "One-way ANOVA of log(x + 1) pool-day means. With plants: 59.8 (reproduced). Plants at 8 newts: F₁,₅₈ = 80.3; at 4 newts: F₁,₅₂ = 4.89 (both reproduced)."
+
+[[target]]
+id = "malagon2020_per_capita_ratio"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "Results, para. 1; Discussion" }
+quantity = "per capita contacts at 8 vs 2 newts m⁻², no plants (paper: 5–15×)"
+published = "5–15×"
+call = """
+let cm = contact_means()
+    m(h, n) = only(filter(r -> r.habitat === h && r.density == n, cm)).mean
+    (m(:simple, 8) / 8) / (m(:simple, 2) / 2)
+end
+"""
+tolerance = { lower = 5.0, upper = 15.0 }
+status = "discrepant"
+regression = { value = 4.71, atol = 0.01 }
+notes = """
+Per capita ratios of the back-transformed means are 4.7 (no plants) and 2.1 (plants). The
+ratios of TOTAL contacts are 18.8 and 8.3 (arithmetic means: 17.2 and 7.1), so "5–15×" fits
+neither reading exactly."""
+
+[[target]]
+id = "malagon2020_fig6_prevalence_simple"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "Results; Fig. 6A" }
+quantity = "cumulative proportion infectious after one month, no plants (paper: >95%)"
+published = ">0.95"
+call = "cohabitation_curve(CohabitationProblem(MalagonParameters(:malagon2020)), 30.0).infectious"
+tolerance = { lower = 0.95, upper = 1.0 }
+status = "qualitative"
+notes = """
+0.952 at day 30. The asymptote is 0.988. Fig. 6 is the Experiment 2 cohabitation (66.5
+infected with 66.5 susceptible newts for 10 min at 133 m⁻²; SolveSEImodel6.m), not a
+population after one infected newt is introduced, as the caption says."""
+
+[[target]]
+id = "malagon2020_fig6_mortality_simple"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "Results; Fig. 6A" }
+quantity = "cumulative mortality at 90 days, no plants (paper: >80% in three months)"
+published = ">0.80"
+call = "cohabitation_curve(CohabitationProblem(MalagonParameters(:malagon2020)), 90.0).dead"
+tolerance = { lower = 0.8, upper = 1.0 }
+status = "qualitative"
+notes = "0.822 with the published d = 0.0223 day⁻¹; 0.835 with the code's d = 1/42.75."
+
+[[target]]
+id = "malagon2020_fig6_complex"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "Results; Fig. 6B" }
+quantity = "cumulative mortality at 96 days, plants (paper: <70%; prevalence <80%)"
+published = "<0.70"
+call = "cohabitation_curve(CohabitationProblem(MalagonParameters(:malagon2020; habitat = :complex)), 96.0).dead"
+tolerance = { lower = 0.0, upper = 0.7 }
+status = "qualitative"
+notes = "0.662; cumulative proportion infectious 0.761 (<0.8)."
+
+[[target]]
+id = "malagon2020_R0_complex"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "Results; Methods (Anderson & May eq. 6.21)" }
+quantity = "R₀, complex habitat, from the final proportion infected"
+published = 1.9
+call = """
+final_size_reproduction_number(cohabitation_curve(CohabitationProblem(
+    MalagonParameters(:malagon2020; habitat = :complex)), 96.0).infectious)
+"""
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = """
+R₀ = −ln(1 − z)/z with z = 0.761 (paper reads 0.77): 1.88. This "R₀" is a transform of the
+cumulative proportion infected in a 10-minute cohabitation, not the R₀ of an epidemic: with
+the fitted rates and d as the removal rate, β c N/(K + N)/d is about 5.7 × 10⁴ (derived
+here, not published)."""
+
+[[target]]
+id = "malagon2020_R0_simple"
+model = "bsal-transmission-functions"
+source = { ref = "malagon2020", location = "Results; Methods" }
+quantity = "R₀, simple habitat, from the asymptotic proportion infected"
+published = 3.2
+call = """
+final_size_reproduction_number(cohabitation_curve(CohabitationProblem(
+    MalagonParameters(:malagon2020)), 96.0).infectious)
+"""
+tolerance = { digits = 1 }
+status = "discrepant"
+regression = { value = 4.495, atol = 0.001 }
+notes = """
+The paper uses I_simple = 0.95 "as the asymptotic level". The model's asymptote (day 96) is 0.988,
+which gives 4.50. 0.95 is the value at about one month (0.952 at day 30 gives 3.19 → 3.2), so
+3.2 is reproduced only if the curve is read at one month. The formula itself is reproduced:
+final_size_reproduction_number(0.95) = 3.15."""
+
+[[target]]
+id = "tompros2022_beta"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "Table 2; section 3.2" }
+quantity = "frequency-dependent transmission rate β (day⁻¹)"
+published = 0.230
+call = "_tompros_reference_fit(:frequency).estimates.β"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "Refit 0.2302, NLL 63.154 (printed 63.2), AIC 128.31 (128.3)."
+
+[[target]]
+id = "tompros2022_beta_ci_lower"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "section 3.2; Fig. 3" }
+quantity = "lower end of the 95% interval of β (day⁻¹)"
+published = 0.181
+call = "likelihood_interval(TomprosModel(:frequency), range(0.0001, 0.5; length = 301)).lower"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "Central 95% of the normalised likelihood on the authors' grid (a flat-prior credible interval). Upper end 0.2926 (printed 0.293) is tested in test/bsal_transmission.jl."
+
+[[target]]
+id = "tompros2022_R0"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "sections 2.7 and 3.4" }
+quantity = "R₀ = β/(μ + σ)"
+published = 4.9
+call = "basic_reproduction_number(TomprosParameters(:tompros2022))"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "0.230/(0.0223 + 0.025) = 4.86. μ is Malagon's death rate; σ = 1/40 day⁻¹ is a personal communication."
+
+[[target]]
+id = "tompros2022_best_model"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "Table 2" }
+quantity = "transmission function with the lowest AIC"
+published = "frequency"
+call = "string(first(sort([_tompros_reference_fit(f) for f in keys(TOMPROS_FORMS)]; by = f -> f.aic)).model.form)"
+status = "reproduced"
+notes = "The refit ranks all eight in the order of Table 2, with density dependence last."
+
+[[target]]
+id = "tompros2022_aic_quadratic"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "Table 2" }
+quantity = "AIC of quadratic saturation (second best)"
+published = 130.3
+call = "_tompros_reference_fit(:quadratic).aic"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = """
+Ours 130.32. All seven printed AICs are reproduced to one decimal (test/bsal_transmission.jl):
+128.3, 130.3, 132.4, 132.9, 139.3, 142.8, 143.3."""
+
+[[target]]
+id = "tompros2022_aic_structural"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "Table 2" }
+quantity = "AIC of structural saturation"
+published = 132.9
+call = "_tompros_reference_fit(:structural).aic"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = """
+Ours 132.87, NLL 62.433. The printed NLL is 62.5, which with k = 4 would give AIC 133.0;
+ours rounds to 62.4. A slightly better optimum here."""
+
+[[target]]
+id = "tompros2022_kappa0_quadratic"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "Table 2; Fig. 4" }
+quantity = "κ₀ of quadratic saturation"
+published = 0.026
+call = "_tompros_reference_fit(:quadratic).estimates.κ₀"
+tolerance = { digits = 3 }
+status = "discrepant"
+regression = { value = 0.0227, atol = 0.0005 }
+notes = """
+κ₀ is barely identified (Fig. 4: 95% of the profile area in [0, 34.2]). κ₁ = 2.79 and
+κ₂ = 0.085 are reproduced, and the NLL agrees (62.162)."""
+
+[[target]]
+id = "tompros2022_density_dependent"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "Table 2; Discussion" }
+quantity = "ΔAIC of density-dependent transmission (paper: failed to converge)"
+published = "FTC"
+call = "_tompros_reference_fit(:density).aic - _tompros_reference_fit(:frequency).aic"
+tolerance = { lower = 10.0, upper = 1.0e9 }
+status = "qualitative"
+notes = """
+The paper's optim failed to converge. Here density dependence has a finite MLE
+(β = 0.0117 newt⁻¹ day⁻¹, NLL 77.41, AIC 156.83), 28.5 AIC units worse than frequency
+dependence, which supports the paper's conclusion."""
+
+[[target]]
+id = "tompros2022_validation_aic"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "section 3.3" }
+quantity = "'AIC' of frequency dependence on days 5–8 in the 10 tanks without deaths"
+published = 65.9
+call = """
+2 * tompros_negloglik(:frequency, [parameter_set(:tompros2022).β];
+    data = load_tompros2022(; data = :validation)) + 2
+"""
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "Ours 65.884; quadratic saturation 70.617 (printed 70.6), with the Table 2 estimates."
+
+[[target]]
+id = "tompros2022_positive_by_day17"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "Abstract; section 3.1" }
+quantity = "proportion of susceptible newts qPCR-positive within 17 days"
+published = ">0.90"
+call = """
+let st = tompros_status()
+    sus = [s for (_, s) in st if !s.infected_start]
+    count(s -> any(s.positive[j] && s.days[j] <= 17 for j in eachindex(s.days)), sus) / length(sus)
+end
+"""
+tolerance = { lower = 0.9, upper = 1.0 }
+status = "qualitative"
+notes = "186/189 = 0.984 after the decision rules. All 290 newts are positive by day 59, as stated."
+
+[[target]]
+id = "tompros2022_mortality"
+model = "bsal-transmission-functions"
+source = { ref = "tompros2022", location = "section 3.1" }
+quantity = "total mortality by day 62"
+published = 0.45
+call = """
+let sus = [s for (_, s) in tompros_status() if !s.infected_start]
+    count(s -> s.died, sus) / length(sus)
+end
+"""
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.4286, atol = 0.0001 }
+notes = """
+The deposit gives 81/189 = 42.9% of the newts exposed by contact (also the survival file
+DataFile4) and 156/290 = 53.8% of all newts. Neither is 45%."""
