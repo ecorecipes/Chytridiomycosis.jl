@@ -25,7 +25,8 @@ The `SciMLBase.ODEProblem` that `solve(prob)` integrates, for the problems that 
 single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
 [`LoadTippingProblem`](@ref), [`BsalLarvalProblem`](@ref),
 [`MultiHostPoolProblem`](@ref) (with its inoculation callback),
-[`ZoosporePersistenceProblem`](@ref) and [`RefugiaODEProblem`](@ref). Use it to solve with
+[`ZoosporePersistenceProblem`](@ref), [`RefugiaODEProblem`](@ref) and
+[`SeasonalBsalProblem`](@ref) (with its inflow switch times as `tstops`). Use it to solve with
 other options or to pass the model to other SciML tools.
 """
 function to_ode_problem end
@@ -72,6 +73,9 @@ include("novel/swab_edna.jl")
 using Distributions: median, quantile
 include("models/miller2025.jl")
 include("fitting/miller2025_abc.jl")
+
+# Bozzuto & Canessa 2019 seasonal Bsal model with a Floquet R0
+include("models/bozzuto2019.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -133,5 +137,12 @@ export RefugiaParameters, RefugiaCTMCProblem, RefugiaODEProblem, transmissibilit
        refugia_initial_state, refugia_rates, refugia_stoichiometry, refugia_observation_weeks,
        RefugiaMesocosmData, miller2025_path, load_miller2025, loss_rate, RefugiaPrior,
        refugia_distance, refugia_abc, refugia_abc_summary
+
+# Bozzuto & Canessa 2019 seasonal Bsal model
+export BozzutoParameters, SeasonalBsalProblem, contact_scaling, contact_rate,
+       transmission_probability, bsal_mortality, larval_inflow, disease_free_susceptibles,
+       instantaneous_reproduction_number, averaged_reproduction_number, seasonal_factor,
+       floquet_exponent, floquet_reproduction_number, target_proportion, floquet_elasticities,
+       floquet_multipliers, periodic_reproduction_number
 
 end # module Chytridiomycosis
