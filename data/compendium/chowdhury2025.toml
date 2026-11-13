@@ -1,0 +1,763 @@
+# Chowdhury MM, Gray MJ, Carter ED, Woodhams DC, McCartney JA, Surles JG, Nelms KM, Gan H,
+# Peace A (2025) Fungal pathogen transmission dynamics in North American salamanders:
+# mathematical insights for disease management. Ecol Model 501:111028.
+# https://doi.org/10.1016/j.ecolmodel.2025.111028
+#
+# Read on 2026-11-13 from the published PDF (lab/papers/chowdhury2025.pdf: §§2-6, Table 2,
+# Table 3, Figs 1, 4, 5, 7, 9) and the online supplement (Elsevier mmc1.pdf, Appendices A-H,
+# saved as lab/papers/chowdhury2025_si/mmc1.pdf). No code or data were deposited ("Data will
+# be made available on request").
+#
+# System: eastern newt (Notophthalmus viridescens) and Bsal; larvae, efts (terrestrial) and
+# adults (aquatic). Time unit: days. Host densities per m². ID50 κ_j is in zoospores per m² of
+# soil (assumed) and κ_a in zoospores per mL of water (Gray et al. 2023), and the paper compares
+# the zoospore pools with them directly; see the units note in src/models/chowdhury2025.jl.
+#
+# Sets: the base set holds values shared by both temperatures and the simulated densities.
+# "6C" and "14C" hold Table 2's temperature-specific values. "<T>C_table3" substitutes the
+# values that reproduce Table 3 (derived here; see notes). "<T>C_as_printed" substitutes text
+# values that contradict Table 2. ChowdhuryParameters(:chowdhury2025; temperature, variant,
+# as_printed) layers them in that order.
+#
+# Durations are stored as durations (larval_period, eft_period, adult_lifespan); the model
+# uses their reciprocals, as Table 2 does (η_j = 1/105, η_a = 1/(3 × 365), δ_a = 1/(10.5 × 365)).
+
+source = { ref = "chowdhury2025", doi = "10.1016/j.ecolmodel.2025.111028", review_ref = 43 }
+
+# --- Life cycle (both temperatures) -------------------------------------------------------------
+
+[[parameter]]
+symbol = "λ"
+quantity = "birth rate of larvae per adult"
+value = 0.82
+units = "eggs adult^-1 day^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "adult", setting = "literature" }
+location = "Table 2; Appendix C (Birth rate)"
+verified = true
+notes = "From 200-400 eggs per female per breeding season (Petranka 1998): 300/365 = 0.82. Applied to all adults (A), not females. With this value the simulated efts grow several-fold within months, unlike Figs 4 and E.1 (see the validation targets)."
+
+[[parameter]]
+symbol = "α"
+quantity = "fraction of larvae that survive metamorphosis to become efts"
+value = 0.02
+units = "1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "larva", setting = "literature" }
+location = "Table 2; Appendix C"
+verified = true
+notes = "Petranka (1998). Printed as 2%."
+
+[[parameter]]
+symbol = "larval_period"
+quantity = "duration of the larval stage, 1/η_j"
+value = 105.0
+units = "day"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "larva", setting = "literature" }
+location = "Table 2 (η_j = 1/105 day^-1); Appendix C"
+verified = true
+notes = "Larvae metamorphose after 2-5 months; averaged to 3.5 months = 105 days."
+
+[[parameter]]
+symbol = "eft_period"
+quantity = "duration of the eft stage, 1/η_a"
+value = 3.0
+units = "yr"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "eft", setting = "literature" }
+location = "Table 2 (η_a = 1/(3 × 365) day^-1)"
+verified = true
+notes = "Appendix C says 2-4 years averaged to 3.5 years, η_a = 1/(3.5 × 365) (set <T>C_as_printed). Table 3 is reproduced only with Table 2's 3 years (R_j at 14 °C)."
+
+[[parameter]]
+symbol = "adult_lifespan"
+quantity = "adult life expectancy, 1/δ_a"
+value = 10.5
+units = "yr"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "adult", setting = "literature" }
+location = "Table 2 (δ_a = 1/(10.5 × 365) day^-1); Appendix C"
+verified = true
+notes = "Average of a 9-12 year lifespan (Smith 2018; Postma 2009)."
+
+[[parameter]]
+symbol = "δ_j"
+quantity = "natural death rate of efts"
+value = 0.0001
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "eft" }
+location = "Table 2; Appendix C"
+verified = true
+notes = "Assumed very small because efts are toxic and rarely eaten."
+
+# --- Disease, both temperatures -----------------------------------------------------------------
+
+[[parameter]]
+symbol = "κ_j"
+quantity = "eft ID50 (zoospores in soil at which half of efts become infected)"
+value = 10000.0
+units = "zoospores m^-2"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 14.0, setting = "lab soil" }
+location = "Table 2; Appendix C (ID50); Appendix A, Table A.1"
+verified = true
+notes = "Assumed: the order of magnitude of the mean of the two soil doses of Appendix A (5e3 and 5e5 zoospores per gram of soil in 50-mL vials; 0/30 and 27/30 adults infected), with the 'conservative assumption' that the vial concentration over 24 h corresponds to the same number per m². The experiment used adult newts, not efts. Used at both temperatures."
+
+[[parameter]]
+symbol = "γ_j"
+quantity = "eft recovery rate"
+value = 0.0
+units = "day^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft" }
+location = "Table 2; Appendix C"
+verified = true
+notes = "No infected newt survived at 6 or 14 °C (Carter et al. 2021; Gray et al. 2023)."
+
+[[parameter]]
+symbol = "γ_a"
+quantity = "adult recovery rate"
+value = 0.0
+units = "day^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult" }
+location = "Table 2; Appendix C"
+verified = true
+
+[[parameter]]
+symbol = "ρ_j"
+quantity = "fraction of contacted spores that encyst on an eft"
+value = 0.75
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft" }
+location = "Table 2 (75%); Appendix C"
+verified = true
+notes = "Adopted from Islam et al. (2021), a modelling study; not measured here."
+
+[[parameter]]
+symbol = "ρ_a"
+quantity = "fraction of contacted spores that encyst on an adult"
+value = 0.75
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult" }
+location = "Table 2 (75%); Appendix C"
+verified = true
+notes = "Adopted from Islam et al. (2021)."
+
+[[parameter]]
+symbol = "b_j"
+quantity = "rate of eft contact with environmental spores"
+value = 0.05
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft" }
+location = "Table 2; Appendix C (Contact with spores)"
+verified = true
+notes = "'Best guess'. Table 2 calls it a probability, but in f_j = ρ b Z/(κ + Z) it is a per capita rate. §6.2 uses 0.005 for the R_j results (set <T>C_table3)."
+
+[[parameter]]
+symbol = "b_a"
+quantity = "rate of adult contact with environmental spores"
+value = 0.1
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult" }
+location = "Table 2; Appendix C"
+verified = true
+notes = "'Best guess'; a rate in f_a although Table 2 calls it a probability. Table 3 (R_a) is reproduced with this value."
+
+[[parameter]]
+symbol = "c_j"
+quantity = "per capita eft contact rate"
+value = 0.571
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 14.0, setting = "lab, 25-m² terrestrial enclosures, 12 efts, no cover objects" }
+location = "§2.2; Table 1; Table 2"
+verified = true
+notes = "8 contacts in 14 days at 12 efts per 25 m² (0.48 m^-2), 'worst case', = 8/14. That is contacts per enclosure, not per eft; per capita it would be 8/(14 × 12) = 0.0476, which is what Table 3 needs (set <T>C_table3). The simulations (eft epidemic peaking at ~70 days at 14 °C) use 0.571. Measured at 14 °C and used at 6 °C too."
+
+# --- Simulated densities (§5.1; Figs 4, 5, 7) ---------------------------------------------------
+
+[[parameter]]
+symbol = "adults_1"
+quantity = "initial adult density and carrying capacity K, scenario 1"
+value = 2.0
+units = "m^-2"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult" }
+location = "§5.1; Table 2 (K = 2, 4, 8, 16 per m²); Appendix C"
+verified = true
+notes = "The densities of the aquatic contact experiment (§2.1; Malagon et al. 2020)."
+
+[[parameter]]
+symbol = "adults_2"
+quantity = "initial adult density and carrying capacity K, scenario 2"
+value = 4.0
+units = "m^-2"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult" }
+location = "§5.1; Table 2"
+verified = true
+
+[[parameter]]
+symbol = "adults_3"
+quantity = "initial adult density and carrying capacity K, scenario 3"
+value = 8.0
+units = "m^-2"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult" }
+location = "§5.1; Table 2"
+verified = true
+
+[[parameter]]
+symbol = "adults_4"
+quantity = "initial adult density and carrying capacity K, scenario 4"
+value = 16.0
+units = "m^-2"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult" }
+location = "§5.1; Table 2"
+verified = true
+
+[[parameter]]
+symbol = "efts_1"
+quantity = "initial eft density, scenario 1"
+value = 0.1
+units = "m^-2"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft" }
+location = "§5.1; Appendix C (Maximum density)"
+verified = true
+notes = "Paired with 2 adults per m² in the figure legends. The eft panels of Fig. 4 start at 80% of the legend value (0.08 … 0.64); unexplained."
+
+[[parameter]]
+symbol = "efts_2"
+quantity = "initial eft density, scenario 2"
+value = 0.2
+units = "m^-2"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft" }
+location = "§5.1; Appendix C"
+verified = true
+
+[[parameter]]
+symbol = "efts_3"
+quantity = "initial eft density, scenario 3"
+value = 0.4
+units = "m^-2"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft" }
+location = "§5.1; Appendix C"
+verified = true
+
+[[parameter]]
+symbol = "efts_4"
+quantity = "initial eft density, scenario 4"
+value = 0.8
+units = "m^-2"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft" }
+location = "§5.1; Appendix C"
+verified = true
+
+[[parameter]]
+symbol = "exposed_fraction"
+quantity = "fraction of each stage exposed at the start of a simulation"
+value = 0.01
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens" }
+location = "§5.1"
+verified = true
+notes = "'we initiated the outbreak by exposing 1% of the population'. Placed in E_j and E_a here; the paper does not say which class."
+
+# --- 6 °C (Table 2) ------------------------------------------------------------------------------
+
+[[parameter]]
+set = "6C"
+symbol = "σ_j"
+quantity = "rate at which exposed efts become infectious (1/latent period)"
+value = 0.1374
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 6.0, setting = "lab" }
+location = "Table 2 (Carter et al. 2021)"
+verified = true
+
+[[parameter]]
+set = "6C"
+symbol = "σ_a"
+quantity = "rate at which exposed adults become infectious (1/latent period)"
+value = 0.0742
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 6.0, setting = "lab" }
+location = "Table 2 (Carter et al. 2021)"
+verified = true
+
+[[parameter]]
+set = "6C"
+symbol = "κ_a"
+quantity = "adult ID50"
+value = 5443.0
+units = "zoospores mL^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 6.0, setting = "lab" }
+location = "Table 2 (Gray et al. 2023)"
+verified = true
+notes = "A dose-response value from Gray et al. (2023), not fitted in this paper. Matches the review's 5,443."
+
+[[parameter]]
+set = "6C"
+symbol = "μ_j"
+quantity = "Bsal-induced death rate of efts"
+value = 0.0233
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 6.0, setting = "lab" }
+location = "Table 2 (experiment of Carter et al. 2021); Appendix C"
+verified = true
+
+[[parameter]]
+set = "6C"
+symbol = "μ_a"
+quantity = "Bsal-induced death rate of adults"
+value = 0.0329
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 6.0, setting = "lab" }
+location = "Table 2 (experiment of Carter et al. 2021); Appendix C"
+verified = true
+notes = "Mean time to death 30 days. Malagon et al. (2020) use 0.0223 day^-1 at 14 °C."
+
+[[parameter]]
+set = "6C"
+symbol = "ξ_j"
+quantity = "decay rate of infectious spores in soil"
+value = 0.05
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 6.0, setting = "lab soil" }
+location = "Table 2 (1/20 day^-1 at 6 °C; Appendix A)"
+verified = true
+notes = "§2.3 says spores persist 25 days at 6 °C and 20 at 14 °C (set 6C_as_printed), the reverse of Table 2. The soil experiment (Appendix A) ran at 14 °C only."
+
+[[parameter]]
+set = "6C"
+symbol = "ξ_a"
+quantity = "decay rate of zoospores in water"
+value = 0.05
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 6.0, setting = "water" }
+location = "Table 2 (1/20); Appendix C (Spore degradation rate)"
+verified = true
+notes = "Assumed: zoospores survive 20 days in water at 6 °C and 25 at 14 °C, citing Stegen et al. (2017; 31 days). Spores persisting longer at the warmer temperature is as printed."
+
+[[parameter]]
+set = "6C"
+symbol = "ω_a"
+quantity = "zoospore shedding rate of an infectious adult"
+value = 67.91
+units = "zoospores host^-1 day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 6.0, setting = "lab, 300 mL housing water" }
+location = "Table 2 ('per adult'); Appendix B (Shedding rates); Appendix C"
+verified = true
+notes = "eDNA in housing water 24 h after a water change, converted at 10.9 ITS copies per zoospore and multiplied by the housing volume, averaged across treatments. Table 2 gives no time unit; per day from the 24-h sampling."
+
+[[parameter]]
+set = "6C"
+symbol = "ω_j"
+quantity = "zoospore shedding rate of an infectious eft"
+value = 67.91
+units = "zoospores host^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 6.0 }
+location = "Table 2 ('Assumed Same as Adult')"
+verified = true
+
+[[parameter]]
+set = "6C"
+symbol = "P_a"
+quantity = "probability of transmission per contact, adults"
+value = 0.19
+units = "1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 6.0, setting = "lab, 1-s contacts" }
+location = "Table 2; Appendix B; Appendix C"
+verified = true
+notes = "Averaged over contact days and contact types of the Appendix B experiment."
+
+[[parameter]]
+set = "6C"
+symbol = "P_j"
+quantity = "probability of transmission per contact, efts"
+value = 0.19
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 6.0 }
+location = "Table 2 ('Assumed Same as Adult')"
+verified = true
+
+[[parameter]]
+set = "6C"
+symbol = "c_a"
+quantity = "maximum adult contact rate of the Holling type II function c_a A/(χ_a + A)"
+value = 464.77
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 6.0, setting = "500-L aquatic mesocosms, 2-16 newts m^-2" }
+location = "Table 2; §2.1; eq. (1)"
+verified = true
+notes = "Contacts per day. The Fig. 1 (6 °C) curve does not pass through c_a = 464.77 with any χ_a: it reads ~30, 219 and 337 at densities 1, 10 and 20, i.e. c_a ≈ 730, χ_a ≈ 23.3 (set 6C_table3). Figs 4, 5 and 7 are reproduced with 464.77 and χ_a = 12."
+
+[[parameter]]
+set = "6C"
+symbol = "χ_a"
+quantity = "half-saturation adult density of the contact function"
+value = 12.0
+units = "m^-2"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 6.0, setting = "500-L aquatic mesocosms" }
+location = "Not printed. Derived from Fig. 7 (β_a at t = 0)"
+verified = false
+notes = "Fig. 7 (left) gives β_a(0) ≈ 50.5, 35.2, 21.7 and 12.2 for A = 16, 8, 4, 2; with P_a c_a = 0.19 × 464.77, χ_a = 12.0, 12.1, 12.3, 12.5 (the same digitisation at 14 °C overestimates χ_a by ~0.1). Reproduces the adult peaks of Figs 4 and 5."
+
+# --- 14 °C (Table 2) -----------------------------------------------------------------------------
+
+[[parameter]]
+set = "14C"
+symbol = "σ_j"
+quantity = "rate at which exposed efts become infectious (1/latent period)"
+value = 0.1391
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 14.0, setting = "lab" }
+location = "Table 2 (Carter et al. 2021)"
+verified = true
+
+[[parameter]]
+set = "14C"
+symbol = "σ_a"
+quantity = "rate at which exposed adults become infectious (1/latent period)"
+value = 0.1115
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab" }
+location = "Table 2 (Carter et al. 2021)"
+verified = true
+
+[[parameter]]
+set = "14C"
+symbol = "κ_a"
+quantity = "adult ID50"
+value = 2895.0
+units = "zoospores mL^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab" }
+location = "Table 2 (Gray et al. 2023)"
+verified = true
+notes = "Matches the review's 2,895."
+
+[[parameter]]
+set = "14C"
+symbol = "μ_j"
+quantity = "Bsal-induced death rate of efts"
+value = 0.0536
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 14.0, setting = "lab" }
+location = "Table 2 (experiment of Carter et al. 2021)"
+verified = true
+
+[[parameter]]
+set = "14C"
+symbol = "μ_a"
+quantity = "Bsal-induced death rate of adults"
+value = 0.0650
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab" }
+location = "Table 2 (experiment of Carter et al. 2021)"
+verified = true
+notes = "Mean time to death 15 days, against 45 days (0.0223 day^-1) in Malagon et al. (2020) and Tompros et al. (2022), also eastern newts at 14 °C."
+
+[[parameter]]
+set = "14C"
+symbol = "ξ_j"
+quantity = "decay rate of infectious spores in soil"
+value = 0.04
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 14.0, setting = "lab soil" }
+location = "Table 2 (1/25 day^-1 at 14 °C; Appendix A)"
+verified = true
+notes = "§2.3 says 20 days at 14 °C (set 14C_as_printed). Table 3's R_j at 14 °C needs 1/25."
+
+[[parameter]]
+set = "14C"
+symbol = "ξ_a"
+quantity = "decay rate of zoospores in water"
+value = 0.04
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "water" }
+location = "Table 2 (1/25); Appendix C"
+verified = true
+notes = "Assumed 25 days at 14 °C. Table 3's R_a at 14 °C needs 1/25."
+
+[[parameter]]
+set = "14C"
+symbol = "ω_a"
+quantity = "zoospore shedding rate of an infectious adult"
+value = 177.47
+units = "zoospores host^-1 day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab, 300 mL housing water" }
+location = "Table 2; Appendix B; Appendix C"
+verified = true
+notes = "The review's 177.5. Per day from the 24-h water sampling."
+
+[[parameter]]
+set = "14C"
+symbol = "ω_j"
+quantity = "zoospore shedding rate of an infectious eft"
+value = 177.47
+units = "zoospores host^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 14.0 }
+location = "Table 2 ('Assumed Same as Adult')"
+verified = true
+
+[[parameter]]
+set = "14C"
+symbol = "P_a"
+quantity = "probability of transmission per contact, adults"
+value = 0.34
+units = "1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "lab, 1-s contacts" }
+location = "Table 2; Appendix B"
+verified = true
+
+[[parameter]]
+set = "14C"
+symbol = "P_j"
+quantity = "probability of transmission per contact, efts"
+value = 0.34
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 14.0 }
+location = "Table 2 ('Assumed Same as Adult')"
+verified = true
+
+[[parameter]]
+set = "14C"
+symbol = "c_a"
+quantity = "maximum adult contact rate of the Holling type II function"
+value = 878.48
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "500-L aquatic mesocosms, 2-16 newts m^-2" }
+location = "Table 2; §2.1; Fig. 1 (right)"
+verified = true
+notes = "Consistent with the Fig. 1 curve (~127 at density 1, ~678 at 20) with χ_a ≈ 5.9. The curve is not a least-squares fit to the four plotted means (that gives c_a ≈ 1075, χ_a ≈ 5.8); presumably fitted to replicate data, which are not available."
+
+[[parameter]]
+set = "14C"
+symbol = "χ_a"
+quantity = "half-saturation adult density of the contact function"
+value = 5.9
+units = "m^-2"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 14.0, setting = "500-L aquatic mesocosms" }
+location = "Not printed. Derived from Table 3 (R_a), Fig. 7 and Fig. 1"
+verified = false
+notes = "Three independent readings agree: Table 3's R_a column at 14 °C fits χ_a = 5.88 exactly given all other Table 2 values; Fig. 7 (right) β_a(0) gives 5.96-6.08; the Fig. 1 curve gives 5.8-5.9."
+
+# --- Values that reproduce Table 3 (variant = :table3) ------------------------------------------
+
+[[parameter]]
+set = "6C_table3"
+symbol = "c_j"
+quantity = "per capita eft contact rate used in Table 3"
+value = 0.047619047619047616
+units = "day^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 14.0 }
+location = "Derived from Table 3 (R_j); §2.2"
+verified = false
+notes = "8/(14 × 12): the §2.2 count per eft. The intercept of R_j against K in Table 3 (0.37 at 6 °C, 0.30 at 14 °C) equals the direct term of eq. (5a) with this c_j (0.369, 0.294) and not with 0.571 (4.43, 3.53)."
+
+[[parameter]]
+set = "6C_table3"
+symbol = "b_j"
+quantity = "rate of eft contact with spores used for R_j"
+value = 0.005
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft" }
+location = "§6.2 ('we additionally assumed the probability of contacting an infectious zoospore was 0.005 in R_j simulations')"
+verified = true
+notes = "Reproduces the slope of R_j against K at 14 °C (0.481 against Table 3's 0.482). At 6 °C Table 3's slope (0.99) is three times the formula's 0.33; unresolved."
+
+[[parameter]]
+set = "6C_table3"
+symbol = "c_a"
+quantity = "maximum adult contact rate behind Table 3 and Fig. 9 at 6 °C"
+value = 729.2
+units = "day^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 6.0 }
+location = "Derived from Table 3 (R_a, 6 °C) and the Fig. 1 (left) curve"
+verified = false
+notes = "Fitting c_a and χ_a to Table 3's R_a at 6 °C (with b_a/ξ_a = 0.1 × 20) gives c_a = 1.569 × 464.77 = 729.2, χ_a = 23.28; the Fig. 1 curve read at densities 1, 10, 20 gives c_a ≈ 730, χ_a ≈ 23.4. Fig. 9 (R_a up to ~16.8 at c_a = 300, K = 16) also needs χ_a ≈ 23."
+
+[[parameter]]
+set = "6C_table3"
+symbol = "χ_a"
+quantity = "half-saturation density behind Table 3 and Fig. 9 at 6 °C"
+value = 23.28
+units = "m^-2"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "adult", temperature_C = 6.0 }
+location = "Derived from Table 3 (R_a, 6 °C) and Fig. 1 (left)"
+verified = false
+notes = "See c_a in this set."
+
+[[parameter]]
+set = "14C_table3"
+symbol = "c_j"
+quantity = "per capita eft contact rate used in Table 3"
+value = 0.047619047619047616
+units = "day^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 14.0 }
+location = "Derived from Table 3 (R_j); §2.2"
+verified = false
+notes = "8/(14 × 12); see the 6C_table3 record."
+
+[[parameter]]
+set = "14C_table3"
+symbol = "b_j"
+quantity = "rate of eft contact with spores used for R_j"
+value = 0.005
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft" }
+location = "§6.2"
+verified = true
+
+# --- Text values that contradict Table 2 (as_printed = true) ------------------------------------
+
+[[parameter]]
+set = "6C_as_printed"
+symbol = "ξ_j"
+quantity = "decay rate of infectious spores in soil, from the §2.3 persistence time"
+value = 0.04
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 6.0, setting = "lab soil" }
+location = "§2.3 ('persist ... an average of 25 days at 6 °C and 20 days at 14 °C')"
+verified = true
+notes = "1/25. Contradicts Table 2 (1/20 at 6 °C)."
+
+[[parameter]]
+set = "6C_as_printed"
+symbol = "eft_period"
+quantity = "duration of the eft stage, Appendix C"
+value = 3.5
+units = "yr"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "eft", setting = "literature" }
+location = "Appendix C ('ηa = 1/(3.5 × 365) per day')"
+verified = true
+notes = "Contradicts Table 2 (3 years)."
+
+[[parameter]]
+set = "14C_as_printed"
+symbol = "ξ_j"
+quantity = "decay rate of infectious spores in soil, from the §2.3 persistence time"
+value = 0.05
+units = "day^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 14.0, setting = "lab soil" }
+location = "§2.3"
+verified = true
+notes = "1/20. Contradicts Table 2 (1/25 at 14 °C)."
+
+[[parameter]]
+set = "14C_as_printed"
+symbol = "eft_period"
+quantity = "duration of the eft stage, Appendix C"
+value = 3.5
+units = "yr"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "eft", setting = "literature" }
+location = "Appendix C"
+verified = true
