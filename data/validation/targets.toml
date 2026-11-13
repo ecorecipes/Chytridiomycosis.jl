@@ -1358,3 +1358,115 @@ regression = { value = 0.4286, atol = 0.0001 }
 notes = """
 The deposit gives 81/189 = 42.9% of the newts exposed by contact (also the survival file
 DataFile4) and 156/290 = 53.8% of all newts. Neither is 45%."""
+
+# --- Drawert et al. 2017, J R Soc Interface 14:20170480 (wiki bd-drawert2017-stochastic-ibm) --
+# Stochastic individual-based Briggs model with one-time interventions. Calls that read
+# data/drawert2017/reproduction.toml use the stored output of scripts/drawert2017_*.jl (about
+# 6 CPU-hours: a stratified sample of 116 of the 2132 points with 30 runs each, a small
+# Nu/Sigma study and an intervention study; seeds in the scripts). The bundled
+# baseline_points.csv is the authors' own table of points and 30-run results.
+
+[[target]]
+id = "drawert2017_lambda_range"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "ESM §1.4" }
+quantity = "every sampled point has a linearised growth rate λ in 0.035–0.35 day⁻¹ (our λ)"
+published = true
+call = """
+let q = parameter_set(:drawert2017)
+    all(r -> q.λ_min <= load_growth_rate(DrawertParameters(:drawert2017; point = r.id)) <= q.λ_max,
+        load_drawert2017())
+end
+"""
+status = "reproduced"
+notes = "Our λ also equals the authors' λ column to the 6 figures printed (max difference 1.0e-6)."
+
+[[target]]
+id = "drawert2017_point_spacing"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "ESM §1.4, eq. (10)" }
+quantity = "smallest distance between two of the 2132 points, eq. (10) with the range of log c2, log c3"
+published = 0.09
+call = """
+let cs = [nondimensional_parameters(DrawertParameters(:drawert2017; point = r.id))
+          for r in load_drawert2017()]
+    rg = nondimensional_ranges(cs)
+    minimum(minimum(nondimensional_distance(cs[i], cs[j], rg) for j in eachindex(cs) if j != i)
+            for i in eachindex(cs))
+end
+"""
+tolerance = { lower = 0.09, upper = 0.0905 }
+status = "qualitative"
+regression = { value = 0.09010, atol = 0.00001 }
+notes = """
+ε = 0.09 is a minimum spacing, so the greedy rejection leaves nearest neighbours just above it
+(0.0901; median 0.0935). Eq. (10) prints log(c_range); that metric gives 0.0919 (median 0.130),
+which does not fit a rejection threshold of 0.09. The printed form is probably a typo."""
+
+[[target]]
+id = "drawert2017_deterministic_extinction"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§4; Fig. 2a" }
+quantity = "fraction of points ending in frog extinction, deterministic Baseline, Nu and Sigma (S* = 1.2, 2)"
+published = 1.0
+call = """
+let d = TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["deterministic"]
+    minimum(d[k] for k in ("frogs_extinct_baseline", "frogs_extinct_nu_1.2", "frogs_extinct_nu_2",
+                           "frogs_extinct_sigma_1.2", "frogs_extinct_sigma_2")) / d["n_points"]
+end
+"""
+status = "reproduced"
+notes = "All 2132 points in all five deterministic models (scripts/drawert2017_deterministic.jl)."
+
+[[target]]
+id = "drawert2017_first_death_window"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§3.2" }
+quantity = "range of the day of the first death in the deterministic Baseline over the 2132 points"
+published = [14, 275]
+call = """
+let d = TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["deterministic"]
+    [d["first_death_day_min"], d["first_death_day_max"]]
+end
+"""
+status = "reproduced"
+notes = """
+Rounded up to whole days, as the authors' code records it. The paper attributes the 14–275 day
+window to the death of all frogs (next target)."""
+
+[[target]]
+id = "drawert2017_all_frogs_window"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§3.2" }
+quantity = "latest day by which all frogs are dead in the deterministic Baseline (paper: within 14–275 days)"
+published = 275
+call = """
+TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["deterministic"]["last_death_max"]
+"""
+tolerance = { lower = 14, upper = 275.5 }
+status = "discrepant"
+regression = { value = 567.061, atol = 0.01 }
+notes = """
+All frogs are dead by day 19.6–567.1; at 71 of the 2132 points it takes longer than 275 days.
+The 14–275 window is the first death (previous target), so §3.2 misnames the quantity."""
+
+[[target]]
+id = "drawert2017_nu1_formula"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "ESM §1.4, eq. (11)" }
+quantity = "S* reached with ν1 from eq. (11) as printed, set for S* = 1.2 (Group A point, Table S9)"
+published = 1.2
+call = """
+let p = DrawertParameters(:drawert2017; set = "groupA")
+    equilibrium_load_ratio(drawert_variant(p, :nu; S_star = parameter_set(:drawert2017).S_star_low,
+                                           as_printed = true))
+end
+"""
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 1.4283, rtol = 0.0001 }
+notes = """
+Eq. (11) drops the logarithm and the ηf term of the S* formula of ESM §1.1.2, which it should
+invert. With the printed ν1, S* < 1 (frogs survive deterministically) at 270 of the 2132
+points, contradicting the paper's "frog extinction … by construction". drawert_variant inverts
+§1.1.2 by default; as_printed = true gives eq. (11)."""

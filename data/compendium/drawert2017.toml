@@ -1,0 +1,952 @@
+# Drawert B, Griesemer M, Petzold LR, Briggs CJ (2017) Using stochastic epidemiological models
+# to evaluate conservation strategies for endangered amphibians. J R Soc Interface 14:20170480.
+# https://doi.org/10.1098/rsif.2017.0480
+# Checked against the published PDF (lab/papers/drawert2017.pdf) and the electronic
+# supplementary material (ESM): the SI text (figshare 10.6084/m9.figshare.5328160) and the
+# simulation code and parameter data (figshare 10.6084/m9.figshare.5328127), both CC BY 4.0,
+# in lab/papers/drawert2017_si/. "§" without a prefix is the main text; "ESM §" the SI text.
+# Time unit: days. Loads are sporangia per frog; zoospores are counts in a pool of volume V.
+#
+# The paper samples its parameters, so the base set holds the fixed constants, the sampling
+# ranges (Table 1), the sampling rules (ESM §1.4) and the design of the intervention study
+# (§3.3). The 2132 sampled points themselves are the authors' table, bundled as
+# data/drawert2017/baseline_points.csv. Named sets "groupA" … "groupE" are the representative
+# points of Fig. 3c (ESM Table S9, rounded as printed; IDs 120, 1094, 182, 982, 192 of the
+# table).
+
+source = { ref = "drawert2017", doi = "10.1098/rsif.2017.0480", review_ref = 39 }
+
+# --- fixed constants -------------------------------------------------------------------------
+
+[[parameter]]
+symbol = "Smax"
+quantity = "lethal sporangial load: a frog dies when its load exceeds Smax"
+value = 10000
+units = "sporangia host^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae" }
+location = "Table 1; §3 (frog i dies for S_i > Smax)"
+verified = true
+notes = "Code (WithinHostModel.c, FrogFunctions.c): a frog dies when an infection would take its load to Smax + 1. ESM Table S3 prints [S_i] ≥ Smax."
+
+[[parameter]]
+symbol = "S0"
+quantity = "initial load on the single infected frog"
+value = 100
+units = "sporangia host^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae" }
+location = "§3.4 (S_1(0) = 100); code README (-param_initSporangia 100); data column param_initSporangia"
+verified = true
+
+[[parameter]]
+symbol = "Z0"
+quantity = "initial zoospores in the pool"
+value = 0
+units = "zoospores"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§3.4 (Z(0) = 0)"
+verified = true
+
+[[parameter]]
+symbol = "V"
+quantity = "volume of the zoospore pool"
+value = 1.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §1.3 (volume set to unity); code WithinHostModel.c param_V 1.0"
+verified = true
+
+[[parameter]]
+symbol = "tfinal"
+quantity = "simulation horizon; frogs and fungus both present then = persistence"
+value = 1000
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §1.2, §1.3 (1000 days); code tfinal = 1000"
+verified = true
+
+[[parameter]]
+symbol = "n_runs"
+quantity = "stochastic realisations per parameter point"
+value = 30
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§3.4; ESM §1.3, §1.5; data column param_ensemble_size"
+verified = true
+
+# --- sampling ranges (Table 1; ESM Table S1). γ sampled on a log scale, the rest linearly ---
+
+[[parameter]]
+symbol = "N_min"
+quantity = "initial number of frogs, lower end of the sampled range"
+value = 5
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "field" }
+location = "Table 1; ESM Table S1"
+verified = true
+notes = "ESM §1.4: population sizes from field surveys in the Sierra Nevada."
+
+[[parameter]]
+symbol = "N_max"
+quantity = "initial number of frogs, upper end of the sampled range"
+value = 200
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "field" }
+location = "Table 1; ESM Table S1"
+verified = true
+
+[[parameter]]
+symbol = "γ_min"
+quantity = "zoospore–frog encounter rate, lower end (log-uniform)"
+value = 1e-6
+units = "frog^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1 (10^-6 to 10^0); ESM Table S1 (units Volume/Frog/Day)"
+verified = true
+
+[[parameter]]
+symbol = "γ_max"
+quantity = "zoospore–frog encounter rate, upper end (log-uniform)"
+value = 1.0
+units = "frog^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1; ESM Table S1"
+verified = true
+
+[[parameter]]
+symbol = "η_min"
+quantity = "zoospore production rate per sporangium, lower end"
+value = 5
+units = "zoospores sporangium^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1; ESM Table S1"
+verified = true
+
+[[parameter]]
+symbol = "η_max"
+quantity = "zoospore production rate per sporangium, upper end"
+value = 20
+units = "zoospores sporangium^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1; ESM Table S1"
+verified = true
+
+[[parameter]]
+symbol = "ν0_min"
+quantity = "encystment probability per encounter (zoospore-free host), lower end"
+value = 0.0
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1 (units S Z^-1); ESM Table S1"
+verified = true
+
+[[parameter]]
+symbol = "ν0_max"
+quantity = "encystment probability per encounter (zoospore-free host), upper end"
+value = 1.0
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1; ESM Table S1"
+verified = true
+
+[[parameter]]
+symbol = "f_min"
+quantity = "fraction of released zoospores that re-encounter their own host, lower end"
+value = 0.0
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1; ESM Table S1"
+verified = true
+
+[[parameter]]
+symbol = "f_max"
+quantity = "fraction of released zoospores that re-encounter their own host, upper end"
+value = 1.0
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1; ESM Table S1"
+verified = true
+
+[[parameter]]
+symbol = "σ0_min"
+quantity = "sporangium loss (shedding) rate, lower end"
+value = 0.1
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1; ESM Table S1"
+verified = true
+
+[[parameter]]
+symbol = "σ0_max"
+quantity = "sporangium loss (shedding) rate, upper end"
+value = 0.5
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1; ESM Table S1"
+verified = true
+
+[[parameter]]
+symbol = "μ_min"
+quantity = "zoospore death rate in the pool, lower end"
+value = 0.01
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1; ESM Table S1"
+verified = true
+
+[[parameter]]
+symbol = "μ_max"
+quantity = "zoospore death rate in the pool, upper end"
+value = 1.5
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "Table 1; ESM Table S1"
+verified = true
+
+# --- sampling rules (ESM §1.4) ---------------------------------------------------------------
+
+[[parameter]]
+symbol = "λ_min"
+quantity = "lowest accepted linearised Bd growth rate (dominant eigenvalue, Baseline)"
+value = 0.035
+units = "day^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §1.4 (λ outside 0.035–0.35 rejected)"
+verified = true
+notes = "The bundled table's λ column spans 0.0351–0.3499."
+
+[[parameter]]
+symbol = "λ_max"
+quantity = "highest accepted linearised Bd growth rate (dominant eigenvalue, Baseline)"
+value = 0.35
+units = "day^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §1.4"
+verified = true
+
+[[parameter]]
+symbol = "ε"
+quantity = "minimum distance between accepted points in non-dimensional parameter space"
+value = 0.09
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §1.4, eq. (10)"
+verified = true
+notes = "Eq. (10) prints log(c_range); the bundled points fit the range of log c instead (see nondimensional_distance)."
+
+[[parameter]]
+symbol = "n_points"
+quantity = "unique parameter points of the Baseline model"
+value = 2132
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§3.2; ESM §1.4"
+verified = true
+
+[[parameter]]
+symbol = "t_death_min"
+quantity = "earliest time by which all frogs die in the deterministic Baseline (selection rule)"
+value = 14
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§3.2 (death of all frogs within 14–275 days)"
+verified = true
+notes = "The ESM states the rule as 0.035 ≤ λ ≤ 0.35 instead."
+
+[[parameter]]
+symbol = "t_death_max"
+quantity = "latest time by which all frogs die in the deterministic Baseline (selection rule)"
+value = 275
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§3.2"
+verified = true
+
+[[parameter]]
+symbol = "S_star_low"
+quantity = "equilibrium load / Smax that fixes ν1 (Nu model) or σ1 (Sigma model), first value"
+value = 1.2
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §1.1.2, §1.1.3, §1.4 (S* = 1.2 and 2)"
+verified = true
+
+[[parameter]]
+symbol = "S_star_high"
+quantity = "equilibrium load / Smax that fixes ν1 (Nu model) or σ1 (Sigma model), second value"
+value = 2.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §1.1.2, §1.1.3, §1.4"
+verified = true
+
+# --- intervention design (§3.3) and outcome thresholds (Fig. 3, Fig. 4) ----------------------
+
+[[parameter]]
+symbol = "day_1"
+quantity = "intervention day after introduction of Bd, first value"
+value = 14
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§3.3 (14, 28 and 56 days)"
+verified = true
+
+[[parameter]]
+symbol = "day_2"
+quantity = "intervention day after introduction of Bd, second value"
+value = 28
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§3.3"
+verified = true
+
+[[parameter]]
+symbol = "day_3"
+quantity = "intervention day after introduction of Bd, third value"
+value = 56
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§3.3"
+verified = true
+
+[[parameter]]
+symbol = "fraction_1"
+quantity = "fraction of frogs (or zoospores) treated, first value"
+value = 0.25
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§3.3 (25%, 50% and 75%)"
+verified = true
+
+[[parameter]]
+symbol = "fraction_2"
+quantity = "fraction of frogs (or zoospores) treated, second value"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§3.3"
+verified = true
+
+[[parameter]]
+symbol = "fraction_3"
+quantity = "fraction of frogs (or zoospores) treated, third value"
+value = 0.75
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§3.3"
+verified = true
+
+[[parameter]]
+symbol = "group_sd"
+quantity = "sd of the surviving fraction separating Group C (above) from B, D and E"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "Fig. 3 caption"
+verified = true
+
+[[parameter]]
+symbol = "group_mean_low"
+quantity = "mean surviving fraction below which a low-sd point is Group B"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "Fig. 3 caption"
+verified = true
+
+[[parameter]]
+symbol = "group_mean_high"
+quantity = "mean surviving fraction above which a low-sd point is Group D"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "Fig. 3 caption"
+verified = true
+
+[[parameter]]
+symbol = "effect_1"
+quantity = "change in mean surviving fraction counted as an effect, light shading"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§4.1; Fig. 4 caption (10%/30%/50%)"
+verified = true
+
+[[parameter]]
+symbol = "effect_2"
+quantity = "change in mean surviving fraction counted as an effect, medium shading"
+value = 0.3
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§4.1; Fig. 4 caption"
+verified = true
+
+[[parameter]]
+symbol = "effect_3"
+quantity = "change in mean surviving fraction counted as an effect, dark shading"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§4.1; Fig. 4 caption"
+verified = true
+
+# --- representative points of Fig. 3c (ESM Table S9, values as printed) ---------------------
+
+[[parameter]]
+set = "groupA"
+symbol = "point_id"
+quantity = "ID of the point in the authors' parameter table"
+value = 120
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupA"
+symbol = "N"
+quantity = "initial number of frogs"
+value = 194
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupA"
+symbol = "γ"
+quantity = "zoospore–frog encounter rate"
+value = 8.31e-5
+units = "frog^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupA"
+symbol = "η"
+quantity = "zoospore production rate"
+value = 5.01
+units = "zoospores sporangium^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupA"
+symbol = "ν0"
+quantity = "encystment probability"
+value = 0.771
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9 (column ν)"
+verified = true
+
+[[parameter]]
+set = "groupA"
+symbol = "f"
+quantity = "self-reinfection fraction"
+value = 0.069
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupA"
+symbol = "σ0"
+quantity = "sporangium loss rate"
+value = 0.254
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9 (column σ)"
+verified = true
+
+[[parameter]]
+set = "groupA"
+symbol = "μ"
+quantity = "zoospore death rate"
+value = 1.42
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupB"
+symbol = "point_id"
+quantity = "ID of the point in the authors' parameter table"
+value = 1094
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupB"
+symbol = "N"
+quantity = "initial number of frogs"
+value = 111
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupB"
+symbol = "γ"
+quantity = "zoospore–frog encounter rate"
+value = 7.83e-4
+units = "frog^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupB"
+symbol = "η"
+quantity = "zoospore production rate"
+value = 11.38
+units = "zoospores sporangium^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupB"
+symbol = "ν0"
+quantity = "encystment probability"
+value = 0.026
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9 (column ν)"
+verified = true
+
+[[parameter]]
+set = "groupB"
+symbol = "f"
+quantity = "self-reinfection fraction"
+value = 0.992
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupB"
+symbol = "σ0"
+quantity = "sporangium loss rate"
+value = 0.192
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9 (column σ)"
+verified = true
+
+[[parameter]]
+set = "groupB"
+symbol = "μ"
+quantity = "zoospore death rate"
+value = 1.23
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupC"
+symbol = "point_id"
+quantity = "ID of the point in the authors' parameter table"
+value = 182
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupC"
+symbol = "N"
+quantity = "initial number of frogs"
+value = 85
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupC"
+symbol = "γ"
+quantity = "zoospore–frog encounter rate"
+value = 3.19e-6
+units = "frog^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupC"
+symbol = "η"
+quantity = "zoospore production rate"
+value = 11.61
+units = "zoospores sporangium^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupC"
+symbol = "ν0"
+quantity = "encystment probability"
+value = 0.078
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9 (column ν)"
+verified = true
+
+[[parameter]]
+set = "groupC"
+symbol = "f"
+quantity = "self-reinfection fraction"
+value = 0.560
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupC"
+symbol = "σ0"
+quantity = "sporangium loss rate"
+value = 0.201
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9 (column σ)"
+verified = true
+
+[[parameter]]
+set = "groupC"
+symbol = "μ"
+quantity = "zoospore death rate"
+value = 1.25
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupD"
+symbol = "point_id"
+quantity = "ID of the point in the authors' parameter table"
+value = 982
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupD"
+symbol = "N"
+quantity = "initial number of frogs"
+value = 142
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupD"
+symbol = "γ"
+quantity = "zoospore–frog encounter rate"
+value = 2.45e-6
+units = "frog^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupD"
+symbol = "η"
+quantity = "zoospore production rate"
+value = 7.299
+units = "zoospores sporangium^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupD"
+symbol = "ν0"
+quantity = "encystment probability"
+value = 0.105
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9 (column ν)"
+verified = true
+
+[[parameter]]
+set = "groupD"
+symbol = "f"
+quantity = "self-reinfection fraction"
+value = 0.711
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupD"
+symbol = "σ0"
+quantity = "sporangium loss rate"
+value = 0.313
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9 (column σ)"
+verified = true
+
+[[parameter]]
+set = "groupD"
+symbol = "μ"
+quantity = "zoospore death rate"
+value = 1.49
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupE"
+symbol = "point_id"
+quantity = "ID of the point in the authors' parameter table"
+value = 192
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupE"
+symbol = "N"
+quantity = "initial number of frogs"
+value = 127
+units = "frogs"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupE"
+symbol = "γ"
+quantity = "zoospore–frog encounter rate"
+value = 4.51e-3
+units = "frog^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupE"
+symbol = "η"
+quantity = "zoospore production rate"
+value = 5.67
+units = "zoospores sporangium^-1 day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupE"
+symbol = "ν0"
+quantity = "encystment probability"
+value = 0.111
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9 (column ν)"
+verified = true
+
+[[parameter]]
+set = "groupE"
+symbol = "f"
+quantity = "self-reinfection fraction"
+value = 0.054
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true
+
+[[parameter]]
+set = "groupE"
+symbol = "σ0"
+quantity = "sporangium loss rate"
+value = 0.181
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9 (column σ)"
+verified = true
+
+[[parameter]]
+set = "groupE"
+symbol = "μ"
+quantity = "zoospore death rate"
+value = 1.21
+units = "day^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd" }
+location = "ESM Table S9"
+verified = true

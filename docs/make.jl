@@ -33,7 +33,8 @@ makedocs(;
                                       "Bayesian fit to field data" => "api/knapp_bayes.md",
                                       "Refugia CTMC (Miller 2025)" => "api/miller2025.md",
                                       "Seasonal Bsal (Bozzuto 2019)" => "api/bozzuto2019.md",
-                                      "Bsal transmission functions" => "api/bsal_transmission.md"]])
+                                      "Bsal transmission functions" => "api/bsal_transmission.md",
+                                      "Stochastic IBM (Drawert 2017)" => "api/drawert2017.md"]])
 
 if get(ENV, "CI", "false") == "true"
     deploydocs(; repo = "github.com/ecorecipes/Chytridiomycosis.jl.git", push_preview = true)
