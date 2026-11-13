@@ -4,3 +4,4 @@ Manifest.toml
 *.jl.mem
 /docs/build/
 /.claude/
+/data/drawert2017/deterministic.csv

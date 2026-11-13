@@ -56,3 +56,15 @@ Standard deviations are population sds (divisor 30), as in `print_stats()` of
   the 6 significant figures printed, and lies in 0.0351–0.3499 (the ESM's 0.035–0.35).
 - Under the distance of ESM eq. (10), with the range of log c2 and log c3 as scale, no two
   points are closer than 0.0901 (ε = 0.09).
+
+## Reproduction output (ours, not the authors')
+
+Written by `scripts/drawert2017_*.jl`; see the script headers for designs and seeds.
+
+- `baseline_sample.csv`: our 30-run summaries at a stratified sample of 116 points.
+- `variants_sample.csv`: Nu and Sigma models, 10 runs per point.
+- `interventions_sample.csv`: one-time interventions, 30 runs per arm.
+- `reproduction.toml`: the summary read by the tests and the validation targets
+  (`scripts/drawert2017_summarise.jl`).
+- `deterministic.csv` (checks on all 2132 points) is not committed. It is 380 kB, and
+  `scripts/drawert2017_deterministic.jl` regenerates it in a few minutes.

@@ -1470,3 +1470,194 @@ Eq. (11) drops the logarithm and the ηf term of the S* formula of ESM §1.1.2, 
 invert. With the printed ν1, S* < 1 (frogs survive deterministically) at 270 of the 2132
 points, contradicting the paper's "frog extinction … by construction". drawert_variant inverts
 §1.1.2 by default; as_printed = true gives eq. (11)."""
+
+[[target]]
+id = "drawert2017_coexistence_fraction"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§4" }
+quantity = "fraction of Baseline points where frogs and fungus coexist in all 30 runs, authors' own table"
+published = 0.0001
+call = """
+let pts = load_drawert2017()
+    count(r -> outcome_class(r.frac_frogs_extinct, r.frac_fungus_extinct, r.frac_persistence) ===
+               :coexistence, pts) / length(pts)
+end
+"""
+tolerance = { digits = 4 }
+status = "discrepant"
+regression = { value = 0.001407, atol = 0.000001 }
+notes = """
+The paper says "about 0.01%". The authors' table has 3 of 2132 points (0.14%), so 0.1% was
+probably meant. The table reproduces the other §4 numbers (65.0%, 24.4%, 10.5%)."""
+
+[[target]]
+id = "drawert2017_frog_extinction_fraction"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§4; Fig. 2a" }
+quantity = "fraction of points with frog extinction in all 30 runs, stochastic Baseline (our runs, weighted)"
+published = 0.65
+call = """
+TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["baseline_sample"]["class_weighted_ours"]["frog_extinction"]
+"""
+tolerance = { atol = 0.03 }
+status = "reproduced"
+notes = """
+Stratified sample of 116 points (A 25, B 15, C 30, D 40, E 6), 30 runs each, weighted by group
+size. On the same points the authors' runs give almost the same value; the gap to 0.65 is
+mostly sampling (the authors' table over all points gives 0.650)."""
+
+[[target]]
+id = "drawert2017_fungal_extinction_fraction"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§4; Fig. 2a" }
+quantity = "fraction of points with fungal extinction in all 30 runs, stochastic Baseline (our runs, weighted)"
+published = 0.24
+call = """
+TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["baseline_sample"]["class_weighted_ours"]["fungal_extinction"]
+"""
+tolerance = { atol = 0.03 }
+status = "reproduced"
+
+[[target]]
+id = "drawert2017_variable_fraction"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§4; Fig. 2a" }
+quantity = "fraction of points with variable outcomes over 30 runs, stochastic Baseline (our runs, weighted)"
+published = 0.10
+call = """
+TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["baseline_sample"]["class_weighted_ours"]["variable"]
+"""
+tolerance = { atol = 0.03 }
+status = "reproduced"
+notes = "The paper says \"approximately 10%\"."
+
+[[target]]
+id = "drawert2017_groupA_fraction"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§4; Fig. 3a" }
+quantity = "fraction of points in Group A (no frog survives any run), stochastic Baseline (our runs, weighted)"
+published = 0.65
+call = """
+TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["baseline_sample"]["group_weighted_ours"]["A"]
+"""
+tolerance = { atol = 0.03 }
+status = "reproduced"
+
+[[target]]
+id = "drawert2017_authors_code_agreement"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "ESM §1.3; code and parameter table (figshare 5328127)" }
+quantity = "our simulator matches the authors' 30-run results point by point (same Fig. 2a class at ≥ 90% of points; two-sample tests reject at ≤ 10%)"
+published = true
+call = """
+let b = TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["baseline_sample"]
+    n = b["n_points"]
+    b["same_class"] / n >= 0.9 && b["fisher_frogs_extinct_p_below_0.05"] / n <= 0.1 &&
+        b["welch_mean_surviving_p_below_0.05"] / n <= 0.1
+end
+"""
+status = "qualitative"
+notes = """
+Fisher exact test on the number of runs ending in frog extinction, Welch test on the mean
+surviving fraction, both at 30 vs 30 runs per point."""
+
+[[target]]
+id = "drawert2017_variants_coexistence"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§4; Fig. 2a" }
+quantity = "load regulation (Nu, Sigma, S* = 1.2) lets frogs and fungus coexist, unlike the Baseline"
+published = true
+call = """
+let v = TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["variants"]
+    v["random_nu_1.2"]["runs_persistence"] > 0.05 && v["random_sigma_1.2"]["runs_persistence"] > 0.05 &&
+        v["random_nu_1.2"]["baseline_authors_runs_persistence"] == 0
+end
+"""
+status = "qualitative"
+notes = """
+Fig. 2a shows coexistence at ~7–8% of Nu and Sigma points and ~0% of Baseline points. Our
+12-point random sample (10 runs per point) is too small to reproduce Fig. 2a's bars; see the
+pending target drawert2017_variants_fig2a."""
+
+[[target]]
+id = "drawert2017_variants_fig2a"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "Fig. 2a (Nu and Sigma bars)" }
+quantity = "outcome fractions of the stochastic Nu and Sigma models over their 4264 points each"
+published = "Nu ≈ 59% frog extinction, 19% fungal, 7% coexistence; Sigma ≈ 55%, 20%, 8% (read from the figure)"
+status = "pending"
+notes = "Needs the full Nu/Sigma design (8528 points × 30 runs); only a 12-point spot check was run."
+
+[[target]]
+id = "drawert2017_cleaning_rarely_harms"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§4.1; Fig. 4; abstract" }
+quantity = "cleaning frogs never lowers the mean surviving fraction by ≥ 0.1, and helps at most Group B/C points"
+published = true
+call = """
+let iv = TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["interventions"]
+    s = [iv["sample_$(g)_clean_frogs"] for g in ("B", "C", "D")]
+    sum(x["negative"] for x in s) == 0 && iv["grid_182"]["clean_frogs"]["negative"] == 0 &&
+        iv["grid_982"]["clean_frogs"]["negative"] == 0 &&
+        (s[1]["positive"] + s[2]["positive"]) / (s[1]["n"] + s[2]["n"]) >= 0.5
+end
+"""
+status = "qualitative"
+notes = """
+One random strategy per point at 6 B, 20 C and 40 D sample points, and all 9 cleaning
+strategies at the Group C and D points of Table S9. Cleaning helped at 16/26 B/C points and
+2/40 D points, and never harmed. The placebo (a second no-intervention ensemble) gave
+|Δ| ≥ 0.1 at 5/66 points, all in Group C."""
+
+[[target]]
+id = "drawert2017_culling_risky"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§4.1; Fig. 4; ESM Fig. S14" }
+quantity = "culling helps and harms in Groups B/C, harms in Group D, and harms more when larger and earlier"
+published = true
+call = """
+let iv = TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["interventions"]
+    b, c, d = (iv["sample_$(g)_cull_frogs"] for g in ("B", "C", "D"))
+    g = iv["grid_982"]["cull_frogs"]
+    Δ = reshape(g["delta"], 3, 3)          # rows: fraction 0.25, 0.5, 0.75; columns: day 14, 28, 56
+    b["positive"] + c["positive"] > 0 && b["negative"] + c["negative"] > 0 &&
+        d["positive"] == 0 && d["negative"] / d["n"] >= 0.5 && g["negative"] == 9 &&
+        all(Δ[3, :] .< Δ[1, :]) && Δ[3, 1] < Δ[3, 3]
+end
+"""
+status = "qualitative"
+notes = """
+Sample: culling helped at 8 and harmed at 8 of 26 B/C points; harmed at 26/40 D points and
+helped at none. At the Group D point all 9 culling strategies harm, from Δ = −0.13 (25%,
+day 56) to −0.72 (75%, day 14)."""
+
+[[target]]
+id = "drawert2017_environment_cleaning_ineffective"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§4.1; Fig. 4" }
+quantity = "cleaning the environment changes the surviving fraction no more often than chance (placebo)"
+published = true
+call = """
+let iv = TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))["interventions"]
+    k(kind) = sum(iv["sample_$(g)_$(kind)"]["positive"] + iv["sample_$(g)_$(kind)"]["negative"]
+                  for g in ("B", "C", "D"))
+    k("clean_environment") <= k("placebo") + 2 && k("clean_environment_as_coded") <= k("placebo") + 2
+end
+"""
+status = "qualitative"
+notes = """
+Both the paper's version (Binomial(Z, fraction) zoospores removed) and the authors' code (all
+zoospores removed) give |Δ| ≥ 0.1 at 4–5 of 66 points, like the placebo (5). The paper reads
+its equal small ± bars as a weak effect; they match the noise of comparing two independent
+30-run ensembles."""
+
+[[target]]
+id = "drawert2017_fig4_all_groups"
+model = "bd-drawert2017-stochastic-ibm"
+source = { ref = "drawert2017", location = "§4.1; Fig. 4 (all groups)" }
+quantity = "fraction of all points where cleaning frogs helps (Δ ≥ 0.1), Baseline"
+published = "20–30% (text); about 17% in the Baseline bar of Fig. 4"
+status = "pending"
+notes = """
+Needs Group A, 65% of the points, where Fig. 4 shows cleaning helping at ~13%. Only one A
+point (id 120, no effect) was affordable here. B/C/D sample: 4/6, 12/20, 2/40 helped."""

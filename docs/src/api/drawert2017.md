@@ -117,23 +117,33 @@ load_drawert2017
 
 ## What reproduces
 
-The heavy runs are in `scripts/drawert2017_*.jl`, and their results are stored in
-`data/drawert2017/reproduction.toml`. What was found:
+The heavy runs are `scripts/drawert2017_*.jl`. Their output is stored in
+`data/drawert2017/reproduction.toml`, which the tests and validation targets read.
 
-- **Growth rate.** The linearised growth rate λ matches the authors' column at all 2132
-  points, to the six figures they printed.
-- **Deterministic model.** Every point ends in frog extinction, in the Baseline and in all
-  four Nu and Sigma variants, as the paper says it should "by construction".
-- **Stochastic Baseline against the authors' runs.** On a stratified sample of 116 points
-  with 30 runs each, our runs match the authors' 30 runs point by point: the same outcome
-  class and group at most points, and two-sample tests reject at about their nominal rate.
-  The weighted fractions of points ending in frog extinction, fungal extinction or variable
-  outcomes are close to the paper's 65%, 24% and 10%.
+- **Deterministic model, all 2132 points.** λ equals the authors' column (to 1e-6).
+- **Deterministic extinction.** Every point ends in frog extinction, in the Baseline and in the
+  four Nu/Sigma variants, "by construction" as the paper says.
+- **Stochastic Baseline, 116 points.** We drew a stratified random sample of points and ran
+  each 30 times, then compared it with the authors' 30 runs:
+  - 113/116 points have the same Fig. 2a outcome class and 105/116 the same Fig. 3 group;
+  - no Fisher test on frog-extinction counts rejects, and 5/116 Welch tests on the mean
+    surviving fraction reject at 5%;
+  - the weighted fractions are 65.4% frog extinction (paper 65%), 24.2% fungal extinction
+    (24%), 10.4% variable (~10%) and 65.4% in Group A (65%).
+- **Nu and Sigma.** Load regulation lets frogs and fungus coexist (18–32% of runs at
+  S* = 1.2 on a random 12-point sample, against none in the Baseline).
+- **Interventions** (Fig. 4, Fig. S14), on 66 sample points and two full 27-strategy grids:
+  - cleaning frogs never harms, and helps at most Group B/C points;
+  - culling helps and harms in Groups B/C, and harms in Group D, more when larger and earlier;
+  - cleaning the environment changes outcomes no more often than a placebo (a second
+    no-intervention ensemble).
+- **Not reproduced.** The overall Fig. 4 bars and Fig. 2a's Nu/Sigma bars need the full design.
 
 Three printed statements disagree with the authors' own data or with the rest of the paper:
 
 - **ESM eq. (11) for ν1** lacks the logarithm and the `ηf` term of the S* formula it should
-  invert. `drawert_variant(p, :nu; as_printed = true)` uses the printed form.
+  invert. With the printed form, frogs would survive deterministically at 270 points.
+  `drawert_variant(p, :nu; as_printed = true)` uses it.
 - **"Death of all frogs within 14–275 days" (§3.2)** fits the day of the *first* death:
   rounded up to whole days, it spans exactly 14–275. The last death comes as late as day 567.
 - **"Coexisting in about 0.01% of the cases"**: the authors' table has 3 of 2132 points
