@@ -485,14 +485,6 @@ notes = "SD ratios in the run with 10^6 draws: αβ_sh 0.08, α 0.64, β_sh 0.98
 # --- Pending: models not yet implemented (wiki R5–R10) ------------------------------------
 
 [[target]]
-id = "bozzuto2019_floquet_R0"
-model = "bsal-bozzuto2019-seasonal"
-source = { ref = "bozzuto2019", location = "" }
-quantity = "Floquet R₀ 8.27 vs 8.88; 1.92 vs 2.13 (review values, unverified)"
-status = "pending"
-notes = "Wiki target R5."
-
-[[target]]
 id = "tompros2022_beta_R0"
 model = "bsal-transmission-functions"
 source = { ref = "tompros2022", location = "" }
@@ -825,3 +817,250 @@ tolerance = { lower = 0.1, upper = 0.3 }
 status = "qualitative"
 regression = { value = 0.245, atol = 0.002 }
 notes = "Checks the digitisation against the text. λ_F/λ_S = 4.3 (text: ~4) is tested in test/daversa2022.jl."
+
+# --- Bozzuto & Canessa 2019, Glob Ecol Conserv 17:e00551 (wiki target R5) -------------------
+# Checked against the PDF and the online Appendix A (Elsevier mmc1.docx). Hibernation uses
+# c2 = 0.95 (Fig. A4 caption), not Table 1's 0.90; see bozzuto2019_table1_c2. Every
+# aestivation number is ~1.6% below the paper's although the seasonal ratios agree: one
+# aestivation input in Table 1 must differ from the value used (unidentified).
+
+[[target]]
+id = "bozzuto2019_R0_hibernation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4" }
+quantity = "non-seasonal R0 = c0 p0 k0/(d + δ0), hibernating population"
+published = 8.88
+call = "basic_reproduction_number(BozzutoParameters(:bozzuto2019))"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "Wiki target R5."
+
+[[target]]
+id = "bozzuto2019_R0_aestivation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4" }
+quantity = "non-seasonal R0, aestivating population"
+published = 2.13
+call = "basic_reproduction_number(BozzutoParameters(:bozzuto2019; population = :aestivation))"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 2.0948, atol = 1e-4 }
+notes = """
+0.3647 × 250/(43.40 + 0.125) = 2.095. The paper's own Floquet-R0 (1.92 and 1.80) and peak
+R0(t) (~5.1, Fig. 2b) all imply R0 ≈ 2.127, so a Table 1 aestivation value (c0, k0 or δ0)
+is not the one used. Not resolvable from the paper or appendix."""
+
+[[target]]
+id = "bozzuto2019_floquet_R0_hibernation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4; eq. (2)" }
+quantity = "analytic Floquet-R0 (eq. 2), hibernating population"
+published = 8.27
+call = "floquet_reproduction_number(BozzutoParameters(:bozzuto2019))"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "With c2 = 0.95. Equals the R0 of the time-averaged model: the infected subsystem is scalar."
+
+[[target]]
+id = "bozzuto2019_floquet_R0_aestivation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4; eq. (2)" }
+quantity = "analytic Floquet-R0 (eq. 2), aestivating population"
+published = 1.92
+call = "floquet_reproduction_number(BozzutoParameters(:bozzuto2019; population = :aestivation))"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 1.8876, atol = 1e-4 }
+notes = "Inherits the R0 offset; the ratio to R0 (0.901) matches the paper's 1.92/2.13."
+
+[[target]]
+id = "bozzuto2019_reduction_hibernation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4" }
+quantity = "proportional reduction 1 - Floquet-R0/R0, hibernating population"
+published = "approximately 7%"
+call = """
+let p = BozzutoParameters(:bozzuto2019)
+    1 - floquet_reproduction_number(p) / basic_reproduction_number(p)
+end
+"""
+tolerance = { lower = 0.065, upper = 0.075 }
+status = "qualitative"
+regression = { value = 0.0685, atol = 1e-3 }
+
+[[target]]
+id = "bozzuto2019_reduction_aestivation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4" }
+quantity = "proportional reduction 1 - Floquet-R0/R0, aestivating population"
+published = "approximately 10%"
+call = """
+let p = BozzutoParameters(:bozzuto2019; population = :aestivation)
+    1 - floquet_reproduction_number(p) / basic_reproduction_number(p)
+end
+"""
+tolerance = { lower = 0.095, upper = 0.105 }
+status = "qualitative"
+regression = { value = 0.0989, atol = 1e-3 }
+notes = "The paper's own 1.92/2.13 gives 0.0986."
+
+[[target]]
+id = "bozzuto2019_numerical_hibernation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4; Appendix eqs. (A1), (A3)" }
+quantity = "numerical Floquet-R0 with S(t) from the step larval inflow, hibernating population"
+published = 8.33
+call = "floquet_reproduction_number(BozzutoParameters(:bozzuto2019); method = :numerical)"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "Also equals the Bacaër–Guernaoui spectral R0 (method = :spectral) to 1e-7."
+
+[[target]]
+id = "bozzuto2019_numerical_aestivation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4; Appendix eqs. (A1), (A3)" }
+quantity = "numerical Floquet-R0, aestivating population"
+published = 1.92
+call = """
+floquet_reproduction_number(BozzutoParameters(:bozzuto2019; population = :aestivation);
+    method = :numerical)
+"""
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 1.8915, atol = 1e-4 }
+notes = "Same R0 offset as bozzuto2019_R0_aestivation."
+
+[[target]]
+id = "bozzuto2019_high_activity_hibernation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4; Fig. A4" }
+quantity = "Floquet-R0 with ~25% winter/summer activity, hibernating population"
+published = 8.22
+call = "floquet_reproduction_number(BozzutoParameters(:bozzuto2019; activity = :high))"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "bozzuto2019_high_activity_aestivation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4; Fig. A4" }
+quantity = "Floquet-R0 with ~25% winter/summer activity, aestivating population"
+published = 1.80
+call = """
+floquet_reproduction_number(BozzutoParameters(:bozzuto2019; population = :aestivation,
+    activity = :high))
+"""
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 1.7762, atol = 1e-4 }
+notes = "Same R0 offset as bozzuto2019_R0_aestivation."
+
+[[target]]
+id = "bozzuto2019_table1_c2"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Table 1 (c2 = 0.90) vs Fig. A4 caption (0.95)" }
+quantity = "analytic Floquet-R0 of the hibernating population with Table 1's printed c2 = 0.90"
+published = 8.27
+call = "floquet_reproduction_number(BozzutoParameters(:bozzuto2019; as_printed = true))"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 8.6687, atol = 1e-3 }
+notes = """
+A printed error in Table 1. c2 = 0.90 gives 8.67 (numerical 8.71) and a c2 elasticity of
+-0.81; c2 = 0.95, as in the Fig. A4 caption, gives 8.27, 8.33 and -0.92 (Fig. A5)."""
+
+[[target]]
+id = "bozzuto2019_max_increase"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4; Fig. 1a" }
+quantity = "Floquet-R0/R0 at c1 = 0.5, c2 = 1, ℓc = 0.5 (maximum increase, +33%)"
+published = 1.33
+call = """
+let s = parameter_set(:bozzuto2019; set = "fig1a_solid")
+    seasonal_factor(s.c1, s.c2, s.ℓc)
+end
+"""
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "Exactly 4/3. A grid over (c1, c2, ℓc) in test/bozzuto2019.jl confirms it is the maximum."
+
+[[target]]
+id = "bozzuto2019_max_decrease"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4; Fig. 1b" }
+quantity = "Floquet-R0/R0 at c1 = c2 = 1, ℓc = 1/3 (maximum decrease, -33%)"
+published = 0.67
+call = """
+let s = parameter_set(:bozzuto2019; set = "fig1b")
+    seasonal_factor(s.c1, s.c2, s.ℓc)
+end
+"""
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "Exactly 2/3, the minimum over the grid."
+
+[[target]]
+id = "bozzuto2019_target_hibernation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 4; Fig. 2c" }
+quantity = "target proportion ϱF = 1/Floquet-R0, hibernating population"
+published = 0.12
+call = "target_proportion(BozzutoParameters(:bozzuto2019))"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "ϱ = 1/R0 = 0.11 is tested in test/bozzuto2019.jl."
+
+[[target]]
+id = "bozzuto2019_peak_target_hibernation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results pp. 4-6; Fig. 2a, c" }
+quantity = "target proportion 1/max R0(t) that also avoids temporary outbreaks, hibernating"
+published = "approximately 5%"
+call = "target_proportion(BozzutoParameters(:bozzuto2019); basis = :peak, inflow = :step)"
+tolerance = { lower = 0.04, upper = 0.06 }
+status = "qualitative"
+regression = { value = 0.0476, atol = 5e-4 }
+notes = "max R0(t) = 21.0, as in Fig. 2a. With S = k0 it is 20.2 (4.9%)."
+
+[[target]]
+id = "bozzuto2019_peak_target_aestivation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results pp. 4-6; Fig. 2b, d" }
+quantity = "target proportion 1/max R0(t), aestivating population"
+published = "approximately 20%"
+call = """
+target_proportion(BozzutoParameters(:bozzuto2019; population = :aestivation);
+    basis = :peak, inflow = :step)
+"""
+tolerance = { lower = 0.18, upper = 0.22 }
+status = "qualitative"
+regression = { value = 0.2003, atol = 5e-4 }
+
+[[target]]
+id = "bozzuto2019_elasticity_lag_hibernation"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Appendix Fig. A5a (digitised)" }
+quantity = "elasticity of Floquet-R0 to the phase lag ℓc, hibernating population"
+published = 2.37
+call = "floquet_elasticities(BozzutoParameters(:bozzuto2019)).ℓc"
+tolerance = { atol = 0.05 }
+status = "reproduced"
+notes = """
+Read from a bar chart. The c1 and c2 bars (0.72, -0.92) and the aestivation bars
+(-0.75, 0.50, 1.58) also match; see test/bozzuto2019.jl."""
+
+[[target]]
+id = "bozzuto2019_elasticity_lag_ranks_first"
+model = "bsal-bozzuto2019-seasonal"
+source = { ref = "bozzuto2019", location = "Results p. 6; Fig. A5" }
+quantity = "|e_ℓc| / max(|e_R0|, |e_c1|, |e_c2|), smaller of the two populations"
+published = "the phase lag ℓc exerts the strongest influence on Floquet-R0"
+call = """
+minimum(map((:hibernation, :aestivation)) do pop
+    e = floquet_elasticities(BozzutoParameters(:bozzuto2019; population = pop))
+    abs(e.ℓc) / max(abs(e.R0), abs(e.c1), abs(e.c2))
+end)
+"""
+tolerance = { lower = 1.0, upper = 10.0 }
+status = "qualitative"
+regression = { value = 1.581, atol = 2e-3 }

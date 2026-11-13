@@ -1,0 +1,545 @@
+# Bozzuto C, Canessa S (2019) Impact of seasonal cycles on host-pathogen dynamics and disease
+# mitigation for Batrachochytrium salamandrivorans. Glob Ecol Conserv 17:e00551.
+# https://doi.org/10.1016/j.gecco.2019.e00551
+# Checked against the PDF (Table 1, p. 3; text pp. 2-4) and the online Appendix A
+# (Elsevier mmc1.docx, saved as lab/papers/bozzuto2019_si/bozzuto2019_appendixA.docx).
+# Time unit: decimal years (t = 0 is the start of January). Densities: salamanders per hectare.
+#
+# Sets: the base set holds values shared by both populations. "hibernation" (north-western
+# Europe) and "aestivation" (coastal NE Spain) are the two Table 1 populations. The
+# "*_high_activity" sets substitute c1 and c2 for the ~25% winter/summer activity of Fig. A4.
+# "hibernation_table1" holds Table 1's printed c2 = 0.90 (see its notes). "fig1a_solid",
+# "fig1a_dotted" and "fig1b" are the contact cycles of Fig. 1 (extremes of the general
+# analysis). BozzutoParameters(:bozzuto2019; population, activity) layers these sets.
+
+source = { ref = "bozzuto2019", doi = "10.1016/j.gecco.2019.e00551", review_ref = 40 }
+
+# --- Shared by both populations ---------------------------------------------------------------
+
+[[parameter]]
+symbol = "p0"
+quantity = "mean proportion of contacts that transmit Bsal, p(t) = p0 (1 - p1 cos 2πt)"
+value = 1.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1; Appendix A1"
+verified = true
+notes = "As in Canessa et al. 2018, so that c0 equals their transmission rate β."
+
+[[parameter]]
+symbol = "p1"
+quantity = "amplitude of the seasonal transmission proportion p(t)"
+value = 0.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "§2.4 (p. 4); Appendix A1"
+verified = true
+notes = "Set to zero for lack of data ('p1 = k1 = 0')."
+
+[[parameter]]
+symbol = "lifespan"
+quantity = "adult life expectancy, 1/d (natural mortality d is constant)"
+value = 8.0
+units = "yr"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1 (Sparreboom 2014; Thiesmeier 2004)"
+verified = true
+
+[[parameter]]
+symbol = "infective_period_warm"
+quantity = "shortest infective period 1/δ (at 15 °C), used for both populations"
+value = 5.0
+units = "day"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult", temperature_C = 15.0, setting = "lab" }
+location = "Appendix A1 (from Stegen et al. 2017)"
+verified = true
+notes = "δ0 = (min δ + max δ)/2 and δ1 = max δ/δ0 - 1, with a 364-day year (days_per_year)."
+
+[[parameter]]
+symbol = "days_per_year"
+quantity = "days per year used to convert the infective periods into δ(t) (yr^-1)"
+value = 364.0
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra" }
+location = "inferred: Table 1 δ0 and δ1 are reproduced only with 364 days (365 gives δ0 = 41.06)"
+verified = true
+notes = "Not stated in the paper. 364/5 = 72.8 and 364/40 = 9.1 give δ0 = 40.95, δ1 = 0.7778."
+
+[[parameter]]
+symbol = "contact_ratio"
+quantity = "ratio of proportional cumulative contacts above/below the mean, April-December (hibernation cycle)"
+value = 1.1643
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", setting = "Belgium" }
+location = "Appendix A1"
+verified = true
+notes = "c0 = β_y/1.1643, where β_y is the Canessa et al. (2018) final-size estimate in yr^-1."
+
+# --- Hibernating population (north-western Europe) ----------------------------------------------
+
+[[parameter]]
+set = "hibernation"
+symbol = "v"
+quantity = "larval inflow (metamorphs) while t1 <= t <= t2, zero otherwise"
+value = 416.0
+units = "larvae ha^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "metamorph" }
+location = "Table 1; Appendix A2"
+verified = true
+notes = "Found numerically so that S(0) = S(1) and k0 is the midrange of S(t) (eq. A1)."
+
+[[parameter]]
+set = "hibernation"
+symbol = "t1"
+quantity = "start of larval inflow"
+value = 0.570
+units = "yr"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "metamorph" }
+location = "Table 1 (Rivera et al. 1999; Thiesmeier 2004)"
+verified = true
+
+[[parameter]]
+set = "hibernation"
+symbol = "t2"
+quantity = "end of larval inflow"
+value = 0.720
+units = "yr"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "metamorph" }
+location = "Table 1 (Rivera et al. 1999; Thiesmeier 2004)"
+verified = true
+
+[[parameter]]
+set = "hibernation"
+symbol = "k0"
+quantity = "average carrying capacity (disease-free density of adults)"
+value = 500.0
+units = "adults ha^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "adult", setting = "north-western Europe" }
+location = "Table 1 (Canessa et al. 2018; Rebelo and Leclair 2003; Rivera et al. 1999; Stegen et al. 2017)"
+verified = true
+
+[[parameter]]
+set = "hibernation"
+symbol = "c0"
+quantity = "contact rate scale: the midrange of c(t), not its mean (Appendix A1)"
+value = 0.7295
+units = "ha yr^-1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult", setting = "Robertville, Belgium" }
+location = "Table 1; Appendix A1"
+verified = true
+notes = """
+Table 1 prints units y^-1; with S and I as densities (ha^-1) the rate in eq. (1) is per
+density, so ha yr^-1. c0 = β_y/1.1643 from the Canessa et al. (2018) outbreak estimate."""
+
+[[parameter]]
+set = "hibernation"
+symbol = "c1"
+quantity = "contact-rate amplitude of the winter trough (cycle in phase with the Bsal cycle)"
+value = 0.99
+units = "1"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1 (set graphically from activity data)"
+verified = true
+
+[[parameter]]
+set = "hibernation"
+symbol = "c2"
+quantity = "contact-rate amplitude of the summer trough (cycle lagged by ℓc)"
+value = 0.95
+units = "1"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Appendix A, Fig. A4 caption ('c2 = 0.85 (0.95; hibernation)')"
+verified = true
+notes = """
+Table 1 prints 0.90 (set "hibernation_table1"). Only 0.95 reproduces Floquet-R0 = 8.27
+(0.90 gives 8.67), the numerical 8.33 (0.90: 8.71) and the Fig. A5 elasticities
+(c1 0.73, c2 -0.92, ℓc 2.37). Table 1's 0.90 is taken to be a typesetting error."""
+
+[[parameter]]
+set = "hibernation"
+symbol = "ℓc"
+quantity = "phase lag of the second contact-rate cycle"
+value = 0.48
+units = "yr"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1 (set graphically from activity data)"
+verified = true
+
+[[parameter]]
+set = "hibernation"
+symbol = "δ0"
+quantity = "mean Bsal-induced mortality rate, δ(t) = δ0 (1 - δ1 cos 2πt)"
+value = 40.950
+units = "yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1; Appendix A1 (from Stegen et al. 2017)"
+verified = true
+notes = "δ0 = (364/40 + 364/5)/2 = 40.95 (infective periods 40 and 5 days)."
+
+[[parameter]]
+set = "hibernation"
+symbol = "δ1"
+quantity = "amplitude of the Bsal-induced mortality rate"
+value = 0.7780
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1; Appendix A1"
+verified = true
+notes = "δ1 = (364/5)/δ0 - 1 = 0.7778; Table 1 prints 0.7780."
+
+[[parameter]]
+set = "hibernation"
+symbol = "infective_period_cold"
+quantity = "longest infective period 1/δ (winter; 5 °C in Stegen et al. 2017)"
+value = 40.0
+units = "day"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult", temperature_C = 5.0, setting = "lab" }
+location = "Appendix A1 (from Stegen et al. 2017)"
+verified = true
+
+[[parameter]]
+set = "hibernation_table1"
+symbol = "c2"
+quantity = "contact-rate amplitude of the summer trough, as printed in Table 1"
+value = 0.90
+units = "1"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1"
+verified = true
+notes = "Inconsistent with the paper's own results; see the hibernation c2 record (0.95)."
+
+[[parameter]]
+set = "hibernation_high_activity"
+symbol = "c1"
+quantity = "winter contact amplitude for ~25% winter/summer activity"
+value = 0.85
+units = "1"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1 (bracketed); Appendix A, Fig. A4"
+verified = true
+
+[[parameter]]
+set = "hibernation_high_activity"
+symbol = "c2"
+quantity = "summer contact amplitude for ~25% winter/summer activity"
+value = 0.85
+units = "1"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1 (bracketed); Appendix A, Fig. A4"
+verified = true
+
+# --- Aestivating population (coastal NE Spain) --------------------------------------------------
+
+[[parameter]]
+set = "aestivation"
+symbol = "v"
+quantity = "larval inflow (metamorphs) while t1 <= t <= t2, zero otherwise"
+value = 184.0
+units = "larvae ha^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "metamorph" }
+location = "Table 1; Appendix A2"
+verified = true
+notes = "Found numerically so that S(0) = S(1) and k0 is the midrange of S(t) (eq. A1)."
+
+[[parameter]]
+set = "aestivation"
+symbol = "t1"
+quantity = "start of larval inflow"
+value = 0.667
+units = "yr"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "metamorph" }
+location = "Table 1 (Rivera et al. 1999; Thiesmeier 2004)"
+verified = true
+
+[[parameter]]
+set = "aestivation"
+symbol = "t2"
+quantity = "end of larval inflow"
+value = 0.837
+units = "yr"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "metamorph" }
+location = "Table 1 (Rivera et al. 1999; Thiesmeier 2004)"
+verified = true
+
+[[parameter]]
+set = "aestivation"
+symbol = "k0"
+quantity = "average carrying capacity (disease-free density of adults)"
+value = 250.0
+units = "adults ha^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "adult", setting = "NE Iberian Peninsula" }
+location = "Table 1 (Canessa et al. 2018; Rebelo and Leclair 2003; Rivera et al. 1999; Stegen et al. 2017)"
+verified = true
+
+[[parameter]]
+set = "aestivation"
+symbol = "c0"
+quantity = "contact rate scale: the midrange of c(t), not its mean (Appendix A1)"
+value = 0.3647
+units = "ha yr^-1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult", setting = "Badalona, Spain" }
+location = "Table 1"
+verified = true
+notes = """
+Half the hibernation value; its derivation is not given. With the other Table 1 values it
+gives R0 = 2.095, not the reported 2.13, and every aestivation result is about 1.6% below the
+paper (the seasonal ratios agree). Which Table 1 value differs from the one used is unknown."""
+
+[[parameter]]
+set = "aestivation"
+symbol = "c1"
+quantity = "contact-rate amplitude of the winter trough"
+value = 0.85
+units = "1"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1 (set graphically from Rivera et al. 1999)"
+verified = true
+
+[[parameter]]
+set = "aestivation"
+symbol = "c2"
+quantity = "contact-rate amplitude of the summer trough"
+value = 0.99
+units = "1"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1; Appendix A, Fig. A4 caption"
+verified = true
+
+[[parameter]]
+set = "aestivation"
+symbol = "ℓc"
+quantity = "phase lag of the second contact-rate cycle"
+value = 0.45
+units = "yr"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "aestivation"
+symbol = "δ0"
+quantity = "mean Bsal-induced mortality rate"
+value = 43.40
+units = "yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1; Appendix A1"
+verified = true
+notes = "δ0 = (364/26 + 364/5)/2 = 43.40 (infective periods 26 and 5 days)."
+
+[[parameter]]
+set = "aestivation"
+symbol = "δ1"
+quantity = "amplitude of the Bsal-induced mortality rate"
+value = 0.6774
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1; Appendix A1"
+verified = true
+notes = "δ1 = (364/5)/δ0 - 1 = 0.6774."
+
+[[parameter]]
+set = "aestivation"
+symbol = "infective_period_cold"
+quantity = "longest infective period 1/δ (winter), shortened for the warmer Iberian winter"
+value = 26.0
+units = "day"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Appendix A1: 1/δ = 40 + 4b days, b = (5 - 40)/(15 - 5)"
+verified = true
+notes = "Linear interpolation of Stegen et al. (2017) to 4 °C above 5 °C; 40 - 14 = 26 days."
+
+[[parameter]]
+set = "aestivation_high_activity"
+symbol = "c1"
+quantity = "winter contact amplitude for ~25% winter/summer activity"
+value = 0.84
+units = "1"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1 (bracketed); Appendix A, Fig. A4"
+verified = true
+
+[[parameter]]
+set = "aestivation_high_activity"
+symbol = "c2"
+quantity = "summer contact amplitude for ~25% winter/summer activity"
+value = 0.84
+units = "1"
+provenance = "E"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1 (bracketed); Appendix A, Fig. A4"
+verified = true
+
+# --- Contact cycles of the general analysis (Fig. 1, from Fig. A2) ------------------------------
+
+[[parameter]]
+set = "fig1a_solid"
+symbol = "c1"
+quantity = "contact cycle giving the largest increase of Floquet-R0 over R0 (+33%)"
+value = 0.5
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal" }
+location = "Results p. 4; Fig. 1a (solid)"
+verified = true
+
+[[parameter]]
+set = "fig1a_solid"
+symbol = "c2"
+quantity = "contact cycle giving the largest increase of Floquet-R0 over R0 (+33%)"
+value = 1.0
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal" }
+location = "Results p. 4; Fig. 1a (solid)"
+verified = true
+
+[[parameter]]
+set = "fig1a_solid"
+symbol = "ℓc"
+quantity = "contact cycle giving the largest increase of Floquet-R0 over R0 (+33%)"
+value = 0.5
+units = "yr"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal" }
+location = "Results p. 4; Fig. 1a (solid)"
+verified = true
+
+[[parameter]]
+set = "fig1a_dotted"
+symbol = "c1"
+quantity = "contact cycle giving the largest increase of Floquet-R0 over R0 (+33%)"
+value = 1.0
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal" }
+location = "Results p. 4; Fig. 1a (dotted)"
+verified = true
+
+[[parameter]]
+set = "fig1a_dotted"
+symbol = "c2"
+quantity = "contact cycle giving the largest increase of Floquet-R0 over R0 (+33%)"
+value = 0.5
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal" }
+location = "Results p. 4; Fig. 1a (dotted)"
+verified = true
+
+[[parameter]]
+set = "fig1a_dotted"
+symbol = "ℓc"
+quantity = "contact cycle giving the largest increase of Floquet-R0 over R0 (+33%)"
+value = 0.5
+units = "yr"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal" }
+location = "Results p. 4; Fig. 1a (dotted)"
+verified = true
+
+[[parameter]]
+set = "fig1b"
+symbol = "c1"
+quantity = "contact cycle giving the largest decrease of Floquet-R0 below R0 (-33%)"
+value = 1.0
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal" }
+location = "Results p. 4; Fig. 1b"
+verified = true
+
+[[parameter]]
+set = "fig1b"
+symbol = "c2"
+quantity = "contact cycle giving the largest decrease of Floquet-R0 below R0 (-33%)"
+value = 1.0
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal" }
+location = "Results p. 4; Fig. 1b"
+verified = true
+
+[[parameter]]
+set = "fig1b"
+symbol = "ℓc"
+quantity = "contact cycle giving the largest decrease of Floquet-R0 below R0 (-33%)"
+value = 0.3333333333333333
+units = "yr"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal" }
+location = "Results p. 4; Fig. 1b (printed 0.33 with a repeating bar, i.e. 1/3)"
+verified = true
