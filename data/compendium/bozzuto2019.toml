@@ -333,7 +333,8 @@ verified = true
 notes = """
 Half the hibernation value; its derivation is not given. With the other Table 1 values it
 gives R0 = 2.095, not the reported 2.13, and every aestivation result is about 1.6% below the
-paper (the seasonal ratios agree). Which Table 1 value differs from the one used is unknown."""
+paper (the seasonal ratios agree). The digitised Fig. 2b R0(t) curve rules out a larger c0
+(0.3703) as the cause; it points to the winter infective period (see that record)."""
 
 [[parameter]]
 set = "aestivation"
@@ -408,7 +409,12 @@ role = "estimated"
 system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
 location = "Appendix A1: 1/δ = 40 + 4b days, b = (5 - 40)/(15 - 5)"
 verified = true
-notes = "Linear interpolation of Stegen et al. (2017) to 4 °C above 5 °C; 40 - 14 = 26 days."
+notes = """
+Linear interpolation of Stegen et al. (2017) to 4 °C above 5 °C; 40 - 14 = 26 days. The
+paper's aestivation results (R0 2.13, Floquet-R0 1.92 and 1.80) and the shape of its Fig. 2b
+R0(t) curve both imply about 28.7 days instead (δ0 = 42.74, δ1 = 0.703), a value fitted here
+and not derivable from the appendix; see bozzuto2019_R0_aestivation in
+data/validation/targets.toml. The package keeps the documented 26 days."""
 
 [[parameter]]
 set = "aestivation_high_activity"

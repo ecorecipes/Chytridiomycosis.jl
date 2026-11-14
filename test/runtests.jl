@@ -24,16 +24,25 @@ using Random: Xoshiro
         # by rounding of e, d_I or β). Open discrepancy: lab/wiki/models/bsal-schmidt2017-sli.md
         @test_broken round(eq.S, digits = 4) == 1.0027
         @test round(eq.S, digits = 4) == 1.0030                           # regression
+        # The published 1.0027 equals (d + e)(d + d_I)/(βe), eq. (2.3) without the γN losses
+        # of L and I: its K → ∞ limit (probable cause; data/validation/targets.toml)
+        @test round((p.d + p.e) * (p.d + p.d_I) / (p.β * p.e), digits = 4) == 1.0027
+        @test endemic_equilibrium(Chytridiomycosis.with(p; K = 1e6)).S ≈
+              (p.d + p.e) * (p.d + p.d_I) / (p.β * p.e) rtol = 1e-7
         du = zeros(3)
         Chytridiomycosis.schmidt_rhs!(du, [eq.S, eq.L, eq.I], p, 0.0)
         @test maximum(abs, du) < 1e-10                                    # really an equilibrium
         @test endemic_equilibrium(Chytridiomycosis.with(p; K = 1.0)) === nothing
         KH = hopf_threshold(p)
-        # Paper reports K_H ≈ 9.5; the Jacobian at the (verified) equilibrium gives ≈ 10.21.
+        # Paper reports K_H ≈ 9.5; the Jacobian at the (verified) equilibrium gives ≈ 10.21
+        # (rates, time units and model variants ruled out: data/validation/targets.toml).
         @test_broken isapprox(KH, 9.5; atol = 0.1)
         @test isapprox(KH, 10.21; atol = 0.01)                            # regression
         @test Chytridiomycosis.equilibrium_stability(Chytridiomycosis.with(p; K = 10.0)) < 0
         @test Chytridiomycosis.equilibrium_stability(Chytridiomycosis.with(p; K = 10.5)) > 0
+        # Near-neutral below K_H: Re λ ≈ -0.0011 yr⁻¹ at the paper's 9.5 (e-folding ≈ 900 yr)
+        reλ = Chytridiomycosis.equilibrium_stability(Chytridiomycosis.with(p; K = 9.5))
+        @test -0.0012 < reλ < -0.001
         @test round(wave_speed(p), digits = 2) == 11.15                   # c = 11.15 km/yr
         crash = population_crash(p)
         @test crash.Smin < 0.05 * p.K                                     # "almost zero"

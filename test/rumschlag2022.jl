@@ -191,13 +191,28 @@ using Distributions: Chisq, ccdf
             @test f.df == df
             if f.k in (key(2, 2, 2), key(2, 1, 2))
                 # Ours is 3.3 AICc units LOWER (a better optimum) for both models in which m
-                # and β have two estimates; same refit from several starts. Unexplained.
+                # and β have two estimates; same refit from several starts. The published
+                # fits did not reach the maximum (see the nesting check below).
                 @test_broken isapprox(f.aicc, aicc; atol = 0.5)
                 @test f.aicc < aicc - 3
             else
                 @test isapprox(f.aicc, aicc; atol = 0.5)      # ours 0.0-0.4 lower
             end
         end
+        # Nesting: a model's maximised log-likelihood cannot be below that of a model nested
+        # in it (1 ⊂ 2 ⊂ 4 estimates). Ours never is. Table 1's AICc (n = 595) violate this
+        # for exactly two pairs: β with two estimates fits 1.32 and 1.37 units WORSE than
+        # with one, for (m, d) = (2, 2) and (2, 1). Those are the two discrepant models.
+        n = 595
+        ll_pub(k) = (df = table1[k][1]; -(table1[k][2] - 2df - 2df * (df + 1) / (n - df - 1)) / 2)
+        ll_ours = Dict(f.k => f.loglik for f in sel)
+        nested(a, b) = a != b && all(getfield(a, s) <= getfield(b, s) for s in (:m, :d, :β))
+        pairs = [(a, b) for a in keys(table1) for b in keys(table1) if nested(a, b)]
+        @test all(((a, b),) -> ll_ours[b] >= ll_ours[a] - 1e-3, pairs)
+        violations = [(a, b) for (a, b) in pairs if ll_pub(a) > ll_pub(b) + 0.05]
+        @test Set(violations) == Set([(key(2, 2, 1), key(2, 2, 2)), (key(2, 1, 1), key(2, 1, 2))])
+        @test ll_pub(key(2, 2, 1)) - ll_pub(key(2, 2, 2)) ≈ 1.32 atol = 0.01
+        @test ll_pub(key(2, 1, 1)) - ll_pub(key(2, 1, 2)) ≈ 1.37 atol = 0.01
         # ranking and weights of the top four (Table 1: 0.40, 0.24, 0.22, 0.13)
         @test [f.k for f in sel[1:4]] ==
               [key(4, 4, 1), key(4, 4, 4), key(4, 1, 1), key(4, 1, 4)]

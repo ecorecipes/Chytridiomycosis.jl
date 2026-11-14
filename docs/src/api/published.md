@@ -9,6 +9,15 @@ read from the [compendium](compendium.md), for example `SchmidtParameters(:schmi
 
 ## Bsal in fire salamanders (Schmidt et al. 2017)
 
+Two Results values are not reproduced (see `data/validation/targets.toml`):
+
+- **S_eq.** The paper gives 1.0027. Eq. (2.3) gives 1.0030. The paper's value equals
+  `(d + e)(d + d_I)/(βe)`, the large-K limit of eq. (2.3), so the authors probably reported
+  that approximation.
+- **K_H.** The paper gives about 9.5. The Jacobian gives 10.21. No rate, unit or model
+  variant tested gives 9.5. The equilibrium is barely stable below 10.21: the real part of
+  the eigenvalues is −0.0011 yr⁻¹ at K = 9.5.
+
 ```@docs
 SchmidtParameters
 SchmidtSLIProblem
