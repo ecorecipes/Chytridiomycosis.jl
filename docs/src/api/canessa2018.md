@@ -68,14 +68,21 @@ distances of Fig. 3.
   values of Fig. 2: median 9.43 (95% interval 5.60–14.35) against 9.6 (5.8–14.3). Thinning
   by 50% gives 4.72 against 4.8, and thinning by 90% gives 0.94 against 0.93.
   `cap = :printed` gives the literal reading.
-- **Final densities.** Fig. 2's density ratios for actions e and f (1.0 and 0.083) are not
-  reproduced (0.69 and 0.006). Our outbreaks run faster or larger with Table S1's
-  introduction of one infected adult per km². No introduction size reproduces both.
+- **Units of `β₀` and the final densities.** Eq. S6 gives the printed `β₀ = 0.007` only
+  when it is solved with the number of adults on Stegen's 475 m × 10 m transect
+  (503 × 0.475 = 238.9) rather than the density 503 ha⁻¹, which gives 0.0039. The archived
+  draws agree: read this way, every `(β₀, S₀)` pair implies a valid `s̄` (mean 0.544,
+  printed 0.542), whereas per hectare 13% would need `s̄ < 0`. So `β₀` is per adult on the
+  transect. Simulating in those units (`units = :transect`, the default: `S₀ × 0.475`
+  susceptibles and one infected adult) reproduces Fig. 2's final densities: 0.951 for
+  action e (plotted 1.0) and 0.081 for f (0.083). Per hectare (`units = :density`,
+  `I₀ = 0.01` ha⁻¹) they are 0.69 and 0.006, because transmission per susceptible is then
+  2.1 times higher. The paper's R0 values keep `S₀` per hectare, and so does
+  `basic_reproduction_number`; the simulated outbreaks therefore spread as if R0 were 0.475
+  times the reported value. This is an inference, not printed.
 - **Printed inconsistencies.**
   - Table S1's `s₀ = 0.9906` is not `logistic(b₀) = 0.9875`.
   - `s₀` is said to match an 8-year life span, but that span gives 0.99897 per 3 days.
-  - Eq. S6 with the printed inputs gives `β₀ = 0.0039`, not 0.007. The archived `β₀`
-    column itself reproduces the printed median and interval.
   - The simplified model's `R₀` is 7.62, not 7.9.
   - "Reducing transmission and host survival by 87% each (Fig 4a)" should read 54%. The
     87% is the transmission-only intercept of Fig. 4a, whose axes are transmission and
@@ -87,7 +94,8 @@ All of these are validation targets (`canessa2018_*` in `data/validation/targets
 
 ## Results
 
-The medians and 95% intervals over the 1,000 draws, with `I₀ = 0.01` ha⁻¹:
+The medians and 95% intervals over the 1,000 draws (`cap = :truncate`,
+`units = :transect`):
 
 | Action | R0, paper (Fig. 2) | R0, here | P(R0 < 1) | final density ratio, here |
 |:--|:--|:--|:--|:--|
