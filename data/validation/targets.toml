@@ -3011,3 +3011,428 @@ let p = WilberParameters(:wilber2016; set = "deposited"), m = IPMMesh(:wilber201
 end
 """
 status = "qualitative"
+
+# --- Louca, Lampo & Doebeli 2014, Proc R Soc B 281:20132783 (wiki bd-louca2014-load-distribution) --
+# Checked against the paper and its ESM (appended to the article on the first author's site).
+# Monte Carlo targets read data/louca2014/reproduction.toml, the stored output of
+# scripts/louca2014_montecarlo.jl (2000 runs per scenario, against the paper's 10^4).
+
+[[target]]
+id = "louca2014_Qo_invasion"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "§3a, eq. (3.1); ESM §2.3, eqs (18)–(19)" }
+quantity = "Q_o > 1 is the invasion condition: sign of the spectral bound of J̄_o equals sign(Q_o − 1) over 2000 sampled parameter sets with finite Q_o"
+published = true
+call = """
+let rng = Random.Xoshiro(2783), ok = true, n = 0
+    for _ in 1:2000
+        s = louca_sample(rng; tadpoles = :suffer, reservoir = false)
+        Q = reproduction_quotient(s.p)
+        isfinite(Q) || continue
+        n += 1
+        ok &= sign(louca_growth_rate(s.p)) == sign(Q - 1)
+    end
+    ok && n > 300
+end
+"""
+status = "qualitative"
+notes = "Q_o is finite (λ_s < R̄_s for both stages) in about a quarter of the draws, since λ_s spans −1 to 1 d⁻¹ and R̄_s is mostly well below 1 d⁻¹."
+
+[[target]]
+id = "louca2014_within_host_loss"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "ESM §4.1, Fig. S4a" }
+quantity = "on-host loss rate μ_S from λ = 0.38 d⁻¹ and K_S = 14.9 (d⁻¹)"
+published = 0.25
+call = "let q = parameter_set(:louca2014); louca_within_host_loss(q.fit_λ, q.fit_KS) end"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "0.2544, the positive root of K_S μ² = 4λ(λ + μ)."
+
+[[target]]
+id = "louca2014_tolerance_estimate"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "ESM §4.1, Fig. S4b" }
+quantity = "DOI tolerance T from g′(0) = 0.0011 with F ≫ T"
+published = 1.73
+call = "let q = parameter_set(:louca2014); louca_tolerance_from_slope(q.fit_gprime; Y = q.Y) end"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "T = ln 2/(Y g′(0)) = 1.7264 with Y = 365 d."
+
+[[target]]
+id = "louca2014_outbreak_transmission"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "ESM §4.2" }
+quantity = "range of β̃ (d⁻¹) from ρ ≈ 0.15 d⁻¹, N = 50–650, η = 1.5–5.7 d⁻¹, μ_Z = 0.02–1 d⁻¹ (one significant figure)"
+published = [7e-6, 2e-3]
+call = """
+let q = parameter_set(:louca2014)
+    lo = louca_transmission_from_growth(q.outbreak_ρ; μZ = q.est_μZ_min, η = q.est_η_max, N = q.outbreak_N_max)
+    hi = louca_transmission_from_growth(q.outbreak_ρ; μZ = q.est_μZ_max, η = q.est_η_min, N = q.outbreak_N_min)
+    round.([lo, hi]; sigdigits = 1)
+end
+"""
+status = "reproduced"
+notes = "Unrounded: 6.88e-6 and 2.30e-3 d⁻¹ ((ρ + μ_Z)ρ = η β̃ N, eq. 21)."
+
+[[target]]
+id = "louca2014_cruciger_transmission"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "ESM §4.2, eq. (25)" }
+quantity = "range of β_A (d⁻¹) for the endemic A. cruciger population (N = 93, 165 recruits yr⁻¹, λ ≈ 0), one significant figure"
+published = [2e-7, 3e-5]
+call = """
+let q = parameter_set(:louca2014), R = q.cruciger_recruits / q.cruciger_N / q.Y
+    lo = louca_endemic_transmission(; μZ = q.est_μZ_min, R, η = q.est_η_max, N = q.cruciger_N)
+    hi = louca_endemic_transmission(; μZ = q.est_μZ_max, R, η = q.est_η_min, N = q.cruciger_N)
+    round.([lo, hi]; sigdigits = 1)
+end
+"""
+status = "reproduced"
+notes = "Unrounded: 1.83e-7 and 3.48e-5 d⁻¹, with the per-capita recruitment rate R = 165/93 yr⁻¹."
+
+[[target]]
+id = "louca2014_release_rate_woodhams"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "ESM §5.1" }
+quantity = "zoospore release rate η ≈ λ + μ_Z + m_Z from Woodhams et al. (2008) Table 2 at 10 and 23 °C (d⁻¹)"
+published = [1.536, 5.714]
+call = """
+[round((round(intrinsic_growth_rate(WoodhamsParameters(:woodhams2008; set)); digits = 3) +
+        WoodhamsParameters(:woodhams2008; set).dZ + WoodhamsParameters(:woodhams2008; set).mZ) * 24;
+       digits = 3) for set in ("10C", "23C")]
+"""
+status = "reproduced"
+notes = """
+Uses Woodhams' λ rounded as they print it (0.021, 0.044 h⁻¹). With our unrounded roots
+(0.02071, 0.04424 h⁻¹) η is 1.529 and 5.720 d⁻¹."""
+
+[[target]]
+id = "louca2014_zoospore_loss_woodhams"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "ESM §5.1" }
+quantity = "free zoospore death rate μ_Z from Woodhams et al. (2008) Table 1 at 4 and 28 °C (d⁻¹)"
+published = [0.0648, 0.984]
+call = "[round(parameter_set(:woodhams2008; set).dZ * 24; digits = 4) for set in (\"table1_4C\", \"table1_28C\")]"
+status = "reproduced"
+
+[[target]]
+id = "louca2014_reservoir_example"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "ESM §5.1" }
+quantity = "equilibrium pool (zoospores) of 10³ hosts with 10⁵ zoospores each, releasing 10 d⁻¹, at μ_Z = 10⁻³ d⁻¹"
+published = 1e12
+call = "let q = parameter_set(:louca2014); q.reservoir_η * q.reservoir_hosts * q.reservoir_doi / q.reservoir_μZ end"
+tolerance = { rtol = 1e-12 }
+status = "reproduced"
+notes = "Z* = Σ η N S/μ_Z from eq. (3) at Z_o = 0."
+
+[[target]]
+id = "louca2014_fig3b_extinction"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "§3d, Fig. 3b; ESM Table S1 row A.3(b)" }
+quantity = "with suffering tadpoles (Fig. 3b parameters) the population goes extinct before the end of year 2"
+published = true
+call = """
+let s = solve(LoucaDOIProblem(LoucaParameters(:louca2014; set = "fig3b")); method = :ode)
+    s.outcome === :extinction && s.t_end < 2 * parameter_set(:louca2014).Y
+end
+"""
+status = "qualitative"
+notes = """
+Deterministic: extinct at day 632 (1.73 yr). Fig. 3b shows the stochastic model, extinct by about
+1.9 yr; three seeded stochastic runs end at 1.74, 1.73 and 3.39 yr (test/louca2014.jl)."""
+
+[[target]]
+id = "louca2014_fig3a_rescue"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "§3d, Fig. 3a; ESM Table S1 row A.3(a)" }
+quantity = "with tolerant tadpoles (Fig. 3a parameters) the hosts survive ten years at a reduced size"
+published = true
+call = """
+let p = LoucaParameters(:louca2014; set = "fig3a"), s = solve(LoucaDOIProblem(p); method = :ode)
+    s.outcome === :persistence && s.NA[end] < p.KA / 5
+end
+"""
+status = "qualitative"
+notes = "Adults average 2.2 (peaks 9) and tadpoles 25 (peaks 95) over years 3–10, against K_A = 100, K_T = 200."
+
+[[target]]
+id = "louca2014_fig2_tadpole_damping"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "§3d, Fig. 2a–d; ESM Table S1 rows A.2" }
+quantity = "Bd persists in both Fig. 2 scenarios; tolerant long-lived tadpoles give strong outbreaks and host fluctuations that suffering tadpoles damp, and adults are fewer when tadpoles tolerate"
+published = true
+call = """
+let a = solve(LoucaDOIProblem(LoucaParameters(:louca2014; set = "fig2ab")); method = :ode),
+    c = solve(LoucaDOIProblem(LoucaParameters(:louca2014; set = "fig2cd")); method = :ode),
+    Y = parameter_set(:louca2014).Y
+    late(s, f) = getfield(s, f)[s.t .> 3Y]
+    amp(s, f) = maximum(late(s, f)) - minimum(late(s, f))
+    avg(s, f) = sum(late(s, f)) / length(late(s, f))
+    a.outcome === c.outcome === :persistence && amp(a, :NT) > 5amp(c, :NT) &&
+        amp(a, :SA) > 2amp(c, :SA) && avg(a, :NA) < avg(c, :NA)
+end
+"""
+status = "qualitative"
+notes = """
+Deterministic, years 3–10: tadpoles 57–131 (tolerant) against 96.8–99.3 (suffering); mean adult
+DOI peaks 7952 against 2765; mean adults 26.2 against 29.3. Fig. 2 shows the stochastic model,
+whose suffering-tadpole runs have quasi-cycles of their own (§3b)."""
+
+# Louca 2014 Monte Carlo (stored output; columns of Table 2: Z_o > 0 suffer, Z_o > 0 tolerate,
+# Z_o = 0 suffer, Z_o = 0 tolerate). A Table 2 cell counts as matched within ±0.1 (our
+# standard error with 2000 runs is about 0.03); "—" means |risk effect| < 0.1 in the paper.
+
+[[target]]
+id = "louca2014_extinction_fraction"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "§3d (sampling the whole space with Z_o = 0)" }
+quantity = "fraction of runs ending in host extinction, Z_o = 0: tadpoles suffer, tadpoles tolerate"
+published = [0.25, 0.21]
+call = """
+let d = load_louca2014()
+    [round(d[k]["extinction"]; digits = 4) for k in ("suffer_noreservoir", "tolerate_noreservoir")]
+end
+"""
+status = "discrepant"
+regression = { value = [0.2145, 0.1835] }
+notes = """
+2000 runs per scenario (SE ≈ 0.009). Not explained by the step size (200/200 outcomes equal at
+dt = 0.01 d), the number of DOI bins (m = 1000: 0.223 against 0.210 on 300 runs), the reading of
+the duplicated "r" in the log-uniform list (0.135–0.225) or the reservoir onset (Z_o = 0 here).
+The authors' C++ code was not deposited."""
+
+[[target]]
+id = "louca2014_suffer_more_extinctions"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "§3d" }
+quantity = "with Z_o = 0, extinctions are more frequent when tadpoles suffer than when they tolerate infection"
+published = true
+call = """
+let d = load_louca2014()
+    d["suffer_noreservoir"]["extinction"] > d["tolerate_noreservoir"]["extinction"]
+end
+"""
+status = "qualitative"
+notes = "0.2145 against 0.1835 (paper 0.25 against 0.21): a difference of 3.1 points, two-proportion z ≈ 2.4."
+
+[[target]]
+id = "louca2014_risk_Qo"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "Table 2, row Q_o; ESM §5.2" }
+quantity = "risk effect of Q_o in the four columns of Table 2"
+published = [0.66, 0.83, 0.81, 0.71]
+call = """
+let d = load_louca2014()
+    [round(d[k]["risk_effects"]["Qo"]; digits = 2) for k in
+     ("suffer_reservoir", "tolerate_reservoir", "suffer_noreservoir", "tolerate_noreservoir")]
+end
+"""
+status = "discrepant"
+regression = { value = [0.9, 0.66, 1.13, 1.02] }
+notes = """
+Ours: slope of the extinction indicator on log10 Q_o over runs with finite Q_o (about 32%), times
+the observed range (10.5–11.5 decades). How the paper sets the range for a parameter that is not
+sampled is not stated. Fixing it at 10 decades (Fig. 5's axis), regressing binned
+probabilities, or using the central 95% range gives 0.58–0.86, 0.43–0.58, 0.75–1.03 and
+0.68–0.93: no single reading matches all four columns, and the tolerate/reservoir column is low
+under all of them. Q_o has the largest risk effect without a reservoir, as the paper says, but
+not with one (Z_o is larger; next target)."""
+
+[[target]]
+id = "louca2014_risk_Zo"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "Table 2, row Z_o" }
+quantity = "risk effect of the reservoir Z_o (tadpoles suffer, tolerate)"
+published = [0.66, 0.78]
+call = """
+let d = load_louca2014()
+    [round(d[k]["risk_effects"]["Zo"]; digits = 2) for k in ("suffer_reservoir", "tolerate_reservoir")]
+end
+"""
+status = "discrepant"
+regression = { value = [1.15, 1.12] }
+notes = """
+Extinction steps up sharply with log Z_o (a step at the middle of the range gives the maximum,
+1.5). Starting the reservoir at t = 0 instead of at exposure gives 1.15 and 1.11, so the onset
+is not the cause (extinction 0.594/0.562 against 0.590/0.559)."""
+
+[[target]]
+id = "louca2014_risk_TA"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "Table 2, row T_A" }
+quantity = "risk effect of the adult DOI tolerance T_A in the four columns"
+published = [-0.38, -0.47, -0.17, -0.28]
+call = """
+let d = load_louca2014()
+    [round(d[k]["risk_effects"]["TA"]; digits = 2) for k in
+     ("suffer_reservoir", "tolerate_reservoir", "suffer_noreservoir", "tolerate_noreservoir")]
+end
+"""
+status = "discrepant"
+regression = { value = [-0.11, -0.05, 0.02, 0.0] }
+notes = """
+The largest disagreement. Our extinctions are mostly fast collapses (median 236 days after
+exposure with Z_o = 0, suffering tadpoles) in which hosts reach the lethal DOI whatever T_A, and
+low T_A also kills the index adult and early infections, which favours clearance. Not changed by
+m = 1000 bins (−0.03) or by the log-scale reading (−0.06 to 0.00)."""
+
+[[target]]
+id = "louca2014_risk_muZ"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "Table 2, row μ_Z" }
+quantity = "risk effect of the free zoospore loss rate μ_Z in the four columns"
+published = [-0.11, -0.2, -0.44, -0.46]
+call = """
+let d = load_louca2014()
+    [round(d[k]["risk_effects"]["μZ"]; digits = 2) for k in
+     ("suffer_reservoir", "tolerate_reservoir", "suffer_noreservoir", "tolerate_noreservoir")]
+end
+"""
+status = "discrepant"
+regression = { value = [-0.21, -0.15, -0.56, -0.5] }
+notes = "Signs and the pattern (much stronger without a reservoir) agree; two cells differ by 0.10 and 0.12."
+
+[[target]]
+id = "louca2014_risk_betaA"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "Table 2, row β_A" }
+quantity = "risk effect of the mean adult transmission rate β_A in the four columns"
+published = [0.32, 0.34, 0.38, 0.39]
+call = """
+let d = load_louca2014()
+    [round(d[k]["risk_effects"]["βA"]; digits = 2) for k in
+     ("suffer_reservoir", "tolerate_reservoir", "suffer_noreservoir", "tolerate_noreservoir")]
+end
+"""
+status = "discrepant"
+regression = { value = [0.51, 0.55, 0.54, 0.54] }
+notes = "Positive in every column, as published, but about 0.17 stronger; β_T likewise (0.29, 0.14, 0.41, 0.31 against 0.17, 0.27, 0.24, 0.18)."
+
+[[target]]
+id = "louca2014_risk_KT_KA"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "Table 2, rows K_T and K_A; §3d (tolerant tadpoles as a rescue buffer)" }
+quantity = "risk effects of K_T and K_A with Z_o = 0 (suffer, tolerate)"
+published = [-0.27, -0.35, -0.22, -0.12]
+call = """
+let d = load_louca2014(), ks = ("suffer_noreservoir", "tolerate_noreservoir")
+    vcat([round(d[k]["risk_effects"]["KT"]; digits = 2) for k in ks],
+         [round(d[k]["risk_effects"]["KA"]; digits = 2) for k in ks])
+end
+"""
+status = "discrepant"
+regression = { value = [0.0, -0.07, 0.06, 0.04] }
+notes = """
+K_T is more negative when tadpoles tolerate (−0.07 against 0.00), the direction §3d reads as a
+rescue buffer, but far weaker than published; K_A has no effect. Carrying capacities raise Q_o
+(more shedders) and buffer against the absolute extinction threshold of 2 hosts; in our runs the
+two cancel."""
+
+[[target]]
+id = "louca2014_risk_TT"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "Table 2, row T_T" }
+quantity = "risk effect of the tadpole DOI tolerance T_T (Z_o > 0, tadpoles suffer)"
+published = -0.24
+call = "round(load_louca2014()[\"suffer_reservoir\"][\"risk_effects\"][\"TT\"]; digits = 2)"
+status = "discrepant"
+regression = { value = 0.01 }
+notes = "As for T_A: in our runs tolerances barely change the outcome."
+
+[[target]]
+id = "louca2014_risk_lambdaA"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "Table 2, row λ_A" }
+quantity = "risk effect of the adult early growth rate λ_A in the four columns"
+published = [0.17, 0.19, 0.18, 0.12]
+call = """
+let d = load_louca2014()
+    [round(d[k]["risk_effects"]["λA"]; digits = 2) for k in
+     ("suffer_reservoir", "tolerate_reservoir", "suffer_noreservoir", "tolerate_noreservoir")]
+end
+"""
+status = "discrepant"
+regression = { value = [0.12, 0.11, 0.08, 0.09] }
+notes = "Positive everywhere as published, but weaker; the Z_o = 0, suffer cell is 0.10 below."
+
+[[target]]
+id = "louca2014_risk_weak_rows"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "Table 2, rows μ_S,A, η_A, μ_S,T, T_br" }
+quantity = "the weak rows of Table 2 (μ_S,A, η_A, μ_S,T, T_br) are matched within ±0.1, a dash (|effect| < 0.1) by |ours| < 0.2"
+published = true
+call = """
+let d = load_louca2014(), cols = ("suffer_reservoir", "tolerate_reservoir", "suffer_noreservoir", "tolerate_noreservoir"),
+    pub = Dict("μSA" => [NaN, NaN, -0.14, -0.11], "ηA" => [NaN, NaN, 0.13, NaN],
+               "μST" => [NaN, NaN, NaN, -0.12], "Tbr" => [NaN, NaN, NaN, -0.10])
+    all(all(isnan(v[i]) ? abs(d[cols[i]]["risk_effects"][s]) < 0.2 :
+            abs(d[cols[i]]["risk_effects"][s] - v[i]) <= 0.1 for i in 1:4) for (s, v) in pub)
+end
+"""
+status = "reproduced"
+notes = "Ours: μ_S,A −0.14/−0.19/−0.15/−0.15; η_A −0.04/0.04/0.04/0.07; μ_S,T −0.03/−0.07/−0.06/−0.07; T_br −0.07/−0.13/−0.07/−0.15."
+
+[[target]]
+id = "louca2014_top_parameters"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "§3c" }
+quantity = "with Z_o = 0 the two model parameters with the largest risk effects are β_A and μ_Z, and Q_o exceeds every parameter"
+published = true
+call = """
+let d = load_louca2014()
+    all(("suffer_noreservoir", "tolerate_noreservoir")) do k
+        re = d[k]["risk_effects"]
+        top = first.(sort([s => abs(v) for (s, v) in re if s != "Qo"]; by = x -> -x[2])[1:2])
+        Set(top) == Set(["βA", "μZ"]) && abs(re["Qo"]) > maximum(abs(v) for (s, v) in re if s != "Qo")
+    end
+end
+"""
+status = "qualitative"
+notes = "Suffer: μ_Z −0.56, β_A 0.54, then β_T 0.41; tolerate: β_A 0.54, μ_Z −0.50, β_T 0.31."
+
+[[target]]
+id = "louca2014_fig5_Qo_outcomes"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "§3c; Fig. 5c,d" }
+quantity = "with Z_o = 0: clearance above 0.85 for Q_o < 10⁻², persistence peaks at Q_o ≈ 1 (bin 1–10), and extinction rises from 0 below Q_o = 0.1 to above 0.5 for Q_o of 10–1000"
+published = true
+call = """
+let d = load_louca2014()
+    all(("suffer_noreservoir", "tolerate_noreservoir")) do k
+        b = d[k]["Qo_bins"]
+        e = b["log10_edges"]; n = b["n"]
+        c = [(e[j] + e[j+1]) / 2 for j in 1:length(n)]
+        lo = [j for j in eachindex(n) if n[j] >= 5 && c[j] < -2]
+        mid = [j for j in eachindex(n) if n[j] >= 20]
+        hi = [j for j in eachindex(n) if n[j] >= 5 && 1 < c[j] < 3]
+        all(b["clearance"][j] > 0.85 for j in lo) &&
+            all(b["extinction"][j] == 0 for j in eachindex(n) if n[j] > 0 && c[j] < -1) &&
+            c[argmax([n[j] >= 20 ? b["persistence"][j] : -1.0 for j in eachindex(n)])] == 0.5 &&
+            all(b["extinction"][j] > 0.5 for j in hi)
+    end
+end
+"""
+status = "qualitative"
+notes = """
+Suffer: persistence 0.67 at Q_o in [1, 10), clearance 0.89–1 below 10⁻², extinction 0.51, 0.65,
+0.86 in the three bins from 10 to 10⁴. The paper's extinction reaches 1 near Q_o = 10⁴; we have
+too few runs there (2 and 1) to say."""
+
+[[target]]
+id = "louca2014_fig4_grid"
+model = "bd-louca2014-load-distribution"
+source = { ref = "louca2014", location = "§3c; Fig. 4c" }
+quantity = "with Z_o = 0 and suffering tadpoles, extinction is most likely at high β_A and low μ_Z and clearance at low β_A and high μ_Z"
+published = true
+call = """
+let g = load_louca2014()["suffer_noreservoir"]["fig4_grid"]
+    E = reduce(hcat, g["extinction"])'; Cl = reduce(hcat, g["clearance"])'
+    ie = argmax(E); ic = argmax(Cl)
+    ie[1] == size(E, 1) && ie[2] == 1 && ic[1] <= size(Cl, 1) ÷ 2 && ic[2] == size(Cl, 2)
+end
+"""
+status = "qualitative"
+notes = "Rows: log10 β_A bins −10 … −3; columns: log10 μ_Z bins −3 … 0. Extinction 0.84 in the corner (β_A > 10⁻⁴, μ_Z < 10⁻²); clearance 0.91 at β_A ~ 10⁻⁹, μ_Z > 0.1."
