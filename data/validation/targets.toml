@@ -1986,8 +1986,10 @@ notes = "The sampling ranges and the number of runs are not given, so the PRCC v
 # Checked against the review copy of the paper (the only version available; Table 1, Figs 2-4,
 # SI eqs S1-S12, Table S1) and the archived draws (Dryad doi:10.5061/dryad.0jh5p). Values
 # "read from Fig. 2/3" were measured on a 300-dpi rendering of the figure. The ensembles
-# (_canessa_reference) run all 1,000 draws once per session with I0 = 0.01 ha⁻¹ (Table S1)
-# and the default cap = :truncate (loads never exceed Lmax; see the model docstrings).
+# (_canessa_reference) run all 1,000 draws once per session with the defaults cap = :truncate
+# (loads never exceed Lmax) and units = :transect (the dynamics count adults on the 0.475-ha
+# transect from which β0 was derived, with one infected adult introduced); see the model
+# docstrings. R0 keeps S0 per ha in either case, as the paper's R0 values do.
 
 [[target]]
 id = "canessa2018_beta0_median"
@@ -2020,7 +2022,33 @@ notes = "0.00372 and 0.01245 in the archived column (the call returns true when 
 id = "canessa2018_beta0_final_size"
 model = "bsal-canessa2018-ipm-decision"
 source = { ref = "canessa2018", location = "SI eq. S6, lines 69-88" }
-quantity = "β0 from the final-size relation with the printed S0 = 503, S∞ = 7 and s̄ = 0.542"
+quantity = "β0 from the final-size relation with S0 as the count on the 0.475-ha transect (503 × 0.475), S∞ = 7 and s̄ = 0.542"
+published = 0.007
+call = """
+let c = parameter_set(:canessa2018)
+    final_size_transmission(c.S0 * c.transect_length * c.search_width / 1e4, c.S_inf, c.s_bar)
+end
+"""
+tolerance = { digits = 3 }
+status = "reproduced"
+regression = { value = 0.006971, atol = 1e-6 }
+notes = """
+Resolved by an inferred reading (not printed): S0 enters eq. S6 as the number of adults on
+Stegen's 475 m × 10 m transect (238.9), the quantity the Stegen data count, with S∞ = 7 as
+printed. This gives 0.00697; with s̄ at its printed limits, 0.0036-0.0123 (printed CI
+0.0037-0.0125). Per hectare (503) it gives 0.0039 (canessa2018_beta0_final_size_per_ha).
+Other single changes tested: s̄ = 0.191 (its lower limit) gives 0.00697 and s̄ read as a daily
+survival (1 - s̄³) gives 0.0072, but neither fits the archived draws (13% would need s̄ < 0 or
+1 - s̄³ > 1); log10 gives 0.0017, S∞ per transect against S0 per ha 0.0033, s0 in R0 0.0040,
+a factor of 2 0.0079. Only the count reading fits the draws (canessa2018_beta0_draws_sbar).
+So β0 is per adult on the transect; dynamics in the same units reproduce Fig. 2's final
+densities (canessa2018_thinning50_ratio)."""
+
+[[target]]
+id = "canessa2018_beta0_final_size_per_ha"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "SI eq. S6, lines 69-88" }
+quantity = "β0 from the final-size relation with the printed S0 = 503 ha⁻¹, S∞ = 7 and s̄ = 0.542"
 published = 0.007
 call = """
 let c = parameter_set(:canessa2018)
@@ -2031,11 +2059,34 @@ tolerance = { digits = 3 }
 status = "discrepant"
 regression = { value = 0.003947, atol = 1e-6 }
 notes = """
-Eq. S6 with R0 = S0 β/(1 - s̄) and the printed inputs gives 0.0039, about half the printed
-median. The median R0 implied by eq. S6, ln(S0/S∞)/(1 - S∞/S0) = 4.3, is also half the R0 of
-both the IPM and the simplified model. The archived (beta0, S0) pairs cannot be reproduced
-from eq. S6 with S∞ = 7 and any s̄ in [0, 1) for every draw (see the compendium notes). The
-draws themselves reproduce the printed median and interval, and the IPM uses them."""
+Eq. S6 with R0 = S0 β/(1 - s̄) and S0 per hectare, as printed, gives 0.0039, about half the
+printed median: the implied R0, ln(S0/S∞)/(1 - S∞/S0) = 4.3, is half the R0 of the IPM and of
+the simplified model. Explained by the transect-count reading
+(canessa2018_beta0_final_size)."""
+
+[[target]]
+id = "canessa2018_beta0_draws_sbar"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "SI lines 81-88; Dryad doi:10.5061/dryad.0jh5p" }
+quantity = "mean s̄ implied by the archived (β0, S0) pairs through eq. S6 with S0 as the transect count and S∞ = 7"
+published = 0.542
+call = """
+let c = parameter_set(:canessa2018), A = c.transect_length * c.search_width / 1e4,
+        draws = load_canessa2018()
+    sum(1 - d.β0 * (d.S0 * A - c.S_inf) / log(d.S0 * A / c.S_inf) for d in draws) /
+        length(draws)
+end
+"""
+tolerance = { atol = 0.01 }
+status = "reproduced"
+regression = { value = 0.5443, atol = 1e-4 }
+notes = """
+Inverting eq. S6 draw by draw with N0 = S0 × 0.475 (an integer count in every row) gives s̄
+with mean 0.544, median 0.550 and range 0.17-0.83: a valid probability in all 1,000 draws.
+Per hectare the implied s̄ has median 0.21 and is negative in 13% of draws. Two features remain
+unexplained: the implied 95% range (0.35-0.72) is narrower than the printed CI (0.191-0.761),
+and it correlates weakly with S0 (r = -0.17), so S∞ or the s̄ distribution may have been
+handled differently in detail."""
 
 [[target]]
 id = "canessa2018_growth_b4"
@@ -2093,7 +2144,7 @@ call = "canessa_survival(CanessaParameters(:canessa2018), 0.0)"
 tolerance = { digits = 4 }
 status = "discrepant"
 regression = { value = 0.98752, atol = 1e-5 }
-notes = "logistic(4.3712) = 0.9875. Neither s(0) nor s(-1) (load 0 GE, 0.9946) gives the printed 0.9906. The package keeps the printed s0 in CanessaParameters(:canessa2018)."
+notes = "logistic(4.3712) = 0.9875. Neither s(0) nor s(-1) (load 0 GE, 0.9946) gives the printed 0.9906, which is s(z = -0.34), not a meaningful load. Fits to the medians or means of the archived survival draws give s(0) = 0.9964 and 0.9959. The package keeps the printed s0 in CanessaParameters(:canessa2018)."
 
 [[target]]
 id = "canessa2018_s0_lifespan"
@@ -2109,7 +2160,7 @@ end
 tolerance = { digits = 3 }
 status = "discrepant"
 regression = { value = 0.998973, atol = 1e-6 }
-notes = "An 8-year life expectancy (Bozzuto & Canessa 2019, Table 1) gives 0.99897 per 3 days. s0 = 0.9906 per 3 days is an annual survival of 0.32 (life expectancy under one year), and over the 90-day horizon 0.75 against 0.97."
+notes = "An 8-year life expectancy (Bozzuto & Canessa 2019, Table 1) gives 0.99897 per 3 days. s0 = 0.9906 per 3 days is an annual survival of 0.32 (life expectancy 318 days), and over the 90-day horizon 0.75 against 0.97. Read per 28 days (exp(-28/2920) = 0.99046) or per month (0.9896) it matches a life span of 8.1 or 8.8 years, so the comparison may have been made on a monthly scale; that is a guess, and the model uses s0 per 3 days."
 
 [[target]]
 id = "canessa2018_R0"
@@ -2127,8 +2178,21 @@ alone (canessa2018_R0_printed_cap). Each draw is refitted as in the SI (logistic
 on z = -1, ln 10, ..., ln 10⁴; eq. S9 from 10 Beverton-Holt steps), R0 = S0 s0 ∫β (I-P)⁻¹G0.
 Checked and ruled out as the cause of the remaining 2%: mesh size, the series length of eq.
 S9, G0 variance vs sd, s0 from the fit or the elicited value, fits on the logit scale or
-dropping T_0 = 0. The review's '98% reduction at >80% coverage within 3 days' is the
-Discussion's summary of actions d and e (canessa2018_antifungal_*)."""
+dropping T_0 = 0. Second pass (quantiles 2.5/50/97.5%): renormalising each growth column over
+the mesh, as an eviction fix (5.61/9.46/14.37; Wilber et al.'s code does not renormalise and
+the SI says eviction was ignored); the variance of Wilber et al.'s code, σ² exp(2 b7 z)
+(5.42/9.09/13.73); the variance evaluated at z rather than min(z, ln Lmax); cell-integrated
+(CDF) kernels (5.60/9.44/14.35); survival at the load after growth (4.26/7.44/11.62);
+least-squares logistic fits (5.84/10.12/15.54); load 0 at z = 0 or -10 (9.48, 9.26); excess
+mass above Lmax piled into the top cell (8.48); 5-30 series steps (no change). None matches
+all three quantiles. The printed cap times 7/6 would (5.80/9.62/14.27), but no documented
+quantity gives that factor. Fig. 2 bears out truncation for the other actions: f is 4.80
+(2.86-7.16) read from the figure against 4.72 (2.80-7.17). Bootstrap standard errors of our
+quantiles are 0.15/0.10/0.18, so the gaps (+0.20, +0.17, -0.05) are 1.3, 1.7 and 0.3 SE:
+within Monte Carlo error if the paper's runs used fresh draws (Fig. 2's g at 10 × 0.93 = 9.3
+and b's longer bar, 5.6-15.1, hint at that), but not if they used the archived draws. The
+review's '98% reduction at >80% coverage within 3 days' is the Discussion's summary of
+actions d and e (canessa2018_antifungal_*)."""
 
 [[target]]
 id = "canessa2018_R0_lower"
@@ -2241,13 +2305,16 @@ quantity = "median final density ratio under the antifungal at 80% coverage (col
 published = 1.0
 call = "_canessa_reference(:e).summary.ratio.median"
 tolerance = { atol = 0.05 }
-status = "discrepant"
-regression = { value = 0.688, atol = 0.005 }
+status = "reproduced"
+regression = { value = 0.951, atol = 0.005 }
 notes = """
-Fig. 2 plots e at a ratio of 1.0 (bar down to 0.56). Ours, with I0 = 0.01 ha⁻¹ (Table S1:
-1 adult km⁻²), is 0.69 (0.06-1.00): our outbreaks under this action start sooner. Smaller
-introductions bring it closer (I0 = 10⁻⁴: 0.995, with 0.52 at the upper R0 bound, as
-Fig. 2), but no single I0 also reproduces action f (canessa2018_thinning50_ratio)."""
+Fig. 2 plots e at a ratio of 1.0 (bar down to 0.56). Ours, simulating in transect numbers
+(units = :transect, the units in which eq. S6 gives the printed β0; one infected adult
+introduced), is 0.951, with 95% range 0.58-0.99 and 0.47 at the upper R0 bound. This is
+within the tolerance but 0.05 below the plotted marker, which sits at 1.0 to reading
+accuracy. Per hectare with I0 = 0.01 ha⁻¹ (units = :density) it is 0.69. One adult km⁻²
+converted to the transect gives 1.00, but a range down to only 0.97. No I0 matches both,
+and none was fitted."""
 
 [[target]]
 id = "canessa2018_thinning50_R0"
@@ -2268,9 +2335,30 @@ quantity = "median final density ratio after 50% pre-emptive thinning"
 published = 0.083
 call = "_canessa_reference(:f).summary.ratio.median"
 tolerance = { atol = 0.03 }
+status = "reproduced"
+regression = { value = 0.081, atol = 0.003 }
+notes = """
+Read from Fig. 2: 0.083 (bar 0.025-0.48). Ours is 0.081 (95% range 0.021-0.34; 0.30 and 0.021
+at the R0 bounds). The dynamics count adults on the 0.475-ha transect, the units in which eq.
+S6 gives the printed β0 (canessa2018_beta0_final_size), with one infected adult introduced.
+In those units transmission per susceptible is 0.475 times that of the per-ha model, so the
+outbreak (effective R0 ≈ 2.2) is still running at 90 days. Per hectare it is 0.006 for any
+introduction (canessa2018_thinning50_ratio_density). Also tested and ruled out: a horizon of
+15 or 20 steps (0.023, 0.006); new infecteds surviving a step before transmitting (0.03). A
+free factor on transmission in the dynamics alone fits best at 0.52-0.54 (a 0.01, f 0.08);
+0.475 is the transect area, not fitted."""
+
+[[target]]
+id = "canessa2018_thinning50_ratio_density"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Fig. 2 (action f)" }
+quantity = "median final density ratio after 50% pre-emptive thinning, simulating per hectare (S0 ha⁻¹, I0 = 0.01 ha⁻¹)"
+published = 0.083
+call = "_canessa_reference(:f; units = :density).summary.ratio.median"
+tolerance = { atol = 0.03 }
 status = "discrepant"
 regression = { value = 0.006, atol = 0.002 }
-notes = "Read from Fig. 2: 0.083 (bar 0.025-0.48). Ours 0.006 (0.001-0.056): with R0 ≈ 4.7 our outbreak runs to completion within 90 days whatever the introduction size (0.006 to 0.007 for I0 from 10⁻² to 10⁻⁵ ha⁻¹), and the final-size relation gives 0.5 × 0.0095. The paper's value implies a slower or smaller outbreak; not explained."
+notes = "With S0 and β0 per ha the outbreak (R0 ≈ 4.7) runs to completion within 90 days whatever the introduction size (0.006 to 0.007 for I0 from 10⁻² to 10⁻⁵ ha⁻¹), as the final-size relation predicts (0.5 × 0.0095). Action e gives 0.69 in these units (plotted 1.0). Explained by the transect-unit reading (canessa2018_thinning50_ratio)."
 
 [[target]]
 id = "canessa2018_thinning90_eradication"
@@ -2303,7 +2391,7 @@ published = "≈ 0.01 (effective extirpation)"
 call = "_canessa_reference(:a).summary.ratio.median"
 tolerance = { lower = -1.0, upper = 0.05 }
 status = "qualitative"
-notes = "Ours < 0.001 (97.5% quantile 0.005)."
+notes = "Ours 0.013 (95% range 0.001-0.10; Fig. 2: about 0.01, bar to 0.11). Per hectare (units = :density) it is < 0.001."
 
 [[target]]
 id = "canessa2018_dispersal_no_action"
@@ -2348,7 +2436,7 @@ call = "basic_reproduction_number(CanessaSIParameters(:canessa2018))"
 tolerance = { digits = 1 }
 status = "discrepant"
 regression = { value = 7.6155, atol = 1e-4 }
-notes = "S0 s0 β/(1 - s̄) with Table S1's 503, 0.9906, 0.007, 0.542 is 7.62 (7.69 without s0, as SI line 70 prints R0). Fig. 4's thresholds below agree with either."
+notes = "S0 s0 β/(1 - s̄) with Table S1's 503, 0.9906, 0.007, 0.542 is 7.62 (7.69 without s0, as SI line 70 prints R0). Fig. 4's thresholds below agree with either. The means of the archived draws (β0 0.00732, S0 500.9) give 7.93, which rounds to 7.9, but then the equal three-way reduction of Fig. 4c is 0.426, not the printed 0.42 (7.62 gives 0.419). Medians give 7.42; β0 at 0.00726 or s̄ at 0.566 would be needed. Not resolved."
 
 [[target]]
 id = "canessa2018_reduction_transmission"

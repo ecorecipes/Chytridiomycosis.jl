@@ -17,7 +17,7 @@ using Test
     @testset "compendium and data" begin
         recs = parameter_records(:canessa2018)
         unverified = Set(r.symbol for r in recs if !r.verified)
-        @test unverified == Set([:growth_series_steps, :Lmax_best, :growth_best])
+        @test unverified == Set([:growth_series_steps, :Lmax_best, :growth_best, :I0_count])
         @test c.step_length == 3 && c.nsteps == 30
         @test (c.z_lower, c.z_upper, c.mesh_points) == (-10, 15, 300)
         @test c.μG0 ≈ log(200) atol = 1e-4                       # Table S1: 5.2983
@@ -137,20 +137,34 @@ using Test
 
     @testset "IPM dynamics" begin
         q = CanessaParameters(draws[11])
-        free = solve(CanessaIPMProblem(q; I0 = 0))
+        area = c.transect_length * c.search_width / 1e4                 # 0.475 ha
+        # Per hectare (units = :density): S0 ha⁻¹ and one infected adult per km²
+        free = solve(CanessaIPMProblem(q; units = :density, I0 = 0))
         @test free.S ≈ q.S0 .* q.s0 .^ (0:30) && all(iszero, free.I)
         @test free.t == 0:3:90
-        sol = solve(CanessaIPMProblem(q))
+        sol = solve(CanessaIPMProblem(q; units = :density))
         @test sol.I[1] ≈ 0.01 atol = 1e-8
         @test size(sol.n) == (300, 31) && sum(sol.n[:, end]) ≈ sol.I[end]
         @test issorted(sol.S; rev = true) && sol.S[end] / free.S[end] < 0.05
         # New infections are S s0 φ: susceptible losses beyond natural deaths
         t = 10
         @test sol.S[t] * q.s0 - sol.S[t+1] ≈ sol.S[t] * q.s0 * sol.φ[t]
-        @test canessa_density_ratio(q, q) ≈ sol.S[end] / (q.S0 * q.s0^30)
+        @test canessa_density_ratio(q, q; units = :density) ≈ sol.S[end] / (q.S0 * q.s0^30)
+        # On the 0.475-ha transect (units = :transect, the default): S0 × 0.475 adults and
+        # one infected adult; the same as per hectare with β0 × 0.475 and I0 = 1/0.475 ha⁻¹
+        st = solve(CanessaIPMProblem(q))
+        @test st.S[1] ≈ area * q.S0
+        @test st.I[1] ≈ 1 atol = 1e-8
+        qs = CanessaParameters(; (f => getfield(q, f) for f in fieldnames(CanessaParameters))...,
+            β0 = area * q.β0)
+        sd = solve(CanessaIPMProblem(qs; units = :density, I0 = 1 / area))
+        @test st.S ≈ area .* sd.S rtol = 1e-10
+        @test canessa_density_ratio(q, q) ≈ st.S[end] / (area * q.S0 * q.s0^30)
+        @test canessa_density_ratio(q, q) > canessa_density_ratio(q, q; units = :density)
         qd = CanessaParameters(draws[11]; action = canessa_action(:d))
         @test canessa_density_ratio(qd, q) > 0.99
         @test_throws ArgumentError CanessaIPMProblem(q; I0 = -1)
+        @test_throws ArgumentError CanessaIPMProblem(q; units = :other)
         # Movement (Fig. 3)
         surv = canessa_cohort_survival(q)
         @test surv[1] == 1 && surv[end] < 0.01 && surv[end-1] >= 0.01 && issorted(surv; rev = true)
@@ -167,6 +181,10 @@ using Test
         p5 = CanessaParameters(sub[5]; action = canessa_action(:e))
         @test ens[5].R0 ≈ basic_reproduction_number(p5) rtol = 1e-12
         @test ens[5].ratio ≈ canessa_density_ratio(p5, CanessaParameters(sub[5])) rtol = 1e-12
+        ensd = canessa_ensemble(canessa_action(:e); draws = sub[1:2], units = :density)
+        @test ensd[2].ratio ≈ canessa_density_ratio(CanessaParameters(sub[2];
+            action = canessa_action(:e)), CanessaParameters(sub[2]); units = :density) rtol = 1e-12
+        @test_throws ArgumentError canessa_ensemble(; draws = sub[1:1], units = :other)
         @test ens[5].max_distance ≈ canessa_dispersal(p5).max_distance
         s = canessa_summary(ens)
         @test s.R0.lower <= s.R0.median <= s.R0.upper
@@ -193,11 +211,15 @@ using Test
         # d: R0 < 1 in every draw, population kept; e: < 2.5% of draws with R0 < 1
         @test S(:d).R0.upper < 1 && S(:d).ratio.lower > 0.99
         @test S(:e).P_R0_below_1 < 0.025 && abs(S(:e).R0.median - 2.4) < 0.25
-        # e's density ratio is 1.0 in Fig. 2 (collapse delayed); ours 0.69 with I0 = 0.01 ha⁻¹
-        @test_broken S(:e).ratio.median > 0.95
-        # f: R0 halves (4.8 in Fig. 2); its density ratio 0.083 is not reproduced (ours 0.006)
+        # Final densities, simulating on the 0.475-ha transect (the units of β0 implied by eq.
+        # S6) with one infected adult: e 0.951 (Fig. 2: 1.0, collapse delayed), f 0.081 (0.083)
+        @test abs(S(:e).ratio.median - 1.0) < 0.05
+        @test S(:e).ratio.median ≈ 0.951 atol = 0.005
         @test abs(S(:f).R0.median - 4.8) < 0.25
-        @test_broken abs(S(:f).ratio.median - 0.083) < 0.03
+        @test abs(S(:f).ratio.median - 0.083) < 0.03
+        # Per hectare (units = :density) the outbreaks run 2.1 times faster: e 0.69, f 0.006
+        @test_broken abs(S(:f; units = :density).ratio.median - 0.083) < 0.03
+        @test S(:f; units = :density).ratio.median < 0.01
         # g: 'approximately 50%' chance of eradication (ours 59%); h: R0 < 1, ratio 0
         @test 0.4 < S(:g).P_R0_below_1 < 0.6
         @test S(:h).R0.upper < 1 && S(:h).ratio.upper < 1e-3
@@ -228,9 +250,15 @@ using Test
         @test required_reduction(p, :β; mS0 = 0.99) == 0
         @test_throws ArgumentError required_reduction(p, :other)
         @test_throws ArgumentError basic_reproduction_number(p; mβ = 1.5)
-        # Eq. S6 with the printed inputs gives 0.0039, not 0.007
+        # Eq. S6 with S0 per ha gives 0.0039, not 0.007; with S0 as the count on the 0.475-ha
+        # transect it gives 0.00697, and the archived draws then imply a valid s̄ in every row
         @test_broken round(final_size_transmission(c.S0, c.S_inf, c.s_bar); digits = 3) == 0.007
         @test final_size_transmission(c.S0, c.S_inf, c.s_bar) ≈ 0.003947 atol = 1e-6
+        area = c.transect_length * c.search_width / 1e4
+        @test round(final_size_transmission(area * c.S0, c.S_inf, c.s_bar); digits = 3) == 0.007
+        sbar(d, A) = 1 - d.β0 * (A * d.S0 - c.S_inf) / log(A * d.S0 / c.S_inf)
+        @test all(d -> 0 < sbar(d, area) < 1, draws)
+        @test count(d -> sbar(d, 1.0) < 0, draws) > 100
         @test_throws ArgumentError final_size_transmission(7, 503, 0.5)
         # Dynamics: no infection gives S0 s0^t; more reduction keeps more hosts (Fig. 4d)
         free = solve(CanessaSIProblem(p; I0 = 0))

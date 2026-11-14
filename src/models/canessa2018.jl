@@ -28,8 +28,13 @@
 # - The cap at Lmax: the SI formula (mean ln Lmax above the cap, normal spread) lets loads
 #   exceed Lmax and gives R0 = 8.2 (95% interval 5.0-12.2), uniformly ~14% below the paper's
 #   9.6 (5.8-14.3). Not letting loads exceed Lmax (cap = :truncate, the default) gives 9.4
-#   (5.6-14.3) and reproduces the other R0 values of Fig. 2. The final-density ratios of Fig. 2
-#   are not reproduced either way (our outbreaks run faster); see the validation targets.
+#   (5.6-14.3) and reproduces the other R0 values of Fig. 2.
+# - Units of β0 (inferred): eq. S6 gives the printed β0 = 0.007 only with S0 as the count on
+#   the 0.475-ha Stegen transect (238.9 adults), not 503 ha⁻¹; the archived (β0, S0) pairs
+#   agree. Simulating in the same units (units = :transect: S0 × 0.475 susceptibles, one
+#   infected adult introduced) reproduces Fig. 2's final densities (e 0.95, f 0.081 against
+#   1.0 and 0.083); per hectare (units = :density, I0 = 0.01 ha⁻¹) they are 0.69 and 0.006.
+#   R0 keeps S0 per ha, as the paper's R0 values do.
 
 const CANESSA_LOADS = (0.0, 10.0, 100.0, 1000.0, 10000.0)
 const CANESSA_ACTION_NAMES = (:a, :b, :c, :d, :e, :f, :g, :h)
@@ -522,19 +527,54 @@ end
 
 # --- The IPM problem -----------------------------------------------------------------------------
 
+const CANESSA_UNITS = (:transect, :density)
+
+# Area (ha) of the Stegen et al. (2017) transect, 475 m × 10 m.
+function _canessa_transect_area(key::Symbol = :canessa2018)
+    c = parameter_set(key)
+    return c.transect_length * c.search_width / 10_000
+end
+
+# Initial susceptibles and default introduction for the simulation units (see
+# CanessaIPMProblem).
+function _canessa_units(p::CanessaParameters, units::Symbol, I0)
+    units in CANESSA_UNITS || throw(ArgumentError("units must be one of $CANESSA_UNITS"))
+    c = parameter_set(:canessa2018)
+    if units === :transect
+        return (S0 = p.S0 * _canessa_transect_area(), I0 = I0 === nothing ? c.I0_count : I0)
+    else
+        return (S0 = p.S0, I0 = I0 === nothing ? c.I0 / 100 : I0)   # km⁻² to ha⁻¹
+    end
+end
+
 """
-    CanessaIPMProblem(p::CanessaParameters; I0 = 0.01, nsteps = 30, mesh = (-10, 15, 300),
-                      cap = :truncate)
+    CanessaIPMProblem(p::CanessaParameters; units = :transect, I0 = nothing, nsteps = 30,
+                      mesh = (-10, 15, 300), cap = :truncate)
 
 The Canessa et al. (2018) integral projection model (eq. S2) for parameters `p`, starting
-from `S0` susceptible and `I0` infected adults per hectare (Table S1: one per km²) with loads
-distributed as `G0`, for `nsteps` steps of 3 days. The integrals use the midpoint rule on
-`mesh = (lower, upper, n)`; `cap` is as in
-[`basic_reproduction_number`](@ref).
+from `S0` susceptible and `I0` infected adults with loads distributed as `G0`, for `nsteps`
+steps of 3 days. The integrals use the midpoint rule on `mesh = (lower, upper, n)`; `cap` is
+as in [`basic_reproduction_number`](@ref).
 
-`solve(prob)` iterates the model and returns a named tuple: `t` (days), `S` (susceptibles
-ha⁻¹), `I` (infected ha⁻¹), `φ` (infection probability in each step), `z` (mesh) and `n`, the
-`length(z) × (nsteps + 1)` matrix of infected adults per hectare in each mesh cell.
+`units` sets what the transmission term `∫ β(z) I(z) dz` counts:
+
+- `:transect` (default): numbers of adults on the 0.475-ha transect of Stegen et al. (2017)
+  (475 m × 10 m), from which `S0` and `β0` were derived. The population starts with
+  `S0 × 0.475` susceptibles and, by default, `I0 = 1` infected adult. This is an inference
+  (not printed): eq. S6 gives the printed `β0 = 0.007` only when it is solved with the
+  transect count (see [`final_size_transmission`](@ref)), and simulating in the same units
+  reproduces the final densities of Fig. 2 (actions e and f).
+- `:density`: adults per hectare, as Table S1 labels `S0` (503 ha⁻¹) and `I0` (one per km²,
+  `I0 = 0.01` ha⁻¹ by default). With `β0` per hectare, every outbreak runs 1/0.475 = 2.1
+  times faster than with `:transect`.
+
+[`basic_reproduction_number`](@ref) keeps `S0` per hectare, as the paper's R0 values do; with
+`units = :transect` the outbreak therefore spreads as if `R0` were 0.475 times the reported
+value.
+
+`solve(prob)` iterates the model and returns a named tuple: `t` (days), `S` (susceptibles),
+`I` (infected), `φ` (infection probability in each step), `z` (mesh) and `n`, the
+`length(z) × (nsteps + 1)` matrix of infected adults in each mesh cell, all in `units`.
 """
 struct CanessaIPMProblem
     p::CanessaParameters
@@ -542,20 +582,24 @@ struct CanessaIPMProblem
     nsteps::Int
     mesh::Tuple{Float64,Float64,Int}
     cap::Symbol
+    units::Symbol
 end
 
-function CanessaIPMProblem(p::CanessaParameters; I0::Real = 0.01, nsteps::Integer = 30,
+function CanessaIPMProblem(p::CanessaParameters; units::Symbol = :transect,
+        I0::Union{Nothing,Real} = nothing, nsteps::Integer = 30,
         mesh = _CANESSA_DEFAULT_MESH, cap::Symbol = :truncate)
-    I0 >= 0 || throw(ArgumentError("I0 must be non-negative"))
+    u = _canessa_units(p, units, I0)
+    u.I0 >= 0 || throw(ArgumentError("I0 must be non-negative"))
     nsteps >= 0 || throw(ArgumentError("nsteps must be non-negative"))
     cap in CANESSA_CAPS || throw(ArgumentError("cap must be one of $CANESSA_CAPS"))
-    return CanessaIPMProblem(p, Float64(I0), Int(nsteps),
-        (Float64(mesh[1]), Float64(mesh[2]), Int(mesh[3])), cap)
+    return CanessaIPMProblem(p, Float64(u.I0), Int(nsteps),
+        (Float64(mesh[1]), Float64(mesh[2]), Int(mesh[3])), cap, units)
 end
 
-function _canessa_iterate(p::CanessaParameters, k, I0, nsteps; save::Bool = true)
+function _canessa_iterate(p::CanessaParameters, k, I0, nsteps; save::Bool = true,
+        S0::Real = p.S0)
     n = I0 .* k.g0
-    S = p.S0
+    S = Float64(S0)
     Ss, Is, φs = [S], [sum(n)], Float64[]
     ns = [copy(n)]
     for _ in 1:nsteps
@@ -572,24 +616,28 @@ end
 function CommonSolve.solve(prob::CanessaIPMProblem)
     p = prob.p
     k = _canessa_kernel(p, prob.mesh, prob.cap)
-    r = _canessa_iterate(p, k, prob.I0, prob.nsteps)
+    S0 = _canessa_units(p, prob.units, prob.I0).S0
+    r = _canessa_iterate(p, k, prob.I0, prob.nsteps; S0)
     return (; t = p.step_days .* (0:prob.nsteps), S = r.S, I = r.I, φ = r.φ, z = k.z, n = r.n)
 end
 
 """
     canessa_density_ratio(p::CanessaParameters, reference::CanessaParameters;
-                          I0 = 0.01, nsteps = 30, mesh = (-10, 15, 300), cap = :truncate)
+                          units = :transect, I0 = nothing, nsteps = 30,
+                          mesh = (-10, 15, 300), cap = :truncate)
 
-The outcome on the y-axis of Fig. 2: the density of susceptibles after `nsteps` under `p` (an
-action, with Bsal introduced at `I0` ha⁻¹), divided by the density with neither infection nor
-action, `S0 s0^nsteps` of `reference` (the same draw without action).
+The outcome on the y-axis of Fig. 2: the susceptibles after `nsteps` under `p` (an action,
+with Bsal introduced as `I0` infected adults), divided by the susceptibles with neither
+infection nor action, `S0 s0^nsteps` of `reference` (the same draw without action). `units`
+and `I0` are as in [`CanessaIPMProblem`](@ref); the ratio itself has no units.
 """
 function canessa_density_ratio(p::CanessaParameters, reference::CanessaParameters;
-        I0::Real = 0.01, nsteps::Integer = 30, mesh = _CANESSA_DEFAULT_MESH,
-        cap::Symbol = :truncate)
+        units::Symbol = :transect, I0::Union{Nothing,Real} = nothing, nsteps::Integer = 30,
+        mesh = _CANESSA_DEFAULT_MESH, cap::Symbol = :truncate)
     k = _canessa_kernel(p, mesh, cap)
-    S = _canessa_iterate(p, k, I0, nsteps; save = false).S[end]
-    return S / (reference.S0 * reference.s0^nsteps)
+    u = _canessa_units(p, units, I0)
+    S = _canessa_iterate(p, k, u.I0, nsteps; save = false, S0 = u.S0).S[end]
+    return S / (_canessa_units(reference, units, I0).S0 * reference.s0^nsteps)
 end
 
 # --- Movement of infected adults (Fig. 3) --------------------------------------------------------
@@ -647,20 +695,24 @@ end
 # --- Ensemble over the archived draws (Fig. 2, Fig. 3) ---------------------------------------
 
 """
-    canessa_ensemble(action = canessa_action(:a); draws = load_canessa2018(), I0 = 0.01,
-                     nsteps = 30, mesh = (-10, 15, 300), cap = :truncate, v = 0.5, s0 = :fit)
+    canessa_ensemble(action = canessa_action(:a); draws = load_canessa2018(),
+                     units = :transect, I0 = nothing, nsteps = 30, mesh = (-10, 15, 300),
+                     cap = :truncate, v = 0.5, s0 = :fit)
 
 Runs the IPM once per archived draw, as the paper's 1,000 simulations did, and returns one
 named tuple per draw: `id`, `R0`
 ([`basic_reproduction_number`](@ref)),
 `ratio` (final susceptibles over the uninfected, unmanaged population,
-[`canessa_density_ratio`](@ref)), and from [`canessa_dispersal`](@ref) `lifespan` (steps),
-`max_distance` and `mean_distance` (m). Summarise with [`canessa_summary`](@ref).
+[`canessa_density_ratio`](@ref); `units` and `I0` as in [`CanessaIPMProblem`](@ref)), and
+from [`canessa_dispersal`](@ref) `lifespan` (steps), `max_distance` and `mean_distance` (m).
+Summarise with [`canessa_summary`](@ref).
 """
 function canessa_ensemble(action::CanessaAction = _NO_ACTION;
-        draws::AbstractVector{CanessaDraw} = load_canessa2018(), I0::Real = 0.01,
+        draws::AbstractVector{CanessaDraw} = load_canessa2018(), units::Symbol = :transect,
+        I0::Union{Nothing,Real} = nothing,
         nsteps::Integer = 30, mesh = _CANESSA_DEFAULT_MESH, cap::Symbol = :truncate,
         v::Real = 0.5, s0::Symbol = :fit)
+    units in CANESSA_UNITS || throw(ArgumentError("units must be one of $CANESSA_UNITS"))
     out = Vector{NamedTuple{(:id, :R0, :ratio, :lifespan, :max_distance, :mean_distance),
         NTuple{6,Float64}}}(undef, length(draws))
     Threads.@threads for i in eachindex(draws)
@@ -668,10 +720,12 @@ function canessa_ensemble(action::CanessaAction = _NO_ACTION;
         ref = CanessaParameters(d; s0)
         p = action == _NO_ACTION ? ref : CanessaParameters(d; action, s0)
         k = _canessa_kernel(p, mesh, cap)
-        S = _canessa_iterate(p, k, I0, nsteps; save = false).S[end]
+        u = _canessa_units(p, units, I0)
+        S = _canessa_iterate(p, k, u.I0, nsteps; save = false, S0 = u.S0).S[end]
+        S_free = _canessa_units(ref, units, I0).S0 * ref.s0^nsteps
         mv = _canessa_dispersal(_canessa_survivorship(k, 0.01, 10_000), p.step_days, v)
         out[i] = (; id = Float64(d.id), R0 = _canessa_R0(p, k),
-            ratio = S / (ref.S0 * ref.s0^nsteps), lifespan = Float64(mv.lifespan),
+            ratio = S / S_free, lifespan = Float64(mv.lifespan),
             max_distance = mv.max_distance, mean_distance = mv.mean_distance)
     end
     return out
@@ -699,14 +753,14 @@ function canessa_summary(results::AbstractVector; level::Real = 0.95)
         ratio_at_R0_bounds = (lower_R0 = near(qR.lower), upper_R0 = near(qR.upper)))
 end
 
-const _CANESSA_ENSEMBLES = Dict{Tuple{Symbol,Symbol},Any}()
+const _CANESSA_ENSEMBLES = Dict{Tuple{Symbol,Symbol,Symbol},Any}()
 
 # The ensembles of the eight Table 1 actions over all 1,000 draws, computed once per session
 # for the validation targets and the tests.
-function _canessa_reference(name::Symbol; cap::Symbol = :truncate)
-    key = (name, cap)
+function _canessa_reference(name::Symbol; cap::Symbol = :truncate, units::Symbol = :transect)
+    key = (name, cap, units)
     haskey(_CANESSA_ENSEMBLES, key) && return _CANESSA_ENSEMBLES[key]
-    r = canessa_ensemble(canessa_action(name); cap)
+    r = canessa_ensemble(canessa_action(name); cap, units)
     _CANESSA_ENSEMBLES[key] = (; results = r, summary = canessa_summary(r))
     return _CANESSA_ENSEMBLES[key]
 end
@@ -798,6 +852,11 @@ end
 Eq. S6, the final-size relation `ln(S0/S∞) = R0 (1 - S∞/S0)` with `R0 = S0 β/(1 - s̄)`
 (SI line 70), solved for `β`: `β = (1 - s̄) ln(S0/S∞)/(S0 - S∞)`. The paper used it with
 data from Stegen et al. (2017) to derive the encounter rate `β0`.
+
+`β` is per unit of whatever `S0` and `S∞` count. With Table S1's `S0 = 503` ha⁻¹, `S∞ = 7`
+and `s̄ = 0.542` it is 0.0039, not the printed 0.007. With `S0` as the count on the 0.475-ha
+transect, `503 × 0.475 = 238.9` adults, and `S∞ = 7`, it is 0.00697. The archived draws agree
+with that reading (validation targets `canessa2018_beta0_*`).
 """
 function final_size_transmission(S0::Real, S∞::Real, s̄::Real)
     0 < S∞ < S0 || throw(ArgumentError("need 0 < S∞ < S0"))

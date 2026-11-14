@@ -25,9 +25,10 @@
 # the archived draws (SI p. 3, line 87; Table S1 caption "for the full distribution of each
 # parameter value see archived data").
 #
-# Rates and probabilities are per 3-day step. β0 multiplies a density of infected adults
-# (ha^-1), so it is in ha per step; Bozzuto & Canessa (2019) converted it to years with
-# 364/3 steps per year.
+# Rates and probabilities are per 3-day step. β0 is printed as multiplying a density of
+# infected adults (ha^-1), i.e. ha per step; Bozzuto & Canessa (2019) converted it to years
+# with 364/3 steps per year. Eq. S6 and the archived draws show it was derived from the count
+# on the 0.475-ha Stegen transect, i.e. per adult on the transect (see β0, S_inf, I0_count).
 
 source = { ref = "canessa2018", doi = "10.1111/1365-2664.13089", review_ref = 30 }
 
@@ -160,11 +161,14 @@ verified = true
 notes = """
 Derived per draw from the final-size relation eq. S6 with S0 and s̄ from Stegen et al. (2017).
 The archived beta0 column reproduces the median and CI (0.00699; 0.00372-0.01245). Eq. S6
-with the printed S0 = 503, S∞ = 7 and s̄ = 0.542 gives 0.0039, not 0.007. With S∞ = 7 the
-archived pairs (beta0, S0) imply 1 - s̄ = beta0 (S0 - S∞)/ln(S0/S∞) with median 0.79 (not
-0.458) and values above 1 (s̄ < 0) for 13% of draws, so the derivation cannot be reconstructed:
-see the validation target canessa2018_beta0_final_size. Bozzuto & Canessa (2019) use 0.007 × 364/3 = 0.8493 ha yr^-1
-(their c0 × 1.1643)."""
+with S0 = 503 per ha, S∞ = 7 and s̄ = 0.542 gives 0.0039, not 0.007; with S0 as the count on
+the 0.475-ha transect (503 × 0.475 = 238.9 adults) it gives 0.00697. The archived pairs say
+the same: with N0 = S0 × 0.475 (an integer in every row) and S∞ = 7, the implied
+s̄ = 1 - beta0 (N0 - S∞)/ln(N0/S∞) lies in 0.17-0.83 for all 1,000 draws, mean 0.544 (printed
+0.542), whereas with S0 per ha 13% of draws would need s̄ < 0. So β0 is per adult on the
+transect, not per ha (inferred, not printed; validation targets canessa2018_beta0_final_size
+and canessa2018_beta0_draws_sbar). The value is kept as archived; the units label stays as
+printed. Bozzuto & Canessa (2019) use 0.007 × 364/3 = 0.8493 ha yr^-1 (their c0 × 1.1643)."""
 
 [[parameter]]
 symbol = "β0_lower"
@@ -444,7 +448,7 @@ role = "estimated"
 system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult", setting = "Robertville, Belgium" }
 location = "SI pp. 3-4, lines 76-78"
 verified = true
-notes = "Poisson regression fit to Stegen et al. (2017) Fig. 1a, corrected for a ~10% re-encounter probability (B. Schmidt, pers. comm.)."
+notes = "Poisson regression fit to Stegen et al. (2017) Fig. 1a, corrected for a ~10% re-encounter probability (B. Schmidt, pers. comm.). Printed as adults ha^-1, but eq. S6 reproduces the printed β0 only when 7 is set against the transect count of S0 (238.9 adults), i.e. read as adults on the 0.475-ha transect (see β0)."
 
 [[parameter]]
 symbol = "s_bar"
@@ -490,7 +494,23 @@ role = "structural"
 system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
 location = "Table S1 ('0 or 1 adults km-2', from Schmidt et al. 2017)"
 verified = true
-notes = "0.01 adults ha^-1 against S0 in ha^-1. Their initial loads are not stated; the package draws them from G0."
+notes = "0.01 adults ha^-1 against S0 in ha^-1 (the package's units = :density). Their initial loads are not stated; the package draws them from G0. The simulations that reproduce Fig. 2's final densities count adults on the transect and introduce one infected adult (I0_count)."
+
+[[parameter]]
+symbol = "I0_count"
+quantity = "infected adults introduced into the transect population at t = 0 (simulation in transect numbers)"
+value = 1.0
+units = "adults"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "inferred (not printed): Table S1's '1' read as one adult in the transect population"
+verified = false
+notes = """
+Used with units = :transect (S0 × 0.475 susceptibles on the 475 m × 10 m transect, β0 per adult
+on the transect, as eq. S6 implies). With one infected adult the median final density ratios of
+Fig. 2 are reproduced for actions e (0.95; plotted 1.0) and f (0.081; plotted 0.083); one adult
+km^-2 converted to the transect (0.00475 adults) gives e 1.00 and f 0.17 instead."""
 
 # --- Management actions, Table 1 --------------------------------------------------------------
 
