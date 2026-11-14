@@ -1,0 +1,652 @@
+# Wilber MQ, Langwig KE, Kilpatrick AM, McCallum HI, Briggs CJ (2016) Integral projection
+# models for host–parasite systems with an application to amphibian chytrid fungus.
+# Methods Ecol Evol 7:1182–1194. https://doi.org/10.1111/2041-210X.12561
+#
+# Read on 2026-11-13 from the published PDF (lab/papers/wilber2016.pdf: eqns 7–13, Table 1,
+# "Analysing the IPM", "Exploring density-dependent transmission dynamics", Figs 2–5) and the
+# authors' GitHub repository mqwilber/ipm_for_parasites (commit 240b5e67, saved in
+# lab/papers/wilber2016_si/repo/): code/*.R and results/IPM_parameters_no_26_linear.rds. The
+# data are on Dryad (doi:10.5061/dryad.06sd9, CC0) and bundled as data/wilber2016/. The
+# journal's Appendices S1–S3 could not be retrieved (HTTP 403); the R code is the record of
+# what they contain (R0 in R0_calculation.R, eviction in eviction_functions.R).
+#
+# System: adult Rana muscosa/R. sierrae (the data file says R. sierrae) and Bd. One time step
+# is 3 days (the swabbing interval). Loads: x is the NATURAL log of the qPCR zoospore load in
+# zoospore equivalents per swab, x = ln(ZE swab^-1), for x ≠ 0; uninfected is a separate
+# class, not x = 0. T is temperature in °C. Vital-rate probabilities are per 3-day step.
+#
+# Sets:
+# - base: Table 1 as printed (3–4 significant figures), the mesh, the time step and the
+#   simulation design.
+# - "deposited": the authors' fitted values at full precision, read from
+#   results/IPM_parameters_no_26_linear.rds (parsed with a minimal XDR reader; see notes).
+#   They agree with Table 1 to the printed digits except the survival function: the deposit
+#   has b00 = 11.597, b10 = −0.8873 where Table 1 prints 11.824, −0.8605. A refit of the
+#   bundled data (fit_wilber2016) reproduces the deposit, not Table 1.
+
+source = { ref = "wilber2016", doi = "10.1111/2041-210X.12561", review_ref = 38 }
+
+# --- Table 1: vital-rate regressions (base set, as printed) ----------------------------------
+
+[[parameter]]
+symbol = "b00"
+quantity = "survival intercept, logit[s(x)] = b00 + b10 x"
+value = 11.824
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", temperature_C = "20", setting = "lab" }
+location = "Table 1; eqn 9"
+verified = true
+notes = "Logistic regression on the 20 °C frogs only (no deaths at 4 or 12 °C; Fig. 2a). The deposited fit and our refit give 11.597 (set deposited); see the validation target wilber2016_survival_table1."
+
+[[parameter]]
+symbol = "b10"
+quantity = "survival slope on load"
+value = -0.8605
+units = "logit ln(ZE swab^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", temperature_C = "20", setting = "lab" }
+location = "Table 1; eqn 9"
+verified = true
+notes = "Deposited fit and refit: −0.88725. With Table 1, s(x) = 1/2 at x = 13.74 (ln ZE); with the deposit at x = 13.07."
+
+[[parameter]]
+symbol = "s0"
+quantity = "survival probability of uninfected hosts per time step"
+value = 1.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1 (cites Briggs et al. 2005)"
+verified = true
+notes = "class_zero_surv = 1 in the code. One frog at 4 °C died with zero load; the code sets s0 = 1 anyway."
+
+[[parameter]]
+symbol = "b01"
+quantity = "growth-function intercept, μ(x, T) = b01 + b11 x + b21 T"
+value = 0.012
+units = "ln(ZE swab^-1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1; eqn 10"
+verified = true
+notes = "Generalized least squares (nlme::gls, REML) with variance exp(2 c01 x)."
+
+[[parameter]]
+symbol = "b11"
+quantity = "growth-function slope on load at t"
+value = 0.799
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1; eqn 10"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b21"
+quantity = "growth-function temperature effect"
+value = 0.092
+units = "ln(ZE swab^-1) degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1; eqn 10"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "v01"
+quantity = "growth-function variance scale, σ²(x) = v01 exp(2 c01 x)"
+value = 5.92
+units = "ln(ZE swab^-1)^2"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1; eqn 11"
+verified = true
+notes = "The REML residual variance of the gls fit (summary(gls)$sigma^2)."
+
+[[parameter]]
+symbol = "c01"
+quantity = "growth-function variance exponent on load"
+value = -0.049
+units = "ln(ZE swab^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1; eqn 11"
+verified = true
+notes = "nlme varExp(form = ~size): sd ∝ exp(c01 x)."
+
+[[parameter]]
+symbol = "b02"
+quantity = "loss-of-infection intercept, logit[l(x, T)] = b02 + b12 x + b22 T"
+value = 1.213
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1; eqn 12"
+verified = true
+notes = "Logistic regression; losses from loads above ln ZE = 5 were dropped as likely PCR error (code)."
+
+[[parameter]]
+symbol = "b12"
+quantity = "loss-of-infection slope on load"
+value = -0.472
+units = "logit ln(ZE swab^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1; eqn 12"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b22"
+quantity = "loss-of-infection temperature effect"
+value = -0.151
+units = "logit degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1; eqn 12"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b03"
+quantity = "initial-infection mean intercept, μ(T) = b03 + b13 T"
+value = 0.642
+units = "ln(ZE swab^-1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1; 'Vital rate functions'"
+verified = true
+notes = "gls (REML) with variance exp(2 c03 T). New infections with ln ZE > 5 were dropped as likely PCR error (code)."
+
+[[parameter]]
+symbol = "b13"
+quantity = "initial-infection mean temperature effect"
+value = 0.137
+units = "ln(ZE swab^-1) degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "v03"
+quantity = "initial-infection variance scale, σ²(T) = v03 exp(2 c03 T)"
+value = 0.59
+units = "ln(ZE swab^-1)^2"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "c03"
+quantity = "initial-infection variance exponent on temperature"
+value = 0.063
+units = "degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b04"
+quantity = "infection-probability intercept, logit[φ(T)] = b04 + b14 T"
+value = -1.66
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = "Probability that an uninfected frog is infected in a 3-day step; frogs were housed singly, so this is infection from the environment (the inoculum)."
+
+[[parameter]]
+symbol = "b14"
+quantity = "infection-probability temperature effect"
+value = 0.102
+units = "logit degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = "φ(4) = 0.227 and φ(20) = 0.613, the 'between 0.22 and 0.6' of the density-dependent section."
+
+# --- time step, mesh and simulation design -----------------------------------------------------
+
+[[parameter]]
+symbol = "Δt"
+quantity = "length of one IPM time step (the swabbing interval)"
+value = 3.0
+units = "day"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "'Model description' after eqn 8"
+verified = true
+notes = "Only 3-day intervals are used in the fits (the code drops the 8-day first interval and 120-day gaps)."
+
+[[parameter]]
+symbol = "mesh_lower"
+quantity = "lower bound L of the load mesh"
+value = -5.0
+units = "ln(ZE swab^-1)"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "'Analysing the IPM'"
+verified = true
+notes = "Chosen to minimise eviction (Appendix S3). The observed range is (−1.14, 13.15)."
+
+[[parameter]]
+symbol = "mesh_upper"
+quantity = "upper bound U of the load mesh"
+value = 18.0
+units = "ln(ZE swab^-1)"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "'Analysing the IPM'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "mesh_n"
+quantity = "number of mesh bins (midpoint rule)"
+value = 100
+units = "bins"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "'Analysing the IPM'"
+verified = true
+notes = "lower_level_sensitivity_analysis.R and R0_calculation.R use 50 bins ('tested with both 100 and 50 and the results are the same'): see mesh_n_bootstrap."
+
+[[parameter]]
+symbol = "mesh_n_bootstrap"
+quantity = "mesh bins used for the parametric bootstrap, elasticities and R0 in the code"
+value = 50
+units = "bins"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "code/lower_level_sensitivity_analysis.R; code/R0_calculation.R"
+verified = true
+notes = "Not stated in the paper."
+
+[[parameter]]
+symbol = "crash_load"
+quantity = "log load above which R. muscosa die off in the field (Vredenburg et al. 2010, ~10,000 ZE)"
+value = 9.21
+units = "ln(ZE swab^-1)"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "field" }
+location = "'Analysing the IPM' (cites Vredenburg et al. 2010)"
+verified = true
+notes = "ln(10 000) = 9.2103, printed as 9.21."
+
+[[parameter]]
+symbol = "summer_days"
+quantity = "length of the simulated summer epizootic"
+value = 120.0
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "field" }
+location = "'Exploring density-dependent transmission dynamics'"
+verified = true
+notes = "40 steps of 3 days (TIME_STEPS = 40 in transmission_simulation.R)."
+
+[[parameter]]
+symbol = "S_init"
+quantity = "initial number of uninfected frogs in the density-dependent simulations"
+value = 100.0
+units = "frogs"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "'Exploring density-dependent transmission dynamics'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "ω_min"
+quantity = "smallest environmental infection probability ω scanned"
+value = 0.01
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "'Exploring density-dependent transmission dynamics'"
+verified = true
+notes = "ω = 1 − exp(−a) in eqn 13."
+
+[[parameter]]
+symbol = "ω_max"
+quantity = "largest environmental infection probability ω scanned (paper)"
+value = 0.6
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "'Exploring density-dependent transmission dynamics'"
+verified = true
+notes = "The deposited simulation uses 0.3 ('for visualization purposes'; set as_coded)."
+
+[[parameter]]
+symbol = "β_max"
+quantity = "largest density-dependent transmission coefficient β scanned"
+value = 0.00117
+units = "per ln(ZE swab^-1) per time step"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "'Exploring density-dependent transmission dynamics' (1.17 × 10^-3)"
+verified = true
+notes = "β multiplies ∫ x I(x,t) dx in eqn 13 as printed, but log(Σ e^x n + 1) in the code; the units follow the printed form."
+
+[[parameter]]
+symbol = "grid_n"
+quantity = "number of values of ω and of β in the scan"
+value = 40
+units = "values"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "code/transmission_simulation.R (num_vals = 40)"
+verified = true
+notes = "Not stated in the paper."
+
+[[parameter]]
+symbol = "n_bootstrap"
+quantity = "parameter draws in the parametric bootstrap of λ and the elasticities"
+value = 1000
+units = "draws"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "'Analysing the IPM'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "δ"
+quantity = "relative perturbation of each regression parameter for elasticities"
+value = 0.001
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "'Analysing the IPM' (δ = 0.001)"
+verified = true
+notes = "The code perturbs b to b(1 + δ), so the printed e = [(λp − λf)/(δ b)] (b/λf) is the usual elasticity."
+
+[[parameter]]
+symbol = "β_R0"
+quantity = "density-dependent transmission coefficient used for R0 (Appendix S1)"
+value = 0.000982
+units = "frog^-1 per time step"
+provenance = "F"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa", setting = "lab" }
+location = "code/R0_calculation.R ('from Rach. and Briggs')"
+verified = false
+notes = "Attributed in the code to Rachowicz & Briggs (2007); Appendix S1 (not retrieved) and Rachowicz & Briggs not checked."
+
+[[parameter]]
+symbol = "S_R0"
+quantity = "number of susceptible frogs used for R0"
+value = 100.0
+units = "frogs"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa", setting = "model" }
+location = "code/R0_calculation.R (S_init = 100)"
+verified = false
+notes = "Appendix S1 not retrieved."
+
+# --- "deposited": the authors' fitted values at full precision ----------------------------------
+# results/IPM_parameters_no_26_linear.rds (2016-02-09). The nonlinear growth alternative
+# (IPM_parameters_no_26_nonlinear.rds, Appendix S2) is not used in the paper's analyses.
+
+[[parameter]]
+symbol = "b00"
+set = "deposited"
+quantity = "survival intercept (authors' deposited fit)"
+value = 11.597348531202599
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", temperature_C = "20", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: surv_int"
+verified = true
+notes = "Differs from Table 1 (11.824). Our refit of the bundled data gives 11.5973."
+
+[[parameter]]
+symbol = "b10"
+set = "deposited"
+quantity = "survival slope on load (authors' deposited fit)"
+value = -0.8872528964852311
+units = "logit ln(ZE swab^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", temperature_C = "20", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: surv_slope"
+verified = true
+notes = "Differs from Table 1 (−0.8605)."
+
+[[parameter]]
+symbol = "b01"
+set = "deposited"
+quantity = "growth-function intercept (deposited)"
+value = 0.01230963653335948
+units = "ln(ZE swab^-1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: growth_int"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b11"
+set = "deposited"
+quantity = "growth-function slope on load (deposited)"
+value = 0.7992390151204585
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: growth_size"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b21"
+set = "deposited"
+quantity = "growth-function temperature effect (deposited)"
+value = 0.09201897716328733
+units = "ln(ZE swab^-1) degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: growth_temp"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "v01"
+set = "deposited"
+quantity = "growth-function variance scale (deposited)"
+value = 5.920100506538487
+units = "ln(ZE swab^-1)^2"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: growth_sigma2"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "c01"
+set = "deposited"
+quantity = "growth-function variance exponent (deposited)"
+value = -0.04937882261907995
+units = "ln(ZE swab^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: growth_sigma2_exp"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b02"
+set = "deposited"
+quantity = "loss-of-infection intercept (deposited)"
+value = 1.2134864225019515
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: loss_int"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b12"
+set = "deposited"
+quantity = "loss-of-infection slope on load (deposited)"
+value = -0.4721255132949476
+units = "logit ln(ZE swab^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: loss_size"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b22"
+set = "deposited"
+quantity = "loss-of-infection temperature effect (deposited)"
+value = -0.15120933813302684
+units = "logit degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: loss_temp"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b03"
+set = "deposited"
+quantity = "initial-infection mean intercept (deposited)"
+value = 0.642328989612396
+units = "ln(ZE swab^-1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: clump_int"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b13"
+set = "deposited"
+quantity = "initial-infection mean temperature effect (deposited)"
+value = 0.13722691726816555
+units = "ln(ZE swab^-1) degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: clump_temp"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "v03"
+set = "deposited"
+quantity = "initial-infection variance scale (deposited)"
+value = 0.5902786832559168
+units = "ln(ZE swab^-1)^2"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: clump_sigma2"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "c03"
+set = "deposited"
+quantity = "initial-infection variance exponent (deposited)"
+value = 0.06315914498045165
+units = "degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: clump_sigma2_exp"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b04"
+set = "deposited"
+quantity = "infection-probability intercept (deposited)"
+value = -1.6602431002465214
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: prob_inf_int"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b14"
+set = "deposited"
+quantity = "infection-probability temperature effect (deposited)"
+value = 0.10189718220662733
+units = "logit degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "results/IPM_parameters_no_26_linear.rds: prob_inf_temp"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "ω_max"
+set = "deposited"
+quantity = "largest ω in the deposited density-dependent simulation"
+value = 0.3
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "code/transmission_simulation.R (inf_vals = seq(0.01, .3, len = num_vals))"
+verified = true
+notes = "'For visualization purposes, just calculate up to 0.3'; the paper says 0.01–0.6."
