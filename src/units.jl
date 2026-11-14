@@ -296,6 +296,7 @@ or `:year`. Declared so far:
 - [`BozzutoParameters`](@ref): `:year`
 - [`MalagonParameters`](@ref) and [`TomprosParameters`](@ref): `:day`
 - [`DrawertParameters`](@ref): `:day`
+- [`ChowdhuryParameters`](@ref): `:day`
 
 A new model declares its own with
 `Chytridiomycosis.time_unit(::Type{<:MyParameters}) = :day`.

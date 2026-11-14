@@ -28,7 +28,8 @@ single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
 [`ZoosporePersistenceProblem`](@ref), [`RefugiaODEProblem`](@ref),
 [`SeasonalBsalProblem`](@ref) (with its inflow switch times as `tstops`),
 [`TransmissionSLIProblem`](@ref), [`SusceptibleChainProblem`](@ref),
-[`CohabitationProblem`](@ref) and [`DrawertODEProblem`](@ref). Use it to solve with
+[`CohabitationProblem`](@ref), [`DrawertODEProblem`](@ref) and
+[`BsalStageTemperatureProblem`](@ref). Use it to solve with
 other options or to pass the model to other SciML tools.
 """
 function to_ode_problem end
@@ -84,6 +85,8 @@ include("fitting/malagon2020.jl")
 include("fitting/tompros2022.jl")
 # Drawert et al. 2017 stochastic individual-based Bd model with one-time interventions
 include("models/drawert2017.jl")
+# Chowdhury et al. 2025 stage- and temperature-structured Bsal model of the eastern newt
+include("models/chowdhury2025.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -170,5 +173,9 @@ export DrawertParameters, DrawertIBMProblem, DrawertODEProblem, DrawertIntervent
        sporangium_loss_rate, nondimensional_parameters, nondimensional_ranges,
        nondimensional_distance, equilibrium_load_ratio, drawert2017_path, load_drawert2017,
        drawert_summary, outcome_class, survival_group, intervention_effect
+# Chowdhury et al. 2025 stage- and temperature-structured Bsal model
+export ChowdhuryParameters, BsalStageTemperatureProblem, chowdhury_scenarios,
+       stage_transmission_rates, stage_totals, stage_decline_time, stage_disease_free_state,
+       stage_next_generation_matrix, stage_reproduction_numbers, stage_elasticities
 
 end # module Chytridiomycosis
