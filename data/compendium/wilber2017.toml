@@ -1,0 +1,1011 @@
+# Wilber MQ, Knapp RA, Toothman M, Briggs CJ (2017) Resistance, tolerance and environmental
+# transmission dynamics determine host extinction risk in a load-dependent amphibian disease.
+# Ecology Letters 20:1169–1181. https://doi.org/10.1111/ele.12814
+#
+# Read on 2026-11-14 from the published PDF (lab/papers/wilber2017.pdf: eqns 1–3, Tables 1–2,
+# Methods, Results, Figs 1–3) and the authors' GitHub repository mqwilber/host_extinction
+# (master branch archive, saved in lab/papers/wilber2017_si/code/host_extinction-master/):
+# code/model_analysis/{model_parameters.yml, IPM_functions_for_R.R, R0_environmental.R,
+# stochastic_multiseason_simulation.R, sensitivity_analysis.R, stable_stage_structure.R,
+# zdecay_plots.R} and code/stat_analysis/{ipm_vital_rates_bayesian.R, pomp_transmission.R,
+# stan_files/*.stan}. The repository also holds the March 2017 preprint and its appendix
+# (docs/ipm_extinction_{manuscript,appendix}.pdf); the journal's Appendices S1–S4 returned
+# HTTP 403. The mesocosm data are on Dryad (doi:10.5061/dryad.p614h, CC0) and bundled as
+# data/wilber2017/.
+#
+# System: adult Rana muscosa/R. sierrae, three tadpole stages, Bd. One time step is 3 days.
+# Loads: x is the NATURAL log of the qPCR load in zoospore equivalents per swab,
+# x = ln(ZE swab^-1); uninfected is a separate class. T is temperature in °C. Probabilities are
+# per 3-day step. The survival function is fitted on the z-scored load (x − x̄)/s_x, with x̄ and
+# s_x of the 20 °C transitions; the paper does not print x̄ and s_x (records surv_mean,
+# surv_sd below, derived from the bundled Wilber 2016 data).
+#
+# Sets:
+# - base: Table 1 as printed, the simulation design (text and code) and the R0 grid.
+# - "coded": full-precision values from the authors' code where Table 1 rounds them
+#   (s0 = 0.9^(1/122), tadpole survivals).
+# - "const", "const_dd", "const_fd", "zpool", "zpool_dd", "zpool_fd": the six transmission
+#   functions of Table 2 (β0, β1, WAIC, weight). Λ is per day and multiplied by Δt.
+
+source = { ref = "wilber2017", doi = "10.1111/ele.12814", review_ref = 34 }
+
+# --- Table 1: within-season vital rates -------------------------------------------------------
+
+[[parameter]]
+symbol = "b00"
+quantity = "survival intercept on the z-scored load, logit[s(x)] = b00 + b10 (x − x̄)/s_x"
+value = 5.295
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", temperature_C = "20", setting = "lab" }
+location = "Table 1 ('x was z-transformed'); code ipm_vital_rates_bayesian.R (posterior mean)"
+verified = true
+notes = "Bayesian logistic regression with Normal(0, 5) priors on the 20 °C transitions of the Wilber 2016 experiment; Table 1 prints the posterior mean (target wilber2017_survival_table1)."
+
+[[parameter]]
+symbol = "b10"
+quantity = "survival slope on the z-scored load"
+value = -2.595
+units = "logit per sd of ln(ZE swab^-1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", temperature_C = "20", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = "On the raw load: slope b10/s_x = −0.876, intercept b00 − b10 x̄/s_x = 11.59 (Wilber 2016 deposit: −0.887, 11.60)."
+
+[[parameter]]
+symbol = "surv_mean"
+quantity = "mean x̄ of ln load used to z-score the survival regression"
+value = 7.185737688504273
+units = "ln(ZE swab^-1)"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", temperature_C = "20", setting = "lab" }
+location = "code ipm_vital_rates_bayesian.R (params$surv_mean); not printed"
+verified = false
+notes = "Mean of the 105 transitions at 20 °C with non-zero load that did not lose infection (3-day intervals; data/wilber2016). Recomputed from the bundled data in test/wilber2017.jl."
+
+[[parameter]]
+symbol = "surv_sd"
+quantity = "standard deviation s_x of ln load used to z-score the survival regression"
+value = 2.96126915890883
+units = "ln(ZE swab^-1)"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", temperature_C = "20", setting = "lab" }
+location = "code ipm_vital_rates_bayesian.R (params$surv_sd); not printed"
+verified = false
+notes = "Sample standard deviation (R sd, n − 1) of the same 105 loads."
+
+[[parameter]]
+symbol = "b01"
+quantity = "growth-function intercept, μ(x, T) = b01 + b11 x + b21 T"
+value = 0.012
+units = "ln(ZE swab^-1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = "Identical to the Wilber 2016 REML fit to all printed digits (0.0123), not to a Bayesian posterior mean; see target wilber2017_growth_table1."
+
+[[parameter]]
+symbol = "b11"
+quantity = "growth-function slope on load at t"
+value = 0.799
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = "The most influential parameter for extinction (Fig. 3)."
+
+[[parameter]]
+symbol = "b21"
+quantity = "growth-function temperature effect"
+value = 0.092
+units = "ln(ZE swab^-1) degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "v01"
+quantity = "growth-function variance scale, σ²(x) = v01 exp(2 c01 x)"
+value = 5.92
+units = "ln(ZE swab^-1)^2"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = "Table 1 prints ν0,1; the Stan variable is 'sigma' but it is a variance (sd = sqrt(sigma exp(2δx)))."
+
+[[parameter]]
+symbol = "c01"
+quantity = "growth-function variance exponent on load"
+value = -0.049
+units = "ln(ZE swab^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b02"
+quantity = "loss-of-infection intercept, logit[l(x, T)] = b02 + b12 x + b22 T"
+value = 1.213
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = "The Stan model for l(x) has flat priors (the Normal(0, 5) lines are commented out), unlike the Table 1 footnote."
+
+[[parameter]]
+symbol = "b12"
+quantity = "loss-of-infection slope on load"
+value = -0.472
+units = "logit ln(ZE swab^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b22"
+quantity = "loss-of-infection temperature effect"
+value = -0.151
+units = "logit degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b03"
+quantity = "initial-load intercept, μ(T) = b03 + b13 T"
+value = 0.642
+units = "ln(ZE swab^-1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "b13"
+quantity = "initial-load temperature effect"
+value = 0.137
+units = "ln(ZE swab^-1) degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "v03"
+quantity = "initial-load variance scale, σ²(T) = v03 exp(2 c03 T)"
+value = 0.59
+units = "ln(ZE swab^-1)^2"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "c03"
+quantity = "initial-load variance exponent on temperature"
+value = 0.063
+units = "degC^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "lab" }
+location = "Table 1"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "s0"
+quantity = "survival probability of uninfected adults per 3-day step"
+value = 0.999
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "field" }
+location = "Table 1 ('yearly survival from Briggs et al. (2005) converted to a three day time scale')"
+verified = true
+notes = "The code uses 0.9^(1/122) = 0.999137 (set coded)."
+
+[[parameter]]
+symbol = "s0_annual"
+quantity = "annual survival of uninfected adults"
+value = 0.9
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "field" }
+location = "code ipm_vital_rates_bayesian.R (class_zero_surv = 0.9^(1/122)); attributed to Briggs et al. (2005)"
+verified = true
+notes = "Briggs et al. (2005) not checked here."
+
+[[parameter]]
+symbol = "μA"
+quantity = "proportion of the zoospores on an infected adult (eˣ ZE) added to the pool per step"
+value = 1.0
+units = "1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "model" }
+location = "Table 1; eqn 3; code model_parameters.yml (zspore_prod)"
+verified = true
+notes = "'Likely a conservative estimate'. Shedding is μA eˣ zoospores per infected adult per step in the simulation (eqn 3) but ln(eˣ + 1) in the R0 code."
+
+[[parameter]]
+symbol = "μT"
+quantity = "zoospores added to the pool per tadpole per step (mean tadpole load)"
+value = 1487.036
+units = "ZE swab^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "mesocosm" }
+location = "Table 1; code model_parameters.yml (mean_tad_load)"
+verified = true
+notes = "Mean ZE of tadpole swabs in data/archival/DensExpt.csv (not bundled; no licence). Every tadpole is infected and sheds μT per step regardless of stage."
+
+[[parameter]]
+symbol = "sT1"
+quantity = "survival of a year-1 tadpole per 3-day step"
+value = 0.987
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "Table 1 (Briggs et al. 2005, converted to 3 days)"
+verified = true
+notes = "Code: 0.9868945 = 0.2^(1/122) (set coded)."
+
+[[parameter]]
+symbol = "sT2"
+quantity = "survival of a year-2 tadpole per 3-day step"
+value = 0.997
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "Table 1"
+verified = true
+notes = "Code: 0.9970807 = 0.7^(1/122)."
+
+[[parameter]]
+symbol = "sT3"
+quantity = "survival of a year-3 tadpole per 3-day step"
+value = 0.997
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "Table 1"
+verified = true
+notes = "Code: 0.9970807."
+
+[[parameter]]
+symbol = "pT1"
+quantity = "probability that a year-1 tadpole does not metamorphose"
+value = 1.0
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "Table 1 (Briggs et al. 2005)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "pT2"
+quantity = "probability that a year-2 tadpole does not metamorphose"
+value = 0.5
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "Table 1 (Briggs et al. 2005)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "pT3"
+quantity = "probability that a year-3 tadpole does not metamorphose"
+value = 0.0
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "Table 1 (Briggs et al. 2005)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "mT1"
+quantity = "probability that a metamorphosing year-1 tadpole survives metamorphosis"
+value = 0.9
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "Table 1 (Briggs et al. 2005)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "mT2"
+quantity = "probability that a metamorphosing year-2 tadpole survives metamorphosis"
+value = 0.9
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "Table 1 (Briggs et al. 2005)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "mT3"
+quantity = "probability that a metamorphosing year-3 tadpole survives metamorphosis"
+value = 1.0
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "Table 1 (Briggs et al. 2005)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "pA"
+quantity = "probability that an adult reproduces in a year"
+value = 0.25
+units = "1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "field" }
+location = "Table 1 (Briggs et al. 2005)"
+verified = true
+notes = "The same for infected and uninfected adults (repro_decline = 0 in the code)."
+
+[[parameter]]
+symbol = "λ"
+quantity = "mean number of year-1 tadpoles per reproducing adult"
+value = 50.0
+units = "tadpoles adult^-1 yr^-1"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "model" }
+location = "Table 1"
+verified = true
+notes = "Chosen to give a disease-free, density-independent growth rate of about 1.46 per year (target wilber2017_disease_free_lambda)."
+
+[[parameter]]
+symbol = "K"
+quantity = "Ricker recruitment parameter, metamorph survival × exp(−A/K)"
+value = 5.0
+units = "adults m^-3"
+provenance = "A"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "model" }
+location = "Table 1"
+verified = true
+notes = "'Leads to equilibrium adult densities between 10–15 adults per m^3 in disease-free model' (target wilber2017_disease_free_equilibrium)."
+
+# --- Simulation design --------------------------------------------------------------------------
+
+[[parameter]]
+symbol = "Δt"
+quantity = "length of one within-season step"
+value = 3.0
+units = "day"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods, 'The host-parasite IPM'; code model_parameters.yml (step_length)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "days_per_year"
+quantity = "days per simulated year (122 steps of 3 days)"
+value = 366.0
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "code model_parameters.yml (days_per_year)"
+verified = true
+notes = "Not stated in the paper."
+
+[[parameter]]
+symbol = "T_mean"
+quantity = "mean of the sinusoidal lake temperature"
+value = 12.0
+units = "degC"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "field" }
+location = "Appendix S3 (preprint) 'minimum 4 °C, maximum 20 °C'; code get_temp (12 − 8 cos(...))"
+verified = true
+notes = "Knapp et al. (2011): about 4 °C in winter, 20 °C in summer."
+
+[[parameter]]
+symbol = "T_amplitude"
+quantity = "amplitude of the sinusoidal lake temperature"
+value = 8.0
+units = "degC"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "field" }
+location = "code get_temp"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "T_start"
+quantity = "temperature at the start of a simulation (winter)"
+value = 4.0
+units = "degC"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods, 'Simulating the hybrid model'; code model_parameters.yml (start_temp)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "T_repro"
+quantity = "temperature at which the yearly demographic update happens (first time each year)"
+value = 11.79
+units = "degC"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "code model_parameters.yml (temp_at_repro, compared after rounding to 2 digits); text 'in the first spring at 12 °C'"
+verified = true
+notes = "Reached at step 30 of each 122-step year (day 90). The code toggles a flag so only the spring crossing (not the autumn one at step 92) triggers reproduction."
+
+[[parameter]]
+symbol = "years"
+quantity = "length of the extinction simulations"
+value = 25.0
+units = "yr"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods, 'Simulating the hybrid model' (25 years); code stochastic_multiseason_simulation.R (years = 25)"
+verified = true
+notes = "model_parameters.yml says 20; the script overrides it."
+
+[[parameter]]
+symbol = "n_sims"
+quantity = "number of stochastic simulations per extinction curve"
+value = 500.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods, 'Simulating the hybrid model'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "years_sensitivity"
+quantity = "horizon of the extinction indicator in the sensitivity analysis"
+value = 8.0
+units = "yr"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods ('went extinct in ≤ 8 years, as this was where extinction probability was c. 50%')"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "n_sensitivity"
+quantity = "number of perturbed simulations per transmission function"
+value = 1000.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "σ_sensitivity"
+quantity = "sdlog of the lognormal (median 1) multiplier applied to each perturbed parameter"
+value = 0.3
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods (Sobie 2009)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "C_logistic"
+quantity = "inverse L2 penalty of the logistic regression on the sensitivity results"
+value = 1.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "code stat_analysis/manuscript_sensitivity_and_plots.ipynb (sklearn LogisticRegression, C = 1, after StandardScaler)"
+verified = true
+notes = "The notebook comments that C = 1 was 'the best model after cross validation'."
+
+[[parameter]]
+symbol = "zsurv_high"
+quantity = "constant zoospore survival per step in the 'high rate of zoospore decay' scenario"
+value = 0.05
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Results ('Drastically decreasing zoospore survival probability', Appendix Fig. S5); code zdecay_plots.R (zsurv = 0.05)"
+verified = true
+notes = "Run with density-dependent transmission and a dynamic pool."
+
+[[parameter]]
+symbol = "A0"
+quantity = "initial uninfected adults"
+value = 10.0
+units = "adults"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods, 'Simulating the hybrid model'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "T1_0"
+quantity = "initial year-1 tadpoles"
+value = 85.0
+units = "tadpoles"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods ('stable stage distribution in the Bd-free model'); code stable_stage_structure.R"
+verified = true
+notes = "Target wilber2017_initial_stages."
+
+[[parameter]]
+symbol = "T2_0"
+quantity = "initial year-2 tadpoles"
+value = 12.0
+units = "tadpoles"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "T3_0"
+quantity = "initial year-3 tadpoles"
+value = 3.0
+units = "tadpoles"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "Z0"
+quantity = "initial zoospores in the pool"
+value = 0.0
+units = "zoospores"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "code model_parameters.yml (init_zspore_val)"
+verified = true
+notes = "Tadpoles start shedding at the first step."
+
+[[parameter]]
+symbol = "mesh_lower"
+quantity = "lower bound of the load mesh"
+value = -5.0
+units = "ln(ZE swab^-1)"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "code model_parameters.yml (min_size)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "mesh_upper"
+quantity = "upper bound of the load mesh"
+value = 18.0
+units = "ln(ZE swab^-1)"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "code model_parameters.yml (max_size)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "mesh_n"
+quantity = "number of mesh bins of the hybrid model"
+value = 30.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Methods ('mid-point rule and 30 mesh points')"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "mesh_n_R0"
+quantity = "number of mesh bins used for R0"
+value = 50.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "code R0_environmental.R (bins = 50)"
+verified = true
+notes = "Not stated in the paper."
+
+[[parameter]]
+symbol = "T_R0_slice"
+quantity = "temperature of the density slice of Fig. 2b"
+value = 15.0
+units = "degC"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Fig. 2 caption"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "S_R0_slice"
+quantity = "susceptible density of the temperature slice of Fig. 2c"
+value = 4.0
+units = "adults m^-3"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "Fig. 2 caption"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "n_R0_draws"
+quantity = "posterior draws behind the medians and credible intervals of Fig. 2b–c"
+value = 500.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", setting = "model" }
+location = "code R0_environmental.R (draws = 500)"
+verified = true
+notes = ""
+
+# --- "coded": full-precision values from the authors' code ------------------------------------
+
+[[parameter]]
+symbol = "s0"
+set = "coded"
+quantity = "survival of uninfected adults per step, 0.9^(1/122)"
+value = 0.9991367765459552
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "field" }
+location = "code ipm_vital_rates_bayesian.R (class_zero_surv = 0.9^(1/122))"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "sT1"
+set = "coded"
+quantity = "survival of a year-1 tadpole per step"
+value = 0.9868945
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "code model_parameters.yml (tad_survival)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "sT2"
+set = "coded"
+quantity = "survival of a year-2 tadpole per step"
+value = 0.9970807
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "code model_parameters.yml (tad_survival)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "sT3"
+set = "coded"
+quantity = "survival of a year-3 tadpole per step"
+value = 0.9970807
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "tadpole", setting = "field" }
+location = "code model_parameters.yml (tad_survival)"
+verified = true
+notes = ""
+
+# --- Table 2: transmission functions, φ = 1 − exp(−Λ), Λ per day × Δt -----------------------------
+# I: infected adults; A: adults; Z: zoospores in the pool (latent). Posterior means (Stan),
+# half-Cauchy(0, 1) priors. "const*" models were fitted to the 333 transitions directly;
+# "zpool*" models with a latent lognormal pool (σ = 1).
+
+[[parameter]]
+symbol = "β0"
+set = "const"
+quantity = "constant infection from the environment, Λ = β0 Δt"
+value = 8.07e-2
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2, 'Constant zoospore pool'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "WAIC"
+set = "const"
+quantity = "WAIC of the transmission model"
+value = 401.1
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2"
+verified = true
+notes = "Weight 0."
+
+[[parameter]]
+symbol = "β0"
+set = "const_dd"
+quantity = "environmental term of Λ = (β0 + β1 I) Δt"
+value = 4.18e-2
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2, 'Density-dependent w/ constant zoospore pool'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "β1"
+set = "const_dd"
+quantity = "density-dependent term of Λ = (β0 + β1 I) Δt"
+value = 5.25e-2
+units = "day^-1 infected^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "WAIC"
+set = "const_dd"
+quantity = "WAIC of the transmission model"
+value = 336.7
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2"
+verified = true
+notes = "Weight 0."
+
+[[parameter]]
+symbol = "β0"
+set = "const_fd"
+quantity = "environmental term of Λ = (β0 + β1 I/A) Δt"
+value = 4.28e-2
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2, 'Frequency-dependent w/ constant zoospore pool'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "β1"
+set = "const_fd"
+quantity = "frequency-dependent term of Λ = (β0 + β1 I/A) Δt"
+value = 0.551
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2"
+verified = true
+notes = "A is the initial number of adults in the tank (column 'density' of the data)."
+
+[[parameter]]
+symbol = "WAIC"
+set = "const_fd"
+quantity = "WAIC of the transmission model"
+value = 336.6
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2"
+verified = true
+notes = "Weight 0."
+
+[[parameter]]
+symbol = "β0"
+set = "zpool"
+quantity = "zoospore-pool term of Λ = β0 ln(Z + 1) Δt"
+value = 1.09e-2
+units = "day^-1 ln(zoospores + 1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2, 'Dynamic zoospore pool'"
+verified = true
+notes = "Latent pool model (Appendix S1; code pomp_just_zpool.stan); not refitted here."
+
+[[parameter]]
+symbol = "WAIC"
+set = "zpool"
+quantity = "WAIC of the transmission model"
+value = 345.32
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2"
+verified = true
+notes = "Weight 0."
+
+[[parameter]]
+symbol = "β0"
+set = "zpool_dd"
+quantity = "zoospore-pool term of Λ = (β0 ln(Z + 1) + β1 I) Δt"
+value = 5.29e-3
+units = "day^-1 ln(zoospores + 1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2, 'Density-dependent w/ dynamic zoospore pool' (best model)"
+verified = true
+notes = "Used for Fig. 2 (R0) and as one of the three hybrid-model transmission functions."
+
+[[parameter]]
+symbol = "β1"
+set = "zpool_dd"
+quantity = "density-dependent term of Λ = (β0 ln(Z + 1) + β1 I) Δt"
+value = 7.52e-2
+units = "day^-1 infected^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "cv_β0"
+set = "zpool_dd"
+quantity = "posterior coefficient of variation of β0"
+value = 0.19
+units = "1"
+provenance = "F"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "preprint appendix Fig. 3 (bar labels; docs/ipm_extinction_appendix.pdf in the authors' repository) and manuscript_sensitivity_and_plots.ipynb (cvs_trans)"
+verified = false
+notes = "The published Appendix Fig. S3 could not be retrieved (HTTP 403). Used only to approximate the posterior of β for the medians of Fig. 2."
+
+[[parameter]]
+symbol = "cv_β1"
+set = "zpool_dd"
+quantity = "posterior coefficient of variation of β1"
+value = 0.20
+units = "1"
+provenance = "F"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "preprint appendix Fig. 3 (bar labels); notebook cvs_trans"
+verified = false
+notes = "As cv_β0."
+
+[[parameter]]
+symbol = "WAIC"
+set = "zpool_dd"
+quantity = "WAIC of the transmission model"
+value = 301.18
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2"
+verified = true
+notes = "Weight 0.99."
+
+[[parameter]]
+symbol = "β0"
+set = "zpool_fd"
+quantity = "zoospore-pool term of Λ = (β0 ln(Z + 1) + β1 I/A) Δt"
+value = 5.77e-3
+units = "day^-1 ln(zoospores + 1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2, 'Frequency-dependent w/ dynamic zoospore pool'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "β1"
+set = "zpool_fd"
+quantity = "frequency-dependent term of Λ = (β0 ln(Z + 1) + β1 I/A) Δt"
+value = 0.627
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2"
+verified = true
+notes = "In the latent-pool fit A is the initial number of adults in the tank (InitialFrogs); in the simulation it is the current number of adults."
+
+[[parameter]]
+symbol = "WAIC"
+set = "zpool_fd"
+quantity = "WAIC of the transmission model"
+value = 311.06
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
+location = "Table 2"
+verified = true
+notes = "Weight 0.01."

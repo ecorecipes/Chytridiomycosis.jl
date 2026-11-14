@@ -37,6 +37,7 @@ makedocs(;
                                       "Stochastic IBM (Drawert 2017)" => "api/drawert2017.md",
                                       "Life stages and temperature (Chowdhury 2025)" => "api/chowdhury2025.md",
                                       "Integral projection models (Wilber 2016)" => "api/wilber2016.md",
+                                      "Extinction risk with a zoospore pool (Wilber 2017)" => "api/wilber2017.md",
                                       "Management decisions with an IPM (Canessa 2018)" => "api/canessa2018.md",
                                       "Load distributions and extinction risk (Louca 2014)" => "api/louca2014.md"]])
 

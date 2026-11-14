@@ -3436,3 +3436,377 @@ end
 """
 status = "qualitative"
 notes = "Rows: log10 β_A bins −10 … −3; columns: log10 μ_Z bins −3 … 0. Extinction 0.84 in the corner (β_A > 10⁻⁴, μ_Z < 10⁻²); clearance 0.91 at β_A ~ 10⁻⁹, μ_Z > 0.1."
+
+# --- Wilber et al. 2017, Ecol Lett 20:1169 (wiki bd-wilber2017-ipm) ---------------------------
+
+[[target]]
+id = "wilber2017_survival_b00"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 1 (s(x), x z-transformed)" }
+quantity = "posterior mean of the survival intercept on the z-scored load, 20 °C frogs, Normal(0, 5) priors"
+published = 5.295
+call = "posterior_summary(Wilber2017Regression(:survival)).mean[1]"
+tolerance = { atol = 0.05 }
+status = "reproduced"
+notes = """
+Quadrature gives 5.2733 (posterior sd 1.34). Stan's posterior mean from 3 × 2500 draws has a Monte
+Carlo error of about 0.02–0.03, so the 0.022 difference is within it. Four deaths among 105
+transitions: the posterior is skewed (mode 4.68)."""
+
+[[target]]
+id = "wilber2017_survival_b10"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 1" }
+quantity = "posterior mean of the survival slope on the z-scored load"
+published = -2.595
+call = "posterior_summary(Wilber2017Regression(:survival)).mean[2]"
+tolerance = { atol = 0.05 }
+status = "reproduced"
+notes = "Quadrature gives −2.5669 (posterior sd 1.13); within the Monte Carlo error of the authors' Stan run."
+
+[[target]]
+id = "wilber2017_growth_b11_table1"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 1 (G(x′, x))" }
+quantity = "growth slope b11 as printed"
+published = 0.799
+call = "fit_wilber2016().growth.coef.b11"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = """
+Table 1's growth, loss and initial-load rows are the Wilber 2016 REML/ML fits (to every printed
+digit), not the Bayesian posterior means that the authors' simulations used
+(ipm_vital_rates_bayesian.R saves posterior means to bayesian_parameter_estimates.rds). With the
+Stan priors the posterior means are b11 = 0.796, v01 = 5.84, c01 = −0.047 (importance sampling,
+posterior_summary(Wilber2017Regression(:growth)))."""
+
+[[target]]
+id = "wilber2017_growth_v01_table1"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 1 (G(x′, x))" }
+quantity = "growth variance scale v01 as printed"
+published = 5.92
+call = "fit_wilber2016().growth.σ2"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "The REML variance of the 2016 fit (5.9201); the posterior mean is 5.84."
+
+[[target]]
+id = "wilber2017_loss_b02_table1"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 1 (l(x, T))" }
+quantity = "loss-of-infection intercept b02 as printed"
+published = 1.213
+call = "fit_wilber2016().loss.coef.b02"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "The maximum-likelihood fit; the posterior mean under the Stan model's flat priors is 1.259 (b12 −0.490, b22 −0.156)."
+
+[[target]]
+id = "wilber2017_initial_v03_table1"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 1 (G0(x′))" }
+quantity = "initial-load variance scale v03 as printed"
+published = 0.59
+call = "fit_wilber2016().initial_load.σ2"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "The REML variance (0.5903); the posterior mean is 0.713 (b03 0.66, b13 0.135, c03 0.061)."
+
+[[target]]
+id = "wilber2017_transmission_n"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Methods ('n = 333')" }
+quantity = "transitions of frogs uninfected at the first swab used to fit transmission"
+published = 333
+call = "length(Wilber2017Transmission(:const).infected)"
+tolerance = {}
+status = "reproduced"
+notes = "Day < 35, 4–8-day intervals, no missing numeric field (R complete.cases), load 0 at the first swab; 124 became infected."
+
+[[target]]
+id = "wilber2017_const_beta0"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 2, 'Constant zoospore pool'" }
+quantity = "posterior mean of β0 (day⁻¹), Λ = β0 Δt"
+published = 0.0807
+call = "posterior_summary(Wilber2017Transmission(:const)).mean[1]"
+tolerance = { atol = 0.0005 }
+status = "reproduced"
+notes = "0.080676 by quadrature."
+
+[[target]]
+id = "wilber2017_const_dd_beta0"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 2, 'Density-dependent w/ constant zoospore pool'" }
+quantity = "posterior mean of β0 (day⁻¹)"
+published = 0.0418
+call = "posterior_summary(Wilber2017Transmission(:const_dd)).mean[1]"
+tolerance = { atol = 0.0005 }
+status = "reproduced"
+notes = "0.041782."
+
+[[target]]
+id = "wilber2017_const_dd_beta1"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 2" }
+quantity = "posterior mean of β1 (day⁻¹ infected⁻¹)"
+published = 0.0525
+call = "posterior_summary(Wilber2017Transmission(:const_dd)).mean[2]"
+tolerance = { atol = 0.0005 }
+status = "reproduced"
+notes = "0.052645 (posterior sd 0.0096; the Stan Monte Carlo error is about 2 × 10⁻⁴)."
+
+[[target]]
+id = "wilber2017_const_fd_beta0"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 2, 'Frequency-dependent w/ constant zoospore pool'" }
+quantity = "posterior mean of β0 (day⁻¹)"
+published = 0.0428
+call = "posterior_summary(Wilber2017Transmission(:const_fd)).mean[1]"
+tolerance = { atol = 0.0005 }
+status = "reproduced"
+notes = "0.042749."
+
+[[target]]
+id = "wilber2017_const_fd_beta1"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 2" }
+quantity = "posterior mean of β1 (day⁻¹)"
+published = 0.551
+call = "posterior_summary(Wilber2017Transmission(:const_fd)).mean[2]"
+tolerance = { atol = 0.005 }
+status = "reproduced"
+notes = "0.5496 (posterior sd 0.100; Monte Carlo error of the authors' run about 0.002). I/A uses the initial number of frogs in the tank."
+
+[[target]]
+id = "wilber2017_const_waic"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 2" }
+quantity = "WAIC of the constant-pool model"
+published = 401.1
+call = "posterior_summary(Wilber2017Transmission(:const)).waic"
+tolerance = { atol = 0.15 }
+status = "reproduced"
+notes = "401.11 by quadrature (p_waic 0.93). WAIC from 7 500 MCMC draws carries a Monte Carlo error of order 0.1."
+
+[[target]]
+id = "wilber2017_const_dd_waic"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 2" }
+quantity = "WAIC of the density-dependent model with a constant pool"
+published = 336.7
+call = "posterior_summary(Wilber2017Transmission(:const_dd)).waic"
+tolerance = { atol = 0.15 }
+status = "reproduced"
+notes = "336.80 (p_waic 1.84)."
+
+[[target]]
+id = "wilber2017_const_fd_waic"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 2" }
+quantity = "WAIC of the frequency-dependent model with a constant pool"
+published = 336.6
+call = "posterior_summary(Wilber2017Transmission(:const_fd)).waic"
+tolerance = { atol = 0.15 }
+status = "reproduced"
+notes = "336.53 (p_waic 1.78). The dynamic-pool rows of Table 2 need the unlicensed raw file DensExpt.csv and are not refitted."
+
+[[target]]
+id = "wilber2017_disease_free_lambda"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 1 (λ: 'λ_growth rate ≈ 1.46 in the disease-free, density-independent model')" }
+quantity = "annual growth rate of the disease-free, density-independent stage model"
+published = 1.46
+call = "population_growth_rate(annual_demography_matrix(Wilber2017Parameters(:wilber2017; set = \"coded\")))"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "1.4633 (stable_stage_structure.R's matrix; 1.4612 with Table 1's rounded survivals)."
+
+[[target]]
+id = "wilber2017_initial_tadpoles"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Methods ('85 year-one tadpoles … 12 … 3', stable stage distribution with 10 adults)" }
+quantity = "year-1 tadpoles in the stable stage distribution scaled to 10 adults"
+published = 85
+call = """
+let w = stable_distribution(annual_demography_matrix(Wilber2017Parameters(:wilber2017; set = "coded")))
+    round(Int, 10 * w[1] / w[4])
+end
+"""
+tolerance = {}
+status = "reproduced"
+notes = "The full vector rounds to (85, 12, 3, 10)."
+
+[[target]]
+id = "wilber2017_disease_free_equilibrium"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Table 1 (K: 'equilibrium adult densities between 10–15 adults per m³ in disease-free model')" }
+quantity = "range of adults over the last year of a 60-year deterministic run without Bd (μT = 0)"
+published = "between 10 and 15"
+call = """
+let p = Wilber2017Parameters(:wilber2017; set = "coded", μT = 0.0)
+    s = hybrid_summary(solve(HybridIPMProblem(p; stochastic = false, years = 60)))
+    a = s.adults[end-121:end]
+    (minimum(a) >= 10 && maximum(a) <= 15) ? 1.0 : 0.0
+end
+"""
+tolerance = { lower = 0.5, upper = 1.5 }
+status = "qualitative"
+notes = "Adults cycle between 12.67 (just before reproduction) and 14.06 each year."
+
+[[target]]
+id = "wilber2017_extinction_8yr"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Methods ('extinct in ≤ 8 years, as this was where extinction probability was c. 50% with the default parameter values')" }
+quantity = "probability of extinction within 8 years, density-dependent transmission with a dynamic pool, 500 runs"
+published = "c. 50%"
+call = """
+let p = Wilber2017Parameters(:wilber2017; set = "coded")
+    extinction_curve(HybridIPMProblem(p; years = 8); nsims = 500, rng = Random.Xoshiro(8)).probability[end]
+end
+"""
+tolerance = { lower = 0.4, upper = 0.6 }
+status = "qualitative"
+regression = { value = 0.516, atol = 0.0005 }
+notes = "Started in winter at 4 °C with 10 adults and 85, 12, 3 tadpoles; the preprint's curve gives 0.53."
+
+[[target]]
+id = "wilber2017_extinction_10yr_dd"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Appendix Fig. S5 (not retrieved); same curve as Fig. 3A of the authors' March 2017 preprint (docs/ipm_extinction_manuscript.pdf), decoded from its vector graphics" }
+quantity = "extinction probability by year 10, density-dependent transmission with a dynamic pool"
+published = 0.742
+call = """
+let p = Wilber2017Parameters(:wilber2017; set = "coded", transmission = :zpool_dd)
+    extinction_curve(HybridIPMProblem(p; years = 10); nsims = 500, rng = Random.Xoshiro(10)).probability[end]
+end
+"""
+tolerance = { atol = 0.06 }
+status = "reproduced"
+notes = "Two independent sets of 500 runs differ by about 0.04 (two standard errors 0.055). The preprint curve: 0.012 at 4 yr, 0.18 at 6, 0.53 at 8, 0.87 at 12, 0.96 at 15, 1.0 at 25."
+
+[[target]]
+id = "wilber2017_extinction_10yr_fd"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Appendix Fig. S5; preprint Fig. 3A (decoded)" }
+quantity = "extinction probability by year 10, frequency-dependent transmission with a dynamic pool"
+published = 0.758
+call = """
+let p = Wilber2017Parameters(:wilber2017; set = "coded", transmission = :zpool_fd)
+    extinction_curve(HybridIPMProblem(p; years = 10); nsims = 500, rng = Random.Xoshiro(11)).probability[end]
+end
+"""
+tolerance = { atol = 0.06 }
+status = "reproduced"
+notes = ""
+
+[[target]]
+id = "wilber2017_extinction_10yr_zpool"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Appendix Fig. S5; preprint Fig. 3A (decoded)" }
+quantity = "extinction probability by year 10, dynamic zoospore pool only"
+published = 0.76
+call = """
+let p = Wilber2017Parameters(:wilber2017; set = "coded", transmission = :zpool)
+    extinction_curve(HybridIPMProblem(p; years = 10); nsims = 500, rng = Random.Xoshiro(12)).probability[end]
+end
+"""
+tolerance = { atol = 0.06 }
+status = "reproduced"
+notes = "The three transmission functions give similar curves because infection from the persistent pool swamps transmission between frogs (Results, Question 3)."
+
+[[target]]
+id = "wilber2017_extinction_10yr_high_decay"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Results ('Drastically decreasing zoospore survival probability … led to an expected reduction in extinction risk'); Appendix Fig. S5; preprint Fig. 3A (decoded)" }
+quantity = "extinction probability by year 10 with zoospore survival fixed at 0.05 per step, density-dependent transmission"
+published = 0.432
+call = """
+let q = parameter_set(:wilber2017)
+    p = Wilber2017Parameters(:wilber2017; set = "coded", ν = q.zsurv_high)
+    extinction_curve(HybridIPMProblem(p; years = 10); nsims = 500, rng = Random.Xoshiro(13)).probability[end]
+end
+"""
+tolerance = { atol = 0.06 }
+status = "reproduced"
+notes = "zdecay_plots.R runs this scenario with standing_var = 1 and one resistance bin, which leaves the growth slope at its mean."
+
+[[target]]
+id = "wilber2017_sensitivity_b11"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Results, Question 3; Fig. 3c" }
+quantity = "rank of |logistic-regression weight| of the growth slope b11 among the 16 parameters (density-dependent transmission with a dynamic pool)"
+published = 1
+call = """
+let p = Wilber2017Parameters(:wilber2017; set = "coded")
+    r = extinction_sensitivity(p; nsims = 300, rng = Random.Xoshiro(3))
+    w = sensitivity_weights(r.X, r.extinct).weights
+    findfirst(==(:b11), r.names[sortperm(abs.(w); rev = true)])
+end
+"""
+tolerance = {}
+status = "reproduced"
+notes = "300 runs here (1 000 in the paper; scripts/wilber2017_sensitivity.jl runs the full analysis)."
+
+[[target]]
+id = "wilber2017_fig2c_total_4C"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Fig. 2c (posterior median, decoded from the vector graphics; S = 4 m⁻³)" }
+quantity = "ln R0 with the zoospore pool at 4 °C"
+published = 0.291
+call = "_wilber2017_lnR0_median(4, 4; kind = :total)"
+tolerance = { atol = 0.05 }
+status = "reproduced"
+notes = """
+The figure plots the median of R0 over 500 posterior draws (R0_environmental.R). With the Table 1
+and Table 2 point values (the plug-in) ln R0 is 0.290 here but 0.08–0.11 above the figure at
+15–20 °C; the median over 1 000 draws from our refitted vital-rate posteriors (β lognormal with the
+posterior CVs printed in the preprint appendix) is within 0.035 at every decoded point, and the
+median of a 500-draw sample (the figure's) varies with sd 0.01–0.025 between seeds. Tolerance
+0.05 = about two of those sd plus the decoding error (≈ 0.01). The R0 code omits Δt, sheds ln(eˣ + 1) per frog and sets s0 = 1 (as_coded = true)."""
+
+[[target]]
+id = "wilber2017_fig2c_total_15C"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Fig. 2c (decoded; S = 4 m⁻³, grid point 14.947 °C)" }
+quantity = "ln R0 with the zoospore pool near 15 °C"
+published = 2.537
+call = "_wilber2017_lnR0_median(4 + 13 * 16 / 19, 4; kind = :total)"
+tolerance = { atol = 0.05 }
+status = "reproduced"
+notes = "Plug-in 2.612. Eight 500-draw medians average 2.538 (sd 0.020)."
+
+[[target]]
+id = "wilber2017_fig2c_host_20C"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Fig. 2c (decoded; S = 4 m⁻³)" }
+quantity = "ln R0 without the zoospore pool at 20 °C"
+published = 1.478
+call = "_wilber2017_lnR0_median(20, 4; kind = :host)"
+tolerance = { atol = 0.05 }
+status = "reproduced"
+notes = "Plug-in 1.586 (outside the tolerance). Eight 500-draw medians average 1.490 (sd 0.020)."
+
+[[target]]
+id = "wilber2017_fig2b_total_S1"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Fig. 2b (decoded; 15 °C)" }
+quantity = "ln R0 with the zoospore pool, 1 susceptible adult per m³"
+published = 1.167
+call = "_wilber2017_lnR0_median(15, 1; kind = :total)"
+tolerance = { atol = 0.05 }
+status = "reproduced"
+notes = "Plug-in 1.231. R0 is proportional to S, so ln R0 rises by ln 16 = 2.77 from 1 to 16 frogs (figure: 2.76 with and without the pool; decoded at 16 frogs 3.927 and 2.850)."
+
+[[target]]
+id = "wilber2017_fig2b_host_S1"
+model = "bd-wilber2017-ipm"
+source = { ref = "wilber2017", location = "Fig. 2b (decoded; 15 °C)" }
+quantity = "ln R0 without the zoospore pool, 1 susceptible adult per m³"
+published = 0.090
+call = "_wilber2017_lnR0_median(15, 1; kind = :host)"
+tolerance = { atol = 0.05 }
+status = "reproduced"
+notes = "Plug-in 0.167. Eight 500-draw medians average 0.092 (sd 0.024)."
+

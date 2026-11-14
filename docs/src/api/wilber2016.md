@@ -87,7 +87,7 @@ WilberParameters
 load_growth_rate(::WilberParameters)
 BdIPMProblem
 BdIPMSolution
-to_discrete_problem
+to_discrete_problem(::BdIPMProblem)
 LoadTransmission
 ```
 
