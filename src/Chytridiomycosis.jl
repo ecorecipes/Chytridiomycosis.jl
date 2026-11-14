@@ -28,8 +28,9 @@ single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
 [`ZoosporePersistenceProblem`](@ref), [`RefugiaODEProblem`](@ref),
 [`SeasonalBsalProblem`](@ref) (with its inflow switch times as `tstops`),
 [`TransmissionSLIProblem`](@ref), [`SusceptibleChainProblem`](@ref),
-[`CohabitationProblem`](@ref), [`DrawertODEProblem`](@ref) and
-[`BsalStageTemperatureProblem`](@ref). Use it to solve with
+[`CohabitationProblem`](@ref), [`DrawertODEProblem`](@ref),
+[`BsalStageTemperatureProblem`](@ref) and [`LoucaDOIProblem`](@ref) (method of lines over
+DOI bins, with exposure, disturbance and end-of-run callbacks). Use it to solve with
 other options or to pass the model to other SciML tools.
 """
 function to_ode_problem end
@@ -96,6 +97,8 @@ include("models/wilber2016.jl")
 include("fitting/wilber2016.jl")
 # Canessa et al. 2018 Bsal integral projection model and management actions
 include("models/canessa2018.jl")
+# Louca et al. 2014 DOI-distribution model of adults and tadpoles, Q_o and extinction risk
+include("models/louca2014.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -200,5 +203,15 @@ export CanessaDraw, canessa2018_path, load_canessa2018, CanessaAction, canessa_a
        CanessaIPMProblem, canessa_density_ratio, canessa_cohort_survival, canessa_dispersal,
        canessa_ensemble, canessa_summary, CanessaSIParameters, CanessaSIProblem,
        required_reduction, final_size_transmission, final_density_ratio
+# Louca et al. 2014 DOI-distribution model and Monte Carlo extinction risk
+export LoucaParameters, LoucaDOIProblem, tadpoles_tolerate, louca_breeding_shape,
+       louca_breeding_rate, louca_transmission, louca_fecundity_factor,
+       louca_metamorphosis_success, louca_base_mortality, louca_disease_mortality,
+       louca_load_rates, louca_load_speed, louca_within_host_capacity, louca_within_host_loss,
+       louca_competition, louca_turnover, reproduction_quotient, louca_jacobian,
+       louca_growth_rate, louca_tolerance_from_slope, louca_survival_curve,
+       louca_transmission_from_growth, louca_endemic_transmission, louca_outcome,
+       louca_ranges, louca_sample, louca_monte_carlo, louca_risk_effects,
+       louca_outcome_probabilities, louca2014_path, load_louca2014
 
 end # module Chytridiomycosis

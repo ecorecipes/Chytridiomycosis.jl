@@ -1,0 +1,1220 @@
+# Louca S, Lampo M, Doebeli M (2014) Assessing host extinction risk following exposure to
+# Batrachochytrium dendrobatidis. Proc R Soc B 281:20132783.
+# https://doi.org/10.1098/rspb.2013.2783
+# Checked against the published PDF (lab/papers/louca2014.pdf) and the electronic supplementary
+# material (ESM), which the first author's site bundles after the article
+# (lab/papers/louca2014_si/Louca2014Assessing_authorsite.pdf, pp. 9–22; the journal's ESM
+# link returns HTTP 403). "§" is the main text; "ESM §" the supplement.
+# Time unit: days. A year is Y = 365 days (the ESM writes Y for "the duration of one year").
+# Degree of infection (DOI) = zoospores on a host; the ESM (§5.1) reads it as the qPCR load of
+# a standardised swab, so loads are recorded as ZE swab^-1.
+#
+# The base set holds the defaults of ESM Table S1 (values used for Figs 2–3 unless the figure
+# row says otherwise), the sampling ranges of Table 1 (symbols *_min, *_max), the numerical
+# design of ESM §5 and the inputs of the parameter estimates of ESM §4. Named sets "fig2ab",
+# "fig2cd", "fig3a" and "fig3b" are the rows of Table S1 for the main-text figures.
+
+source = { ref = "louca2014", doi = "10.1098/rspb.2013.2783", review_ref = 37 }
+
+# --- calendar and numerics ----------------------------------------------------------------
+
+[[parameter]]
+symbol = "Y"
+quantity = "length of one year"
+value = 365
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §1.1 (Y is the duration of one year)"
+verified = false
+notes = "The number of days is not printed; 365 assumed."
+
+[[parameter]]
+symbol = "m"
+quantity = "number of DOI bins between 0 and the lethal DOI F_s"
+value = 100
+units = "1"
+provenance = "A"
+role = "numerical"
+system = { pathogen = "Bd" }
+location = "ESM §5 (range 0 … F_s split into m = 100 bins; rates rescaled by m/F_s)"
+verified = true
+
+[[parameter]]
+symbol = "dt_min"
+quantity = "smallest integration time step used by the authors (explicit second-order Runge–Kutta)"
+value = 0.001
+units = "day"
+provenance = "A"
+role = "numerical"
+system = { pathogen = "Bd" }
+location = "ESM §5 (dt from 10^-3 to 10^-2 d)"
+verified = true
+
+[[parameter]]
+symbol = "dt_max"
+quantity = "largest integration time step used by the authors"
+value = 0.01
+units = "day"
+provenance = "A"
+role = "numerical"
+system = { pathogen = "Bd" }
+location = "ESM §5"
+verified = true
+
+[[parameter]]
+symbol = "years"
+quantity = "simulation horizon"
+value = 10
+units = "yr"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "§2b; ESM §5, §5.2 (simulations ran up to ten years)"
+verified = true
+
+[[parameter]]
+symbol = "exposure_time"
+quantity = "time at which one infected adult is introduced (middle of the second year)"
+value = 1.5
+units = "yr"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §5 (middle of the second year); ESM §5.2 (after 1.5 years)"
+verified = true
+
+[[parameter]]
+symbol = "exposure_doi"
+quantity = "DOI of the single infected adult introduced at exposure"
+value = 1000
+units = "ZE swab^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §5 (a single infected adult with DOI 10^3)"
+verified = true
+
+[[parameter]]
+symbol = "extinction_threshold"
+quantity = "hosts are extinct when tadpoles plus adults fall below this number"
+value = 2
+units = "hosts"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §5"
+verified = true
+
+[[parameter]]
+symbol = "clearance_threshold"
+quantity = "Bd is cleared when free plus within-host zoospores fall below this number"
+value = 10
+units = "zoospores"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM §5"
+verified = true
+
+[[parameter]]
+symbol = "n_samples"
+quantity = "Monte Carlo sample size per scenario"
+value = 10000
+units = "1"
+provenance = "A"
+role = "numerical"
+system = { pathogen = "Bd" }
+location = "§2b (10^4 trials); ESM §5.2"
+verified = true
+
+# --- defaults of ESM Table S1 (Figs 2–3) -----------------------------------------------------
+
+[[parameter]]
+symbol = "Zo"
+quantity = "environmental reservoir: equilibrium free zoospores without infected hosts"
+value = 0
+units = "zoospores"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 (Z_o = 0 unless stated)"
+verified = true
+
+[[parameter]]
+symbol = "μSA"
+quantity = "asymptotic on-host zoospore loss rate, adults"
+value = 0.01
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "μST"
+quantity = "asymptotic on-host zoospore loss rate, tadpoles"
+value = 0.01
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "λA"
+quantity = "early within-host growth rate I'(0), adults"
+value = 0
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "λT"
+quantity = "early within-host growth rate I'(0), tadpoles"
+value = 0
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "b"
+quantity = "relative amplitude of the seasonal transmission rate"
+value = 0
+units = "1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default (b = 0, constant transmission)"
+verified = true
+
+[[parameter]]
+symbol = "φ"
+quantity = "phase lag of the transmission maximum after the breeding peak"
+value = 0
+units = "day"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "ηA"
+quantity = "zoospore release rate per zoospore on an adult"
+value = 2
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "ηT"
+quantity = "zoospore release rate per zoospore on a tadpole"
+value = 2
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "FA"
+quantity = "lethal DOI of adults"
+value = 10000
+units = "ZE swab^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "Table 1 (only value); ESM §5.1 (onset of mass mortality at 10^4–10^5 per standardised swab)"
+verified = true
+
+[[parameter]]
+symbol = "FT"
+quantity = "lethal (or, for tolerant tadpoles, maximum + 1) DOI of tadpoles"
+value = 10000
+units = "ZE swab^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "Table 1 (10^4 or ∞); ESM §1.3, Table S1 (tolerant: T_T = F_T, S_T,max = F_T − 1)"
+verified = true
+notes = "Table 1 writes F_T = ∞ for tolerant tadpoles; the ESM implements tolerance as T_T = F_T (no disease mortality) with the DOI capped at F_T − 1, which needs a finite F_T for the bins. We follow the ESM with F_T = 10^4."
+
+[[parameter]]
+symbol = "TA"
+quantity = "DOI tolerance of adults: yearly survival halved at this DOI"
+value = 1000
+units = "ZE swab^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "TT"
+quantity = "DOI tolerance of tadpoles (T_T = F_T: tolerant tadpoles)"
+value = 10000
+units = "ZE swab^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default (T_T = F_T)"
+verified = true
+
+[[parameter]]
+symbol = "STmax"
+quantity = "maximum DOI a tadpole can carry (F_T − 1: tolerant; F_T: lethal at F_T)"
+value = 9999
+units = "ZE swab^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM §1.3; Table S1 default (S_T,max = F_T − 1)"
+verified = true
+
+[[parameter]]
+symbol = "Tm"
+quantity = "metamorphosis DOI tolerance: success probability halved at this DOI"
+value = 1e6
+units = "ZE swab^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default (T_m = 10^6)"
+verified = true
+
+[[parameter]]
+symbol = "Tbr"
+quantity = "breeding DOI tolerance: fecundity halved at this DOI"
+value = 1e6
+units = "ZE swab^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default (T_br = 10^6)"
+verified = true
+
+[[parameter]]
+symbol = "τm"
+quantity = "expected tadpole lifetime (metamorphosis at rate 1/τm)"
+value = 365
+units = "day"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default (τ_m = Y)"
+verified = true
+
+[[parameter]]
+symbol = "r"
+quantity = "yearly fecundity: hatched tadpoles per healthy adult per year"
+value = 100
+units = "tadpoles adult^-1 yr^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "τbr"
+quantity = "breeding period: full width at half maximum of the breeding function"
+value = 60
+units = "day"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "σA"
+quantity = "maximum (disease-free, density-free) yearly adult survivorship"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "σT"
+quantity = "maximum yearly tadpole survivorship"
+value = 0.05
+units = "1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "KA"
+quantity = "adult carrying capacity"
+value = 100
+units = "hosts"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "KT"
+quantity = "tadpole carrying capacity"
+value = 200
+units = "hosts"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "fA"
+quantity = "fraction of adults killed by one random disturbance (stochastic model)"
+value = 0.2
+units = "1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM §5.3; Table S1 default"
+verified = true
+
+[[parameter]]
+symbol = "fT"
+quantity = "fraction of tadpoles killed by one random disturbance (stochastic model)"
+value = 0.2
+units = "1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "ESM §5.3; Table S1 default"
+verified = true
+
+# --- Table S1 rows for the main-text figures -------------------------------------------------
+
+[[parameter]]
+set = "fig2ab"
+symbol = "μZ"
+quantity = "free zoospore loss rate"
+value = 1
+units = "day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(a,b); Fig. 2 legend"
+verified = true
+
+[[parameter]]
+set = "fig2ab"
+symbol = "μSA"
+quantity = "on-host zoospore loss rate, adults"
+value = 0.2
+units = "day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(a,b)"
+verified = true
+
+[[parameter]]
+set = "fig2ab"
+symbol = "μST"
+quantity = "on-host zoospore loss rate, tadpoles"
+value = 0.2
+units = "day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(a,b)"
+verified = true
+
+[[parameter]]
+set = "fig2ab"
+symbol = "βA"
+quantity = "mean pool-to-adult transmission rate"
+value = 0.001
+units = "zoospore^-1 day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(a,b)"
+verified = true
+
+[[parameter]]
+set = "fig2ab"
+symbol = "βT"
+quantity = "mean pool-to-tadpole transmission rate"
+value = 0.001
+units = "zoospore^-1 day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(a,b)"
+verified = true
+
+[[parameter]]
+set = "fig2ab"
+symbol = "τbr"
+quantity = "breeding period (Y/2: constant breeding)"
+value = 182.5
+units = "day"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(a,b) (τ_br = Y/2); Fig. 2 legend (time-independent breeding)"
+verified = true
+
+[[parameter]]
+set = "fig2cd"
+symbol = "μZ"
+quantity = "free zoospore loss rate"
+value = 1
+units = "day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(c,d) (as (a,b))"
+verified = true
+
+[[parameter]]
+set = "fig2cd"
+symbol = "μSA"
+quantity = "on-host zoospore loss rate, adults"
+value = 0.2
+units = "day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(c,d) (as (a,b))"
+verified = true
+
+[[parameter]]
+set = "fig2cd"
+symbol = "μST"
+quantity = "on-host zoospore loss rate, tadpoles"
+value = 0.2
+units = "day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(c,d) (as (a,b))"
+verified = true
+
+[[parameter]]
+set = "fig2cd"
+symbol = "βA"
+quantity = "mean pool-to-adult transmission rate"
+value = 0.001
+units = "zoospore^-1 day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(c,d) (as (a,b))"
+verified = true
+
+[[parameter]]
+set = "fig2cd"
+symbol = "βT"
+quantity = "mean pool-to-tadpole transmission rate"
+value = 0.001
+units = "zoospore^-1 day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(c,d) (as (a,b))"
+verified = true
+
+[[parameter]]
+set = "fig2cd"
+symbol = "τbr"
+quantity = "breeding period (Y/2: constant breeding)"
+value = 182.5
+units = "day"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(c,d) (as (a,b))"
+verified = true
+
+[[parameter]]
+set = "fig2cd"
+symbol = "TT"
+quantity = "DOI tolerance of tadpoles (tadpoles suffer)"
+value = 500
+units = "ZE swab^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(c,d)"
+verified = true
+
+[[parameter]]
+set = "fig2cd"
+symbol = "STmax"
+quantity = "maximum tadpole DOI (F_T: lethal at F_T)"
+value = 10000
+units = "ZE swab^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.2(c,d) (S_T,max = F_T)"
+verified = true
+
+[[parameter]]
+set = "fig3a"
+symbol = "μZ"
+quantity = "free zoospore loss rate"
+value = 0.1
+units = "day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.3(a)"
+verified = true
+
+[[parameter]]
+set = "fig3a"
+symbol = "βA"
+quantity = "mean pool-to-adult transmission rate"
+value = 0.0001
+units = "zoospore^-1 day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.3(a)"
+verified = true
+
+[[parameter]]
+set = "fig3a"
+symbol = "βT"
+quantity = "mean pool-to-tadpole transmission rate"
+value = 0.0001
+units = "zoospore^-1 day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.3(a)"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "μZ"
+quantity = "free zoospore loss rate"
+value = 0.1
+units = "day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.3(b) (as (a))"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "βA"
+quantity = "mean pool-to-adult transmission rate"
+value = 0.0001
+units = "zoospore^-1 day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.3(b) (as (a))"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "βT"
+quantity = "mean pool-to-tadpole transmission rate"
+value = 0.0001
+units = "zoospore^-1 day^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.3(b) (as (a))"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "TT"
+quantity = "DOI tolerance of tadpoles (tadpoles suffer)"
+value = 1000
+units = "ZE swab^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.3(b)"
+verified = true
+
+[[parameter]]
+set = "fig3b"
+symbol = "STmax"
+quantity = "maximum tadpole DOI (F_T: lethal at F_T)"
+value = 10000
+units = "ZE swab^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd" }
+location = "ESM Table S1 row A.3(b) (S_T,max = F_T)"
+verified = true
+
+# --- sampling ranges of Table 1 (Monte Carlo, ESM §5.2) ----------------------------------
+# Scale: ESM §5.2 lists the log-uniformly sampled parameters as "r, Z_o, μ_Z, μ_S,A, μ_S,T,
+# K_A, K_T, β_A, β_T, T_A, T_T, T_m, r"; r appears twice, and the second is taken to be T_br
+# (the only tolerance missing from the list). All others are linear-uniform.
+
+[[parameter]]
+symbol = "Zo_min"
+quantity = "environmental reservoir, lower bound (Z_o > 0 scenarios; log-uniform)"
+value = 10
+units = "zoospores"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "Zo_max"
+quantity = "environmental reservoir, upper bound"
+value = 1e15
+units = "zoospores"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "μZ_min"
+quantity = "free zoospore loss rate, lower bound (log-uniform)"
+value = 0.001
+units = "day^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "μZ_max"
+quantity = "free zoospore loss rate, upper bound"
+value = 1
+units = "day^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "μS_min"
+quantity = "on-host zoospore loss rate (adults and tadpoles), lower bound (log-uniform)"
+value = 0.001
+units = "day^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "μS_max"
+quantity = "on-host zoospore loss rate, upper bound"
+value = 1
+units = "day^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "λ_min"
+quantity = "early infection growth rate (adults and tadpoles), lower bound (linear)"
+value = -1
+units = "day^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "λ_max"
+quantity = "early infection growth rate, upper bound"
+value = 1
+units = "day^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "β_min"
+quantity = "mean transmission rate (adults and tadpoles), lower bound (log-uniform)"
+value = 1e-10
+units = "zoospore^-1 day^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "β_max"
+quantity = "mean transmission rate, upper bound"
+value = 0.001
+units = "zoospore^-1 day^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "φ_min"
+quantity = "phase lag of transmission, lower bound (linear)"
+value = 0
+units = "yr"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "φ_max"
+quantity = "phase lag of transmission, upper bound"
+value = 1
+units = "yr"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "b_min"
+quantity = "relative oscillation amplitude of transmission, lower bound (linear)"
+value = 0
+units = "1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "b_max"
+quantity = "relative oscillation amplitude of transmission, upper bound"
+value = 1
+units = "1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "η_min"
+quantity = "zoospore release rate (adults and tadpoles), lower bound (linear)"
+value = 1
+units = "day^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1; ESM §5.1 (1.536–5.714 d^-1 from Woodhams et al. 2008)"
+verified = true
+
+[[parameter]]
+symbol = "η_max"
+quantity = "zoospore release rate, upper bound"
+value = 10
+units = "day^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "T_min"
+quantity = "lower bound of every DOI tolerance (T_A, T_T, T_m, T_br; log-uniform)"
+value = 10
+units = "ZE swab^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "Tmbr_max"
+quantity = "upper bound of the metamorphosis and breeding tolerances T_m, T_br (T_A, T_T go to F_A, F_T)"
+value = 1e6
+units = "ZE swab^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "r_min"
+quantity = "yearly adult fecundity, lower bound (log-uniform)"
+value = 10
+units = "tadpoles adult^-1 yr^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "r_max"
+quantity = "yearly adult fecundity, upper bound"
+value = 1000
+units = "tadpoles adult^-1 yr^-1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "τm_min"
+quantity = "tadpole lifetime, lower bound (linear)"
+value = 10
+units = "day"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1 (10 days)"
+verified = true
+
+[[parameter]]
+symbol = "τm_max"
+quantity = "tadpole lifetime, upper bound"
+value = 4
+units = "yr"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1 (4 years)"
+verified = true
+
+[[parameter]]
+symbol = "τbr_min"
+quantity = "breeding period, lower bound (linear)"
+value = 1
+units = "day"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1 (1 day)"
+verified = true
+
+[[parameter]]
+symbol = "τbr_max"
+quantity = "breeding period, upper bound (Y/2: constant breeding)"
+value = 0.5
+units = "yr"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1 (0.5 year)"
+verified = true
+
+[[parameter]]
+symbol = "σA_min"
+quantity = "maximum adult survivorship, lower bound (linear)"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "σA_max"
+quantity = "maximum adult survivorship, upper bound"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "σT_min"
+quantity = "maximum tadpole survivorship, lower bound (linear)"
+value = 0.01
+units = "1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "σT_max"
+quantity = "maximum tadpole survivorship, upper bound"
+value = 0.2
+units = "1"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "K_min"
+quantity = "carrying capacity (adults and tadpoles), lower bound (log-uniform)"
+value = 10
+units = "hosts"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "K_max"
+quantity = "carrying capacity, upper bound"
+value = 1000
+units = "hosts"
+provenance = "A"
+role = "range"
+system = { pathogen = "Bd" }
+location = "Table 1"
+verified = true
+
+# --- inputs of the parameter estimates (ESM §4, §5.1) -----------------------------------------
+
+[[parameter]]
+symbol = "fit_λ"
+quantity = "early within-host growth rate, logistic fit to 22 experimentally infected D. meridensis"
+value = 0.38
+units = "day^-1"
+provenance = "F"
+role = "estimate"
+system = { pathogen = "Bd", host = "Dendropsophus meridensis" }
+location = "ESM §4.1, Fig. S4a (λ = 0.38 ± 0.60 d^-1; Lampo 2013, unpublished data)"
+verified = true
+
+[[parameter]]
+symbol = "fit_KS"
+quantity = "within-host capacity, logistic fit (D. meridensis)"
+value = 14.9
+units = "ZE swab^-1"
+provenance = "F"
+role = "estimate"
+system = { pathogen = "Bd", host = "Dendropsophus meridensis" }
+location = "ESM §4.1, Fig. S4a (K_S = 14.9 ± 3.6)"
+verified = true
+
+[[parameter]]
+symbol = "fit_xo"
+quantity = "initial DOI, logistic fit (D. meridensis)"
+value = 0.086
+units = "ZE swab^-1"
+provenance = "F"
+role = "estimate"
+system = { pathogen = "Bd", host = "Dendropsophus meridensis" }
+location = "ESM §4.1, Fig. S4a (x_o = 0.086 ± 0.687)"
+verified = true
+
+[[parameter]]
+symbol = "fit_gprime"
+quantity = "slope g'(0) of disease mortality in DOI, survival fit (D. meridensis)"
+value = 0.0011
+units = "day^-1 (ZE swab^-1)^-1"
+provenance = "F"
+role = "estimate"
+system = { pathogen = "Bd", host = "Dendropsophus meridensis" }
+location = "ESM §4.1, Fig. S4b (g'(0) = 0.0011 ± 0.0000007, μ_o = 0)"
+verified = true
+
+[[parameter]]
+symbol = "fit_μo"
+quantity = "base mortality, survival fit (D. meridensis)"
+value = 0
+units = "day^-1"
+provenance = "F"
+role = "estimate"
+system = { pathogen = "Bd", host = "Dendropsophus meridensis" }
+location = "ESM §4.1, Fig. S4b"
+verified = true
+
+[[parameter]]
+symbol = "outbreak_ρ"
+quantity = "early epizootic growth rate of Bd prevalence (Vredenburg et al. 2010 R. muscosa populations)"
+value = 0.15
+units = "day^-1"
+provenance = "M"
+role = "estimate"
+system = { pathogen = "Bd", host = "Rana muscosa" }
+location = "ESM §4.2 (ρ ≈ 0.15 d^-1, from ref. 11)"
+verified = true
+
+[[parameter]]
+symbol = "outbreak_N_min"
+quantity = "pre-exposure population size (adults + subadults), lower bound"
+value = 50
+units = "hosts"
+provenance = "M"
+role = "estimate"
+system = { pathogen = "Bd", host = "Rana muscosa" }
+location = "ESM §4.2"
+verified = true
+
+[[parameter]]
+symbol = "outbreak_N_max"
+quantity = "pre-exposure population size, upper bound"
+value = 650
+units = "hosts"
+provenance = "M"
+role = "estimate"
+system = { pathogen = "Bd", host = "Rana muscosa" }
+location = "ESM §4.2"
+verified = true
+
+[[parameter]]
+symbol = "est_η_min"
+quantity = "zoospore release rate used in the estimates, lower bound"
+value = 1.5
+units = "day^-1"
+provenance = "D"
+role = "estimate"
+system = { pathogen = "Bd" }
+location = "ESM §4.2 (η_s ≈ 1.5–5.7 d^-1, see §5.1)"
+verified = true
+
+[[parameter]]
+symbol = "est_η_max"
+quantity = "zoospore release rate used in the estimates, upper bound"
+value = 5.7
+units = "day^-1"
+provenance = "D"
+role = "estimate"
+system = { pathogen = "Bd" }
+location = "ESM §4.2"
+verified = true
+
+[[parameter]]
+symbol = "est_μZ_min"
+quantity = "free zoospore loss rate used in the estimates, lower bound"
+value = 0.02
+units = "day^-1"
+provenance = "D"
+role = "estimate"
+system = { pathogen = "Bd" }
+location = "ESM §4.2 (μ_Z ≈ 0.02–1 d^-1); §5.1 (Johnson & Speare: 7 weeks)"
+verified = true
+
+[[parameter]]
+symbol = "est_μZ_max"
+quantity = "free zoospore loss rate used in the estimates, upper bound"
+value = 1
+units = "day^-1"
+provenance = "D"
+role = "estimate"
+system = { pathogen = "Bd" }
+location = "ESM §4.2"
+verified = true
+
+[[parameter]]
+symbol = "cruciger_N"
+quantity = "A. cruciger population size (median adults; Lampo et al. 2012)"
+value = 93
+units = "hosts"
+provenance = "M"
+role = "estimate"
+system = { pathogen = "Bd", host = "Atelopus cruciger" }
+location = "ESM §4.2"
+verified = true
+
+[[parameter]]
+symbol = "cruciger_recruits"
+quantity = "A. cruciger recruitment (average frogs per year; Lampo et al. 2012)"
+value = 165
+units = "hosts yr^-1"
+provenance = "M"
+role = "estimate"
+system = { pathogen = "Bd", host = "Atelopus cruciger" }
+location = "ESM §4.2"
+verified = true
+
+[[parameter]]
+symbol = "johnson_survival"
+quantity = "time Bd stays infectious in lake water (Johnson & Speare 2003)"
+value = 7
+units = "week"
+provenance = "M"
+role = "estimate"
+system = { pathogen = "Bd" }
+location = "ESM §5.1 (up to 7 weeks, μ_Z ≈ 0.02 d^-1)"
+verified = true
+
+[[parameter]]
+symbol = "reservoir_μZ"
+quantity = "zoospore loss rate of the hypothetical reservoir example"
+value = 0.001
+units = "day^-1"
+provenance = "A"
+role = "estimate"
+system = { pathogen = "Bd" }
+location = "ESM §5.1"
+verified = true
+
+[[parameter]]
+symbol = "reservoir_hosts"
+quantity = "persistently infected hosts in the reservoir example"
+value = 1000
+units = "hosts"
+provenance = "A"
+role = "estimate"
+system = { pathogen = "Bd" }
+location = "ESM §5.1"
+verified = true
+
+[[parameter]]
+symbol = "reservoir_doi"
+quantity = "zoospores on each host in the reservoir example"
+value = 1e5
+units = "ZE swab^-1"
+provenance = "A"
+role = "estimate"
+system = { pathogen = "Bd" }
+location = "ESM §5.1"
+verified = true
+
+[[parameter]]
+symbol = "reservoir_η"
+quantity = "zoospores released per zoospore per day in the reservoir example"
+value = 10
+units = "day^-1"
+provenance = "A"
+role = "estimate"
+system = { pathogen = "Bd" }
+location = "ESM §5.1"
+verified = true
