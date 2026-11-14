@@ -1720,7 +1720,12 @@ point (id 120, no effect) was affordable here. B/C/D sample: 4/6, 12/20, 2/40 he
 # from the figures' pixels. χ_a is not printed; it is derived from Table 3 and Fig. 7 (see
 # data/compendium/chowdhury2025.toml), so Table 3's 14 °C R_a column and Fig. 7's β_a are not
 # independent checks of it. Table 3 and the simulations do not use the same parameters:
-# variant = :table3 holds the values that reproduce Table 3.
+# variant = :table3 holds the values that reproduce Table 3. The eft ID50 at 6 °C is 3,348 (Fig.
+# 5a; Appendix C; Carter et al. 2021), not Table 2's 10,000 (eft_id50 = :table2).
+# Re-examined 2026-11-14: the eft curves of Figs 4 and 7 are reproduced, both temperatures and
+# all densities, by one implied reading of the simulations: λ/24, a half-saturation κ_j/24 in
+# f_j, and efts starting at 0.8 × the stated density. All three were fitted (joint profile
+# minima 24, 24, 0.80), none is printed, so the eft targets stay discrepant.
 
 [[target]]
 id = "chowdhury2025_table3_Ra_14C"
@@ -1780,25 +1785,29 @@ call = """
 tolerance = { rtol = 0.01 }
 status = "discrepant"
 regression = { value = [5.3912, 9.7253, 16.4762, 26.1163], rtol = 1e-3 }
-notes = "No χ_a fits Table 3 with c_a = 464.77 and b_a/ξ_a = 2. Table 3 (and Fig. 9) used the Fig. 1 curve, the simulations Table 2's c_a."
+notes = "No χ_a fits Table 3 with c_a = 464.77 and b_a/ξ_a = 2 (best χ_a = 13.1, 9% off). Table 3 (and Fig. 9) used the Fig. 1 curve, the simulations Table 2's c_a. Re-checked 2026-11-14 with a free χ_a and one 14 °C value swapped in: ξ_a = 1/25 (4.7% off), κ_a = 2,895 (5.8%), P_a = 0.34 (2.3%, but then χ_a = 27.4 while Fig. 7's β_a(0) needs 34), σ_a, μ_a, ω_a, η_a, b_a worse. No consistent alternative."
 
 [[target]]
 id = "chowdhury2025_table3_Rj_6C"
 model = "bsal-chowdhury2025-stage-temperature"
-source = { ref = "chowdhury2025", location = "Table 3; eq. (5a)" }
+source = { ref = "chowdhury2025", location = "Table 3; eq. (5a); Appendix C (ID50); Fig. 5a" }
 quantity = "eft reproduction number R_j at 6 °C for K = 2, 4, 8, 16 m⁻²"
 published = [2.35, 4.33, 8.29, 16.21]
 call = """
 [stage_reproduction_numbers(ChowdhuryParameters(:chowdhury2025; temperature = 6, K = s.adults,
     variant = :table3)).R_j for s in chowdhury_scenarios()]
 """
-tolerance = { rtol = 0.01 }
-status = "discrepant"
-regression = { value = [1.0307, 1.6923, 3.0151, 5.6607], rtol = 1e-3 }
+tolerance = { rtol = 4e-3 }
+status = "reproduced"
 notes = """
-The direct part (Table 3's intercept, 0.37) reproduces with c_j = 0.0476. The environmental
-part grows by 0.99 per unit K in Table 3 against 0.33 from eq. (5a), with b_j = 0.005 and
-ξ_j = 1/20; ξ_j = 1/25 (§2.3) gives 0.41. No printed value accounts for the factor of 3."""
+Ours: 2.345, 4.320, 8.270, 16.171. Needs the 6 °C eft ID50, κ_j = 3,348, not Table 2's
+10,000 (with which R_j = 1.03, 1.69, 3.02, 5.66: the environmental part a third of Table 3's).
+Appendix C takes the 6 °C eft value 'from the literature'; Fig. 5a draws it at 3,348; the
+eft LD50 at 6 °C in Carter et al. (2021, S1 Table), by the log-probit fit that reproduces
+Table 2's κ_a (5,443.8 and 2,897.0), is 3,373 (R_j within 1%). Table 3 alone would imply
+3,339. Ruled out first: any printed b_j, ξ_j (1/25 gives slope 0.41 not 0.99), ω_j = 177.47
+(needs η_a = 3.5 y as well, 0.8% off), the eft ID50 rather than LD50 (4,258: R_j 12.8 at
+K = 16), η_a, λ and a sex ratio (temperature-independent, while 14 °C reproduces)."""
 
 [[target]]
 id = "chowdhury2025_fig4_adult_infected_peaks"
@@ -1878,7 +1887,14 @@ let ex(T) = map(chowdhury_scenarios()) do s
         !any(last.(e6)) && !any(last.(e14))
 end
 """
-status = "qualitative"
+status = "discrepant"
+regression = { value = false }
+notes = """
+The Z_a part holds. The Z_j part fails at 6 °C, 0.8 efts m⁻² only: Z_j peaks at 654, 1,190,
+2,255 and 4,338 against the 6 °C eft ID50 of 3,348 (Fig. 5a), because Table 2's λ = 0.82
+multiplies the efts (Fig. 5a peaks at ~440; see chowdhury2025_eft_recruitment). It held
+with Table 2's κ_j = 10,000 (eft_id50 = :table2), and holds with λ = 0 (Z_j ≤ 377) or the
+implied reading λ/24 (Z_j ≤ 439)."""
 
 [[target]]
 id = "chowdhury2025_zoospore_peak_timing_14C"
@@ -1895,7 +1911,7 @@ end
 tolerance = { lower = 40, upper = 60 }
 status = "discrepant"
 regression = { value = 32.0, atol = 1.5 }
-notes = "The paper's own Fig. 5d peaks at ~35 days. At 6 °C the peaks fall at days 45-56, matching §5.1's '40-60 days'."
+notes = "The paper's own Fig. 5d peaks at ~35 days. At 6 °C the peaks fall at days 45-56, matching §5.1's '40-60 days'. Not affected by larval recruitment: λ = 0 and the implied λ/24 also give day 31-32; the text probably describes 6 °C."
 
 [[target]]
 id = "chowdhury2025_adult_decline_120d"
@@ -1945,7 +1961,7 @@ end
 tolerance = { atol = 0.05 }
 status = "discrepant"
 regression = { value = 0.0336, atol = 0.003 }
-notes = "37.7 against 39.0 days. Fig. 4d shows near-simultaneous declines at all densities; no reading of the figure gives 33%."
+notes = "37.7 against 39.0 days. Fig. 4d shows near-simultaneous declines at all densities; no reading of the figure gives 33%. The implied λ/24 reading of the eft curves gives 0.020 (37.4 against 38.1 days); λ = 0 about the same. Nothing found that gives 33%."
 
 [[target]]
 id = "chowdhury2025_eft_recruitment"
@@ -1961,12 +1977,18 @@ end
 """
 tolerance = { rtol = 0.05 }
 status = "discrepant"
-regression = { value = 7.64, rtol = 0.01 }
+regression = { value = 7.19, rtol = 0.01 }
 notes = """
-Fig. 4a rises from 0.64 to ~0.665 and then falls; Fig. E.1 efts never recover over 10 years.
-With λ = 0.82 eggs per adult per day and α = 0.02, larvae recruit ~6 efts per m² by day 120.
-With λ = 0 the 14 °C eft curves match (infected peak 0.233 against 0.24, Z_j peak 771
-against ~780), but the 6 °C epidemic is still slower than Fig. 4c."""
+Fig. 4a rises from 0.643 to 0.665 (day ~41) and then falls; Fig. E.1 efts never recover over
+10 years. With λ = 0.82 eggs per adult per day and α = 0.02, larvae recruit ~6 efts per m²
+by day 120. Ruled out: λ per year (0.82/365: no rise at 6 °C), per female (0.41: still
+several-fold), λ = 0 (no rise; 6 °C epidemic 0.318 at day 107 against 0.376 at day 82).
+One reading reproduces Figs 4a, b, e, f, 5a, b and 7 (middle) together: λ/24 = 0.034,
+f_j with half-saturation κ_j/24, and efts starting at 0.8 × the legend density, which is
+what Fig. 4a, b start from (0.643 for 0.8). Then the 6 °C peak is 0.661 at day 44 (1.033),
+N(120) 0.303 (fig. 0.310), and at 14 °C the curve is flat to day ~30 as in Fig. 4b. The three
+values were fitted jointly (profile minima at 24, 24 and 0.80); the 24s suggest an hourly
+conversion but nothing in the paper says so, and the 0.8 has no explanation."""
 
 [[target]]
 id = "chowdhury2025_eft_infected_peak_14C"
@@ -1983,7 +2005,11 @@ end
 tolerance = { rtol = 0.1 }
 status = "discrepant"
 regression = { value = 1.25, rtol = 0.01 }
-notes = "With Table 2's recruitment. Setting λ = 0 gives 0.233 (day 77; figure ~0.243, day ~70)."
+notes = """
+With Table 2's recruitment. λ = 0 gives 0.233 (day 77); the figure, measured at 600 dpi,
+peaks at 0.240 at day ~65. The implied reading (λ/24, κ_j/24 in f_j, efts from 0.64; see
+chowdhury2025_eft_recruitment) gives 0.241 at day 67, and 0.028, 0.057, 0.117 for the lower
+densities (figure 0.026, 0.055, 0.116). Fitted, so not adopted."""
 
 [[target]]
 id = "chowdhury2025_fig7_fj_peak"
@@ -2000,8 +2026,18 @@ end
 """
 tolerance = { rtol = 0.15 }
 status = "discrepant"
-regression = { value = 0.0115, rtol = 0.01 }
-notes = "f_j = 0.029 needs Z_j ≈ 34,000 against κ_j = 10,000, but Fig. 5a's Z_j peaks at ~440 for the same run. Figs 5a and 7 cannot both hold."
+regression = { value = 0.0212, rtol = 0.01 }
+notes = """
+Ours (0.0212) is reached only because Table 2's λ makes Z_j peak at 4,338; Fig. 5a's Z_j
+peaks at ~440, which gives f_j = 0.0043 with κ_j = 3,348. Ruled out: other units for the
+plotted Z_j (the Z_j curves of Fig. 5a, b match ω_j I_j − ξ_j Z_j with Table 2's ω, ξ),
+f_j with b_j rather than ρ_j b_j (only raises the ceiling; the fit below gives ρ_j b_j),
+b_j = 0.005. Fitting f = F Z/(κ' + Z) to the f_j peaks of Fig. 7 against the Z_j peaks of
+Fig. 5 gives F = 0.038 (= ρ_j b_j = 0.0375) and κ' = 139 at 6 °C, 420 at 14 °C: κ_j/24.1
+and κ_j/23.8. With κ_j/24 in f_j (and the implied λ/24 and 0.8 start of
+chowdhury2025_eft_recruitment) f_j peaks at 0.0105, 0.0165, 0.0229, 0.0285 at 6 °C (figure
+0.0113, 0.0172, 0.0235, 0.0287) and 0.0068-0.0243 at 14 °C (0.0071-0.0247), on time. Table 3
+and the ID50 lines of Fig. 5 use κ_j itself. Implied, not printed: stays discrepant."""
 
 [[target]]
 id = "chowdhury2025_Ra_above_one_14C"
