@@ -1989,3 +1989,435 @@ quantity = "LHS/PRCC sensitivity of R_j and R_a over 29 parameters"
 published = "Fig. 8 (6 °C), Fig. H.6 (14 °C)"
 status = "pending"
 notes = "The sampling ranges and the number of runs are not given, so the PRCC values cannot be recomputed."
+
+# --- Wilber et al. 2016, Methods Ecol Evol 7:1182 (wiki bd-wilber2016-ipm) -------------------
+# Host–parasite IPM of Bd on Rana muscosa. Refits use the bundled Dryad data (CC0); the IPM
+# analyses use the authors' deposited coefficients (set "deposited"), which made the figures.
+# "Deposit" values were decoded from the vector graphics of the authors' results/*.pdf (to
+# about 1e-5) or read from their results CSVs (github.com/mqwilber/ipm_for_parasites).
+
+[[target]]
+id = "wilber2016_survival_table1"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Table 1; eqn 9; Fig. 2a" }
+quantity = "survival intercept b00 refitted to the 20 °C frogs, as the text and Fig. 2a describe"
+published = 11.824
+call = "fit_wilber2016().survival.coef.b00"
+tolerance = { digits = 3 }
+status = "discrepant"
+regression = { value = 11.5973, atol = 0.0001 }
+notes = """
+The 20 °C fit gives b00 = 11.597, b10 = −0.8873, which are also the authors' deposited values
+(results/IPM_parameters_no_26_linear.rds) and what their figures use. Table 1's 11.824 and
+−0.8605 are the fit to all three temperatures (target wilber2016_survival_all_temperatures),
+the Appendix S2 alternative."""
+
+[[target]]
+id = "wilber2016_survival_lrt"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Vital rate functions'" }
+quantity = "likelihood-ratio χ² (1 d.f.) for the effect of load on survival, 20 °C fit"
+published = 12.197
+call = "fit_wilber2016().tests.survival_load"
+tolerance = { atol = 0.002 }
+status = "discrepant"
+regression = { value = 8.5789, atol = 0.001 }
+notes = "The all-temperature fit gives 12.1965, so the printed test, like Table 1, comes from that fit."
+
+[[target]]
+id = "wilber2016_survival_all_temperatures"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Table 1; Appendix S2 (survival fitted to all temperatures)" }
+quantity = "largest |refit − Table 1| of b00, b10 when survival is fitted to 4, 12 and 20 °C together"
+published = 0.0
+call = """
+let f = fit_wilber2016(; survival_temperatures = (4, 12, 20)), q = parameter_set(:wilber2016)
+    max(abs(f.survival.coef.b00 - q.b00), abs(f.survival.coef.b10 - q.b10))
+end
+"""
+tolerance = { atol = 0.0005 }
+status = "reproduced"
+notes = "11.8241 and −0.86055; the χ² of this fit is 12.1965 (printed 12.197)."
+
+[[target]]
+id = "wilber2016_growth_fit"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Table 1; eqns 10–11" }
+quantity = "largest |refit − Table 1| over b01, b11, b21, v01, c01 (gls, REML)"
+published = 0.0
+call = """
+let g = fit_wilber2016().growth, q = parameter_set(:wilber2016)
+    maximum(abs, (g.coef.b01 - q.b01, g.coef.b11 - q.b11, g.coef.b21 - q.b21, g.σ2 - q.v01,
+                  g.c - q.c01))
+end
+"""
+tolerance = { atol = 0.0005 }
+status = "reproduced"
+notes = "The refit equals the deposited fit to about 1e-8 (relative), covariances included."
+
+[[target]]
+id = "wilber2016_other_fits"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Table 1" }
+quantity = "largest |refit − Table 1| over the loss, initial-load and infection coefficients"
+published = 0.0
+call = """
+let f = fit_wilber2016(), q = parameter_set(:wilber2016)
+    l, c, i = f.loss.coef, f.initial_load, f.infection.coef
+    maximum(abs, (l.b02 - q.b02, l.b12 - q.b12, l.b22 - q.b22, c.coef.b03 - q.b03,
+                  c.coef.b13 - q.b13, c.σ2 - q.v03, c.c - q.c03, i.b04 - q.b04, i.b14 - q.b14))
+end
+"""
+tolerance = { atol = 0.0005 }
+status = "reproduced"
+notes = "All within half a unit of the last printed digit (largest: v03 0.59028, b04 −1.66024)."
+
+[[target]]
+id = "wilber2016_growth_load_lrt"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Vital rate functions'" }
+quantity = "LRT χ² for load at t in the growth function"
+published = 196.36
+call = "fit_wilber2016().tests.growth_load"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2016_growth_temperature_lrt"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Vital rate functions'" }
+quantity = "LRT χ² for temperature in the growth function"
+published = 13.56
+call = "fit_wilber2016().tests.growth_temperature"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2016_growth_variance_lrt"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Vital rate functions'" }
+quantity = "LRT χ², exponential against constant variance in the growth function"
+published = 9.8
+call = "fit_wilber2016().tests.growth_variance"
+tolerance = { digits = 1 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2016_loss_temperature_lrt"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Vital rate functions'" }
+quantity = "LRT χ² for temperature in the loss-of-infection function"
+published = 14.555
+call = "fit_wilber2016().tests.loss_temperature"
+tolerance = { digits = 3 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2016_loss_load_lrt"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Vital rate functions'" }
+quantity = "LRT χ² for load in the loss-of-infection function"
+published = 23.701
+call = "fit_wilber2016().tests.loss_load"
+tolerance = { digits = 3 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2016_initial_temperature_t"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Vital rate functions'" }
+quantity = "t value (41 d.f.) of temperature in the mean initial load"
+published = 2.53
+call = "fit_wilber2016().tests.initial_temperature_t"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "43 new infections after dropping ln ZE > 5, so 41 d.f. as printed."
+
+[[target]]
+id = "wilber2016_initial_variance_lrt"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Vital rate functions'" }
+quantity = "LRT χ² for temperature-dependent variance of the initial load"
+published = 6.00
+call = "fit_wilber2016().tests.initial_variance"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2016_infection_lrt"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Vital rate functions'" }
+quantity = "LRT χ² for temperature in the infection probability"
+published = 6.0361
+call = "fit_wilber2016().tests.infection_temperature"
+tolerance = { digits = 4 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2016_load_range"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "'Analysing the IPM'" }
+quantity = "range of ln ZE in the experiment is (−1.14, 13.15)"
+published = true
+call = """
+let xs = [log(r.load) for r in load_wilber2016() if r.load > 0]
+    round.(extrema(xs); digits = 2) == (-1.14, 13.15)
+end
+"""
+status = "reproduced"
+
+[[target]]
+id = "wilber2016_experiment_temperatures"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "'Application … laboratory experiment'" }
+quantity = "number of temperatures at which the 20 frogs were housed (5 per temperature)"
+published = 3
+call = "length(unique(r.temperature for r in load_wilber2016()))"
+status = "discrepant"
+regression = { value = 4 }
+notes = """
+The data have 5 frogs at each of 4, 12, 20 and 26 °C (20 frogs); the text's three temperatures
+with five frogs each make 15. The code excludes 26 °C from every fit; the paper never says so."""
+
+[[target]]
+id = "wilber2016_omega_range"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "'Exploring density-dependent transmission dynamics'" }
+quantity = "the fitted environmental infection probability is between 0.22 and 0.6 (4–20 °C)"
+published = true
+call = """
+let p = WilberParameters(:wilber2016; set = "deposited")
+    round(infection_probability(p, 4); digits = 2) == 0.22 &&
+        round(infection_probability(p, 20); digits = 1) == 0.6
+end
+"""
+status = "reproduced"
+notes = "φ(4) = 0.222, φ(20) = 0.593 (Table 1 as printed: 0.227 and 0.613)."
+
+[[target]]
+id = "wilber2016_lambda_4C"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results; Fig. 4b" }
+quantity = "minimal Bd-induced decline at low temperature (λ ≈ 1 at 4 °C)"
+published = "λ ≈ 1"
+call = "population_growth_rate(WilberParameters(:wilber2016; set = \"deposited\"); temperature = 4)"
+tolerance = { lower = 0.998, upper = 1.0 }
+status = "qualitative"
+regression = { value = 0.998956, atol = 0.000001 }
+notes = "The deposited lambda_plot.pdf gives 0.99896."
+
+[[target]]
+id = "wilber2016_lambda_20C_deposit"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Fig. 4b; authors' results/lambda_plot.pdf (point estimate)" }
+quantity = "λ per 3-day step at 20 °C, deposited coefficients, 100 bins"
+published = 0.93690
+call = "population_growth_rate(WilberParameters(:wilber2016; set = \"deposited\"); temperature = 20)"
+tolerance = { atol = 0.00002 }
+status = "reproduced"
+notes = "All 17 temperatures (4–20 °C) agree with the deposit to 4.5e-6. Fig. 4b plots bootstrap medians (0.940 at 20 °C)."
+
+[[target]]
+id = "wilber2016_decline_18C"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Discussion; Fig. 4b" }
+quantity = "probability of an 80% or greater decline over a 120-day summer at 18 °C (paper: about 50%)"
+published = 0.5
+call = """
+let B = growth_rate_bootstrap(fit_wilber2016(); temperatures = [18], rng = Random.Xoshiro(2016),
+                              as_coded = true)
+    sum(B .^ 40 .<= 0.2) / length(B)
+end
+"""
+tolerance = { lower = 0.4, upper = 0.6 }
+status = "qualitative"
+regression = { value = 0.502, atol = 0.0005 }
+notes = """
+λ^40 ≤ 0.2 in 1000 bootstrap draws, reproducing the authors' monte_carlo_params, which never
+resamples the survival slope (as_coded = true). Resampling both survival coefficients gives
+0.62 at 18 °C (0.43 at 17 °C), with much narrower interquartile ranges than Fig. 4b."""
+
+[[target]]
+id = "wilber2016_vm_ratio_decreasing"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results; Fig. 5 inset" }
+quantity = "the variance-to-mean ratio of the stable load distribution decreases with temperature (4–20 °C)"
+published = true
+call = """
+let p = WilberParameters(:wilber2016; set = "deposited")
+    v = [stable_load_distribution(p; temperature = T).vm_ratio for T in 4:20]
+    all(diff(v) .< 0)
+end
+"""
+status = "qualitative"
+
+[[target]]
+id = "wilber2016_vm_ratio_4C"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Fig. 5 inset; authors' results/var_mean_plot.pdf" }
+quantity = "variance-to-mean ratio of ln load in the stable distribution at 4 °C"
+published = 2.6149
+call = "stable_load_distribution(WilberParameters(:wilber2016; set = \"deposited\"); temperature = 4).vm_ratio"
+tolerance = { atol = 0.0005 }
+status = "reproduced"
+notes = "0.851 at 20 °C (deposit 0.851). The means (2.03 to 8.24) agree with the deposit to 1.3e-4."
+
+[[target]]
+id = "wilber2016_stable_peak_4C"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Fig. 5" }
+quantity = "height of the stable load distribution at its peak, 4 °C (per bin of width 0.23)"
+published = 0.0566
+call = "maximum(stable_load_distribution(WilberParameters(:wilber2016; set = \"deposited\"); temperature = 4).probability)"
+tolerance = { atol = 0.0002 }
+status = "reproduced"
+notes = "The peaks at 4, 8, 12, 16, 20 °C sit at the same midpoints as the deposited curves (1.33, 2.25, 5.70, 7.54, 8.92 ln ZE)."
+
+[[target]]
+id = "wilber2016_time_to_death_4C"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Fig. 4a; authors' results/mean_time_to_death.pdf" }
+quantity = "mean time to death (days) at 4 °C of a frog starting at ln ZE = −0.745"
+published = 2853.9
+call = "mean_time_to_death(WilberParameters(:wilber2016; set = \"deposited\"); temperature = 4).infected[19]"
+tolerance = { atol = 1.0 }
+status = "reproduced"
+notes = "69.5 days at 20 °C; the curves for 4–20 °C agree with the deposit to plotting precision."
+
+[[target]]
+id = "wilber2016_R0_threshold"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Appendix S1 (authors' R0_calculation.R, results/r0_plot.pdf)" }
+quantity = "temperature (°C) at which the full-IPM R0 crosses 1, β = 9.82e-4, 100 frogs, 50 bins"
+published = 12.2
+call = """
+let p = WilberParameters(:wilber2016; set = "deposited"), m = IPMMesh(:wilber2016; n = 50)
+    f(T) = basic_reproduction_number(p; temperature = T, mesh = m) - 1
+    a, b = 10.0, 15.0
+    for _ in 1:40
+        c = (a + b) / 2
+        f(c) > 0 ? (b = c) : (a = c)
+    end
+    (a + b) / 2
+end
+"""
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "Appendix S1 itself was not retrievable; the deposited plot's R0 values (full and collapsed, 4–20 °C) agree with ours to 4e-5."
+
+[[target]]
+id = "wilber2016_R0_peak"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Appendix S1 (authors' results/r0_plot.pdf)" }
+quantity = "largest full-IPM R0 over 4–20 °C (at 17 °C)"
+published = 1.6844
+call = """
+let p = WilberParameters(:wilber2016; set = "deposited"), m = IPMMesh(:wilber2016; n = 50)
+    maximum(basic_reproduction_number(p; temperature = T, mesh = m) for T in 4:20)
+end
+"""
+tolerance = { atol = 0.0005 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2016_dd_deposit_cell"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Figs S7–S8; authors' results/transmission_results/pop_size_post_summer_20.csv" }
+quantity = "frogs left after 120 days at 20 °C from 100 uninfected, ω = 0.3, β = 1.17e-3 (eqn 13 as coded)"
+published = 14.2994922417937
+call = """
+let p = WilberParameters(:wilber2016; set = "deposited"), q = parameter_set(:wilber2016; set = "deposited")
+    s = solve(BdIPMProblem(p; temperature = 20, transmission = LoadTransmission(q.ω_max, q.β_max; as_coded = true)))
+    s.S[end] + sum(s.I[:, end])
+end
+"""
+tolerance = { atol = 1e-8 }
+status = "reproduced"
+notes = "The whole 40 × 40 grid at 12, 16 and 20 °C agrees with the deposited CSVs to 4e-12 (test/wilber2016.jl checks corners)."
+
+[[target]]
+id = "wilber2016_dd_20C"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Effects of density-dependent transmission'; Figs S7–S8" }
+quantity = "at 20 °C, >80% decline with close to 100% prevalence (largest ω and β of the scan)"
+published = true
+call = """
+let p = WilberParameters(:wilber2016; set = "deposited"), q = parameter_set(:wilber2016; set = "deposited")
+    s = solve(BdIPMProblem(p; temperature = 20, transmission = LoadTransmission(q.ω_max, q.β_max; as_coded = true)))
+    N = s.S[end] + sum(s.I[:, end])
+    (1 - N / q.S_init > 0.8) && (1 - s.S[end] / N > 0.95)
+end
+"""
+status = "qualitative"
+notes = "Decline 0.857, prevalence 0.967."
+
+[[target]]
+id = "wilber2016_dd_12C"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Effects of density-dependent transmission'; Figs S7–S8" }
+quantity = "largest population decline over the scan at 12 °C (paper: a maximum of 20%)"
+published = 0.20
+call = """
+let p = WilberParameters(:wilber2016; set = "deposited"), q = parameter_set(:wilber2016; set = "deposited")
+    s = solve(BdIPMProblem(p; temperature = 12, transmission = LoadTransmission(q.ω_max, q.β_max; as_coded = true)))
+    1 - (s.S[end] + sum(s.I[:, end])) / q.S_init
+end
+"""
+tolerance = { atol = 0.025 }
+status = "discrepant"
+regression = { value = 0.2505, atol = 0.0005 }
+notes = """
+The deposited simulation itself gives at most 25.0% decline and 77.4% prevalence at 12 °C (the
+paper: 20% and 70%), with ω ≤ 0.3. The paper's scan to ω = 0.6 would give larger declines."""
+
+[[target]]
+id = "wilber2016_dd_little_effect"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results, 'Effects of density-dependent transmission'" }
+quantity = "with ω above about 0.15, raising β over its range changes the 120-day decline at 20 °C by < 0.02 (eqn 13 as coded)"
+published = true
+call = """
+let p = WilberParameters(:wilber2016; set = "deposited"), q = parameter_set(:wilber2016)
+    d(β) = (s = solve(BdIPMProblem(p; temperature = 20, transmission = LoadTransmission(0.15, β; as_coded = true)));
+            1 - (s.S[end] + sum(s.I[:, end])) / q.S_init)
+    d(q.β_max) - d(0.0) < 0.02
+end
+"""
+status = "qualitative"
+notes = """
+Holds only as coded, where β multiplies ln(total ZE + 1). With eqn 13 as printed (β ∫ x I dx) the
+decline at ω = 0.15 rises from 0.79 to 0.86, and at ω = 0.01 from 0.16 to 0.79 (0.16 to 0.32 as
+coded): the paper's conclusion that density dependence matters little rests on the code."""
+
+[[target]]
+id = "wilber2016_elasticity_growth_survival"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Results; Fig. S5" }
+quantity = "at 20 °C the four largest elasticities of λ are growth (b11, b21) and survival (b00, b10) coefficients"
+published = true
+call = """
+let e = vital_rate_elasticities(WilberParameters(:wilber2016; set = "deposited"); temperature = 20,
+                                mesh = IPMMesh(:wilber2016; n = 50))
+    top = first.(sort(collect(pairs(e)); by = x -> -abs(x[2]))[1:4])
+    Set(top) == Set([:b11, :b21, :b00, :b10])
+end
+"""
+status = "qualitative"
+notes = """
+−0.91, 0.36, −0.29, −0.24 (b11, b00, b10, b21). At 10 °C s0 has the largest elasticity (0.31);
+the authors' figure shows ≈ 0 for s0 because set_temp_params resets class_zero_surv to 1, so
+their perturbation of s0 had no effect."""
+
+[[target]]
+id = "wilber2016_vm_elasticity_survival"
+model = "bd-wilber2016-ipm"
+source = { ref = "wilber2016", location = "Discussion; Fig. S6" }
+quantity = "the V:M ratio becomes more sensitive to survival (b00) as temperature rises, and is more sensitive to the growth variance (v01) than to the initial-load variance (v03)"
+published = true
+call = """
+let p = WilberParameters(:wilber2016; set = "deposited"), m = IPMMesh(:wilber2016; n = 50)
+    es = [vital_rate_elasticities(p; temperature = T, mesh = m, of = :vm_ratio) for T in (10, 16, 20)]
+    issorted([abs(e.b00) for e in es]) && all(e -> abs(e.v01) > abs(e.v03) && abs(e.c01) > abs(e.c03), es)
+end
+"""
+status = "qualitative"

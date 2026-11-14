@@ -87,6 +87,13 @@ include("fitting/tompros2022.jl")
 include("models/drawert2017.jl")
 # Chowdhury et al. 2025 stage- and temperature-structured Bsal model of the eastern newt
 include("models/chowdhury2025.jl")
+# Integral projection models: generic machinery, and Wilber et al. 2016 Bd–R. muscosa IPM
+using LinearAlgebra: LinearAlgebra, dot, mul!, logdet
+using Distributions: UnivariateDistribution, cdf, ccdf, MvNormal
+using SciMLBase: DiscreteProblem
+include("ipm.jl")
+include("models/wilber2016.jl")
+include("fitting/wilber2016.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -177,5 +184,12 @@ export DrawertParameters, DrawertIBMProblem, DrawertODEProblem, DrawertIntervent
 export ChowdhuryParameters, BsalStageTemperatureProblem, chowdhury_scenarios,
        stage_transmission_rates, stage_totals, stage_decline_time, stage_disease_free_state,
        stage_next_generation_matrix, stage_reproduction_numbers, stage_elasticities
+# Integral projection models (generic) and Wilber et al. 2016
+export IPMMesh, meshpoints, meshwidth, meshedges, IPMKernel, DiscretizedIPM, discretize,
+       projection_matrix, population_growth_rate, stable_distribution, sensitivity_matrix,
+       elasticity_matrix, absorption_times, eviction, mesh_convergence, load_summary
+export WilberParameters, LoadTransmission, BdIPMProblem, BdIPMSolution, to_discrete_problem,
+       stable_load_distribution, mean_time_to_death, vital_rate_elasticities, wilber2016_path,
+       load_wilber2016, WilberFit, fit_wilber2016, WilberRegression, growth_rate_bootstrap
 
 end # module Chytridiomycosis

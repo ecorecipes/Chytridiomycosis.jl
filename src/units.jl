@@ -297,6 +297,7 @@ or `:year`. Declared so far:
 - [`MalagonParameters`](@ref) and [`TomprosParameters`](@ref): `:day`
 - [`DrawertParameters`](@ref): `:day`
 - [`ChowdhuryParameters`](@ref): `:day`
+- [`WilberParameters`](@ref): `:day` (one IPM step is `Δt = 3` days)
 
 A new model declares its own with
 `Chytridiomycosis.time_unit(::Type{<:MyParameters}) = :day`.

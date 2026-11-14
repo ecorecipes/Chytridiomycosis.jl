@@ -35,7 +35,8 @@ makedocs(;
                                       "Seasonal Bsal (Bozzuto 2019)" => "api/bozzuto2019.md",
                                       "Bsal transmission functions" => "api/bsal_transmission.md",
                                       "Stochastic IBM (Drawert 2017)" => "api/drawert2017.md",
-                                      "Life stages and temperature (Chowdhury 2025)" => "api/chowdhury2025.md"]])
+                                      "Life stages and temperature (Chowdhury 2025)" => "api/chowdhury2025.md",
+                                      "Integral projection models (Wilber 2016)" => "api/wilber2016.md"]])
 
 if get(ENV, "CI", "false") == "true"
     deploydocs(; repo = "github.com/ecorecipes/Chytridiomycosis.jl.git", push_preview = true)
