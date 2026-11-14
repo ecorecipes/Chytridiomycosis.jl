@@ -94,6 +94,9 @@ using SciMLBase: DiscreteProblem
 include("ipm.jl")
 include("models/wilber2016.jl")
 include("fitting/wilber2016.jl")
+# Wilber et al. 2017 hybrid IPM: zoospore pool, tadpoles, seasonality, demographic stochasticity
+include("models/wilber2017.jl")
+include("fitting/wilber2017.jl")
 # Canessa et al. 2018 Bsal integral projection model and management actions
 include("models/canessa2018.jl")
 
@@ -193,6 +196,12 @@ export IPMMesh, meshpoints, meshwidth, meshedges, IPMKernel, DiscretizedIPM, dis
 export WilberParameters, LoadTransmission, BdIPMProblem, BdIPMSolution, to_discrete_problem,
        stable_load_distribution, mean_time_to_death, vital_rate_elasticities, wilber2016_path,
        load_wilber2016, WilberFit, fit_wilber2016, WilberRegression, growth_rate_bootstrap
+# IPM additions (environmental reservoir, demographic stochasticity) and Wilber et al. 2017
+export reservoir_reproduction_number, demographic_projection, demographic_projection!
+export Wilber2017Parameters, zoospore_survival, annual_demography_matrix, HybridIPMProblem,
+       HybridIPMSolution, hybrid_summary, wilber2017_temperature, extinction_curve, stasis_load,
+       extinction_sensitivity, sensitivity_weights, wilber2017_path, load_wilber2017,
+       Wilber2017Transmission, Wilber2017Regression, posterior_summary, posterior_draws
 # Canessa et al. 2018 Bsal integral projection model and management actions
 export CanessaDraw, canessa2018_path, load_canessa2018, CanessaAction, canessa_actions,
        canessa_action, canessa_growth_coefficients, CanessaParameters, canessa_survival,

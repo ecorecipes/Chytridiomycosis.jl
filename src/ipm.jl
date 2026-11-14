@@ -89,6 +89,12 @@ computed from the state. Use [`discretize`](@ref) to turn a kernel into matrices
 The kernel of Wilber et al. (2016) at `temperature` (°C): survival `s(x)`, normal growth
 `G(x′, x, T)`, loss of infection `l(x, T)`, normal initial load `G0(x′, T)` and `s0` (see
 [`WilberParameters`](@ref)).
+
+    IPMKernel(p::Wilber2017Parameters; temperature)
+
+The within-season adult kernel of Wilber et al. (2017) at `temperature` (°C), the same
+forms with survival on the z-scored load, `logit s = b00 + b10 (x − surv_mean)/surv_sd`
+(see [`Wilber2017Parameters`](@ref)).
 """
 struct IPMKernel{S,G,L,G0<:UnivariateDistribution}
     survival::S
@@ -365,4 +371,140 @@ function load_summary(mesh::IPMMesh, u::AbstractVector)
     return (total = total, uninfected = u[1], infected = Ni,
             prevalence = total > 0 ? Ni / total : NaN, mean = m, variance = v,
             vm_ratio = v / m)
+end
+
+# --- Additions for Wilber et al. (2017): environmental reservoir and demographic stochasticity --
+
+_per_bin(v::Real, n) = fill(Float64(v), n)
+function _per_bin(v, n)
+    length(v) == n || throw(DimensionMismatch("expected one entry per mesh bin ($n)"))
+    return collect(Float64, v)
+end
+
+"""
+    reservoir_reproduction_number(d::DiscretizedIPM; host_transmission, pool_transmission,
+                                  shedding, pool_survival) -> NamedTuple
+
+`R0` of a discretised host–parasite IPM whose infected hosts also shed into an environmental
+pool `Z` that infects susceptible hosts (Wilber et al. 2017, Appendix S2; Klepac & Caswell
+2011). The infected states are the `n` load bins and the pool:
+
+```
+U = [ P   0 ]        M = [ s0 G0 ] [ tᵀ  β ]
+    [ fᵀ  ν ]            [  0    ]
+```
+
+with `P` the infected kernel, `f` (`shedding`, a scalar or one entry per bin) the pathogen
+added to the pool per infected host per step, `ν` (`pool_survival`) the survival of the pool
+per step, `t` (`host_transmission`, scalar or per bin) the number of hosts infected per step
+by one infected host and `β` (`pool_transmission`) the number infected per step per unit of
+pool, both in a fully susceptible population and linearised at the disease-free state.
+`R0 = ρ(M (I − U)⁻¹) = [t; β]ᵀ (I − U)⁻¹ [s0 G0; 0]` because `M` has rank one.
+
+Returns `total` (`R0` with the pool), `host` (`R0` without it, `β = 0`; the method of
+[`basic_reproduction_number`](@ref) for a [`DiscretizedIPM`](@ref)) and `environment`
+(`total − host`, the pool's contribution, `β fᵀ(I − P)⁻¹ s0 G0 / (1 − ν)`).
+"""
+function reservoir_reproduction_number(d::DiscretizedIPM; host_transmission,
+        pool_transmission::Real, shedding, pool_survival::Real)
+    n = d.mesh.n
+    0 <= pool_survival < 1 ||
+        throw(DomainError(pool_survival, "pool_survival must lie in [0, 1)"))
+    t = _per_bin(host_transmission, n)
+    f = _per_bin(shedding, n)
+    U = zeros(n + 1, n + 1)
+    U[1:n, 1:n] .= d.P
+    U[n+1, 1:n] .= f
+    U[n+1, n+1] = pool_survival
+    b = vcat(d.uninfected_survival .* d.recruitment, 0.0)
+    w = (LinearAlgebra.I - U) \ b
+    host = dot(t, @view w[1:n])
+    total = host + pool_transmission * w[n+1]
+    return (total = total, host = host, environment = total - host)
+end
+
+# Multinomial draw of `m` individuals over categories with probabilities `p` (summing to 1),
+# by sequential binomials, added to `out`.
+function _add_multinomial!(rng::AbstractRNG, out, m::Integer, p)
+    rest = 1.0
+    last = findlast(>(0), p)
+    last === nothing && return out
+    for i in 1:last
+        m == 0 && return out
+        q = p[i]
+        q > 0 || continue
+        if i == last || q >= rest
+            out[i] += m
+            return out
+        end
+        x = rand(rng, Binomial(m, clamp(q / rest, 0.0, 1.0)))
+        out[i] += x
+        m -= x
+        rest -= q
+    end
+    return out
+end
+
+"""
+    demographic_projection(rng, T, F, n) -> Vector{Float64}
+
+One step of a matrix population model with demographic stochasticity (Caswell 2001, ch. 15;
+Schreiber & Ross 2016), for integer numbers `n` of individuals in each state:
+
+- the `nⱼ` individuals of state `j` move independently: a multinomial draw over the states
+  with probabilities `T[:, j]`, the remainder `1 − Σᵢ T[i, j]` dying (negative entries, and a
+  column sum above 1 from rounding, are clipped and the column renormalised, as Wilber et al.
+  2017 do);
+- each state `j` produces `Poisson(nⱼ F[i, j])` new individuals of state `i` (births, or
+  parasites shed into a pool).
+
+`T + F` is the mean projection matrix. [`demographic_projection!`](@ref) writes into an
+existing vector.
+"""
+demographic_projection(rng::AbstractRNG, T::AbstractMatrix, F::AbstractMatrix,
+        n::AbstractVector) = demographic_projection!(rng, zeros(size(T, 1)), T, F, n)
+
+"""
+    demographic_projection!(rng, out, T, F, n) -> out
+
+In-place [`demographic_projection`](@ref); `out` is overwritten.
+"""
+function demographic_projection!(rng::AbstractRNG, out::AbstractVector, T::AbstractMatrix,
+        F::AbstractMatrix, n::AbstractVector)
+    N = size(T, 1)
+    (size(T) == (N, N) && size(F) == (N, N) && length(n) == N && length(out) == N) ||
+        throw(DimensionMismatch("T and F must be square and match n and out"))
+    fill!(out, 0.0)
+    p = Vector{Float64}(undef, N)
+    for j in 1:N
+        nj = n[j]
+        nj == 0 && continue
+        (nj >= 0 && isinteger(nj)) ||
+            throw(DomainError(nj, "numbers of individuals must be non-negative integers"))
+        m = Int(nj)
+        s = 0.0
+        for i in 1:N
+            p[i] = max(T[i, j], 0.0)
+            s += p[i]
+        end
+        tot = s + max(1 - s, 0.0)        # the dead class
+        if s > 0
+            p ./= tot
+            _add_multinomial_or_die!(rng, out, m, p, s / tot)
+        end
+        for i in 1:N
+            f = F[i, j]
+            f > 0 && (out[i] += rand(rng, Poisson(m * f)))
+        end
+    end
+    return out
+end
+
+# Survivors (total probability `alive`) distributed over the states; the rest die.
+function _add_multinomial_or_die!(rng, out, m, p, alive)
+    alive >= 1 && return _add_multinomial!(rng, out, m, p)
+    k = rand(rng, Binomial(m, alive))
+    k == 0 && return out
+    p ./= alive
+    return _add_multinomial!(rng, out, k, p)
 end

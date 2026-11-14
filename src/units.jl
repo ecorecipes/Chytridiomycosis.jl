@@ -297,7 +297,8 @@ or `:year`. Declared so far:
 - [`MalagonParameters`](@ref) and [`TomprosParameters`](@ref): `:day`
 - [`DrawertParameters`](@ref): `:day`
 - [`ChowdhuryParameters`](@ref): `:day`
-- [`WilberParameters`](@ref): `:day` (one IPM step is `Δt = 3` days)
+- [`WilberParameters`](@ref) and [`Wilber2017Parameters`](@ref): `:day` (one IPM step is
+  `Δt = 3` days)
 - [`CanessaParameters`](@ref) and [`CanessaSIParameters`](@ref): `:day` (probabilities and
   rates per step of `step_days = 3` days)
 
