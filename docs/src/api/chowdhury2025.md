@@ -59,17 +59,28 @@ are [transmission functions](bsal_transmission.md). The adult default is
   `χ_a ≈ 23.3`. So Table 2's `c_a` at 6 °C was not used for Table 3.
 - **Table 3 uses a different eft contact rate.** §2.2 counts 8 contacts in 14 days among 12
   efts and sets `c_j = 8/14 = 0.571`. That is per enclosure, not per eft. Table 3's `R_j`
-  needs `8/(14 × 12) = 0.0476`, and also `b_j = 0.005` (§6.2). With these, 14 °C
-  reproduces, but at 6 °C the environmental part of `R_j` is three times the formula's.
+  needs `8/(14 × 12) = 0.0476`, and also `b_j = 0.005` (§6.2).
+- **The eft ID50 at 6 °C is not Table 2's.** Table 2 prints `κ_j = 10,000` for both
+  temperatures, but Appendix C takes only the 14 °C value from the soil experiment and the
+  6 °C eft value "from the literature". Fig. 5a draws that ID50 at about 3,350. It is the
+  eft LD50 at 6 °C in the data of Carter et al. (2021): the log-probit fit that gives Table
+  2's adult `κ_a` (5,443 and 2,895) gives 3,373 for efts. With it, Table 3's 6 °C `R_j`
+  reproduces; with 10,000 its environmental part is a third of Table 3's. The package uses
+  3,348 at 6 °C; `eft_id50 = :table2` restores 10,000.
 - **Spore persistence in soil.** §2.3 says 25 days at 6 °C and 20 at 14 °C. Table 2 gives
   the reverse (`ξ_j = 1/20, 1/25`), and only Table 2 reproduces Table 3. Appendix C says
   efts mature after 3.5 years and Table 2 says 3; again only Table 2 reproduces Table 3.
   `as_printed = true` uses the text values.
 - **Efts.** With Table 2's birth rate (`λ = 0.82` eggs per adult per day) larvae recruit
   several efts per m² within months, so the simulated eft numbers rise. In Figs 4, 5 and
-  E.1 they stay flat or fall and never recover over 10 years. With negligible recruitment
-  (`λ ≈ 0`) the 14 °C eft curves are close to the paper's. The adult curves are the same
-  either way.
+  E.1 they stay flat or fall and never recover over 10 years, and they start at 80% of the
+  stated density (0.64 for 0.8). The rate of infection from soil spores in Fig. 7 is also
+  about ten times what the `Z_j` of Fig. 5 gives. One reading reproduces all the eft
+  curves of Figs 4, 5 and 7 at both temperatures and all densities: the simulations behave
+  as if they used `λ/24`, a half-saturation of `κ_j/24` in `f_j`, and efts starting at
+  0.8 times the stated density. These three were found by fitting the figures; the paper
+  prints none of them, so they are not defaults (the tests show the fit). The adult curves
+  are the same either way.
 - **Units of the pools.** `Z_a` is compared with `κ_a` in spores per mL and `Z_j` with `κ_j`
   in spores per m², but both pools are filled by `ω I` with `I` per m². The paper equates
   them without a volume. The package keeps the paper's numbers.
@@ -88,7 +99,8 @@ Table 3.
 | `R_a`, Table 3, 14 °C | 16.55, 27.85, 43.72, 65.67 | 16.55, 27.86, 43.75, 65.73 |
 | `R_j`, Table 3, 14 °C (`:table3`) | 1.26, 2.22, 4.15, 8.01 | 1.26, 2.22, 4.14, 7.99 |
 | `R_a`, Table 3, 6 °C (`:table3`) | 4.82, 9.1, 16.5, 28.1 | 4.83, 9.11, 16.48, 28.11 |
-| `R_j`, Table 3, 6 °C | 2.35, 4.33, 8.29, 16.21 | not reproduced (1.03 … 5.66) |
+| `R_j`, Table 3, 6 °C (`:table3`) | 2.35, 4.33, 8.29, 16.21 | 2.34, 4.32, 8.27, 16.17 |
+| Eft curves, Figs 4, 5, 7 | e.g. infected efts peak 0.38 (6 °C), 0.24 (14 °C) | only with the fitted reading above |
 
 The validation targets (`validation_targets(; source = :chowdhury2025)`) record each claim.
 Table 3's numbers mix parameter sets: no single parameter set reproduces Figs 4–7 and

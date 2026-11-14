@@ -33,17 +33,25 @@
 #   this reproduces Figs 4, 5 and 7. The Fig. 1 curve and the 6 °C R_a column of Table 3
 #   instead imply c_a ≈ 729 day⁻¹ and χ_a ≈ 23.3 m⁻². `variant = :table3` uses those.
 # - Table 3's R_j needs c_j = 8/(14 × 12) = 0.0476 day⁻¹ (8 contacts in 14 days among 12
-#   efts, per capita) rather than the 0.571 of §2.2 and Table 2, and b_j = 0.005 (§6.2). With
-#   these, 14 °C reproduces; at 6 °C the direct part reproduces but the environmental part
-#   is about 3 times larger than the formula gives (unresolved).
+#   efts, per capita) rather than the 0.571 of §2.2 and Table 2, and b_j = 0.005 (§6.2).
+# - Table 2 prints κ_j = 10,000 for both temperatures, but Appendix C takes only the 14 °C
+#   value from the soil experiment and the 6 °C eft value "from the literature". Fig. 5a
+#   draws that ID50 at ~3,350; it is the eft LD50 at 6 °C in the data of Carter et al. (2021)
+#   (3,373 by the log-probit fit that reproduces Table 2's κ_a). With it Table 3's 6 °C R_j
+#   reproduces (with 10,000 the environmental part is a third of Table 3's). This is the
+#   default; `eft_id50 = :table2` uses the printed 10,000.
 # - §2.3 says terrestrial spores persist 25 days at 6 °C and 20 at 14 °C; Table 2 gives
 #   ξ_j = 1/20 and 1/25. Appendix C says efts mature after 3.5 years; Table 2 says 3. Table 3
 #   reproduces only with the Table 2 values, which are the default. `as_printed = true` uses
 #   the text values.
 # - The eft trajectories of Figs 4 and 5 (efts flat or declining, never recovering in the
 #   10-year runs of Appendix E) are not reproduced with Table 2's λ = 0.82 eggs adult⁻¹ day⁻¹:
-#   larvae then recruit several efts per m² within months. They are approximated when
-#   larval recruitment is negligible (λ ≈ 0). The adult trajectories are reproduced either way.
+#   larvae then recruit several efts per m² within months. The eft curves of Figs 4a, b,
+#   e, f and 7 (middle) are reproduced, all four densities and both temperatures, only if
+#   the simulations used λ/24, a half-saturation of κ_j/24 in f_j (Fig. 7 against Fig. 5)
+#   and efts starting at 80% of the stated density (as Fig. 4a, b show). These are implied
+#   by fitting, not printed, so they are not defaults (see the validation targets). The
+#   adult trajectories are reproduced either way.
 #
 # Units: Z_a enters f_a against κ_a in zoospores per mL, and Z_j against κ_j in zoospores
 # per m², while Z' = ω I − ξ Z with I in hosts per m² and ω in zoospores per host per day.
@@ -60,7 +68,7 @@ const CHOWDHURY_STATE = (:S_l, :S_j, :E_j, :I_j, :R_j, :S_a, :E_a, :I_a, :R_a, :
                         γ_a = 0, μ_j, μ_a, ρ_j, ρ_a, ξ_j, ξ_a, ω_j, ω_a, P_j, P_a, b_j, b_a,
                         c_j, c_a, χ_a, temperature = NaN)
     ChowdhuryParameters(:chowdhury2025; temperature = 14, K = 2, variant = :table2,
-                        as_printed = false, kwargs...)
+                        as_printed = false, eft_id50 = :appendix_c, kwargs...)
 
 Parameters of the Chowdhury et al. (2025) stage-structured Bsal model of the eastern newt
 (Table 2). Rates are per day and densities per m².
@@ -88,6 +96,11 @@ The keyed constructor reads the compendium (`data/compendium/chowdhury2025.toml`
 - `as_printed = true` uses the values printed in the text where they contradict Table 2:
   terrestrial spore persistence of 25 days at 6 °C and 20 days at 14 °C (§2.3; Table 2 has
   the reverse), and an eft stage of 3.5 years (Appendix C; Table 2 has 3).
+- `eft_id50 = :appendix_c` (default) takes the eft ID50 `κ_j` at 6 °C as the paper used
+  it: 3,348 per m², the ID50 line of Fig. 5a, which Appendix C says came from the
+  literature (it is the eft LD50 at 6 °C in Carter et al. 2021) and which reproduces
+  Table 3's 6 °C `R_j`. At 14 °C `κ_j = 10,000` (Appendix A; Fig. 5b). `eft_id50 = :table2`
+  uses Table 2's 10,000 at both temperatures.
 """
 struct ChowdhuryParameters
     λ::Float64
@@ -141,12 +154,15 @@ ChowdhuryParameters(; λ, α, η_j, η_a, K, δ_j, δ_a, σ_j, σ_a, κ_j, κ_a,
         ρ_j, ρ_a, ξ_j, ξ_a, ω_j, ω_a, P_j, P_a, b_j, b_a, c_j, c_a, χ_a, temperature)
 
 function ChowdhuryParameters(key::Symbol; temperature::Real = 14, K::Real = 2.0,
-        variant::Symbol = :table2, as_printed::Bool = false, kwargs...)
+        variant::Symbol = :table2, as_printed::Bool = false, eft_id50::Symbol = :appendix_c,
+        kwargs...)
     T = round(Int, temperature)
     (T == temperature && T in CHOWDHURY_TEMPERATURES) ||
         throw(ArgumentError("temperature must be one of $CHOWDHURY_TEMPERATURES °C"))
     variant in CHOWDHURY_VARIANTS ||
         throw(ArgumentError("variant must be one of $CHOWDHURY_VARIANTS"))
+    eft_id50 in (:appendix_c, :table2) ||
+        throw(ArgumentError("eft_id50 must be :appendix_c or :table2"))
     sets = ["", "$(T)C"]
     variant === :table3 && push!(sets, "$(T)C_table3")
     as_printed && push!(sets, "$(T)C_as_printed")
@@ -156,6 +172,9 @@ function ChowdhuryParameters(key::Symbol; temperature::Real = 14, K::Real = 2.0,
         r.set == s || continue
         vals[r.symbol] = _time_part(r.units) === nothing ? r.value : in_time_unit(r, :day)
     end
+    # Table 2 prints one κ_j for both temperatures (the base record)
+    eft_id50 === :table2 &&
+        (vals[:κ_j] = only(r.value for r in recs if r.set == "" && r.symbol === :κ_j))
     val(k) = haskey(vals, k) ? vals[k] : throw(ArgumentError("$key has no $k at $(T) °C"))
     base = (; λ = val(:λ), α = val(:α), η_j = 1 / val(:larval_period),
         η_a = 1 / val(:eft_period), K = Float64(K), δ_j = val(:δ_j),
@@ -441,7 +460,8 @@ R_a = S_a*² c_a P_a σ_a / ((σ_a + δ_a) D_a (S_l* + S_a*)(χ_a + S_a*))
 ```
 
 with `D_j = δ_j + η_a + γ_j + μ_j` and `D_a = μ_a + δ_a + γ_a`. Table 3 is reproduced with
-`variant = :table3` at 14 °C (both columns) and for `R_a` at 6 °C.
+`variant = :table3` (both columns, both temperatures; at 6 °C `R_j` needs the default
+`eft_id50 = :appendix_c`).
 """
 function stage_reproduction_numbers(p::ChowdhuryParameters; kwargs...)
     m = stage_next_generation_matrix(p; kwargs...)

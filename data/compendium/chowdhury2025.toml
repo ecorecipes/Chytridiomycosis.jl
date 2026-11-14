@@ -8,6 +8,14 @@
 # saved as lab/papers/chowdhury2025_si/mmc1.pdf). No code or data were deposited ("Data will
 # be made available on request").
 #
+# Re-checked on 2026-11-14 against the data behind the parameters: Carter et al. (2021, PLoS
+# Pathog 17:e1009234, doi:10.1371/journal.ppat.1009234; S1 and S2 Tables) and Gray et al.
+# (2023, Nat Commun 14:3270, Supplementary Table 1), saved under
+# lab/papers/chowdhury2025_si/{carter2021,gray2023_si}/. The NSF Public Access copy of the
+# paper (accepted manuscript, lab/papers/chowdhury2025_si/preprint/nsf_par.pdf) has the same
+# text and tables as the published PDF. The SSRN preprint (doi:10.2139/ssrn.4998606) could not
+# be retrieved (the site refuses automated clients).
+#
 # System: eastern newt (Notophthalmus viridescens) and Bsal; larvae, efts (terrestrial) and
 # adults (aquatic). Time unit: days. Host densities per m². ID50 κ_j is in zoospores per m² of
 # soil (assumed) and κ_a in zoospores per mL of water (Gray et al. 2023), and the paper compares
@@ -17,7 +25,9 @@
 # "6C" and "14C" hold Table 2's temperature-specific values. "<T>C_table3" substitutes the
 # values that reproduce Table 3 (derived here; see notes). "<T>C_as_printed" substitutes text
 # values that contradict Table 2. ChowdhuryParameters(:chowdhury2025; temperature, variant,
-# as_printed) layers them in that order.
+# as_printed) layers them in that order. The one exception to "6C holds Table 2" is κ_j: Table
+# 2 prints 10,000 for both temperatures, but the paper used the eft ID50 of Appendix C at 6 °C
+# (see the 6C κ_j record); eft_id50 = :table2 restores the printed value.
 #
 # Durations are stored as durations (larval_period, eft_period, adult_lifespan); the model
 # uses their reciprocals, as Table 2 does (η_j = 1/105, η_a = 1/(3 × 365), δ_a = 1/(10.5 × 365)).
@@ -36,7 +46,7 @@ role = "estimated"
 system = { pathogen = "none", host = "Notophthalmus viridescens", stage = "adult", setting = "literature" }
 location = "Table 2; Appendix C (Birth rate)"
 verified = true
-notes = "From 200-400 eggs per female per breeding season (Petranka 1998): 300/365 = 0.82. Applied to all adults (A), not females. With this value the simulated efts grow several-fold within months, unlike Figs 4 and E.1 (see the validation targets)."
+notes = "From 200-400 eggs per female per breeding season (Petranka 1998): 300/365 = 0.82. Applied to all adults (A), not females. With this value the simulated efts grow several-fold within months, unlike Figs 4 and E.1 (see the validation targets). Table 3 (R_j, R_a) needs this value through S_j* and S_l*, but the simulations of Figs 4, 5 and 7 behave as if λ were about 0.82/24 = 0.034 (implied by fitting Figs 4a, b, e, f and 7; best divisor 24, range 22-25); not printed, so not used."
 
 [[parameter]]
 symbol = "α"
@@ -110,7 +120,7 @@ role = "uncertain"
 system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 14.0, setting = "lab soil" }
 location = "Table 2; Appendix C (ID50); Appendix A, Table A.1"
 verified = true
-notes = "Assumed: the order of magnitude of the mean of the two soil doses of Appendix A (5e3 and 5e5 zoospores per gram of soil in 50-mL vials; 0/30 and 27/30 adults infected), with the 'conservative assumption' that the vial concentration over 24 h corresponds to the same number per m². The experiment used adult newts, not efts. Used at both temperatures."
+notes = "Assumed: the order of magnitude of the mean of the two soil doses of Appendix A (5e3 and 5e5 zoospores per gram of soil in 50-mL vials; 0/30 and 27/30 adults infected), with the 'conservative assumption' that the vial concentration over 24 h corresponds to the same number per m². The experiment used adult newts, not efts. Table 2 prints this value for both temperatures, but Appendix C says only the 14 °C value comes from Appendix A and the 6 °C eft value from the literature; Fig. 5b draws the ID50 line at 10,000 (14 °C) and Fig. 5a at ~3,350 (6 °C). Used at 14 °C; at 6 °C only with eft_id50 = :table2. The simulated f_j of Fig. 7 (middle) behaves as if the half-saturation were κ_j/24 at both temperatures (fit of Fig. 7 against Fig. 5: 10,000/420 = 23.8 and 3,350/139 = 24.1); Table 3 and the Fig. 5 ID50 lines use κ_j itself. Not printed, so not used."
 
 [[parameter]]
 symbol = "γ_j"
@@ -252,7 +262,7 @@ role = "structural"
 system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft" }
 location = "§5.1; Appendix C (Maximum density)"
 verified = true
-notes = "Paired with 2 adults per m² in the figure legends. The eft panels of Fig. 4 start at 80% of the legend value (0.08 … 0.64); unexplained."
+notes = "Paired with 2 adults per m² in the figure legends. The eft panels of Figs 4 and E.1 start at 80% of the legend value (0.08 … 0.64; measured 0.643 for 0.8, 0.322 for 0.4), and the eft epidemics of Figs 4e, f and 7 fit best with that start (profile minimum at 0.80, range 0.79-0.81), not with the legend value. Unexplained; the legend value is used here."
 
 [[parameter]]
 symbol = "efts_2"
@@ -300,6 +310,19 @@ verified = true
 notes = "'we initiated the outbreak by exposing 1% of the population'. Placed in E_j and E_a here; the paper does not say which class."
 
 # --- 6 °C (Table 2) ------------------------------------------------------------------------------
+
+[[parameter]]
+set = "6C"
+symbol = "κ_j"
+quantity = "eft ID50 at 6 °C (the value behind Table 3 and Fig. 5a)"
+value = 3348.0
+units = "zoospores m^-2"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft", temperature_C = 6.0, setting = "lab, 10-mL water bath exposure" }
+location = "Appendix C (ID50/LD50: 'adapted ... from the literature for ... eft (6 C)'); Fig. 5a (ID50 line, right axis); Carter et al. 2021, S1 Table"
+verified = false
+notes = "Not in Table 2, which prints 10,000 for both temperatures. Read from the ID50 line of Fig. 5a: 3,348 ± 6 (600-dpi rendering; the same reading of Fig. 5b gives 10,000 exactly). Its source: the eft LD50 at 6 °C from Carter et al. (2021, S1 Table: 5/6 efts dead at 5e3 zoospores per 10 mL, 6/6 at 5e4-5e6), which a log-probit fit (glm, binomial probit on log dose, MASS::dose.p, as in Gray et al. 2023) puts at 3,373; the same fit gives 5,443.8 and 2,897.0 from the adult infection data, Table 2's κ_a (5,443, 2,895). The fit is degenerate (one partial response), so variants of it give 3,300-3,460. The eft ID50 (4/6 infected at 5e3) would be 4,258. Table 3's R_j at 6 °C (with variant = :table3) needs κ_j = 3,339; this value gives it to 0.25%. Units as for κ_j (a dose per 10 mL treated as per m²)."
 
 [[parameter]]
 set = "6C"
@@ -656,7 +679,7 @@ role = "uncertain"
 system = { pathogen = "Bsal", host = "Notophthalmus viridescens", stage = "eft" }
 location = "§6.2 ('we additionally assumed the probability of contacting an infectious zoospore was 0.005 in R_j simulations')"
 verified = true
-notes = "Reproduces the slope of R_j against K at 14 °C (0.481 against Table 3's 0.482). At 6 °C Table 3's slope (0.99) is three times the formula's 0.33; unresolved."
+notes = "Reproduces the slope of R_j against K at 14 °C (0.481 against Table 3's 0.482). At 6 °C Table 3's slope (0.99) is three times the formula's 0.33 with κ_j = 10,000; the 6 °C eft ID50 (κ_j = 3,348, set 6C) accounts for it (0.988)."
 
 [[parameter]]
 set = "6C_table3"

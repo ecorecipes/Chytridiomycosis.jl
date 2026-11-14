@@ -26,7 +26,7 @@ using Test
         @test all(r -> r.provenance in ("M", "F", "A", "D"), recs)
         # only the values not printed in the paper (derived here) are unverified
         @test all(r -> r.verified || r.provenance == "D", recs)
-        @test Set(r.symbol for r in recs if !r.verified) == Set([:χ_a, :c_a, :c_j])
+        @test Set(r.symbol for r in recs if !r.verified) == Set([:χ_a, :c_a, :c_j, :κ_j])
         p6, p14 = ChowdhuryParameters(:chowdhury2025; temperature = 6),
                   ChowdhuryParameters(:chowdhury2025; temperature = 14)
         @test time_unit(p6) === :day
@@ -37,6 +37,11 @@ using Test
         @test (p6.c_a, p14.c_a) == (464.77, 878.48)
         @test (p6.ξ_a, p14.ξ_a) == (1 / 20, 1 / 25)               # Table 2, as the review says
         @test p6.ω_j == p6.ω_a && p14.P_j == p14.P_a              # "assumed same as adult"
+        # eft ID50: Fig. 5a's 3,348 at 6 °C (Appendix C), Table 2's 10,000 at 14 °C
+        @test (p6.κ_j, p14.κ_j) == (3348.0, 10000.0)
+        @test ChowdhuryParameters(:chowdhury2025; temperature = 6, eft_id50 = :table2).κ_j == 10000.0
+        @test ChowdhuryParameters(:chowdhury2025; temperature = 6, variant = :table3).κ_j == 3348.0
+        @test_throws ArgumentError ChowdhuryParameters(:chowdhury2025; eft_id50 = :gray2023)
         # Table 3 variant: per capita eft contacts and b_j = 0.005 (§6.2)
         t6 = ChowdhuryParameters(:chowdhury2025; temperature = 6, variant = :table3)
         @test t6.c_j ≈ 8 / (14 * 12) && t6.b_j == 0.005 && t6.c_a == 729.2
@@ -121,12 +126,19 @@ using Test
         @test [r.R_a for r in R(6, :table3)] ≈ tab3[6].R_a rtol = 4e-3
         # 6 °C R_a with Table 2's c_a = 464.77 and χ_a = 12 (the values of Figs 4, 5, 7)
         @test_broken [r.R_a for r in R(6, :table2)] ≈ tab3[6].R_a rtol = 0.02
-        # 6 °C R_j: the direct part (the intercept, 0.37) reproduces; the environmental part
-        # (slope 0.99 per unit K) is ~3x the formula's 0.33 with any printed b_j, ξ_j
+        # 6 °C R_j: the direct part is the intercept (0.37); the environmental part (slope
+        # 0.99 per unit K) needs the 6 °C eft ID50 of Fig. 5a and Appendix C (κ_j = 3,348)
         r6 = R(6, :table3)
         @test r6[1].direct_j ≈ 0.37 atol = 0.005
-        @test [r.environmental_j / s.adults for (r, s) in zip(r6, scen)] ≈ fill(0.33, 4) atol = 0.005
-        @test_broken [r.R_j for r in r6] ≈ tab3[6].R_j rtol = 0.02
+        @test [r.environmental_j / s.adults for (r, s) in zip(r6, scen)] ≈ fill(0.988, 4) atol = 0.002
+        @test [r.R_j for r in r6] ≈ tab3[6].R_j rtol = 4e-3
+        # with Table 2's printed κ_j = 10,000 it is a third of that (0.33)
+        r6p = [stage_reproduction_numbers(p) for p in pars(6; variant = :table3, eft_id50 = :table2)]
+        @test [r.environmental_j / s.adults for (r, s) in zip(r6p, scen)] ≈ fill(0.33, 4) atol = 0.005
+        @test_broken [r.R_j for r in r6p] ≈ tab3[6].R_j rtol = 0.02
+        # the eft LD50 at 6 °C from Carter et al. (2021) by the log-probit fit (3,373) is within 1%
+        @test [stage_reproduction_numbers(p).R_j
+               for p in pars(6; variant = :table3, κ_j = 3373.0)] ≈ tab3[6].R_j rtol = 0.01
         # Table 2's c_j = 0.571 gives a direct part of 4.43 (6 °C), not 0.37
         @test R(6, :table2)[1].direct_j ≈ 4.43 atol = 0.01
         # §6.2 and Fig. 9: R_a > 1 at 14 °C on the whole grid c_a ∈ [0, 600], K ∈ [1, 16]
@@ -211,10 +223,12 @@ using Test
         @test_broken peak(n6[4], :infected_efts) ≈ 0.38 rtol = 0.15
         # the adult side does not depend on larval recruitment over one year
         @test [peak(r, :infected_adults) for r in n14] ≈ [peak(r, :infected_adults) for r in s14] rtol = 0.01
-        # Fig. 7 (middle): f_j peaks at 0.011-0.029 (6 °C); ten times what either version gives
+        # Fig. 7 (middle): f_j peaks at 0.011-0.029 (6 °C). Table 2 gets 0.021 only because its
+        # recruitment makes Z_j ten times Fig. 5a's; λ = 0 gives 0.004
         fj(r) = maximum(stage_transmission_rates(r.prob, u).f_j for u in r.sol.u)
-        @test fj(s6[4]) ≈ 0.0115 rtol = 0.02
-        @test_broken fj(s6[4]) ≈ 0.029 rtol = 0.15
+        @test fj(s6[4]) ≈ 0.0212 rtol = 0.02
+        @test fj(n6[4]) ≈ 0.0038 rtol = 0.05
+        @test_broken fj(n6[4]) ≈ 0.029 rtol = 0.15
         # "adults declined about 3X faster than efts" (§5.1), only without recruitment
         for n in (n6, n14)
             ratio = [stage_decline_time(r.prob; stage = :efts) / stage_decline_time(r.prob)
@@ -223,7 +237,47 @@ using Test
         end
         # with Table 2's recruitment the 6 °C efts never fall by 80% within the year
         @test all(isinf, [stage_decline_time(r.prob; stage = :efts) for r in s6])
-        # ID50 not exceeded for efts (§5.1)
+        # ID50 not exceeded for efts (§5.1): true without recruitment, but Table 2's
+        # recruitment takes Z_j past the 6 °C eft ID50 at 0.8 efts m⁻²
         @test all(r -> peak(r, :Z_j) < r.prob.p.κ_j, vcat(n6, n14))
+        @test [peak(r, :Z_j) > r.prob.p.κ_j for r in s6] == [false, false, false, true]
+    end
+
+    @testset "eft curves: an implied reading of the simulations (fitted, not published)" begin
+        # λ/24, half-saturation κ_j/24 in f_j and efts starting at 0.8 × the stated density
+        # reproduce Figs 4 (a, b, e, f), 5 (a, b) and 7 (middle) together. All three were
+        # fitted to these figures (joint profile minima 24, 24, 0.80); none is printed.
+        implied(T) = map(scen) do s
+            p = ChowdhuryParameters(:chowdhury2025; temperature = T, K = s.adults)
+            p = C.with(p; λ = p.λ / 24, κ_j = p.κ_j / 24)
+            prob = BsalStageTemperatureProblem(p; adults = s.adults, efts = 0.8 * s.efts)
+            sol = solve(prob; saveat = 1.0)
+            (; prob, sol, tot = [stage_totals(u) for u in sol.u])
+        end
+        i6, i14 = implied(6), implied(14)
+        fj(r) = maximum(stage_transmission_rates(r.prob, u).f_j for u in r.sol.u)
+        # Fig. 4 (e, f): infected eft peaks, read at 600 dpi
+        @test [peak(r, :infected_efts) for r in i6] ≈ [0.0434, 0.0915, 0.1857, 0.376] rtol = 0.06
+        @test [peak(r, :infected_efts) for r in i14] ≈ [0.0256, 0.0547, 0.1156, 0.2401] rtol = 0.09
+        @test 80 <= peakday(i6[4], :infected_efts) <= 90 && 62 <= peakday(i14[4], :infected_efts) <= 70
+        # Fig. 7 (middle): f_j peaks
+        @test fj.(i6) ≈ [0.0113, 0.0172, 0.0235, 0.0287] rtol = 0.08
+        @test fj.(i14) ≈ [0.0071, 0.0121, 0.0183, 0.0247] rtol = 0.05
+        # Fig. 5 (a, b): Z_j peaks ~440 and ~780 at 0.8 efts m⁻², below the ID50 lines
+        @test peak(i6[4], :Z_j) ≈ 440 rtol = 0.03
+        @test peak(i14[4], :Z_j) ≈ 780 rtol = 0.03
+        @test all(r -> peak(r, :Z_j) < 24 * r.prob.p.κ_j, vcat(i6, i14))
+        # Fig. 4 (a, b): from 0.64, up to 0.665 near day 41 at 6 °C, flat to day ~30 at 14 °C
+        e6, e14 = getfield.(i6[4].tot, :efts), getfield.(i14[4].tot, :efts)
+        @test maximum(e6) ≈ 0.665 rtol = 0.01
+        @test 35 <= argmax(e6) - 1 <= 50
+        @test e6[121] ≈ 0.310 rtol = 0.05
+        @test e14[121] ≈ 0.067 rtol = 0.1
+        @test maximum(e14) == e14[1]
+        @test e14[31] ≈ 0.640 rtol = 0.01
+        @test e14[61] ≈ 0.473 rtol = 0.02
+        # the adults are unchanged
+        @test [peak(r, :infected_adults) for r in i6] ≈ [peak(r, :infected_adults) for r in s6] rtol = 0.01
+        @test [peak(r, :Z_a) for r in i14] ≈ [peak(r, :Z_a) for r in s14] rtol = 0.01
     end
 end
