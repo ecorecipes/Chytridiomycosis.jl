@@ -87,6 +87,9 @@ include("fitting/tompros2022.jl")
 include("models/drawert2017.jl")
 # Chowdhury et al. 2025 stage- and temperature-structured Bsal model of the eastern newt
 include("models/chowdhury2025.jl")
+# Canessa et al. 2018 Bsal integral projection model and management actions
+using LinearAlgebra: LinearAlgebra, dot
+include("models/canessa2018.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -177,5 +180,12 @@ export DrawertParameters, DrawertIBMProblem, DrawertODEProblem, DrawertIntervent
 export ChowdhuryParameters, BsalStageTemperatureProblem, chowdhury_scenarios,
        stage_transmission_rates, stage_totals, stage_decline_time, stage_disease_free_state,
        stage_next_generation_matrix, stage_reproduction_numbers, stage_elasticities
+# Canessa et al. 2018 Bsal integral projection model and management actions
+export CanessaDraw, canessa2018_path, load_canessa2018, CanessaAction, canessa_actions,
+       canessa_action, canessa_growth_coefficients, CanessaParameters, canessa_survival,
+       canessa_transmission, canessa_initial_load, canessa_growth_mean, canessa_growth_variance,
+       CanessaIPMProblem, canessa_density_ratio, canessa_cohort_survival, canessa_dispersal,
+       canessa_ensemble, canessa_summary, CanessaSIParameters, CanessaSIProblem,
+       required_reduction, final_size_transmission, final_density_ratio
 
 end # module Chytridiomycosis

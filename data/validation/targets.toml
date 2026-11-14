@@ -484,14 +484,6 @@ notes = "SD ratios in the run with 10^6 draws: αβ_sh 0.08, α 0.64, β_sh 0.98
 
 # --- Pending: models not yet implemented (wiki R5–R10) ------------------------------------
 
-[[target]]
-id = "canessa2018_R0"
-model = "bsal-canessa2018-ipm-decision"
-source = { ref = "canessa2018", location = "" }
-quantity = "R₀ about 9.6 (5.8–14.3); 98% reduction at >80% coverage within 3 days (review values, unverified)"
-status = "pending"
-notes = "Wiki target R8."
-
 # Rumschlag et al. 2022 (wiki target R9): checked against the published version, J Anim Ecol
 # 91:170; the preprint prints the same numbers. Refits use the authors' figshare deposit
 # (data/rumschlag2022). _rumschlag_reference_fit() fits a model once per session; it fits the
@@ -1989,3 +1981,416 @@ quantity = "LHS/PRCC sensitivity of R_j and R_a over 29 parameters"
 published = "Fig. 8 (6 °C), Fig. H.6 (14 °C)"
 status = "pending"
 notes = "The sampling ranges and the number of runs are not given, so the PRCC values cannot be recomputed."
+
+# --- Canessa et al. 2018, J Appl Ecol 55:1987 (wiki target R8) ----------------------------
+# Checked against the review copy of the paper (the only version available; Table 1, Figs 2-4,
+# SI eqs S1-S12, Table S1) and the archived draws (Dryad doi:10.5061/dryad.0jh5p). Values
+# "read from Fig. 2/3" were measured on a 300-dpi rendering of the figure. The ensembles
+# (_canessa_reference) run all 1,000 draws once per session with I0 = 0.01 ha⁻¹ (Table S1)
+# and the default cap = :truncate (loads never exceed Lmax; see the model docstrings).
+
+[[target]]
+id = "canessa2018_beta0_median"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "SI p. 4, lines 86-87; Table S1" }
+quantity = "median encounter rate β0 over the 1,000 draws (ha per 3-day step)"
+published = 0.007
+call = "median([d.β0 for d in load_canessa2018()])"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "The archived beta0 column: 0.00699."
+
+[[target]]
+id = "canessa2018_beta0_interval"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "SI p. 4, line 87" }
+quantity = "95% interval of β0 over the draws: 0.0037-0.0125 (both limits within 1%)"
+published = true
+call = """
+let b = [d.β0 for d in load_canessa2018()], c = parameter_set(:canessa2018)
+    isapprox(quantile(b, 0.025), c.β0_lower; rtol = 0.01) &&
+        isapprox(quantile(b, 0.975), c.β0_upper; rtol = 0.01)
+end
+"""
+tolerance = {}
+status = "qualitative"
+notes = "0.00372 and 0.01245 in the archived column (the call returns true when both are within 1%)."
+
+[[target]]
+id = "canessa2018_beta0_final_size"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "SI eq. S6, lines 69-88" }
+quantity = "β0 from the final-size relation with the printed S0 = 503, S∞ = 7 and s̄ = 0.542"
+published = 0.007
+call = """
+let c = parameter_set(:canessa2018)
+    final_size_transmission(c.S0, c.S_inf, c.s_bar)
+end
+"""
+tolerance = { digits = 3 }
+status = "discrepant"
+regression = { value = 0.003947, atol = 1e-6 }
+notes = """
+Eq. S6 with R0 = S0 β/(1 - s̄) and the printed inputs gives 0.0039, about half the printed
+median. The median R0 implied by eq. S6, ln(S0/S∞)/(1 - S∞/S0) = 4.3, is also half the R0 of
+both the IPM and the simplified model. The archived (beta0, S0) pairs cannot be reproduced
+from eq. S6 with S∞ = 7 and any s̄ in [0, 1) for every draw (see the compendium notes). The
+draws themselves reproduce the printed median and interval, and the IPM uses them."""
+
+[[target]]
+id = "canessa2018_growth_b4"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Table S1; SI eqs S8-S9" }
+quantity = "intercept b4 of the expected next log-load"
+published = 1.0194
+call = """
+let c = parameter_set(:canessa2018)
+    canessa_growth_coefficients(c.Lmax_best, c.growth_best;
+        steps = round(Int, c.growth_series_steps))[1]
+end
+"""
+tolerance = { digits = 4 }
+status = "reproduced"
+notes = "The best estimates Lmax = 10⁴ GE, 25 zoospores per zoospore in 5 days and the 10-step series are not printed; they are the unique grid point that reproduces b4-b6 to four decimals (1.01940, 1.52882, -0.06921)."
+
+[[target]]
+id = "canessa2018_growth_b5"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Table S1; SI eqs S8-S9" }
+quantity = "linear coefficient b5 of the expected next log-load"
+published = 1.5288
+call = """
+let c = parameter_set(:canessa2018)
+    canessa_growth_coefficients(c.Lmax_best, c.growth_best;
+        steps = round(Int, c.growth_series_steps))[2]
+end
+"""
+tolerance = { digits = 4 }
+status = "reproduced"
+
+[[target]]
+id = "canessa2018_growth_b6"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Table S1; SI eqs S8-S9" }
+quantity = "quadratic coefficient b6 of the expected next log-load"
+published = -0.0692
+call = """
+let c = parameter_set(:canessa2018)
+    canessa_growth_coefficients(c.Lmax_best, c.growth_best;
+        steps = round(Int, c.growth_series_steps))[3]
+end
+"""
+tolerance = { digits = 4 }
+status = "reproduced"
+
+[[target]]
+id = "canessa2018_s0_table"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Table S1 (s0 = s(z=0))" }
+quantity = "s0 = s(z = 0) from the printed survival intercept b0"
+published = 0.9906
+call = "canessa_survival(CanessaParameters(:canessa2018), 0.0)"
+tolerance = { digits = 4 }
+status = "discrepant"
+regression = { value = 0.98752, atol = 1e-5 }
+notes = "logistic(4.3712) = 0.9875. Neither s(0) nor s(-1) (load 0 GE, 0.9946) gives the printed 0.9906. The package keeps the printed s0 in CanessaParameters(:canessa2018)."
+
+[[target]]
+id = "canessa2018_s0_lifespan"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "SI lines 52-55" }
+quantity = "3-day survival implied by an adult life span of about 8 years, said to be 'very similar' to s0"
+published = 0.9906
+call = """
+let c = parameter_set(:canessa2018)
+    hazard_to_survival(1 / (365 * parameter_set(:bozzuto2019).lifespan), c.step_length)
+end
+"""
+tolerance = { digits = 3 }
+status = "discrepant"
+regression = { value = 0.998973, atol = 1e-6 }
+notes = "An 8-year life expectancy (Bozzuto & Canessa 2019, Table 1) gives 0.99897 per 3 days. s0 = 0.9906 per 3 days is an annual survival of 0.32 (life expectancy under one year), and over the 90-day horizon 0.75 against 0.97."
+
+[[target]]
+id = "canessa2018_R0"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 255-258 and 296-297; Fig. 2 (action a)" }
+quantity = "median IPM R0 without action over the 1,000 draws"
+published = 9.6
+call = "_canessa_reference(:a).summary.R0.median"
+tolerance = { digits = 1 }
+status = "discrepant"
+regression = { value = 9.435, atol = 0.01 }
+notes = """
+Wiki target R8. 9.43 with loads capped at Lmax (cap = :truncate); 8.25 with the SI formula
+alone (canessa2018_R0_printed_cap). Each draw is refitted as in the SI (logistic regressions
+on z = -1, ln 10, ..., ln 10⁴; eq. S9 from 10 Beverton-Holt steps), R0 = S0 s0 ∫β (I-P)⁻¹G0.
+Checked and ruled out as the cause of the remaining 2%: mesh size, the series length of eq.
+S9, G0 variance vs sd, s0 from the fit or the elicited value, fits on the logit scale or
+dropping T_0 = 0. The review's '98% reduction at >80% coverage within 3 days' is the
+Discussion's summary of actions d and e (canessa2018_antifungal_*)."""
+
+[[target]]
+id = "canessa2018_R0_lower"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, line 297 ('5.8 – 14.3 the 95% confidence interval')" }
+quantity = "2.5% quantile of the IPM R0 without action"
+published = 5.8
+call = "_canessa_reference(:a).summary.R0.lower"
+tolerance = { digits = 1 }
+status = "discrepant"
+regression = { value = 5.600, atol = 0.01 }
+notes = "5.60 with cap = :truncate (4.97 with the printed cap)."
+
+[[target]]
+id = "canessa2018_R0_upper"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, line 297" }
+quantity = "97.5% quantile of the IPM R0 without action"
+published = 14.3
+call = "_canessa_reference(:a).summary.R0.upper"
+tolerance = { digits = 1 }
+status = "reproduced"
+regression = { value = 14.347, atol = 0.01 }
+notes = "12.23 with the printed cap."
+
+[[target]]
+id = "canessa2018_R0_printed_cap"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, line 258; SI lines 116-118" }
+quantity = "median IPM R0 without action, with the cap exactly as printed (loads may exceed Lmax)"
+published = 9.6
+call = "_canessa_reference(:a; cap = :printed).summary.R0.median"
+tolerance = { digits = 1 }
+status = "discrepant"
+regression = { value = 8.245, atol = 0.01 }
+notes = "SI lines 116-118 cap only the mean: z' ~ N(ln Lmax, σ²(ln Lmax)) for z ≥ ln Lmax, so half of the mass at the cap lies above it, where survival is lower. The 95% interval is 4.97-12.23, each quantile 14-15% below the paper's."
+
+[[target]]
+id = "canessa2018_body_condition_R0"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 269-271; Fig. 2 (action b)" }
+quantity = "improving body condition (0.5 β(z) for z ≤ 100 GE) does not reduce R0: median R0 ratio b/a"
+published = "no reduction (b plotted at R0 ≈ 9.6, as a)"
+call = "_canessa_reference(:b).summary.R0.median / _canessa_reference(:a).summary.R0.median"
+tolerance = { lower = 0.9, upper = 1.0 }
+status = "qualitative"
+notes = "Ratio 0.952: a 5% reduction, because 16% of new infections start below 100 GE (G0 = N(ln 200, 0.5)). Accepted as 'no reduction' within 10%."
+
+[[target]]
+id = "canessa2018_probiotic_R0"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 271-274" }
+quantity = "the probiotic (action c) increases R0 relative to no action (text): median R0 ratio c/a"
+published = "increase"
+call = "_canessa_reference(:c).summary.R0.median / _canessa_reference(:a).summary.R0.median"
+tolerance = { lower = 1.0, upper = 1.5 }
+status = "qualitative"
+notes = "Ratio 1.026. Slower growth lengthens survival more than the halved low-load transmission removes."
+
+[[target]]
+id = "canessa2018_probiotic_R0_fig2"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Fig. 2 (action c)" }
+quantity = "median R0 of the probiotic action as plotted"
+published = 8.3
+call = "_canessa_reference(:c).summary.R0.median"
+tolerance = { atol = 0.3 }
+status = "discrepant"
+regression = { value = 9.676, atol = 0.01 }
+notes = "Read from Fig. 2: c is plotted at R0 ≈ 8.3 (interval ≈ 4.8-12.5), below a (9.6), which contradicts the text ('increasing R0'). Ours follows the text: 9.68 (5.68-14.68)."
+
+[[target]]
+id = "canessa2018_antifungal_R0"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 274-277; Fig. 2 (action d)" }
+quantity = "median R0 under the antifungal with full coverage (98% less transmission, growth slowed 80%)"
+published = "R0 < 1 (plotted at ≈ 0.2)"
+call = "_canessa_reference(:d).summary.R0.median"
+tolerance = { lower = 0.1, upper = 0.35 }
+status = "qualitative"
+notes = "0.209 (0.123-0.319); every draw has R0 < 1 and the final density ratio is 1.00."
+
+[[target]]
+id = "canessa2018_antifungal_coverage_eradication"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 292-294; Fig. 2 (action e)" }
+quantity = "proportion of draws with R0 < 1 under the antifungal at 80% coverage"
+published = "less than 2.5%"
+call = "_canessa_reference(:e).summary.P_R0_below_1"
+tolerance = { lower = -1.0, upper = 0.025 }
+status = "qualitative"
+notes = "0.3% of draws."
+
+[[target]]
+id = "canessa2018_antifungal_coverage_R0"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Fig. 2 (action e)" }
+quantity = "median R0 under the antifungal at 80% coverage"
+published = 2.4
+call = "_canessa_reference(:e).summary.R0.median"
+tolerance = { atol = 0.25 }
+status = "reproduced"
+notes = "Read from Fig. 2: 2.4 (1.4-3.7). Ours 2.26 (1.33-3.44)."
+
+[[target]]
+id = "canessa2018_antifungal_coverage_ratio"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 277-281; Fig. 2 (action e)" }
+quantity = "median final density ratio under the antifungal at 80% coverage (collapse delayed beyond three months)"
+published = 1.0
+call = "_canessa_reference(:e).summary.ratio.median"
+tolerance = { atol = 0.05 }
+status = "discrepant"
+regression = { value = 0.688, atol = 0.005 }
+notes = """
+Fig. 2 plots e at a ratio of 1.0 (bar down to 0.56). Ours, with I0 = 0.01 ha⁻¹ (Table S1:
+1 adult km⁻²), is 0.69 (0.06-1.00): our outbreaks under this action start sooner. Smaller
+introductions bring it closer (I0 = 10⁻⁴: 0.995, with 0.52 at the upper R0 bound, as
+Fig. 2), but no single I0 also reproduces action f (canessa2018_thinning50_ratio)."""
+
+[[target]]
+id = "canessa2018_thinning50_R0"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 281-283; Fig. 2 (action f)" }
+quantity = "median R0 after removing 50% of hosts before Bsal arrives"
+published = 4.8
+call = "_canessa_reference(:f).summary.R0.median"
+tolerance = { atol = 0.25 }
+status = "reproduced"
+notes = "Read from Fig. 2: 4.8 (2.9-7.2). Ours 4.72 (2.80-7.17); exactly half of action a draw by draw."
+
+[[target]]
+id = "canessa2018_thinning50_ratio"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Fig. 2 (action f)" }
+quantity = "median final density ratio after 50% pre-emptive thinning"
+published = 0.083
+call = "_canessa_reference(:f).summary.ratio.median"
+tolerance = { atol = 0.03 }
+status = "discrepant"
+regression = { value = 0.006, atol = 0.002 }
+notes = "Read from Fig. 2: 0.083 (bar 0.025-0.48). Ours 0.006 (0.001-0.056): with R0 ≈ 4.7 our outbreak runs to completion within 90 days whatever the introduction size (0.006 to 0.007 for I0 from 10⁻² to 10⁻⁵ ha⁻¹), and the final-size relation gives 0.5 × 0.0095. The paper's value implies a slower or smaller outbreak; not explained."
+
+[[target]]
+id = "canessa2018_thinning90_eradication"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 283-284 and 289-292; Fig. 2 (action g)" }
+quantity = "chance of eradicating Bsal (R0 < 1) after removing 90% of hosts"
+published = "approximately 50%"
+call = "_canessa_reference(:g).summary.P_R0_below_1"
+tolerance = { lower = 0.4, upper = 0.6 }
+status = "qualitative"
+notes = "58.6% of draws (median R0 0.94, 0.56-1.44; Fig. 2: 0.93, 0.53-1.39). With the printed cap it is 83%."
+
+[[target]]
+id = "canessa2018_removal_R0"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 284-288; Fig. 2 (action h)" }
+quantity = "upper 95% bound of R0 under post-detection removal of 90% per step"
+published = "R0 < 1 (plotted near 0.2-0.3)"
+call = "_canessa_reference(:h).summary.R0.upper"
+tolerance = { lower = 0.0, upper = 1.0 }
+status = "qualitative"
+notes = "Median 0.34 (0.21-0.49): one step of transmission (≈ 1/2.8 of a lifetime's) times 0.1 s0. The figure's marker is at about 0.2-0.3."
+
+[[target]]
+id = "canessa2018_no_action_extirpation"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 259-260; Fig. 2 (action a)" }
+quantity = "median final density ratio without action (effective extirpation within three months)"
+published = "≈ 0.01 (effective extirpation)"
+call = "_canessa_reference(:a).summary.ratio.median"
+tolerance = { lower = -1.0, upper = 0.05 }
+status = "qualitative"
+notes = "Ours < 0.001 (97.5% quantile 0.005)."
+
+[[target]]
+id = "canessa2018_dispersal_no_action"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 260-266; Fig. 3a" }
+quantity = "median distance (m) moved by infected adults before cohort survival falls below 1%, no action"
+published = "less than 100 m; Fig. 3a curve reaches 0 at about 40-50 m"
+call = "_canessa_reference(:a).summary.max_distance.median"
+tolerance = { lower = 30.0, upper = 55.0 }
+status = "qualitative"
+notes = "37 m (29-49 m); mean distance 8 m. 0.5 km yr⁻¹ is 4.1 m per 3-day step."
+
+[[target]]
+id = "canessa2018_dispersal_slowed_growth"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 271-281; Fig. 3c-e" }
+quantity = "treatments that slow Bsal growth increase movement distances: ratio of median life-span distances c/a"
+published = "increase (Fig. 3c-e reach about 65 m, extremes about 90 m)"
+call = "_canessa_reference(:c).summary.max_distance.median / _canessa_reference(:a).summary.max_distance.median"
+tolerance = { lower = 1.0, upper = 3.0 }
+status = "qualitative"
+notes = "53 m against 37 m (ratio 1.44); actions c, d and e share the slowed growth kernel. Our 97.5% quantile is 74 m."
+
+[[target]]
+id = "canessa2018_dispersal_removal"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 284-288; Fig. 3h" }
+quantity = "life-span distance (m) under post-detection removal"
+published = "minimal (Fig. 3h: under 10 m)"
+call = "_canessa_reference(:h).summary.max_distance.upper"
+tolerance = { lower = 0.0, upper = 10.0 }
+status = "qualitative"
+notes = "8.2 m (two steps) in every draw."
+
+[[target]]
+id = "canessa2018_simplified_R0"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 295-297; SI eqs S11-S12" }
+quantity = "R0 of the simplified SI model without management"
+published = 7.9
+call = "basic_reproduction_number(CanessaSIParameters(:canessa2018))"
+tolerance = { digits = 1 }
+status = "discrepant"
+regression = { value = 7.6155, atol = 1e-4 }
+notes = "S0 s0 β/(1 - s̄) with Table S1's 503, 0.9906, 0.007, 0.542 is 7.62 (7.69 without s0, as SI line 70 prints R0). Fig. 4's thresholds below agree with either."
+
+[[target]]
+id = "canessa2018_reduction_transmission"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 301-302; Fig. 4a-b" }
+quantity = "reduction in transmission (or initial density) alone that gives R0 = 1 in the simplified model"
+published = 0.87
+call = "required_reduction(CanessaSIParameters(:canessa2018), :β)"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "0.869: 'at least 85%' in the text, 0.87 at the axis intercept of Fig. 4a."
+
+[[target]]
+id = "canessa2018_reduction_survival"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 301-302; Fig. 4b" }
+quantity = "reduction in survival alone that gives R0 = 1 in the simplified model"
+published = 0.75
+call = "required_reduction(CanessaSIParameters(:canessa2018), :survival)"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "0.752; 'at least 75%'."
+
+[[target]]
+id = "canessa2018_reduction_all_three"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 303-304; Fig. 4c" }
+quantity = "equal reduction of transmission, initial density and survival that gives R0 = 1"
+published = 0.42
+call = "required_reduction(CanessaSIParameters(:canessa2018), (:β, :S0, :survival))"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "0.419."
+
+[[target]]
+id = "canessa2018_reduction_transmission_survival"
+model = "bsal-canessa2018-ipm-decision"
+source = { ref = "canessa2018", location = "Results, lines 304-305 ('reducing transmission and host survival by 87% each (Fig 4a)')" }
+quantity = "equal reduction of transmission and survival that gives R0 = 1"
+published = 0.87
+call = "required_reduction(CanessaSIParameters(:canessa2018), (:β, :survival))"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.5366, atol = 1e-4 }
+notes = "Printed error: 0.87 is the transmission-only intercept of Fig. 4a, whose axes are transmission and initial density, not survival. Equal reductions of transmission and survival need 54%; of transmission and density, 64%."
