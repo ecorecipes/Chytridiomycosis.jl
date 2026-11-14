@@ -1,0 +1,584 @@
+# Canessa S, Bozzuto C, Campbell Grant EH, Cruickshank SS, Fisher MC, Koella JC, Lötters S,
+# Martel A, Pasmans F, Scheele BC, Spitzen-van der Sluijs A, Steinfartz S, Schmidt BR (2018)
+# Decision-making for mitigating wildlife diseases: from theory to practice for an emerging
+# fungal pathogen of amphibians. J Appl Ecol 55:1987-1996.
+# https://doi.org/10.1111/1365-2664.13089
+#
+# Read on 2026-11-13 from lab/papers/canessa2018.pdf, which is the *confidential review copy*
+# (ScholarOne, 28 Sep 2017; main text, Table 1, Figs 1-4 and the Online Supporting Information
+# with eqs S1-S12 and Table S1). It carries no DOI; the DOI above resolves (Crossref) to the same
+# title and the same 13 authors, J Appl Ecol 55(4):1987-1996. The version of record and its
+# Wiley supplements were not accessible (HTTP 403), so the published wording may differ.
+# The archived parameter draws (Dryad doi:10.5061/dryad.0jh5p, file
+# Canessa_JAPPL_2017_00978_SI2.xls, CC0; identical MD5 to lab/papers/canessa2018_si4.xls) are
+# bundled as data/canessa2018/parameter_draws.csv.
+#
+# System: fire salamander (Salamandra salamandra) adults and Bsal, a closed population over a
+# post-reproductive period. Discrete time, one step = 3 days, 30 steps (three months).
+# Densities: adults per hectare. Loads: Bsal genomic equivalents (GE, qPCR); the model works on
+# z = ln(load), with load 0 placed at z = -1 (SI lines 44-46). The basis of GE (per swab or per
+# host) is not stated.
+#
+# Sets: the base set holds Table S1 (the experts' best estimates and the derived values),
+# the numerical settings and the Table 1 management actions. Table S1 itself is not what the
+# ensemble simulations used: each of the 1,000 IPM runs refits the functions to one row of
+# the archived draws (SI p. 3, line 87; Table S1 caption "for the full distribution of each
+# parameter value see archived data").
+#
+# Rates and probabilities are per 3-day step. β0 multiplies a density of infected adults
+# (ha^-1), so it is in ha per step; Bozzuto & Canessa (2019) converted it to years with
+# 364/3 steps per year.
+
+source = { ref = "canessa2018", doi = "10.1111/1365-2664.13089", review_ref = 30 }
+
+# --- Time and numerics (SI eqs S2, p. 5) ----------------------------------------------------
+
+[[parameter]]
+symbol = "step_length"
+quantity = "length of one time step (t to t+1)"
+value = 3.0
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "SI p. 1, lines 21-22; Fig. 1 caption"
+verified = true
+
+[[parameter]]
+symbol = "nsteps"
+quantity = "number of time steps simulated (three months)"
+value = 30.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "SI p. 1, line 22"
+verified = true
+
+[[parameter]]
+symbol = "z_lower"
+quantity = "lower limit l of the log-load mesh"
+value = -10.0
+units = "ln GE"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra" }
+location = "SI p. 5, lines 125-127"
+verified = true
+
+[[parameter]]
+symbol = "z_upper"
+quantity = "upper limit u of the log-load mesh"
+value = 15.0
+units = "ln GE"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra" }
+location = "SI p. 5, lines 125-127"
+verified = true
+
+[[parameter]]
+symbol = "mesh_points"
+quantity = "number of mesh points for the midpoint rule"
+value = 300.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra" }
+location = "SI p. 5, line 127"
+verified = true
+notes = "No eviction correction ('eviction was not a complication'). The package uses the midpoint rule on this mesh."
+
+[[parameter]]
+symbol = "z_zero_load"
+quantity = "log-load assigned to an elicited load of 0 GE"
+value = -1.0
+units = "ln GE"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra" }
+location = "SI p. 2, lines 44-46"
+verified = true
+notes = "The other elicited loads 10, 100, 1000 and 10000 GE enter as their natural logarithms."
+
+# --- Survival, eq. S4 (Table S1) --------------------------------------------------------------
+
+[[parameter]]
+symbol = "s0"
+quantity = "3-day survival probability of susceptible adults"
+value = 0.9906
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1 ('s(z) fit to elicited survival values; s0 = s(z=0)')"
+verified = true
+notes = """
+Printed inconsistency: logistic(b0) with the printed b0 = 4.3712 is 0.9875, not 0.9906, and
+s(z = -1) is 0.9946. SI line 53 calls s0 'very similar' to the survival implied by an 8-year
+adult lifespan, but that is exp(-3/(8 × 365)) = 0.99897 per 3 days; 0.9906 per 3 days is an
+annual survival of 0.32. The ensemble runs use s(0) of each draw's own fit (median 0.996)."""
+
+[[parameter]]
+symbol = "b0"
+quantity = "intercept of logit s(z), survival of infected adults"
+value = 4.3712
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1; eq. S4"
+verified = true
+notes = """
+Fit to the experts' best estimates, which are not published. The curve it gives (0.62 at 100
+GE, 0.19 at 1000 GE) lies far below the archived draws (medians 0.895 and 0.644), and a PERT
+with mode 0.62 cannot have a mean of 0.895, so Table S1 does not summarise the draws."""
+
+[[parameter]]
+symbol = "b1"
+quantity = "slope of logit s(z) on z = ln(load)"
+value = -0.8413
+units = "(ln GE)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1; eq. S4"
+verified = true
+
+# --- Transmission, eqs. S3, S5 (Table S1) ---------------------------------------------------
+
+[[parameter]]
+symbol = "β0"
+quantity = "encounter rate scaling the load-dependent transmission function β(z)"
+value = 0.007
+units = "ha per 3-day step"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult", setting = "Robertville, Belgium" }
+location = "Table S1; SI pp. 3-4, lines 60-88 (median; 95% CI 0.0037-0.0125)"
+verified = true
+notes = """
+Derived per draw from the final-size relation eq. S6 with S0 and s̄ from Stegen et al. (2017).
+The archived beta0 column reproduces the median and CI (0.00699; 0.00372-0.01245). Eq. S6
+with the printed S0 = 503, S∞ = 7 and s̄ = 0.542 gives 0.0039, not 0.007. With S∞ = 7 the
+archived pairs (beta0, S0) imply 1 - s̄ = beta0 (S0 - S∞)/ln(S0/S∞) with median 0.79 (not
+0.458) and values above 1 (s̄ < 0) for 13% of draws, so the derivation cannot be reconstructed:
+see the validation target canessa2018_beta0_final_size. Bozzuto & Canessa (2019) use 0.007 × 364/3 = 0.8493 ha yr^-1
+(their c0 × 1.1643)."""
+
+[[parameter]]
+symbol = "β0_lower"
+quantity = "lower 95% limit of β0 across the 1000 draws"
+value = 0.0037
+units = "ha per 3-day step"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "SI p. 4, line 87"
+verified = true
+
+[[parameter]]
+symbol = "β0_upper"
+quantity = "upper 95% limit of β0 across the 1000 draws"
+value = 0.0125
+units = "ha per 3-day step"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "SI p. 4, line 87"
+verified = true
+
+[[parameter]]
+symbol = "b2"
+quantity = "intercept of logit of the per-encounter transmission probability"
+value = -4.1651
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1; eq. S5"
+verified = true
+notes = "Fit to the best estimates (not published); like b0, b1 it does not summarise the archived draws (0.18 at 10 GE against a draw median of 0.57)."
+
+[[parameter]]
+symbol = "b3"
+quantity = "slope of logit transmission probability on z = ln(load)"
+value = 1.1612
+units = "(ln GE)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1; eq. S5"
+verified = true
+
+# --- Initial load, eq. S7 -----------------------------------------------------------------------
+
+[[parameter]]
+symbol = "μG0"
+quantity = "mean of the normal initial log-load distribution G0"
+value = 5.2983
+units = "ln GE"
+provenance = "E"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1; eq. S7"
+verified = true
+notes = "ln(200) = 5.29832. The archived draws have no initial-load columns, so G0 is the same in every run."
+
+[[parameter]]
+symbol = "σ2G0"
+quantity = "variance of the initial log-load distribution G0"
+value = 0.5
+units = "(ln GE)^2"
+provenance = "E"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1; eq. S7"
+verified = true
+
+# --- Load growth, eqs. S8-S10 -------------------------------------------------------------------
+
+[[parameter]]
+symbol = "b4"
+quantity = "intercept of the expected next log-load, z' = b4 + b5 z + b6 z^2"
+value = 1.0194
+units = "ln GE"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1; eq. S9"
+verified = true
+notes = "Reproduced to 4 decimals by regressing ln L(t+1) on ln L(t) (quadratic) for 10 Beverton-Holt steps (eq. S8) from L0 = 10 with Lmax = 10000 GE and 25 zoospores per zoospore in 5 days (see Lmax_best, growth_best, growth_series_steps)."
+
+[[parameter]]
+symbol = "b5"
+quantity = "linear coefficient of the expected next log-load"
+value = 1.5288
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1; eq. S9"
+verified = true
+
+[[parameter]]
+symbol = "b6"
+quantity = "quadratic coefficient of the expected next log-load"
+value = -0.0692
+units = "(ln GE)^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1; eq. S9"
+verified = true
+
+[[parameter]]
+symbol = "L0_growth"
+quantity = "starting load of the Beverton-Holt series used to fit eq. S9"
+value = 10.0
+units = "GE"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra" }
+location = "SI p. 5, lines 111-112"
+verified = true
+
+[[parameter]]
+symbol = "growth_period"
+quantity = "period over which experts gave zoospores produced per zoospore"
+value = 5.0
+units = "day"
+provenance = "E"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra" }
+location = "SI p. 5, lines 109-111"
+verified = true
+notes = "λ(1 day) = (growth)^(1/5) and λ per 3-day step = λ(1 day)^3."
+
+[[parameter]]
+symbol = "growth_series_steps"
+quantity = "number of Beverton-Holt steps regressed to fit eq. S9"
+value = 10.0
+units = "1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra" }
+location = "inferred (not printed): the only length that reproduces Table S1 b4-b6"
+verified = false
+notes = "A grid over Lmax (5000-20000), growth (10-100) and 2-60 steps: 10 steps with Lmax = 10000 and growth = 25 gives (1.01940, 1.52882, -0.06921); the next best fit is 40 times worse. The IPM R0 hardly depends on it (5 to 30 steps change the median by <0.1%)."
+
+[[parameter]]
+symbol = "Lmax_best"
+quantity = "experts' best estimate of the maximum load per animal"
+value = 10000.0
+units = "GE"
+provenance = "E"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "inferred from Table S1 b4-b6 (not printed); archived draws: median 10808"
+verified = false
+
+[[parameter]]
+symbol = "growth_best"
+quantity = "experts' best estimate of zoospores produced by one zoospore in 5 days"
+value = 25.0
+units = "zoospores zoospore^-1"
+provenance = "E"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "inferred from Table S1 b4-b6 (not printed); archived draws: median 55.7"
+verified = false
+
+[[parameter]]
+symbol = "σ2G"
+quantity = "variance scale of the next log-load, σ²(z) = σ²G exp(b7 z)"
+value = 5.92
+units = "(ln GE)^2"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa", stage = "adult", setting = "lab" }
+location = "Table S1; eq. S10 (from Wilber et al. 2016, Bd)"
+verified = true
+notes = "Borrowed from Bd for lack of Bsal data. Above the cap (z ≥ ln Lmax) the variance is σ²(ln Lmax)."
+
+[[parameter]]
+symbol = "b7"
+quantity = "load coefficient of the growth variance, eq. S10"
+value = -0.049
+units = "(ln GE)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa", stage = "adult", setting = "lab" }
+location = "Table S1; eq. S10 (from Wilber et al. 2016, Bd)"
+verified = true
+
+# --- Host movement --------------------------------------------------------------------------------
+
+[[parameter]]
+symbol = "v_disp"
+quantity = "mean velocity of moving fire salamanders in a typical middle European habitat"
+value = 0.5
+units = "km yr^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1 (Schulte et al. 2007)"
+verified = true
+
+[[parameter]]
+symbol = "lifespan_threshold"
+quantity = "cumulative survival below which an infected cohort counts as dead (life span)"
+value = 0.01
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra" }
+location = "main text lines 171-174"
+verified = true
+
+# --- Densities and the outbreak data (Stegen et al. 2017) ---------------------------------------
+
+[[parameter]]
+symbol = "S0"
+quantity = "initial density of susceptible adults at carrying capacity"
+value = 503.0
+units = "adults ha^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "adult", setting = "Robertville, Belgium" }
+location = "Table S1; SI p. 3, lines 73-75 (95% CI 236-966)"
+verified = true
+notes = "From Stegen et al. (2017) with a 475 m transect and an assumed 10 m search width (0.475 ha). The archived S0 column is (negative binomial count)/0.475, median 490.5."
+
+[[parameter]]
+symbol = "S0_lower"
+quantity = "lower 95% limit of S0"
+value = 236.0
+units = "adults ha^-1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "adult", setting = "Robertville, Belgium" }
+location = "SI p. 3, line 74"
+verified = true
+
+[[parameter]]
+symbol = "S0_upper"
+quantity = "upper 95% limit of S0"
+value = 966.0
+units = "adults ha^-1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "adult", setting = "Robertville, Belgium" }
+location = "SI p. 3, line 74"
+verified = true
+
+[[parameter]]
+symbol = "transect_length"
+quantity = "length of the Stegen et al. (2017) transect"
+value = 475.0
+units = "m"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", setting = "Robertville, Belgium" }
+location = "SI p. 3, line 73"
+verified = true
+
+[[parameter]]
+symbol = "search_width"
+quantity = "assumed search width of the transect"
+value = 10.0
+units = "m"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", setting = "Robertville, Belgium" }
+location = "SI p. 3, lines 73-74"
+verified = true
+
+[[parameter]]
+symbol = "S_inf"
+quantity = "density of adults escaping infection after nine months"
+value = 7.0
+units = "adults ha^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult", setting = "Robertville, Belgium" }
+location = "SI pp. 3-4, lines 76-78"
+verified = true
+notes = "Poisson regression fit to Stegen et al. (2017) Fig. 1a, corrected for a ~10% re-encounter probability (B. Schmidt, pers. comm.)."
+
+[[parameter]]
+symbol = "s_bar"
+quantity = "mean survival probability of infected adults (simplified model)"
+value = 0.542
+units = "1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult", setting = "Robertville, Belgium" }
+location = "Table S1; SI p. 4, line 81 (95% CI 0.191-0.761)"
+verified = true
+notes = "From Stegen et al. (2017); a beta distribution in the paper, whose parameters are not given. Treated as a per-step survival in eqs. S11-S12."
+
+[[parameter]]
+symbol = "s_bar_lower"
+quantity = "lower 95% limit of s̄"
+value = 0.191
+units = "1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "SI p. 4, line 81"
+verified = true
+
+[[parameter]]
+symbol = "s_bar_upper"
+quantity = "upper 95% limit of s̄"
+value = 0.761
+units = "1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "SI p. 4, line 81"
+verified = true
+
+[[parameter]]
+symbol = "I0"
+quantity = "initial density of infected adults entering a healthy population"
+value = 1.0
+units = "adults km^-2"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table S1 ('0 or 1 adults km-2', from Schmidt et al. 2017)"
+verified = true
+notes = "0.01 adults ha^-1 against S0 in ha^-1. Their initial loads are not stated; the package draws them from G0."
+
+# --- Management actions, Table 1 --------------------------------------------------------------
+
+[[parameter]]
+symbol = "body_condition_factor"
+quantity = "multiplier on β(z) for z ≤ ln(100 GE) under action b (and c)"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1, actions b and c(a)"
+verified = true
+
+[[parameter]]
+symbol = "low_load_threshold"
+quantity = "load at or below which actions b and c halve transmission"
+value = 100.0
+units = "GE"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1, actions b and c(a)"
+verified = true
+
+[[parameter]]
+symbol = "growth_factor"
+quantity = "multiplier on the elicited zoospores-per-zoospore value (slowing Bsal growth by 80%)"
+value = 0.2
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1, actions c-e(b): λ = (⁵√(0.2 · data))³"
+verified = true
+
+[[parameter]]
+symbol = "antifungal_efficacy"
+quantity = "proportional reduction of β(z) by the antifungal"
+value = 0.98
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1, actions d and e"
+verified = true
+
+[[parameter]]
+symbol = "antifungal_coverage"
+quantity = "proportion of the population treated at each step under action e"
+value = 0.8
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1, action e: (1 - 0.80 · 0.98) β(z)"
+verified = true
+
+[[parameter]]
+symbol = "thinning_low"
+quantity = "proportion removed before Bsal arrives (action f)"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1, action f: 0.5 · S0"
+verified = true
+
+[[parameter]]
+symbol = "thinning_high"
+quantity = "proportion removed before Bsal arrives (action g)"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "none", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1, action g: 0.1 · S0"
+verified = true
+
+[[parameter]]
+symbol = "removal_rate"
+quantity = "proportion of all adults removed per step after Bsal entry (action h)"
+value = 0.9
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
+location = "Table 1, action h: 0.1 · s(z), 'removal of 90% of all individuals (per time step)'"
+verified = true
+notes = "Applied to s(z) and to s0, since it removes susceptible and infected adults alike."

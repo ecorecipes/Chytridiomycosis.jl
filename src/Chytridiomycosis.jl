@@ -94,6 +94,8 @@ using SciMLBase: DiscreteProblem
 include("ipm.jl")
 include("models/wilber2016.jl")
 include("fitting/wilber2016.jl")
+# Canessa et al. 2018 Bsal integral projection model and management actions
+include("models/canessa2018.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -191,5 +193,12 @@ export IPMMesh, meshpoints, meshwidth, meshedges, IPMKernel, DiscretizedIPM, dis
 export WilberParameters, LoadTransmission, BdIPMProblem, BdIPMSolution, to_discrete_problem,
        stable_load_distribution, mean_time_to_death, vital_rate_elasticities, wilber2016_path,
        load_wilber2016, WilberFit, fit_wilber2016, WilberRegression, growth_rate_bootstrap
+# Canessa et al. 2018 Bsal integral projection model and management actions
+export CanessaDraw, canessa2018_path, load_canessa2018, CanessaAction, canessa_actions,
+       canessa_action, canessa_growth_coefficients, CanessaParameters, canessa_survival,
+       canessa_transmission, canessa_initial_load, canessa_growth_mean, canessa_growth_variance,
+       CanessaIPMProblem, canessa_density_ratio, canessa_cohort_survival, canessa_dispersal,
+       canessa_ensemble, canessa_summary, CanessaSIParameters, CanessaSIProblem,
+       required_reduction, final_size_transmission, final_density_ratio
 
 end # module Chytridiomycosis
