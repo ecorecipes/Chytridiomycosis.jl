@@ -73,7 +73,14 @@ regression = { value = 1.0030, digits = 4 }
 notes = """
 Wiki target R2. Eq. (2.3) with the Table 1 values gives 1.0030, and the residual of the ODE
 right-hand side there is below 1e-10. Rounding of e, d_I or β does not explain the difference.
-The supplement offers no explanation."""
+The supplement offers no explanation. Probable cause, without tuning: the published value is
+(d + e)(d + d_I)/(βe) = 1.002748, which rounds to 1.0027. That is the equilibrium S with the
+density-dependent losses γN of the L and I classes dropped, and the K → ∞ limit of eq. (2.3)
+(S_eq is 1.00287 at K = 50 and 1.00275 at K = 1000). It is the natural approximation when
+γN* = 0.011 yr⁻¹ is small against e and d_I. But the paper prints the exact eq. (2.3), so
+the target stays discrepant. Ruled out: rounding I_eq in the printed form
+S = K - L - I - βKI/(b - d) (S would need I_eq = 0.00489061, not 0.00489056), and the
+365-day rates β = d_I = 365/7, e = 365 (1.0030)."""
 
 [[target]]
 id = "schmidt2017_hopf"
@@ -87,7 +94,15 @@ status = "discrepant"
 regression = { value = 10.21, atol = 0.01 }
 notes = """
 Wiki target R2. The Jacobian at the verified equilibrium gives 10.21, and simulation confirms
-it. Stability changes between K = 10.0 and 10.5."""
+it. Stability changes between K = 10.0 and 10.5. Ruled out: 365-day or rounded rates
+(e = 365: 10.23; β = 365/7: 10.19; d_I = 365/7: 10.22; all three: 10.21); density
+dependence on S only, or on
+recruitment (10.16); the Jacobian at the approximate S_eq = 1.0027 of schmidt2017_S_eq
+(19.4) or at S_eq rounded to 1.0030 (10.42). K_H = 9.5 would need e ≈ 326 yr⁻¹. Time units
+cannot matter (K_H is a density). The complex pair is almost neutral over the whole range:
+Re λ = -0.0011 yr⁻¹ at K = 9.5 (e-folding time ≈ 900 yr; period 1.9 yr) and -0.004 yr⁻¹ at
+K = 8. A threshold read from simulations, or with a coarse step in K, could not separate 9.5
+from 10.2, but nothing in the paper says how K_H was found. Unexplained."""
 
 [[target]]
 id = "schmidt2017_wave_speed"
@@ -600,9 +615,20 @@ tolerance = { atol = 0.5 }
 status = "discrepant"
 regression = { value = 1386.42, atol = 0.05 }
 notes = """
-Ours is 3.3 units lower (a better optimum, the same from several starts). The other model
-with two estimates of both m and β (one d; published 1393.9, ours 1390.6) is lower by the
-same amount. Possibly a local optimum in the original fits; unexplained."""
+Ours is 3.3 units lower (a better optimum, the same from 12 dispersed starts). The other
+model with two estimates of both m and β (one d; published 1393.9, ours 1390.6) is lower by
+the same amount. The published values contradict each other. With n = 595, Table 1's AICc
+imply these maximised log-likelihoods:
+- this model, -685.70, against -684.38 for the model nested in it with one β (published
+  1385.0, ours 1384.86);
+- the pair with one d, -688.83 against -687.46 (published 1389.1, ours 1389.0).
+A model cannot fit worse than a model nested in it. These are the only two violations among
+the nested pairs of Table 1, and the conclusion holds for any n above 25. So the original
+fits of these two models stopped short of the maximum, by 1.57 and 1.61 log-likelihood
+units against ours. The paper used bbmle::mle2. No code was deposited (the figshare item holds
+only the two CSVs and a metadata sheet), so the published numbers cannot be rebuilt.
+Likelihoods that apply one group's m to every tadpole give 1383.5 (ASW) and 1387.7 (ponds),
+not 1389.7."""
 
 [[target]]
 id = "rumschlag2022_fig4a_ASW"
@@ -797,8 +823,9 @@ notes = "Checks the digitisation against the text. λ_F/λ_S = 4.3 (text: ~4) is
 # --- Bozzuto & Canessa 2019, Glob Ecol Conserv 17:e00551 (wiki target R5) -------------------
 # Checked against the PDF and the online Appendix A (Elsevier mmc1.docx). Hibernation uses
 # c2 = 0.95 (Fig. A4 caption), not Table 1's 0.90; see bozzuto2019_table1_c2. Every
-# aestivation number is ~1.6% below the paper's although the seasonal ratios agree: one
-# aestivation input in Table 1 must differ from the value used (unidentified).
+# aestivation number is ~1.6% below the paper's although the seasonal ratios agree. The
+# R0(t) curve of Fig. 2b (digitised in data/bozzuto2019) points to a winter infective period
+# of ≈28.7 days instead of Appendix A1's 26; no documented calculation gives 28.7.
 
 [[target]]
 id = "bozzuto2019_R0_hibernation"
@@ -822,9 +849,28 @@ tolerance = { digits = 2 }
 status = "discrepant"
 regression = { value = 2.0948, atol = 1e-4 }
 notes = """
-0.3647 × 250/(43.40 + 0.125) = 2.095. The paper's own Floquet-R0 (1.92 and 1.80) and peak
-R0(t) (~5.1, Fig. 2b) all imply R0 ≈ 2.127, so a Table 1 aestivation value (c0, k0 or δ0)
-is not the one used. Not resolvable from the paper or appendix."""
+0.3647 × 250/(43.40 + 0.125) = 2.095. The paper's Floquet-R0 values (1.92, numerical 1.92,
+high activity 1.80) and target proportions (≈52%, 47%) all imply R0 ≈ 2.127; all of them
+round correctly only for R0 in 2.125–2.129. Only c0, k0, d and δ0 enter R0 (c1, c2, ℓc, t1
+and t2 do not). Single changes tested:
+- k0 = 253.8 is ruled out. The numerical Floquet-R0 uses S(t) from v = 184, so it would
+  stay at 1.89.
+- d would have to be negative.
+- c0 = 0.3703 and δ0 = 42.74 both reproduce every number, but the shape of the R0(t) curve
+  of Fig. 2b separates them (digitised in data/bozzuto2019; test/bozzuto2019.jl).
+  - A winter infective period of 28.7 days, with the 5-day summer period kept (δ0 = 42.74,
+    δ1 = 0.703), matches the curve: RMS 0.022, about 2 px.
+  - A larger c0 does not: RMS 0.116, 0.21–0.28 too low in winter.
+  - Fitting both infective periods to the curve gives 28.7 and 4.95 days. The same fit on
+    Fig. 2a returns 39.8 and 4.95 days, against the true 40 and 5.
+So the aestivation figures used a longer winter infective period than the 26 days of
+Appendix A1 (1/δ = 40 + 4b, b = -3.5). No documented calculation gives 28.7 days. It would
+need 3.2 °C in that formula instead of 4; the stated 9.6 - 5 = 4.6 °C gives 23.9 days, and a
+365-day year gives R0 = 2.089. So the value is fitted and the target stays discrepant.
+Also ruled out:
+- c0 = 0.7295/2 (2.095);
+- the 1.1643 contact ratio recomputed for the aestivation cycle (about 1.17 by the closest
+  reading of Appendix A1), which lowers c0 instead of raising it."""
 
 [[target]]
 id = "bozzuto2019_floquet_R0_hibernation"
@@ -847,7 +893,9 @@ call = "floquet_reproduction_number(BozzutoParameters(:bozzuto2019; population =
 tolerance = { digits = 2 }
 status = "discrepant"
 regression = { value = 1.8876, atol = 1e-4 }
-notes = "Inherits the R0 offset; the ratio to R0 (0.901) matches the paper's 1.92/2.13."
+notes = """
+Inherits the R0 offset; the ratio to R0 (0.901) matches the paper's 1.92/2.13. With a
+winter infective period of 28.7 days (see bozzuto2019_R0_aestivation) it is 1.917."""
 
 [[target]]
 id = "bozzuto2019_reduction_hibernation"
@@ -904,7 +952,7 @@ floquet_reproduction_number(BozzutoParameters(:bozzuto2019; population = :aestiv
 tolerance = { digits = 2 }
 status = "discrepant"
 regression = { value = 1.8915, atol = 1e-4 }
-notes = "Same R0 offset as bozzuto2019_R0_aestivation."
+notes = "Same R0 offset as bozzuto2019_R0_aestivation; 1.921 with a 28.7-day winter infective period."
 
 [[target]]
 id = "bozzuto2019_high_activity_hibernation"
@@ -929,7 +977,7 @@ floquet_reproduction_number(BozzutoParameters(:bozzuto2019; population = :aestiv
 tolerance = { digits = 2 }
 status = "discrepant"
 regression = { value = 1.7762, atol = 1e-4 }
-notes = "Same R0 offset as bozzuto2019_R0_aestivation."
+notes = "Same R0 offset as bozzuto2019_R0_aestivation; 1.804 with a 28.7-day winter infective period."
 
 [[target]]
 id = "bozzuto2019_table1_c2"
@@ -1131,7 +1179,12 @@ regression = { value = 4.71, atol = 0.01 }
 notes = """
 Per capita ratios of the back-transformed means are 4.7 (no plants) and 2.1 (plants). The
 ratios of TOTAL contacts are 18.8 and 8.3 (arithmetic means: 17.2 and 7.1), so "5–15×" fits
-neither reading exactly."""
+neither reading exactly. Other per capita ratios at 8 vs 2 newts, none spanning 5–15:
+- geometric means of the raw hourly counts: 5.5 (no plants) and 2.7 (plants);
+- by diel period, without plants: 2.8–7.0 (arithmetic) and 3.4–8.9 (geometric); with
+  plants: 1.4–2.6 and 2.3–3.3;
+- by pool: 4.2–6.0 (no plants) and 1.0–3.1 (plants).
+Per pair of newts the ratio is below 1. Unexplained."""
 
 [[target]]
 id = "malagon2020_fig6_prevalence_simple"
@@ -1348,8 +1401,16 @@ tolerance = { digits = 2 }
 status = "discrepant"
 regression = { value = 0.4286, atol = 0.0001 }
 notes = """
-The deposit gives 81/189 = 42.9% of the newts exposed by contact (also the survival file
-DataFile4) and 156/290 = 53.8% of all newts. Neither is 45%."""
+The deposit gives 81/189 = 42.9% of the newts exposed by contact and 156/290 = 53.8% of all
+newts. Neither is 45%. The 42.9% is also the survival file DataFile4 read by the authors'
+Kaplan–Meier code, which has no censoring before day 62. Other readings, none 45%:
+- the initially infected newts: 75/101 = 74%;
+- the mean of per-tank proportions: 37.5% (contact-exposed), 53.5% (all);
+- the mean over density levels: 33.3%;
+- the mean over prevalence levels: 42.9% (contact-exposed), 52.2% (all);
+- deaths by day 59 or 60: the same as by day 62.
+Only one subgroup is 45%: the contact-exposed newts at 25% prevalence (31/69 = 44.9%). That
+is not "total mortality among treatments". Unexplained."""
 
 # --- Drawert et al. 2017, J R Soc Interface 14:20170480 (wiki bd-drawert2017-stochastic-ibm) --
 # Stochastic individual-based Briggs model with one-time interventions. Calls that read

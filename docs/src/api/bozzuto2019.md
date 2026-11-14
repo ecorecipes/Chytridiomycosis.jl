@@ -82,9 +82,23 @@ follow:
 | Elasticity to ℓc (Fig. A5) | ≈2.37, 1.58 | 2.367, 1.581 |
 
 Every aestivation value in the package is about 1.6% below the paper's, while the seasonal
-ratios agree (Floquet-R0/R0 is 0.901 in both). One of the aestivation inputs in Table 1
-(`c₀`, `k₀` or `δ₀`) must differ from the value the authors used, but the paper does not
-say which. These targets are recorded as discrepant in `data/validation/targets.toml`.
+ratios agree (Floquet-R0/R0 is 0.901 in both). The paper's numbers all imply R0 ≈ 2.127.
+Three single changes would give that:
+
+- **`k₀` = 253.8.** Ruled out: the numerical Floquet-R0 would stay at 1.89, because `S(t)`
+  comes from the printed inflow `v` = 184.
+- **`c₀` = 0.3703.** Reproduces every printed number.
+- **A winter infective period of 28.7 days instead of 26** (`δ₀` = 42.74, `δ₁` = 0.703).
+  Also reproduces every printed number.
+
+The R0(t) curve of Fig. 2b, digitised in `data/bozzuto2019`, separates the last two. The
+longer infective period matches its shape to about 2 pixels (RMS 0.022). A larger `c₀`
+leaves the curve 0.2–0.3 too low in winter (RMS 0.12). Fitting both infective periods to the
+curve gives 28.7 and 4.95 days. The same fit on Fig. 2a gives 39.8 and 4.95 days, against
+the documented 40 and 5.
+
+No documented calculation gives 28.7 days. Appendix A1's interpolation gives 26 days. The
+package keeps 26, and these targets stay discrepant in `data/validation/targets.toml`.
 
 ```@docs
 BozzutoParameters

@@ -113,7 +113,8 @@ from the raw swab results, using their false-negative and false-positive rules.
       barely identified (Fig. 4 puts 95% of its profile in [0, 34.2]); κ₁, κ₂ and the NLL
       agree.
     - **Mortality.** The paper reports 45% total mortality. The deposit gives 42.9% of the
-      newts exposed by contact and 53.8% of all newts.
+      newts exposed by contact and 53.8% of all newts. Means over tanks, densities or
+      prevalence levels give 33–54%, but none gives 45%.
     - **The interval for β** is the central 95% of the normalised likelihood, a credible
       interval under a flat prior on the grid, not a likelihood-ratio interval.
 

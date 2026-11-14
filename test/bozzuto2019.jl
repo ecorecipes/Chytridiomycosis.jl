@@ -165,6 +165,40 @@ using Test
         @test target_proportion(C.with(hib; k0 = 1.0)) == 1.0
     end
 
+    @testset "the aestivation offset and Fig. 2 R0(t) (data/bozzuto2019)" begin
+        # The R0(t) curves digitised from Fig. 2 locate the 1.6% aestivation offset in δ(t)
+        rows = [split(l, ',') for l in readlines(joinpath(pkgdir(Chytridiomycosis), "data",
+            "bozzuto2019", "fig2_R0t.csv"))[2:end]]
+        curve(panel) = [(parse(Float64, r[2]), parse(Float64, r[3])) for r in rows if r[1] == panel]
+        function rms(p, pts)
+            m = C.contact_scaling(p)
+            r = [instantaneous_reproduction_number(p, t; inflow = :step, scale = m) - y
+                 for (t, y) in pts]
+            return sqrt(sum(abs2, r) / length(r))
+        end
+        a, b = curve("a"), curve("b")
+        @test length(a) > 400 && length(b) > 400
+        # The digitisation reproduces the hibernation curve with the Table 1 values
+        @test rms(hib, a) < 0.2                                   # 0.14; 1 px = 0.05
+        # Two single changes reach the R0 ≈ 2.127 implied by the paper's other numbers: a
+        # larger c0 (0.3703), or a winter infective period of 28.7 instead of 26 days
+        f = 2.127 / basic_reproduction_number(aes)
+        aes_c0 = C.with(aes; c0 = f * aes.c0)
+        δ0 = (364 / 28.7 + 364 / 5) / 2
+        aes_δ = C.with(aes; δ0 = δ0, δ1 = (364 / 5) / δ0 - 1)
+        for q in (aes_c0, aes_δ)
+            @test round(basic_reproduction_number(q), digits = 2) == 2.13
+            @test round(floquet_reproduction_number(q), digits = 2) == 1.92
+            @test round(floquet_reproduction_number(q; method = :numerical), digits = 2) == 1.92
+            @test round(floquet_reproduction_number(C.with(q; c1 = aes_hi.c1, c2 = aes_hi.c2)),
+                digits = 2) == 1.80
+        end
+        # ...but only the longer winter infective period matches the shape of Fig. 2b
+        @test rms(aes_δ, b) < 0.03                                # 0.022; 1 px = 0.011
+        @test rms(aes_c0, b) > 0.1                                # 0.116
+        @test rms(aes, b) > 0.1                                   # Table 1: 0.147
+    end
+
     @testset "elasticities (Fig. A5)" begin
         e = floquet_elasticities(hib)
         @test e.R0 ≈ 1 rtol = 1e-6
