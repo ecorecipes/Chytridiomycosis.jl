@@ -114,6 +114,13 @@ using Distributions: Distributions, Cauchy, TDist
 include("observation/hmm.jl")
 include("models/wilber2022.jl")
 include("fitting/wilber2022.jl")
+# Multistate capture-recapture survival: generic multi-event / CTMC layer, Hollanders et al.
+# 2023 (load-dependent mortality, robust design) and Palomar et al. 2023 (multi-event)
+include("observation/multistate.jl")
+include("models/hollanders2023.jl")
+include("fitting/hollanders2023.jl")
+include("models/palomar2023.jl")
+include("fitting/palomar2023.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -251,5 +258,18 @@ export wilber2022_path, Wilber2022Data, wilber2022_data, wilber2022_emission,
        outbreak_state_probabilities, outbreak_viterbi, OutbreakHMMFit, looic,
        wilber2022_effect, wilber2022_fit, Wilber2022DeclineProblem, Wilber2022DeclineFit,
        decline_effect, predicted_decline, wilber2022_decline, wilber2022_path_analysis
+# Multistate capture-recapture survival (generic layer, Hollanders 2023, Palomar 2023)
+export ctmc_transition, infection_generator, survival_transition, multievent_emission,
+       robust_design_likelihoods, quasistationary_distribution, MultiEventStructure,
+       MultiEventProblem, multievent_parameters, simulate_capture_histories, MultiEventFit,
+       qaic
+export hollanders2023_path, Hollanders2023Data, load_hollanders2023,
+       hollanders2023_summary_data, load_hazard_ratio, hollanders2023_draws_path,
+       hollanders2023_posterior, CTMultistateProblem, hollanders2023_load_model,
+       CTMultistateFit, hollanders2023_start, hollanders2023_summary, hollanders2023_fit,
+       hollanders2023_refit_path
+export palomar2023_structure, palomar2023_models, palomar2023_parameters,
+       palomar2023_implied_prevalence, palomar2023_model_selection,
+       palomar2023_swabbing_experiment
 
 end # module Chytridiomycosis

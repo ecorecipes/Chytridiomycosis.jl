@@ -4516,3 +4516,457 @@ all(ρ -> all(m -> _wilber2022_looic(m, ρ).mean > _wilber2022_looic(:full, ρ).
 status = "qualitative"
 notes = "The smallest gap is 2.33 (no winter severity, ρ = 0.25; paper 2.30)."
 
+
+# --- multistate survival ---------------------------------------------------------------------------
+# Hollanders et al. 2023, Ecol Appl 33:e2724, and Palomar et al. 2023, Biodivers Conserv 32:793
+# (wiki obs-multistate-survival). Hollanders data are bundled (Dryad, CC0; data/hollanders2023).
+# The targets that read the authors' posterior draws (repository mhollanders/mfleayi-adults, no
+# licence, not bundled) are skipped when hollanders2023_draws_path() finds nothing. The refit
+# targets use the reduced maximum-likelihood refit (CTMultistateProblem), computed once per
+# session; their tolerances were set before the fit to one posterior sd of the published value,
+# (HDI upper − lower)/3.92. Palomar et al. deposited no data: their estimates are pending, and
+# the two discrepant targets compare printed numbers with each other.
+
+[[target]]
+id = "hollanders2023_individuals"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Sampling summary'" }
+quantity = "unique Mixophyes fleayi captured (462 + 136 + 88)"
+published = 686
+call = "sum(hollanders2023_summary_data().individuals)"
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_primary_detections"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Sampling summary'" }
+quantity = "primary-occasion detections"
+published = 1609
+call = "hollanders2023_summary_data().primary_detections"
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_detections"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Sampling summary'" }
+quantity = "detections including recaptures in secondary surveys"
+published = 2384
+call = "hollanders2023_summary_data().detections"
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_infected_detections"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Sampling summary'" }
+quantity = "primary detections of an infected frog"
+published = 248
+call = "hollanders2023_summary_data().infected_detections"
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_observed_gains"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Sampling summary'" }
+quantity = "observations of frogs gaining infection (consecutive captures, gaps ignored, as the code's trans array)"
+published = 118
+call = "hollanders2023_summary_data().gains"
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_observed_clearances"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Sampling summary'" }
+quantity = "observations of frogs clearing infection"
+published = 124
+call = "hollanders2023_summary_data().clearances"
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_load_min"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Sampling summary'" }
+quantity = "smallest observed load, log10 ITS1 copies per swab"
+published = 1.425
+call = "hollanders2023_summary_data().minimum"
+tolerance = { digits = 3 }
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_load_max"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Sampling summary'" }
+quantity = "largest observed load, log10 ITS1 copies per swab"
+published = 6.18
+call = "hollanders2023_summary_data().maximum"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_load_mean"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Discussion ('average observed Bd infection loads, 10^3.17')" }
+quantity = "mean observed load, log10 ITS1 copies per swab (the centre of the load covariate)"
+published = 3.17
+call = "hollanders2023_summary_data().mean"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "3.174; sd 0.911 over the 248 loads. The intensity slope 1.953 is per 2 × 0.911 log10 units, i.e. 1.07 per log10 unit."
+
+[[target]]
+id = "hollanders2023_status_load_slopes"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Apparent mortality rates'" }
+quantity = "largest |ours − printed| over the median and 95% HDI bounds of the status (−0.167 [−1.714, 1.053]) and intensity (1.953 [−0.011, 3.834]) effects, from the authors' draws"
+published = 0.0
+call = "_hollanders2023_slope_deviation()"
+tolerance = { atol = 0.0015 }
+status = "reproduced"
+notes = "The printed summaries are conditional on RJMCMC inclusion (status included in 79.4% of draws, intensity 99.9%); over all draws the status median is 0. Needs the authors' draws."
+
+[[target]]
+id = "hollanders2023_annual_hazard"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Apparent mortality rates'" }
+quantity = "annual apparent mortality hazard averaged over sites, from the authors' draws"
+published = 0.783
+call = "hollanders2023_posterior().annual_hazard.median"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "Site geometric mean of the six-weekly hazard (0.0903) × 52/6; 365.25/42 would give 0.786. HDI [0.571, 0.997] also matches."
+
+[[target]]
+id = "hollanders2023_annual_survival"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results" }
+quantity = "annual apparent survival probability, exp(−annual hazard), from the authors' draws"
+published = 0.457
+call = "hollanders2023_posterior().annual_survival.median"
+tolerance = { digits = 3 }
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_gain"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Infection dynamics'" }
+quantity = "six-weekly hazard of gaining infection, site average, from the authors' draws"
+published = 0.283
+call = "hollanders2023_posterior().gain.median"
+tolerance = { digits = 3 }
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_clearance"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Infection dynamics'" }
+quantity = "six-weekly hazard of clearing infection, site average, from the authors' draws"
+published = 2.623
+call = "hollanders2023_posterior().clearance.median"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "A rate. The review's 'clearance 0.927 per six weeks' is the probability 1 − exp(−2.623)."
+
+[[target]]
+id = "hollanders2023_gain_probability"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Infection dynamics'" }
+quantity = "probability of gaining infection over six weeks, 1 − exp(−rate), from the authors' draws"
+published = 0.246
+call = "hollanders2023_posterior().gain_probability.median"
+tolerance = { digits = 3 }
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_clearance_probability"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Infection dynamics'" }
+quantity = "probability of clearing infection over six weeks, from the authors' draws"
+published = 0.927
+call = "hollanders2023_posterior().clearance_probability.median"
+tolerance = { digits = 3 }
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_gain_rain"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Infection dynamics'" }
+quantity = "rainfall effect on the log hazard of gaining infection (conditional on inclusion), from the authors' draws"
+published = 1.141
+call = "hollanders2023_posterior().gain_rain.median"
+tolerance = { digits = 3 }
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_clear_temperature"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Infection dynamics'" }
+quantity = "temperature effect on the log hazard of clearing infection (conditional on inclusion), from the authors' draws"
+published = 1.101
+call = "hollanders2023_posterior().clear_temperature.median"
+tolerance = { digits = 3 }
+status = "reproduced"
+
+[[target]]
+id = "hollanders2023_mortality_site_range"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results ('ranged from 0.077 to 0.104')" }
+quantity = "smallest and largest site median six-weekly mortality hazard, from the authors' draws"
+published = [0.077, 0.104]
+call = "round.(collect(extrema(hollanders2023_posterior().mortality_sites)); digits = 3)"
+status = "reproduced"
+notes = "Tuntable 0.077, Bat Cave 0.092, Brindle 0.104. Gaining 0.163–0.564 and clearing 2.418–2.892 also match."
+
+[[target]]
+id = "hollanders2023_hazard_ratio_1e5"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Discussion, 'Impact of Bd on individual mortality'" }
+quantity = "median ratio of the mortality hazard at 10^5 ITS1 copies per swab to uninfected, from the authors' draws"
+published = 4.4
+call = "hollanders2023_posterior().hazard_ratio[2][2].median"
+tolerance = { rtol = 0.1 }
+status = "discrepant"
+regression = { value = 6.4606, atol = 0.001 }
+notes = """
+exp(β_status + β_load (5 − 3.174)/(2 × 0.911)) over all 10 000 draws (model-averaged, as the
+Fig. 4 code computes the curve): median 6.46. Other readings tried, none giving 4.4: draws
+conditional on inclusion of both terms (6.22), ratio of the median Fig. 4 curve to the median baseline rate
+(6.41), product at the printed medians (7.07), and the ratio of six-week death probabilities
+(5.1). With the data's scaling, 4.4 and 11 together imply β_load ≈ 1.67 and β_status ≈ −0.19
+(an earlier run?), or with the printed medians a load sd of 1.07 instead of 0.91. Neither is
+documented, so the target stays discrepant."""
+
+[[target]]
+id = "hollanders2023_hazard_ratio_1e6"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Discussion" }
+quantity = "median ratio of the mortality hazard at 10^6 ITS1 copies per swab to uninfected, from the authors' draws"
+published = 11.0
+call = "hollanders2023_posterior().hazard_ratio[3][2].median"
+tolerance = { rtol = 0.1 }
+status = "discrepant"
+regression = { value = 19.0387, atol = 0.001 }
+notes = "Model-averaged draws: 19.0 (conditional on inclusion 18.2; ratio of median curves 19.0; at the printed medians 20.6). Same explanation as hollanders2023_hazard_ratio_1e5."
+
+[[target]]
+id = "hollanders2023_refit_clearance"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Infection dynamics' (2.623 [1.308, 4.961])" }
+quantity = "six-weekly clearing hazard, site geometric mean, reduced maximum-likelihood refit"
+published = 2.623
+call = "hollanders2023_summary(hollanders2023_fit()).clearance.estimate"
+tolerance = { atol = 0.93 }
+status = "reproduced"
+notes = "Ours 2.618 (Wald 95% 1.20–5.75). Tolerance one posterior sd, (4.961 − 1.308)/3.92, set before the fit."
+
+[[target]]
+id = "hollanders2023_refit_gain"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results, 'Infection dynamics' (0.283 [0.12, 0.564])" }
+quantity = "six-weekly gaining hazard, site geometric mean, reduced refit"
+published = 0.283
+call = "hollanders2023_summary(hollanders2023_fit()).gain.estimate"
+tolerance = { atol = 0.113 }
+status = "reproduced"
+notes = "Ours 0.229 (0.091–0.580). The refit has no survey random effects (authors' sd 0.49), so its rate is a mean over surveys, not a median."
+
+[[target]]
+id = "hollanders2023_refit_load_effect"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results ('1.953 [−0.011, 3.834]')" }
+quantity = "intensity effect on log mortality hazard (per 2 sd of log10 load), reduced refit"
+published = 1.953
+call = "hollanders2023_summary(hollanders2023_fit()).phi_load.estimate"
+tolerance = { atol = 0.98 }
+status = "reproduced"
+notes = "Ours 1.290 (Wald 95% −0.82 to 3.46)."
+
+[[target]]
+id = "hollanders2023_refit_clear_temperature"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results ('1.101 [−0.094, 2.302]')" }
+quantity = "temperature effect on the log clearing hazard, reduced refit"
+published = 1.101
+call = "hollanders2023_summary(hollanders2023_fit()).clear_temperature.estimate"
+tolerance = { atol = 0.61 }
+status = "reproduced"
+notes = "Ours 1.106 (−0.02 to 2.22). Tolerance by the same one-sd rule."
+
+[[target]]
+id = "hollanders2023_refit_status_null"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results ('infection status did not have an effect on mortality … pd = 60%')" }
+quantity = "the 95% interval of the status effect on log mortality includes 0, reduced refit"
+published = true
+call = "(s = hollanders2023_summary(hollanders2023_fit()).phi_status; s.lower < 0 < s.upper)"
+status = "qualitative"
+notes = "Ours 1.22 (Wald 95% −1.09 to 3.49)."
+
+[[target]]
+id = "hollanders2023_refit_status_effect"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results ('−0.167 [−1.714, 1.053]')" }
+quantity = "status effect on log mortality hazard (infected at the mean load), reduced refit"
+published = -0.167
+call = "hollanders2023_summary(hollanders2023_fit()).phi_status.estimate"
+tolerance = { atol = 0.71 }
+status = "discrepant"
+regression = { value = 1.2159, atol = 0.05 }
+notes = """
+Ours 1.22 (Wald 95% −1.09 to 3.49; sampling correlation with the intensity effect −0.89). The
+published value is inside our interval, and the profile log-likelihood with the status effect
+fixed at −0.167 (others re-maximised) is only 0.11 below the optimum (LR 0.22, P = 0.64): the
+reduced model hardly separates status from intensity. That profiled fit implies intensity 2.58,
+annual hazard 0.81, rain on gaining 1.44, gain 0.19 and clearance 2.30. A fitted explanation, so
+the target stays discrepant. Untested candidates for the shift of the optimum: the missing
+survey random effects and body condition, and RJMCMC (status excluded in 21% of the authors'
+draws). At the authors' posterior medians mapped onto the reduced model the log-likelihood is
+−3566.7, 23.7 below our optimum."""
+
+[[target]]
+id = "hollanders2023_refit_load_positive"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results ('intensity was associated with increased mortality … pd = 97.5%')" }
+quantity = "the intensity effect is positive with Wald P(β ≤ 0) < 0.05 (the paper's pd > 97.5%, one-sided), reduced refit"
+published = true
+call = "hollanders2023_summary(hollanders2023_fit()).phi_load.estimate > 0 && _hollanders2023_wald_below_zero(:mortality_load) < 0.05"
+status = "discrepant"
+regression = { value = false }
+notes = """
+Ours 1.29 with Wald P(β ≤ 0) = 0.12: positive but not 'present' by the paper's 97.5% rule. The
+reduced refit carries the status and load effects together (sampling correlation −0.89), and the RJMCMC of the paper shrinks the status effect, which sharpens the load
+effect. Not tested further: the authors' model with survey effects and condition is not
+refitted."""
+
+[[target]]
+id = "hollanders2023_refit_annual_hazard"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results ('0.783 [0.571, 0.997]')" }
+quantity = "annual apparent mortality hazard, site geometric mean × 52/6, reduced refit"
+published = 0.783
+call = "hollanders2023_summary(hollanders2023_fit()).annual_hazard.estimate"
+tolerance = { atol = 0.11 }
+status = "discrepant"
+regression = { value = 0.6684, atol = 0.02 }
+notes = """
+Ours 0.668 (Wald 95% 0.37–1.23), just outside one posterior sd (0.115 against 0.109); the
+published value lies inside our interval. Our status effect is larger (1.22), so more of the
+mortality goes to infected frogs and the uninfected baseline is lower (sampling correlation of
+the status effect with the Brindle log intercept −0.93). Not resolved: no single
+documented difference explains it without refitting the full model."""
+
+[[target]]
+id = "hollanders2023_refit_gain_rain"
+model = "obs-multistate-survival"
+source = { ref = "hollanders2023", location = "Results ('1.141 [−0.013, 2.253]')" }
+quantity = "rainfall effect on the log gaining hazard, reduced refit"
+published = 1.141
+call = "hollanders2023_summary(hollanders2023_fit()).gain_rain.estimate"
+tolerance = { atol = 0.58 }
+status = "discrepant"
+regression = { value = 1.9292, atol = 0.05 }
+notes = """
+Ours 1.93 (Wald 95% 0.30–3.58), 0.79 above, outside the one-sd rule (0.58) but with the
+published value inside our interval. The refit has no survey random effects on gaining (the
+authors' sd 0.49), so rainfall, which varies by survey, takes up survey-to-survey variation.
+Plausible, not tested."""
+
+[[target]]
+id = "palomar2023_implied_prevalence"
+model = "obs-multistate-survival"
+source = { ref = "palomar2023", location = "Results (S, ψ means; 'overall prevalence of 27.79%')" }
+quantity = "Bd prevalence among living males implied by the mean annual S_I, S_U, ψ_U→I, ψ_I→U (quasi-stationary), against the observed swab prevalence"
+published = 0.2779
+call = "palomar2023_implied_prevalence()"
+tolerance = { atol = 0.15 }
+status = "discrepant"
+regression = { value = 0.7136, atol = 1e-4 }
+notes = """
+Our arithmetic from printed numbers only (tolerance set before computing). The survivors' long-run
+state mix under the mean survival and transition probabilities is 71% infected (a two-state
+chain without survival gives 0.583/(0.583 + 0.225) = 72%), against 27.8% of swabs positive (both
+sexes; swabbing a random subsample). Hypothesis: the state-dependent δ (δ_U = 1 at the boundary,
+δ_I = 0.119) attributes captures of unknown status to state I, inflating ψ_U→I. It fits
+palomar2023_assignment_design too, but cannot be tested without the histories; the simulation
+palomar2023_swabbing_experiment probes it: on one simulated data set (seed 2023) with survival
+equal in both states, ψ_U→I = 0.2, ψ_I→U = 0.6, δ = 0.43 in both states and the four unswabbed
+years, the published structure returned δ_U = 1.000, δ_I = 0.112, ψ_U→I = 0.66 and ψ_I→U = 0.25
+(the published pattern, transitions reversed) but unbiased survival. A simulation, not the
+data, so the target stays discrepant."""
+
+[[target]]
+id = "palomar2023_assignment_design"
+model = "obs-multistate-survival"
+source = { ref = "palomar2023", location = "Methods 'Sampling' (588 of 1369 captures swabbed, random subsample); Results (δ_U = 1.000)" }
+quantity = "state-assignment probability of an encountered Bd-negative toad, δ_U, against the fraction of captures swabbed (random subsampling makes δ state-independent)"
+published = 1.0
+call = "parameter_set(:palomar2023).swabbed_captures / parameter_set(:palomar2023).captures_2008_2016"
+tolerance = { atol = 0.15 }
+status = "discrepant"
+regression = { value = 0.4295, atol = 1e-4 }
+notes = """
+If the toads swabbed were a random subsample, the probability that a capture's status is
+recorded cannot depend on the toad's state, and should be near 588/1369 = 0.43 (lower still if
+2006–2007 and 2017–2018, unswabbed, are included). The published δ_U = 1.000 (no SE) and
+δ_I = 0.119 are not consistent with that. Same hypothesis as palomar2023_implied_prevalence."""
+
+[[target]]
+id = "palomar2023_survival_infected"
+model = "obs-multistate-survival"
+source = { ref = "palomar2023", location = "Results ('SI = 0.754 ± 0.016')" }
+quantity = "mean annual survival of Bd-positive males, multi-event model 1"
+published = 0.754
+status = "pending"
+notes = "Capture histories not deposited (data/palomar2023/README.md). Fit with solve(MultiEventProblem(H, palomar2023_structure())) once available."
+
+[[target]]
+id = "palomar2023_survival_uninfected"
+model = "obs-multistate-survival"
+source = { ref = "palomar2023", location = "Results ('SU = 0.883 ± 0.027')" }
+quantity = "mean annual survival of Bd-negative males, multi-event model 1"
+published = 0.883
+status = "pending"
+notes = "Data not deposited."
+
+[[target]]
+id = "palomar2023_infection"
+model = "obs-multistate-survival"
+source = { ref = "palomar2023", location = "Results ('ΨU→I = 0.583 ± 0.039')" }
+quantity = "mean annual probability of becoming Bd-positive"
+published = 0.583
+status = "pending"
+notes = "Data not deposited."
+
+[[target]]
+id = "palomar2023_clearance"
+model = "obs-multistate-survival"
+source = { ref = "palomar2023", location = "Results ('ΨI→U = 0.225 ± 0.019')" }
+quantity = "mean annual probability of becoming Bd-negative"
+published = 0.225
+status = "pending"
+notes = "Data not deposited."
+
+[[target]]
+id = "palomar2023_assignment_infected"
+model = "obs-multistate-survival"
+source = { ref = "palomar2023", location = "Results ('δI = 0.119 ± 0.011')" }
+quantity = "state-assignment probability of an encountered Bd-positive toad"
+published = 0.119
+status = "pending"
+notes = "Data not deposited."
+
+[[target]]
+id = "palomar2023_qaic_best"
+model = "obs-multistate-survival"
+source = { ref = "palomar2023", location = "Table 1" }
+quantity = "model 1 (S state + time, ψ state * time, p time, δ state) has the lowest QAIC (4293.7, ĉ = 1.474)"
+published = true
+status = "pending"
+notes = "palomar2023_model_selection(H) fits all 13 models once the histories are available."
+
+[[target]]
+id = "palomar2023_pradel_lambda"
+model = "obs-multistate-survival"
+source = { ref = "palomar2023", location = "Results, 'Pradel model'" }
+quantity = "geometric mean annual population growth rate λ (Pradel model, MARK)"
+published = 0.92
+status = "pending"
+notes = "The Pradel (1996) temporal-symmetry model is not implemented, and the data are not deposited."
