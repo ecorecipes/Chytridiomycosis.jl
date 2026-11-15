@@ -109,6 +109,11 @@ include("observation/load_units.jl")
 include("observation/load_likelihood.jl")
 include("observation/load_taylor.jl")
 include("observation/load_operators.jl")
+# Generic HMM layer; Wilber et al. 2022 outbreak-state HMM and its companion analyses
+using Distributions: Distributions, Cauchy, TDist
+include("observation/hmm.jl")
+include("models/wilber2022.jl")
+include("fitting/wilber2022.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -236,5 +241,15 @@ export QPCRStandardCurve, qpcr_efficiency, standard_quantity, cycle_threshold, l
        TaylorPowerLawProblem, load_moments, SchrockGroup, schrock2024_path, load_schrock2024,
        schrock_taylor_slopes, SwabLoadDistribution, detection_probability, swab_logpdf,
        swab_loglikelihood, swab_distribution
+# Generic hidden Markov models
+export hmm_forward, hmm_loglikelihood, hmm_backward, hmm_posterior, hmm_viterbi, hmm_sample,
+       CategoricalEmission, emission_likelihoods, CovariateTransitions, HMMLogDensity
+# Wilber et al. 2022 outbreak-state HMM, decline regression and path analysis
+export wilber2022_path, Wilber2022Data, wilber2022_data, wilber2022_emission,
+       OutbreakHMMProblem, Wilber2022Parameters, wilber2022_parameters,
+       outbreak_transition_matrix, outbreak_rates, outbreak_sequences,
+       outbreak_state_probabilities, outbreak_viterbi, OutbreakHMMFit, looic,
+       wilber2022_effect, wilber2022_fit, Wilber2022DeclineProblem, Wilber2022DeclineFit,
+       decline_effect, predicted_decline, wilber2022_decline, wilber2022_path_analysis
 
 end # module Chytridiomycosis
