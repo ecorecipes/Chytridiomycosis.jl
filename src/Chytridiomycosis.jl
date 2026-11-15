@@ -102,6 +102,13 @@ include("fitting/wilber2017.jl")
 include("models/canessa2018.jl")
 # Louca et al. 2014 DOI-distribution model of adults and tadpoles, Q_o and extinction risk
 include("models/louca2014.jl")
+# Load observation layer: qPCR units map, load likelihoods, Taylor's power law, operators
+using Distributions: Gamma, Weibull, Exponential, TDist, logdiffcdf, mean, var,
+    DiscreteUnivariateDistribution
+include("observation/load_units.jl")
+include("observation/load_likelihood.jl")
+include("observation/load_taylor.jl")
+include("observation/load_operators.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -222,5 +229,12 @@ export LoucaParameters, LoucaDOIProblem, tadpoles_tolerate, louca_breeding_shape
        louca_transmission_from_growth, louca_endemic_transmission, louca_outcome,
        louca_ranges, louca_sample, louca_monte_carlo, louca_risk_effects,
        louca_outcome_probabilities, louca2014_path, load_louca2014
+# Load observation layer
+export QPCRStandardCurve, qpcr_efficiency, standard_quantity, cycle_threshold, longo_strains,
+       strain_copy_number, restandardize, dsdna_mass, genome_equivalents, shed_viability,
+       LoadHurdleModel, hurdle_distribution, fit_positive_loads, compare_load_families,
+       TaylorPowerLawProblem, load_moments, SchrockGroup, schrock2024_path, load_schrock2024,
+       schrock_taylor_slopes, SwabLoadDistribution, detection_probability, swab_logpdf,
+       swab_loglikelihood, swab_distribution
 
 end # module Chytridiomycosis

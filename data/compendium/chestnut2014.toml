@@ -1,0 +1,101 @@
+# Chestnut T, Anderson C, Popa R, Blaustein AR, Voytek M, Olson DH, Kirshtein J (2014)
+# Heterogeneous occupancy and density estimates of the pathogenic fungus Batrachochytrium
+# dendrobatidis in waters of North America. PLoS ONE 9:e106790.
+# https://doi.org/10.1371/journal.pone.0106790
+# Checked against the PDF, 2026-11-14. Filtered pond water (20-600 mL per sample), qPCR with
+# a SYBR green kit. Densities are reported as "zoospores per L" after dividing the qPCR
+# quantity by a conversion factor of 169 copies per zoospore from their own dilution series,
+# so "genomic equivalents are 169 times greater than the numbers we report" (Methods). 169 is
+# above the 10-144 copies per zoospore Longo et al. (2013) found among eight strains.
+
+source = { ref = "chestnut2014", doi = "10.1371/journal.pone.0106790", review_ref = 50 }
+
+[[parameter]]
+symbol = "copies_per_zoospore"
+quantity = "conversion factor from qPCR genomic equivalents to reported zoospores"
+value = 169.0
+units = "copies zoospore^-1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", setting = "lab" }
+location = "Methods, laboratory methods"
+verified = true
+
+[[parameter]]
+symbol = "quantitative_limit"
+quantity = "qPCR detection limit for a quantitative result"
+value = 10.0
+units = "genomic equivalents"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "field" }
+location = "Discussion"
+verified = true
+
+[[parameter]]
+symbol = "density_mean"
+quantity = "overall mean zoospore density over the 41 sites"
+value = 40.0
+units = "zoospores L^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", setting = "field" }
+location = "Results, all sites; Fig. 2"
+verified = true
+
+[[parameter]]
+symbol = "density_median"
+quantity = "overall median zoospore density over the 41 sites"
+value = 15.0
+units = "zoospores L^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", setting = "field" }
+location = "Results, all sites; Fig. 2"
+verified = true
+
+[[parameter]]
+symbol = "density_max"
+quantity = "highest zoospore density of one filter over the 41 sites (a Nevada site in May)"
+value = 4924.0
+units = "zoospores L^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", setting = "field" }
+location = "Results, all sites"
+verified = true
+notes = "The other two filters at that site were negative. The second Nevada site gave 2,109 on one filter and 192 and 227 on the other two."
+
+[[parameter]]
+symbol = "density_nevada_second"
+quantity = "zoospore density of the highest filter at the second Nevada site"
+value = 2109.0
+units = "zoospores L^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", setting = "field" }
+location = "Results, all sites"
+verified = true
+
+[[parameter]]
+symbol = "density_oregon_mean"
+quantity = "mean zoospore density at the Oregon case-study site"
+value = 100.0
+units = "zoospores L^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", setting = "field" }
+location = "Results, all sites"
+verified = true
+
+[[parameter]]
+symbol = "density_extreme"
+quantity = "highest zoospore density of one filter (Oregon case study, March 2011)"
+value = 3159289.0
+units = "zoospores L^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", setting = "field" }
+location = "Results, Oregon case study; Fig. 3"
+verified = true
+notes = "The other two filters of that visit read 0 and 4 zoospores L^-1. The authors suggest the filter caught a free-floating colony of zoosporangia."

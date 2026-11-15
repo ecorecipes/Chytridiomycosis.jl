@@ -28,3 +28,904 @@ role = "uncertain"
 system = { pathogen = "Bd", isolate = "CLFT023", setting = "culture" }
 location = "Abstract; Results, Fig. 4A"
 verified = true
+
+# ---------------------------------------------------------------------------------------
+# Added 2026-11-14 for the load observation layer (src/observation/load_units.jl), checked
+# against the PDF: Methods (Standard Sets A-C), Table 1 and the bar labels of Fig. 4.
+# Fig. 4 is a raster image whose bars carry printed value labels; those labels are
+# transcribed, not digitised. pdftotext renders the minus signs of Table 1 as "2"
+# (y = 23.13x + 31.6 is y = -3.13x + 31.6).
+
+[[parameter]]
+symbol = "amplicon_bp"
+quantity = "length of the M13 PCR amplicon used as the absolute ITS1 standard (146 bp insert plus 254 bp vector)"
+value = 400.0
+units = "bp"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", isolate = "JEL427", setting = "culture" }
+location = "Methods, Bd strain comparison"
+verified = true
+
+[[parameter]]
+symbol = "bp_mass"
+quantity = "average mass of one base pair, as printed"
+value = 660.0
+units = "Da bp^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "culture" }
+location = "Methods, Bd strain comparison"
+verified = true
+notes = "The printed amplicon mass (4.10e-10 ng) does not follow from 400 bp x 660 Da (4.38e-10 ng); it follows from the standard dsDNA formula (617.96 bp + 36.04) g/mol. See amplicon_mass and the validation target longo2013_amplicon_mass."
+
+[[parameter]]
+symbol = "amplicon_mass"
+quantity = "mass of one copy of the ITS1/5.8S amplicon fragment"
+value = 4.10e-10
+units = "ng copy^-1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", setting = "culture" }
+location = "Methods, Bd strain comparison"
+verified = true
+
+[[parameter]]
+symbol = "genome_bp"
+quantity = "diploid genome size used to convert DNA mass to zoospores"
+value = 46.0e6
+units = "bp"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "culture" }
+location = "Methods, Standard Set B (citing ref. 16)"
+verified = true
+
+[[parameter]]
+symbol = "standard_B_top"
+quantity = "top concentration of the equimolar DNA standards (Standard Set B)"
+value = 0.3
+units = "ng uL^-1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", setting = "culture" }
+location = "Methods, Standard Set B"
+verified = true
+
+[[parameter]]
+symbol = "zoospores_in_standard_B_top"
+quantity = "zoospores whose genomes make up the top Standard Set B concentration (printed as roughly 6,000 per uL)"
+value = 6000.0
+units = "zoospores uL^-1"
+provenance = "D"
+role = "structural"
+system = { pathogen = "Bd", setting = "culture" }
+location = "Methods, Standard Set B"
+verified = true
+notes = "Approximate (printed with ~). Derived in the paper from 0.3 ng uL^-1 and a 46 Mb diploid genome."
+
+[[parameter]]
+symbol = "copies_per_1_5ng_text_min"
+quantity = "lowest ITS1 copy number in 1.5 ng of DNA, as stated in the text"
+value = 6.0e5
+units = "copies (1.5 ng DNA)^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", setting = "culture" }
+location = "Results, ITS1/5.8S copy number"
+verified = true
+
+[[parameter]]
+symbol = "copies_per_1_5ng_text_max"
+quantity = "highest ITS1 copy number in 1.5 ng of DNA, as stated in the text"
+value = 6.0e6
+units = "copies (1.5 ng DNA)^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", setting = "culture" }
+location = "Results, ITS1/5.8S copy number"
+verified = true
+notes = "Fig. 4B's highest bar (LBAbercrom) is labelled 6.4 x 10^6, not 6.0 x 10^6; see the validation target longo2013_copies_1_5ng_max."
+
+# Per-strain records, one named set per strain, e.g. parameter_set(:longo2013; set = "CLFT023").
+# Strains: JEL404, MexMkt, JEL427, PAB01, LFT001_01, CLFT023, CLFT024, LBAbercrom (Table 1 order).
+
+# --- JEL404 (USA (Maine))
+
+[[parameter]]
+set = "JEL404"
+symbol = "copies_per_zoospore"
+quantity = "ITS1/5.8S copies per zoospore of strain JEL404 (amplicon standard, Standard Set C)"
+value = 39.0
+units = "copies zoospore^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "JEL404", setting = "culture" }
+location = "Fig. 4A (bar label)"
+verified = true
+
+[[parameter]]
+set = "JEL404"
+symbol = "copies_per_1_5ng"
+quantity = "ITS1/5.8S copies in 1.5 ng of genomic DNA of strain JEL404"
+value = 2100000.0
+units = "copies (1.5 ng DNA)^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "JEL404", setting = "culture" }
+location = "Fig. 4B (bar label, in units of 10^6)"
+verified = true
+
+[[parameter]]
+set = "JEL404"
+symbol = "ct_slope_A"
+quantity = "slope of Ct on log10 zoospores per reaction, zoospore-count standards of JEL404"
+value = -3.13
+units = "Ct (log10 zoospores)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL404", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+notes = "x = log10 zoospore genomic equivalents per 5 uL reaction (Fig. 2). pdftotext renders the minus sign as 2."
+
+[[parameter]]
+set = "JEL404"
+symbol = "ct_intercept_A"
+quantity = "Ct at one zoospore per reaction, zoospore-count standards of JEL404"
+value = 31.6
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL404", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "JEL404"
+symbol = "efficiency_A"
+quantity = "printed amplification efficiency (10^(-1/slope) - 1) of the zoospore-count standards of JEL404"
+value = 109.0
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL404", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "JEL404"
+symbol = "ct_slope_B"
+quantity = "slope of Ct on log10 DNA concentration, equimolar DNA standards of JEL404"
+value = -3.42
+units = "Ct (log10 ng uL^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL404", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+notes = "x = log10 DNA concentration in ng per uL (Fig. 3)."
+
+[[parameter]]
+set = "JEL404"
+symbol = "ct_intercept_B"
+quantity = "Ct at 1 ng per uL, equimolar DNA standards of JEL404"
+value = 14.3
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL404", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+[[parameter]]
+set = "JEL404"
+symbol = "efficiency_B"
+quantity = "printed amplification efficiency of the equimolar DNA standards of JEL404"
+value = 96.1
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL404", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+# --- MexMkt (Mexico)
+
+[[parameter]]
+set = "MexMkt"
+symbol = "copies_per_zoospore"
+quantity = "ITS1/5.8S copies per zoospore of strain MexMkt (amplicon standard, Standard Set C)"
+value = 10.0
+units = "copies zoospore^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "MexMkt", setting = "culture" }
+location = "Fig. 4A (bar label)"
+verified = true
+
+[[parameter]]
+set = "MexMkt"
+symbol = "copies_per_1_5ng"
+quantity = "ITS1/5.8S copies in 1.5 ng of genomic DNA of strain MexMkt"
+value = 700000.0
+units = "copies (1.5 ng DNA)^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "MexMkt", setting = "culture" }
+location = "Fig. 4B (bar label, in units of 10^6)"
+verified = true
+
+[[parameter]]
+set = "MexMkt"
+symbol = "ct_slope_A"
+quantity = "slope of Ct on log10 zoospores per reaction, zoospore-count standards of MexMkt"
+value = -3.31
+units = "Ct (log10 zoospores)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "MexMkt", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+notes = "x = log10 zoospore genomic equivalents per 5 uL reaction (Fig. 2). pdftotext renders the minus sign as 2."
+
+[[parameter]]
+set = "MexMkt"
+symbol = "ct_intercept_A"
+quantity = "Ct at one zoospore per reaction, zoospore-count standards of MexMkt"
+value = 33.9
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "MexMkt", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "MexMkt"
+symbol = "efficiency_A"
+quantity = "printed amplification efficiency (10^(-1/slope) - 1) of the zoospore-count standards of MexMkt"
+value = 101.0
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "MexMkt", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "MexMkt"
+symbol = "ct_slope_B"
+quantity = "slope of Ct on log10 DNA concentration, equimolar DNA standards of MexMkt"
+value = -3.48
+units = "Ct (log10 ng uL^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "MexMkt", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+notes = "x = log10 DNA concentration in ng per uL (Fig. 3)."
+
+[[parameter]]
+set = "MexMkt"
+symbol = "ct_intercept_B"
+quantity = "Ct at 1 ng per uL, equimolar DNA standards of MexMkt"
+value = 15.9
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "MexMkt", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+[[parameter]]
+set = "MexMkt"
+symbol = "efficiency_B"
+quantity = "printed amplification efficiency of the equimolar DNA standards of MexMkt"
+value = 93.8
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "MexMkt", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+# --- JEL427 (Puerto Rico)
+
+[[parameter]]
+set = "JEL427"
+symbol = "copies_per_zoospore"
+quantity = "ITS1/5.8S copies per zoospore of strain JEL427 (amplicon standard, Standard Set C)"
+value = 65.0
+units = "copies zoospore^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "JEL427", setting = "culture" }
+location = "Fig. 4A (bar label)"
+verified = true
+
+[[parameter]]
+set = "JEL427"
+symbol = "copies_per_1_5ng"
+quantity = "ITS1/5.8S copies in 1.5 ng of genomic DNA of strain JEL427"
+value = 1900000.0
+units = "copies (1.5 ng DNA)^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "JEL427", setting = "culture" }
+location = "Fig. 4B (bar label, in units of 10^6)"
+verified = true
+
+[[parameter]]
+set = "JEL427"
+symbol = "ct_slope_A"
+quantity = "slope of Ct on log10 zoospores per reaction, zoospore-count standards of JEL427"
+value = -3.15
+units = "Ct (log10 zoospores)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL427", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+notes = "x = log10 zoospore genomic equivalents per 5 uL reaction (Fig. 2). pdftotext renders the minus sign as 2."
+
+[[parameter]]
+set = "JEL427"
+symbol = "ct_intercept_A"
+quantity = "Ct at one zoospore per reaction, zoospore-count standards of JEL427"
+value = 30.8
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL427", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "JEL427"
+symbol = "efficiency_A"
+quantity = "printed amplification efficiency (10^(-1/slope) - 1) of the zoospore-count standards of JEL427"
+value = 108.0
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL427", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "JEL427"
+symbol = "ct_slope_B"
+quantity = "slope of Ct on log10 DNA concentration, equimolar DNA standards of JEL427"
+value = -3.44
+units = "Ct (log10 ng uL^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL427", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+notes = "x = log10 DNA concentration in ng per uL (Fig. 3)."
+
+[[parameter]]
+set = "JEL427"
+symbol = "ct_intercept_B"
+quantity = "Ct at 1 ng per uL, equimolar DNA standards of JEL427"
+value = 14.5
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL427", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+[[parameter]]
+set = "JEL427"
+symbol = "efficiency_B"
+quantity = "printed amplification efficiency of the equimolar DNA standards of JEL427"
+value = 95.3
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL427", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+# --- PAB01 (Puerto Rico)
+
+[[parameter]]
+set = "PAB01"
+symbol = "copies_per_zoospore"
+quantity = "ITS1/5.8S copies per zoospore of strain PAB01 (amplicon standard, Standard Set C)"
+value = 59.0
+units = "copies zoospore^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "PAB01", setting = "culture" }
+location = "Fig. 4A (bar label)"
+verified = true
+
+[[parameter]]
+set = "PAB01"
+symbol = "copies_per_1_5ng"
+quantity = "ITS1/5.8S copies in 1.5 ng of genomic DNA of strain PAB01"
+value = 600000.0
+units = "copies (1.5 ng DNA)^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "PAB01", setting = "culture" }
+location = "Fig. 4B (bar label, in units of 10^6)"
+verified = true
+
+[[parameter]]
+set = "PAB01"
+symbol = "ct_slope_A"
+quantity = "slope of Ct on log10 zoospores per reaction, zoospore-count standards of PAB01"
+value = -3.05
+units = "Ct (log10 zoospores)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "PAB01", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+notes = "x = log10 zoospore genomic equivalents per 5 uL reaction (Fig. 2). pdftotext renders the minus sign as 2."
+
+[[parameter]]
+set = "PAB01"
+symbol = "ct_intercept_A"
+quantity = "Ct at one zoospore per reaction, zoospore-count standards of PAB01"
+value = 30.8
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "PAB01", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "PAB01"
+symbol = "efficiency_A"
+quantity = "printed amplification efficiency (10^(-1/slope) - 1) of the zoospore-count standards of PAB01"
+value = 113.0
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "PAB01", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "PAB01"
+symbol = "ct_slope_B"
+quantity = "slope of Ct on log10 DNA concentration, equimolar DNA standards of PAB01"
+value = -3.28
+units = "Ct (log10 ng uL^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "PAB01", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+notes = "x = log10 DNA concentration in ng per uL (Fig. 3)."
+
+[[parameter]]
+set = "PAB01"
+symbol = "ct_intercept_B"
+quantity = "Ct at 1 ng per uL, equimolar DNA standards of PAB01"
+value = 16.3
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "PAB01", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+[[parameter]]
+set = "PAB01"
+symbol = "efficiency_B"
+quantity = "printed amplification efficiency of the equimolar DNA standards of PAB01"
+value = 102.0
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "PAB01", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+# --- LFT001_01 (Brazil)
+
+[[parameter]]
+set = "LFT001_01"
+symbol = "copies_per_zoospore"
+quantity = "ITS1/5.8S copies per zoospore of strain LFT001_01 (amplicon standard, Standard Set C)"
+value = 125.0
+units = "copies zoospore^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "LFT001_01", setting = "culture" }
+location = "Fig. 4A (bar label)"
+verified = true
+
+[[parameter]]
+set = "LFT001_01"
+symbol = "copies_per_1_5ng"
+quantity = "ITS1/5.8S copies in 1.5 ng of genomic DNA of strain LFT001_01"
+value = 2300000.0
+units = "copies (1.5 ng DNA)^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "LFT001_01", setting = "culture" }
+location = "Fig. 4B (bar label, in units of 10^6)"
+verified = true
+
+[[parameter]]
+set = "LFT001_01"
+symbol = "ct_slope_A"
+quantity = "slope of Ct on log10 zoospores per reaction, zoospore-count standards of LFT001_01"
+value = -3.36
+units = "Ct (log10 zoospores)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LFT001_01", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+notes = "x = log10 zoospore genomic equivalents per 5 uL reaction (Fig. 2). pdftotext renders the minus sign as 2."
+
+[[parameter]]
+set = "LFT001_01"
+symbol = "ct_intercept_A"
+quantity = "Ct at one zoospore per reaction, zoospore-count standards of LFT001_01"
+value = 30.5
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LFT001_01", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "LFT001_01"
+symbol = "efficiency_A"
+quantity = "printed amplification efficiency (10^(-1/slope) - 1) of the zoospore-count standards of LFT001_01"
+value = 98.4
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LFT001_01", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "LFT001_01"
+symbol = "ct_slope_B"
+quantity = "slope of Ct on log10 DNA concentration, equimolar DNA standards of LFT001_01"
+value = -3.48
+units = "Ct (log10 ng uL^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LFT001_01", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+notes = "x = log10 DNA concentration in ng per uL (Fig. 3)."
+
+[[parameter]]
+set = "LFT001_01"
+symbol = "ct_intercept_B"
+quantity = "Ct at 1 ng per uL, equimolar DNA standards of LFT001_01"
+value = 14.3
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LFT001_01", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+[[parameter]]
+set = "LFT001_01"
+symbol = "efficiency_B"
+quantity = "printed amplification efficiency of the equimolar DNA standards of LFT001_01"
+value = 93.8
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LFT001_01", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+# --- CLFT023 (Brazil)
+
+[[parameter]]
+set = "CLFT023"
+symbol = "copies_per_zoospore"
+quantity = "ITS1/5.8S copies per zoospore of strain CLFT023 (amplicon standard, Standard Set C)"
+value = 144.0
+units = "copies zoospore^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "CLFT023", setting = "culture" }
+location = "Fig. 4A (bar label)"
+verified = true
+
+[[parameter]]
+set = "CLFT023"
+symbol = "copies_per_1_5ng"
+quantity = "ITS1/5.8S copies in 1.5 ng of genomic DNA of strain CLFT023"
+value = 5200000.0
+units = "copies (1.5 ng DNA)^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "CLFT023", setting = "culture" }
+location = "Fig. 4B (bar label, in units of 10^6)"
+verified = true
+
+[[parameter]]
+set = "CLFT023"
+symbol = "ct_slope_A"
+quantity = "slope of Ct on log10 zoospores per reaction, zoospore-count standards of CLFT023"
+value = -3.35
+units = "Ct (log10 zoospores)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT023", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+notes = "x = log10 zoospore genomic equivalents per 5 uL reaction (Fig. 2). pdftotext renders the minus sign as 2."
+
+[[parameter]]
+set = "CLFT023"
+symbol = "ct_intercept_A"
+quantity = "Ct at one zoospore per reaction, zoospore-count standards of CLFT023"
+value = 30.4
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT023", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "CLFT023"
+symbol = "efficiency_A"
+quantity = "printed amplification efficiency (10^(-1/slope) - 1) of the zoospore-count standards of CLFT023"
+value = 98.8
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT023", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "CLFT023"
+symbol = "ct_slope_B"
+quantity = "slope of Ct on log10 DNA concentration, equimolar DNA standards of CLFT023"
+value = -3.36
+units = "Ct (log10 ng uL^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT023", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+notes = "x = log10 DNA concentration in ng per uL (Fig. 3)."
+
+[[parameter]]
+set = "CLFT023"
+symbol = "ct_intercept_B"
+quantity = "Ct at 1 ng per uL, equimolar DNA standards of CLFT023"
+value = 13.2
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT023", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+[[parameter]]
+set = "CLFT023"
+symbol = "efficiency_B"
+quantity = "printed amplification efficiency of the equimolar DNA standards of CLFT023"
+value = 98.4
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT023", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+# --- CLFT024 (Brazil)
+
+[[parameter]]
+set = "CLFT024"
+symbol = "copies_per_zoospore"
+quantity = "ITS1/5.8S copies per zoospore of strain CLFT024 (amplicon standard, Standard Set C)"
+value = 118.0
+units = "copies zoospore^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "CLFT024", setting = "culture" }
+location = "Fig. 4A (bar label)"
+verified = true
+
+[[parameter]]
+set = "CLFT024"
+symbol = "copies_per_1_5ng"
+quantity = "ITS1/5.8S copies in 1.5 ng of genomic DNA of strain CLFT024"
+value = 1200000.0
+units = "copies (1.5 ng DNA)^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "CLFT024", setting = "culture" }
+location = "Fig. 4B (bar label, in units of 10^6)"
+verified = true
+
+[[parameter]]
+set = "CLFT024"
+symbol = "ct_slope_A"
+quantity = "slope of Ct on log10 zoospores per reaction, zoospore-count standards of CLFT024"
+value = -3.35
+units = "Ct (log10 zoospores)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT024", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+notes = "x = log10 zoospore genomic equivalents per 5 uL reaction (Fig. 2). pdftotext renders the minus sign as 2."
+
+[[parameter]]
+set = "CLFT024"
+symbol = "ct_intercept_A"
+quantity = "Ct at one zoospore per reaction, zoospore-count standards of CLFT024"
+value = 30.5
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT024", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "CLFT024"
+symbol = "efficiency_A"
+quantity = "printed amplification efficiency (10^(-1/slope) - 1) of the zoospore-count standards of CLFT024"
+value = 98.8
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT024", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "CLFT024"
+symbol = "ct_slope_B"
+quantity = "slope of Ct on log10 DNA concentration, equimolar DNA standards of CLFT024"
+value = -3.52
+units = "Ct (log10 ng uL^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT024", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+notes = "x = log10 DNA concentration in ng per uL (Fig. 3)."
+
+[[parameter]]
+set = "CLFT024"
+symbol = "ct_intercept_B"
+quantity = "Ct at 1 ng per uL, equimolar DNA standards of CLFT024"
+value = 15.1
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT024", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+[[parameter]]
+set = "CLFT024"
+symbol = "efficiency_B"
+quantity = "printed amplification efficiency of the equimolar DNA standards of CLFT024"
+value = 92.3
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "CLFT024", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+# --- LBAbercrom (Australia)
+
+[[parameter]]
+set = "LBAbercrom"
+symbol = "copies_per_zoospore"
+quantity = "ITS1/5.8S copies per zoospore of strain LBAbercrom (amplicon standard, Standard Set C)"
+value = 107.0
+units = "copies zoospore^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "LBAbercrom", setting = "culture" }
+location = "Fig. 4A (bar label)"
+verified = true
+
+[[parameter]]
+set = "LBAbercrom"
+symbol = "copies_per_1_5ng"
+quantity = "ITS1/5.8S copies in 1.5 ng of genomic DNA of strain LBAbercrom"
+value = 6400000.0
+units = "copies (1.5 ng DNA)^-1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "LBAbercrom", setting = "culture" }
+location = "Fig. 4B (bar label, in units of 10^6)"
+verified = true
+
+[[parameter]]
+set = "LBAbercrom"
+symbol = "ct_slope_A"
+quantity = "slope of Ct on log10 zoospores per reaction, zoospore-count standards of LBAbercrom"
+value = -3.22
+units = "Ct (log10 zoospores)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LBAbercrom", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+notes = "x = log10 zoospore genomic equivalents per 5 uL reaction (Fig. 2). pdftotext renders the minus sign as 2."
+
+[[parameter]]
+set = "LBAbercrom"
+symbol = "ct_intercept_A"
+quantity = "Ct at one zoospore per reaction, zoospore-count standards of LBAbercrom"
+value = 30.4
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LBAbercrom", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "LBAbercrom"
+symbol = "efficiency_A"
+quantity = "printed amplification efficiency (10^(-1/slope) - 1) of the zoospore-count standards of LBAbercrom"
+value = 104.0
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LBAbercrom", setting = "culture" }
+location = "Table 1, Standard Set A"
+verified = true
+
+[[parameter]]
+set = "LBAbercrom"
+symbol = "ct_slope_B"
+quantity = "slope of Ct on log10 DNA concentration, equimolar DNA standards of LBAbercrom"
+value = -3.55
+units = "Ct (log10 ng uL^-1)^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LBAbercrom", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+notes = "x = log10 DNA concentration in ng per uL (Fig. 3)."
+
+[[parameter]]
+set = "LBAbercrom"
+symbol = "ct_intercept_B"
+quantity = "Ct at 1 ng per uL, equimolar DNA standards of LBAbercrom"
+value = 12.6
+units = "Ct"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LBAbercrom", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true
+
+[[parameter]]
+set = "LBAbercrom"
+symbol = "efficiency_B"
+quantity = "printed amplification efficiency of the equimolar DNA standards of LBAbercrom"
+value = 91.3
+units = "percent"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LBAbercrom", setting = "culture" }
+location = "Table 1, Standard Set B"
+verified = true

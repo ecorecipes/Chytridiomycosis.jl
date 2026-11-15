@@ -1,0 +1,160 @@
+# Schrock SAR, Walsman JC, DeMarchi J, LeSage EH, Ohmer MEB, Rollins-Smith LA, Briggs CJ,
+# Richards-Zawacki CL, Woodhams DC, Knapp RA, Smith TC, Haddad CFB, Becker CG, Johnson PTJ,
+# Wilber MQ. Do fungi look like macroparasites? Quantifying the patterns and mechanisms of
+# aggregation for host-fungal parasite relationships.
+#   Preprint: bioRxiv 2024, doi:10.1101/2024.08.29.609018 (lab/papers/schrock2024.pdf).
+#   Published: Proc R Soc B 292:20242013 (2025), doi:10.1098/rspb.2024.2013, CC BY 4.0
+#   (lab/papers/schrock2025_published/).
+#   Data: Dryad doi:10.5061/dryad.mgqnk998g (CC0; group summaries only, raw swabs not
+#   deposited). Code: Zenodo doi:10.5281/zenodo.14291806 (MIT), read for 03_Fig.1_TPL_Plot.R
+#   and 01_Aggregation_Groups.R.
+# Checked against both PDFs, 2026-11-14. Values are the published version's; where the
+# preprint differs the notes say so. The key stays schrock2024 (references.tsv).
+#
+# Taylor's power law (TPL): log10(variance) = log10(a) + b log10(mean) by ordinary least
+# squares over groups (species x life stage x site x season x year with at least 10 swabs and
+# at least 3 Bd-positive swabs), mean and sample variance (n - 1) of the load on the natural
+# scale INCLUDING uninfected swabs (zeros). 95% intervals are lm confint (t quantiles).
+
+source = { ref = "schrock2024", doi = "10.1098/rspb.2024.2013", review_ref = 60 }
+
+[[parameter]]
+symbol = "tpl_slope_sierra"
+quantity = "Taylor's power law slope b, Sierra Nevada dataset (mountain yellow-legged frogs)"
+value = 1.90
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae", setting = "field" }
+location = "Results 3a; Fig. 1"
+verified = true
+notes = "95% CI 1.86-1.94. Same in the preprint."
+
+[[parameter]]
+symbol = "tpl_slope_brazil"
+quantity = "Taylor's power law slope b, Brazil dataset (41 species)"
+value = 2.06
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", setting = "field" }
+location = "Results 3a; Fig. 1"
+verified = true
+notes = "95% CI 1.99-2.12. Same in the preprint. The East Bay and eastern US slopes lie between 1.90 and 2.06 and are printed only in the Fig. 1 legend (raster)."
+
+[[parameter]]
+symbol = "tpl_slope_larval"
+quantity = "Taylor's power law slope b, larvae (all datasets)"
+value = 1.85
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", stage = "larva", setting = "field" }
+location = "Results 3a"
+verified = true
+notes = "95% CI 1.82-1.89."
+
+[[parameter]]
+symbol = "tpl_slope_subadult"
+quantity = "Taylor's power law slope b, subadults (all datasets)"
+value = 1.93
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", stage = "subadult", setting = "field" }
+location = "Results 3a"
+verified = true
+notes = "95% CI 1.91-1.95."
+
+[[parameter]]
+symbol = "tpl_slope_adult"
+quantity = "Taylor's power law slope b, adults (all datasets)"
+value = 2.03
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", stage = "adult", setting = "field" }
+location = "Results 3a"
+verified = true
+notes = "95% CI 2.00-2.05. The preprint printed 2.01 (1.98-2.04)."
+
+[[parameter]]
+symbol = "tpl_slope_enzootic"
+quantity = "Taylor's power law slope b, Sierra groups in the enzootic phase"
+value = 2.08
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae", setting = "field" }
+location = "Results 3a (published version only)"
+verified = true
+notes = "95% CI 2.00-2.16. Not in the preprint."
+
+[[parameter]]
+symbol = "tpl_slope_epizootic"
+quantity = "Taylor's power law slope b, Sierra groups in the post-invasion epizootic phase"
+value = 1.92
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana muscosa / R. sierrae", setting = "field" }
+location = "Results 3a (published version only)"
+verified = true
+notes = "95% CI 1.86-1.99. Not in the preprint."
+
+[[parameter]]
+symbol = "tpl_slope_macroparasite"
+quantity = "Taylor's power law slope of macroparasites (Shaw & Dobson 1995), the benchmark"
+value = 1.55
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { setting = "field" }
+location = "Methods 2b; Fig. 1"
+verified = true
+notes = "95% CI 1.48-1.62. Secondary: from Shaw & Dobson (1995), not re-checked. The Fig. 1 code draws it with intercept 1.098."
+
+[[parameter]]
+symbol = "lognormal_best_or_tied"
+quantity = "fraction of groups (>= 10 infected) where the lognormal fitted best or within 2 AIC of the best"
+value = 0.767
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", setting = "field" }
+location = "Results 3b; Fig. 2"
+verified = true
+notes = "525 groups. Weibull 58.8%, gamma 35.2%, exponential 25.7%. Lognormal strictly best (> 2 AIC) in 38.0%."
+
+[[parameter]]
+symbol = "min_swabs_group"
+quantity = "fewest swabs for a group to be summarised"
+value = 10.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "field" }
+location = "Zenodo code 01_Aggregation_Groups.R"
+verified = true
+
+[[parameter]]
+symbol = "min_infected_tpl"
+quantity = "fewest Bd-positive swabs for a group to enter the Taylor's power law regression"
+value = 3.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "field" }
+location = "Methods 2b; Zenodo code 03_Fig.1_TPL_Plot.R"
+verified = true
+
+[[parameter]]
+symbol = "min_infected_fit"
+quantity = "fewest Bd-positive swabs for a group to enter the distribution comparison"
+value = 10.0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "field" }
+location = "Methods 2c"
+verified = true
