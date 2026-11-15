@@ -3810,3 +3810,200 @@ tolerance = { atol = 0.05 }
 status = "reproduced"
 notes = "Plug-in 0.167. Eight 500-draw medians average 0.092 (sd 0.024)."
 
+
+# --- observation load -------------------------------------------------------------------
+# Load observation layer (src/observation/load_*.jl; wiki obs-load-distribution).
+# Longo et al. 2013 (PLoS ONE 8:e59499), Schrock et al. (preprint 2024, Proc R Soc B 2025),
+# Maguire et al. 2016 (Dis Aquat Org 119:179), Chestnut et al. 2014 (PLoS ONE 9:e106790).
+
+[[target]]
+id = "longo2013_efficiency_setA"
+model = "obs-load-distribution"
+source = { ref = "longo2013", location = "Table 1, Standard Set A" }
+quantity = "strains whose printed efficiency follows from the printed slope as 10^(-1/slope) - 1 (zoospore-count standards)"
+published = 8
+call = "_longo_efficiency_consistent(:A)"
+status = "reproduced"
+notes = """
+All eight. The check allows for the rounding of the printed slope (to 0.01) and of the printed
+efficiency (to its last digit). CLFT023 and CLFT024 (slope -3.35, printed 98.8%) give 98.86% at
+the printed slope; a slope of -3.351 gives 98.8%."""
+
+[[target]]
+id = "longo2013_efficiency_setB"
+model = "obs-load-distribution"
+source = { ref = "longo2013", location = "Table 1, Standard Set B" }
+quantity = "strains whose printed efficiency follows from the printed slope (equimolar DNA standards)"
+published = 8
+call = "_longo_efficiency_consistent(:B)"
+status = "reproduced"
+notes = "All eight, with the same allowance for rounding."
+
+[[target]]
+id = "longo2013_copy_number_range"
+model = "obs-load-distribution"
+source = { ref = "longo2013", location = "Abstract; Fig. 4A" }
+quantity = "ratio of the highest to the lowest ITS1 copy number per zoospore over the eight strains (10 to 144)"
+published = 14.4
+call = "(n = strain_copy_number.(longo_strains()); maximum(n) / minimum(n))"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = """
+From the eight bar labels of Fig. 4A (CLFT023 144, LFT001 125, CLFT024 118, LBAbercrom 107,
+JEL427 65, PAB01 59, JEL404 39, MexMkt 10), which agree with the 10 and 144 of the abstract."""
+
+[[target]]
+id = "longo2013_copies_1_5ng_max"
+model = "obs-load-distribution"
+source = { ref = "longo2013", location = "Results, ITS1/5.8S copy number; Fig. 4B" }
+quantity = "highest ITS1 copy number in 1.5 ng of genomic DNA over the eight strains"
+published = 6.0e6
+call = "maximum(parameter_set(:longo2013; set = s).copies_per_1_5ng for s in longo_strains())"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 6.4e6, rtol = 1e-9 }
+notes = """
+The text gives the range as 6.0 x 10^5 to 6.0 x 10^6; the bars of Fig. 4B are labelled 0.6 to
+6.4 (x 10^6), the highest being LBAbercrom. The lower end agrees (PAB01, 0.6 x 10^6) and so
+does the "10-fold" difference (6.4/0.6 = 10.7). Rounding cannot turn 6.4 into 6.0. The
+compendium keeps the bar labels per strain and the text's range as separate records; nothing
+in the package uses the text's upper end. Unexplained (probably a typo in the text)."""
+
+[[target]]
+id = "longo2013_amplicon_mass"
+model = "obs-load-distribution"
+source = { ref = "longo2013", location = "Methods, Bd strain comparison" }
+quantity = "mass of one 400-bp ITS1 amplicon copy (ng)"
+published = 4.10e-10
+call = "dsdna_mass(parameter_set(:longo2013).amplicon_bp)"
+tolerance = { rtol = 0.005 }
+status = "reproduced"
+notes = """
+The Methods give 400 bp and 660 Da per base pair, which make 4.38e-10 ng
+(dsdna_mass(400; bp_mass = 660), 7% more). The printed 4.10e-10 follows from the standard
+dsDNA molecular weight, (617.96 x 400 + 36.04) g/mol, which gives 4.105e-10 with no tuning:
+one documented formula, so the discrepancy counts as resolved. Every copy number of Fig. 4
+rests on this mass (copies = DNA mass / mass per copy); with 660 Da they would be 6.4% lower.
+Elsewhere the Methods do use 660 Da (longo2013_zoospores_per_0_3ng)."""
+
+[[target]]
+id = "longo2013_zoospores_per_0_3ng"
+model = "obs-load-distribution"
+source = { ref = "longo2013", location = "Methods, Standard Set B" }
+quantity = "zoospore genomes in 0.3 ng of DNA (46 Mb diploid genome, 660 Da per bp)"
+published = "roughly 6,000"
+call = "(q = parameter_set(:longo2013); genome_equivalents(q.standard_B_top; genome_bp = q.genome_bp, bp_mass = q.bp_mass))"
+tolerance = { lower = 5500.0, upper = 6500.0 }
+status = "qualitative"
+notes = "5,951. With the standard dsDNA formula instead of 660 Da it is 6,355, which also rounds to 6,000."
+
+[[target]]
+id = "longo2013_mexmkt_fewest_copies"
+model = "obs-load-distribution"
+source = { ref = "longo2013", location = "Results; Fig. 2; Table 1" }
+quantity = "MexMkt has the highest Ct of the eight zoospore-count standard curves over 0.1 to 1000 zoospores (fewest ITS1 copies per zoospore)"
+published = true
+call = "_longo_highest_ct(\"MexMkt\")"
+status = "qualitative"
+notes = """
+Checked on a grid of 41 quantities. Taken at face value the Set A curves understate the
+copy-number spread of Fig. 4A: at 10 zoospores MexMkt's Ct is 3.54 cycles above CLFT023's,
+11.6-fold fewer copies at a slope of -3.32, against 14.4-fold in Fig. 4A, and JEL404's 1.42
+cycles mean 2.7-fold against 3.7-fold. That comparison is ours, not the paper's."""
+
+[[target]]
+id = "schrock2024_tpl_sierra"
+model = "obs-load-distribution"
+source = { ref = "schrock2024", location = "Results 3a; Fig. 1 (Proc R Soc B 2025; same in the 2024 preprint)" }
+quantity = "Taylor's power law slope, Sierra Nevada dataset"
+published = 1.90
+status = "pending"
+notes = """
+Implemented (schrock_taylor_slopes(load_schrock2024())[:sierra_nevada].slope, following the
+authors' 03_Fig.1_TPL_Plot.R), but the Dryad group summaries (doi:10.5061/dryad.mgqnk998g,
+CC0) refused the package's automated download on 2026-11-14; see data/schrock2024/README.md.
+95% CI 1.86-1.94."""
+
+[[target]]
+id = "schrock2024_tpl_brazil"
+model = "obs-load-distribution"
+source = { ref = "schrock2024", location = "Results 3a; Fig. 1" }
+quantity = "Taylor's power law slope, Brazil dataset"
+published = 2.06
+status = "pending"
+notes = "As schrock2024_tpl_sierra ([:brazil]). 95% CI 1.99-2.12."
+
+[[target]]
+id = "schrock2024_tpl_adult"
+model = "obs-load-distribution"
+source = { ref = "schrock2024", location = "Results 3a (Proc R Soc B 2025)" }
+quantity = "Taylor's power law slope, adults over all datasets"
+published = 2.03
+status = "pending"
+notes = """
+schrock_taylor_slopes(load_schrock2024(); by = :life_stage)[:adult].slope, following
+04_TPL_Life_Stage.R. The preprint printed 2.01 (1.98-2.04); the published version 2.03
+(2.00-2.05), presumably from a revised group set. Larvae 1.85, subadults 1.93 in both."""
+
+[[target]]
+id = "schrock2024_lognormal_best"
+model = "obs-load-distribution"
+source = { ref = "schrock2024", location = "Results 3b; Fig. 2" }
+quantity = "fraction of groups (>= 10 infected) where the lognormal fits best or within 2 AIC"
+published = 0.767
+status = "pending"
+notes = """
+The per-group fits (compare_load_families, fitdistrplus-style MLE on the positive loads) are
+implemented, but need the raw swabs, which were not deposited; the Dryad file holds the
+authors' AIC values per group (lnorm_aic, gamma_aic, ...), from which the fraction could be
+recomputed once the file is available."""
+
+[[target]]
+id = "schrock2024_lognormal_slope_two"
+model = "obs-load-distribution"
+source = { ref = "schrock2024", location = "Methods 2b; Discussion" }
+quantity = "Taylor's power law slope across groups with lognormal loads of equal log-scale spread"
+published = 2.0
+call = "_lognormal_taylor_slope()"
+tolerance = { atol = 1e-9 }
+status = "reproduced"
+notes = """
+"Given a lognormal distribution, we would expect a TPL slope of 2." Exact moments of 25
+lognormal groups (sd 2 on the natural-log scale, means spanning 12 natural-log units), every
+swab infected. With the zeros included, as the paper computes them, groups whose prevalence
+differs break the identity: Var/mean^2 = (e^(sigma^2) - pi)/pi, so a slope below 2 (Sierra 1.90)
+is what lognormal loads give when prevalence rises with mean load."""
+
+[[target]]
+id = "maguire2016_viability"
+model = "obs-load-distribution"
+source = { ref = "maguire2016", location = "Abstract; Table 2" }
+quantity = "fraction of shed zoospores alive"
+published = "approximately 80%"
+call = "shed_viability()"
+tolerance = { lower = 0.75, upper = 0.85 }
+status = "qualitative"
+notes = """
+logistic(1.29) = 0.784 at day 0 for the reference species. The odds rise by exp(0.05) = 1.051
+per day (the text says 1.06, which needs an unrounded slope of at least 0.0535), so for A.
+zeteki the regression gives 0.90 by day 18, when the last one died; for H. lemur (slope 0.01)
+0.86 by day 35. "Approximately 80% throughout" describes the intercept better than the end of
+the experiment."""
+
+[[target]]
+id = "chestnut2014_orders_of_magnitude"
+model = "obs-load-distribution"
+source = { ref = "chestnut2014", location = "Results, Oregon case study" }
+quantity = "orders of magnitude between the March 2011 filter (3,159,289 zoospores per L) and the largest previous observation"
+published = "approximately four"
+call = "(q = parameter_set(:chestnut2014); log10(q.density_extreme / q.density_max))"
+tolerance = { lower = 3.5, upper = 4.5 }
+status = "discrepant"
+regression = { value = 2.808, atol = 0.001 }
+notes = """
+The paper names the Nevada sites as the previous observations: 3,159,289/4,924 = 642 (2.81
+orders) and 3,159,289/2,109 = 1,498 (3.18). Against the Oregon mean (100 per L) it is 4.50
+orders, against the 41-site mean (40) 4.90 and against the median (15) 5.32; none of these is
+"any previous observation". The review's "five orders of magnitude in force of infection" is
+the ratio to the mean, which the paper does not state. The draft wiki card's "nearly three
+orders" (to 4,924) is right."""

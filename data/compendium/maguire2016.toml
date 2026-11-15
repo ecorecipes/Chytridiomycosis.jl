@@ -1,0 +1,110 @@
+# Maguire C, DiRenzo GV, Tunstall TS, Muletz CR, Zamudio KR, Lips KR (2016) Dead or alive?
+# Viability of chytrid zoospores shed from live amphibian hosts. Dis Aquat Org 119:179-187.
+# https://doi.org/10.3354/dao02991
+# Checked against the PDF, 2026-11-14. Bd JEL 423 (GPL-2), Atelopus zeteki and Hylomantis
+# lemur in the lab. Zoospores shed into 15-min water baths were stained (SYBR green /
+# propidium iodide); loads on skin swabs are qPCR zoospore genomic equivalents (ZGE).
+# Used by the observation layer for the fraction of qPCR-counted zoospores that are alive.
+#
+# The viability regression (Table 2) does not say which species is the reference level. The
+# text says the odds of viability rose for A. zeteki (1.06 per day) and not for H. lemur, which
+# fits A. zeteki as the reference (day slope 0.05; H. lemur 0.05 - 0.04 = 0.01).
+
+source = { ref = "maguire2016", doi = "10.3354/dao02991", review_ref = 106 }
+
+[[parameter]]
+symbol = "viability_logit_intercept"
+quantity = "intercept of the mixed logistic regression of zoospore viability (logit scale)"
+value = 1.29
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL423", setting = "lab" }
+location = "Table 2"
+verified = true
+notes = "SE 0.12. logistic(1.29) = 0.784, the 'approximately 80%' of the abstract."
+
+[[parameter]]
+symbol = "viability_logit_day"
+quantity = "effect of experimental day on the logit of zoospore viability"
+value = 0.05
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL423", setting = "lab" }
+location = "Table 2"
+verified = true
+notes = "SE 0.01. The text gives the odds ratio as 1.06 +- 0.01 per day; exp(0.05) = 1.051, so the unrounded slope is at least 0.0535."
+
+[[parameter]]
+symbol = "viability_logit_species"
+quantity = "species effect on the logit of zoospore viability"
+value = 0.2
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL423", setting = "lab" }
+location = "Table 2"
+verified = true
+notes = "SE 0.23, p = 0.37."
+
+[[parameter]]
+symbol = "viability_logit_day_species"
+quantity = "day x species interaction on the logit of zoospore viability"
+value = -0.04
+units = "day^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL423", setting = "lab" }
+location = "Table 2"
+verified = true
+notes = "SE 0.01."
+
+[[parameter]]
+symbol = "stock_mortality"
+quantity = "fraction of zoospores dead in the culture stock (handling mortality subtracted from the mixtures)"
+value = 0.07
+units = "1"
+provenance = "M"
+role = "uncertain"
+system = { pathogen = "Bd", isolate = "JEL423", setting = "culture" }
+location = "Statistical analysis; Table 1"
+verified = true
+notes = "Printed as ~7%. Table 1's 0% mixtures read 7.9-12.1% dead."
+
+[[parameter]]
+symbol = "positive_threshold"
+quantity = "qPCR load at or above which a swab was called Bd-positive"
+value = 1.0
+units = "ZE swab^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", isolate = "JEL423", setting = "lab" }
+location = "Methods, zoospore collection and quantification"
+verified = true
+
+[[parameter]]
+set = "Atelopus_zeteki"
+symbol = "mean_load"
+quantity = "mean infection intensity over the experiment"
+value = 31455.0
+units = "ZE swab^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL423", host = "Atelopus zeteki", setting = "lab" }
+location = "Abstract; Results"
+verified = true
+notes = "+- 10103 (printed as +-SD in Results)."
+
+[[parameter]]
+set = "Hylomantis_lemur"
+symbol = "mean_load"
+quantity = "mean infection intensity over the experiment"
+value = 1832.0
+units = "ZE swab^-1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL423", host = "Hylomantis lemur", setting = "lab" }
+location = "Abstract; Results"
+verified = true
+notes = "+- 1086."
