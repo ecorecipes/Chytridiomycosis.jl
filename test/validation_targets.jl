@@ -10,7 +10,10 @@
     @test_throws ArgumentError reproduce(validation_target("blooi2015_heat_clearance"))
     @test length(validation_targets(; status = :discrepant)) == 52
     @test all(t -> t.source === :schmidt2017, validation_targets(; source = :schmidt2017))
-    @testset "$(t.id)" for t in filter(t -> t.status !== :pending, ts)
+    # Wilber 2022 targets need the authors' deposit, which is not bundled (data/wilber2022)
+    w22 = Chytridiomycosis._wilber2022_find() !== nothing
+    @testset "$(t.id)" for t in filter(t -> t.status !== :pending &&
+                                             (w22 || t.source !== :wilber2022), ts)
         r = check_target(t)
         if t.status === :discrepant
             @test_broken r.published

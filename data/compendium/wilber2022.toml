@@ -1,0 +1,970 @@
+# Wilber MQ, Knapp RA, Smith TC, Briggs CJ (2022) Host density has limited effects on pathogen
+# invasion, disease-induced declines and within-host infection dynamics across a landscape of
+# disease. Journal of Animal Ecology 91:2451–2464. https://doi.org/10.1111/1365-2656.13823
+#
+# Read on 2026-11-14 from the accepted manuscript (NSF Public Access Repository 10401712,
+# lab/papers/wilber2022_si/nsfpar/accepted.pdf: eqns 1–2, Table 1, Figs 2–6, Results) and the
+# authors' deposit (Zenodo doi:10.5281/zenodo.7114634, mqwilber/host_density_and_bd v1.0.0,
+# lab/papers/wilber2022_si/zenodo7114634/). Appendices S1–S4 were not obtained (Wiley 403; the
+# PMC author manuscript PMC12594071 is behind a browser check).
+#
+# System: Rana sierrae/R. muscosa lake populations, Sequoia–Kings Canyon and Yosemite,
+# 2004–2019. Every value here is a posterior summary fitted by the authors in Stan. None is
+# an input of a mechanistic model; they are reproduction targets for the refits in
+# src/fitting/wilber2022.jl.
+#
+# Sets:
+# - base: Hypothesis 2 (Fig. 5, text) and Hypothesis 3 (translocation, text).
+# - "abundance_rho0.25", "abundance_rho0.33", "abundance_rho0.5": Fig. 3 effect sizes of the
+#   full HMM (eqn 1) with host abundance, at the three prevalence cutoffs ρ (0.33 is 0.3333 in
+#   the code). "density_rho…": the same with host density (count per metre of shoreline).
+#   The covariates are z-scored over the 79 lakes × 16 years (tadpole presence is not), so
+#   slopes are per sd. Fig. 3 prints the medians and 95% intervals only as a figure; the values
+#   are digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg (the
+#   same estimates as Fig. 3 on panel-specific axes, 1800×2400 px; pixel resolution 0.002 on
+#   most panels, 0.01 on "φ, tadpole"), checked by eye against Fig. 3 of the manuscript.
+
+source = { ref = "wilber2022", doi = "10.1111/1365-2656.13823", review_ref = 47 }
+
+# --- Hypothesis 2: magnitude of decline (eqn 2, Fig. 5) ------------------------------------------
+
+[[parameter]]
+symbol = "decline_slope_adult_abundance_lower"
+quantity = "lower 95% bound of the slope β1 of logit expected decline on z-scored log10 maximum adult count"
+value = -0.1
+units = "logit per sd of log10 count"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult", setting = "field" }
+location = "Fig. 5A (printed '95% CI: [−0.1, 0.7]'); 52 lakes"
+verified = true
+notes = "Beta-binomial regression of the decline from maximum to minimum count; Stan, β1 ~ Normal(0, 5)."
+
+[[parameter]]
+symbol = "decline_slope_adult_abundance_upper"
+quantity = "upper 95% bound of β1, adult count"
+value = 0.7
+units = "logit per sd of log10 count"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult", setting = "field" }
+location = "Fig. 5A"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "decline_slope_adult_density_lower"
+quantity = "lower 95% bound of β1 on z-scored log10 maximum adult density (count per m of shoreline)"
+value = -0.01
+units = "logit per sd of log10 density"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult", setting = "field" }
+location = "Fig. 5B (printed '95% CI: [−0.01, 0.81]')"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "decline_slope_adult_density_upper"
+quantity = "upper 95% bound of β1, adult density"
+value = 0.81
+units = "logit per sd of log10 density"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult", setting = "field" }
+location = "Fig. 5B"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "decline_slope_subadult_abundance_lower"
+quantity = "lower 95% bound of β1 on z-scored log10 maximum adult + subadult count"
+value = 0.12
+units = "logit per sd of log10 count"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult and subadult", setting = "field" }
+location = "Fig. 5C (printed '95% CI: [0.12, 0.73]'); 82 lakes"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "decline_slope_subadult_abundance_upper"
+quantity = "upper 95% bound of β1, adult + subadult count"
+value = 0.73
+units = "logit per sd of log10 count"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult and subadult", setting = "field" }
+location = "Fig. 5C"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "decline_slope_subadult_density_lower"
+quantity = "lower 95% bound of β1 on z-scored log10 maximum adult + subadult density"
+value = 0.16
+units = "logit per sd of log10 density"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult and subadult", setting = "field" }
+location = "Fig. 5D (printed '95% CI: [0.16, 0.78]')"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "decline_slope_subadult_density_upper"
+quantity = "upper 95% bound of β1, adult + subadult density"
+value = 0.78
+units = "logit per sd of log10 density"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult and subadult", setting = "field" }
+location = "Fig. 5D"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "decline_at_7_frogs"
+quantity = "predicted proportional decline of a population of 7 adults + subadults (posterior median)"
+value = 0.84
+units = "proportion"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult and subadult", setting = "field" }
+location = "Results, 'Higher host density weakly increases the magnitude of disease-induced declines'"
+verified = true
+notes = "95% CI [0.73, 0.91] (printed as 84%, [73%, 91%]); abundance model of Fig. 5C."
+
+# --- Hypothesis 3: translocation (Fig. 6B, text) ---------------------------------------------------
+
+[[parameter]]
+symbol = "translocation_diff_50170"
+quantity = "difference in mean log10 Bd load, translocated lake 50170 minus donor 50183"
+value = 0.31
+units = "log10 ITS1 copies swab^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult", setting = "field" }
+location = "Results, 'Higher amphibian density has little effect on infection intensity'"
+verified = true
+notes = "95% CI [0.03, 0.60]. Loads are 'ITS copies' in Fig. 6; the translocation data (data/archival/humphreys_translocation_2010.csv) are not in the deposit."
+
+[[parameter]]
+symbol = "translocation_diff_50219"
+quantity = "difference in mean log10 Bd load, 50219 minus donor 50183"
+value = 0.45
+units = "log10 ITS1 copies swab^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult", setting = "field" }
+location = "Results"
+verified = true
+notes = "95% CI [0.14, 0.75]."
+
+[[parameter]]
+symbol = "translocation_diff_50194"
+quantity = "difference in mean log10 Bd load, 50194 minus donor 50183"
+value = -0.10
+units = "log10 ITS1 copies swab^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult", setting = "field" }
+location = "Results"
+verified = true
+notes = "95% CI [−0.47, 0.26]."
+
+[[parameter]]
+symbol = "translocation_delta_looic"
+quantity = "ΔLOOIC of the model with lower loads in translocated lakes minus the model with free means"
+value = 10.9
+units = "LOOIC"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "adult", setting = "field" }
+location = "Results"
+verified = true
+notes = ""
+
+# --- Hypothesis 1: Fig. 3 effect sizes (generated from the digitised values) -----------------------
+
+[[parameter]]
+set = "abundance_rho0.25"
+symbol = "omega_abundance"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on abundance (log10 count + 1, z-scored)"
+value = 0.24
+units = "probit per sd of log10(count + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [0.01, 0.50] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.33"
+symbol = "omega_abundance"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on abundance (log10 count + 1, z-scored)"
+value = 0.20
+units = "probit per sd of log10(count + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.01, 0.43] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.5"
+symbol = "omega_abundance"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on abundance (log10 count + 1, z-scored)"
+value = 0.18
+units = "probit per sd of log10(count + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.02, 0.41] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.25"
+symbol = "omega_abundance"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on abundance (log10 count + 1, z-scored); model with density instead of abundance"
+value = 0.15
+units = "probit per sd of log10(count per m of shoreline + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.01, 0.35] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.33"
+symbol = "omega_abundance"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on abundance (log10 count + 1, z-scored); model with density instead of abundance"
+value = 0.13
+units = "probit per sd of log10(count per m of shoreline + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.02, 0.33] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.5"
+symbol = "omega_abundance"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on abundance (log10 count + 1, z-scored); model with density instead of abundance"
+value = 0.12
+units = "probit per sd of log10(count per m of shoreline + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.03, 0.31] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.25"
+symbol = "phi_abundance"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on abundance (log10 count + 1, z-scored)"
+value = -0.21
+units = "probit per sd of log10(count + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.57, 0.12] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.33"
+symbol = "phi_abundance"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on abundance (log10 count + 1, z-scored)"
+value = -0.20
+units = "probit per sd of log10(count + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.55, 0.13] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.5"
+symbol = "phi_abundance"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on abundance (log10 count + 1, z-scored)"
+value = 0.01
+units = "probit per sd of log10(count + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.33, 0.34] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.25"
+symbol = "phi_abundance"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on abundance (log10 count + 1, z-scored); model with density instead of abundance"
+value = -0.02
+units = "probit per sd of log10(count per m of shoreline + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.23, 0.23] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.33"
+symbol = "phi_abundance"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on abundance (log10 count + 1, z-scored); model with density instead of abundance"
+value = 0.00
+units = "probit per sd of log10(count per m of shoreline + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.22, 0.23] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.5"
+symbol = "phi_abundance"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on abundance (log10 count + 1, z-scored); model with density instead of abundance"
+value = 0.06
+units = "probit per sd of log10(count per m of shoreline + 1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.15, 0.30] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.25"
+symbol = "omega_temperature"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on maximum summer air temperature (z-scored)"
+value = 0.19
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.04, 0.45] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.33"
+symbol = "omega_temperature"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on maximum summer air temperature (z-scored)"
+value = 0.18
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.05, 0.42] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.5"
+symbol = "omega_temperature"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on maximum summer air temperature (z-scored)"
+value = 0.23
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [0.02, 0.47] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.25"
+symbol = "omega_temperature"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on maximum summer air temperature (z-scored); model with density instead of abundance"
+value = 0.19
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.04, 0.43] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.33"
+symbol = "omega_temperature"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on maximum summer air temperature (z-scored); model with density instead of abundance"
+value = 0.18
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.05, 0.42] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.5"
+symbol = "omega_temperature"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on maximum summer air temperature (z-scored); model with density instead of abundance"
+value = 0.23
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [0.01, 0.46] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.25"
+symbol = "phi_temperature"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on maximum summer air temperature (z-scored)"
+value = 0.45
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [0.10, 0.83] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.33"
+symbol = "phi_temperature"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on maximum summer air temperature (z-scored)"
+value = 0.46
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [0.10, 0.81] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.5"
+symbol = "phi_temperature"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on maximum summer air temperature (z-scored)"
+value = 0.37
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [0.03, 0.72] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.25"
+symbol = "phi_temperature"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on maximum summer air temperature (z-scored); model with density instead of abundance"
+value = 0.43
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [0.07, 0.80] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.33"
+symbol = "phi_temperature"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on maximum summer air temperature (z-scored); model with density instead of abundance"
+value = 0.44
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [0.10, 0.80] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.5"
+symbol = "phi_temperature"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on maximum summer air temperature (z-scored); model with density instead of abundance"
+value = 0.37
+units = "probit per sd of max summer air temperature"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [0.05, 0.70] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.25"
+symbol = "omega_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on winter severity, 1 April SWE of the next year (z-scored)"
+value = 0.18
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.13, 0.49] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.33"
+symbol = "omega_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on winter severity, 1 April SWE of the next year (z-scored)"
+value = 0.18
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.13, 0.50] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.5"
+symbol = "omega_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on winter severity, 1 April SWE of the next year (z-scored)"
+value = 0.19
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.11, 0.49] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.25"
+symbol = "omega_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on winter severity, 1 April SWE of the next year (z-scored); model with density instead of abundance"
+value = 0.19
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.09, 0.48] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.33"
+symbol = "omega_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on winter severity, 1 April SWE of the next year (z-scored); model with density instead of abundance"
+value = 0.21
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.10, 0.49] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.5"
+symbol = "omega_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on winter severity, 1 April SWE of the next year (z-scored); model with density instead of abundance"
+value = 0.20
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.10, 0.48] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.25"
+symbol = "phi_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on winter severity, 1 April SWE of the next year (z-scored)"
+value = 0.05
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.49, 0.54] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.33"
+symbol = "phi_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on winter severity, 1 April SWE of the next year (z-scored)"
+value = 0.07
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.44, 0.55] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.5"
+symbol = "phi_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on winter severity, 1 April SWE of the next year (z-scored)"
+value = 0.13
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.31, 0.58] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.25"
+symbol = "phi_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on winter severity, 1 April SWE of the next year (z-scored); model with density instead of abundance"
+value = 0.07
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.44, 0.57] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.33"
+symbol = "phi_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on winter severity, 1 April SWE of the next year (z-scored); model with density instead of abundance"
+value = 0.09
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.42, 0.57] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.5"
+symbol = "phi_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on winter severity, 1 April SWE of the next year (z-scored); model with density instead of abundance"
+value = 0.15
+units = "probit per sd of 1 April SWE"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.29, 0.62] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.25"
+symbol = "omega_temp_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on temperature × winter severity"
+value = -0.29
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.65, 0.01] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.33"
+symbol = "omega_temp_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on temperature × winter severity"
+value = -0.38
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.71, -0.06] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.5"
+symbol = "omega_temp_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on temperature × winter severity"
+value = -0.39
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.70, -0.10] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.25"
+symbol = "omega_temp_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on temperature × winter severity; model with density instead of abundance"
+value = -0.30
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.64, -0.00] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.33"
+symbol = "omega_temp_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on temperature × winter severity; model with density instead of abundance"
+value = -0.37
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.71, -0.07] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.5"
+symbol = "omega_temp_snow"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on temperature × winter severity; model with density instead of abundance"
+value = -0.39
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.72, -0.09] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.25"
+symbol = "phi_temp_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on temperature × winter severity"
+value = -0.54
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-1.07, -0.07] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.33"
+symbol = "phi_temp_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on temperature × winter severity"
+value = -0.49
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-1.00, -0.08] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.5"
+symbol = "phi_temp_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on temperature × winter severity"
+value = -0.44
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-1.07, -0.04] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.25"
+symbol = "phi_temp_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on temperature × winter severity; model with density instead of abundance"
+value = -0.49
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-1.01, -0.04] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.33"
+symbol = "phi_temp_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on temperature × winter severity; model with density instead of abundance"
+value = -0.47
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.97, -0.04] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.5"
+symbol = "phi_temp_snow"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on temperature × winter severity; model with density instead of abundance"
+value = -0.43
+units = "probit per sd^2 (temperature x SWE)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-1.07, -0.04] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.25"
+symbol = "omega_tadpole"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on tadpole presence"
+value = -0.23
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.91, 0.38] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.33"
+symbol = "omega_tadpole"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on tadpole presence"
+value = -0.14
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.78, 0.45] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.5"
+symbol = "omega_tadpole"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on tadpole presence"
+value = -0.33
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.99, 0.28] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.25"
+symbol = "omega_tadpole"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on tadpole presence; model with density instead of abundance"
+value = -0.08
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.70, 0.53] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.33"
+symbol = "omega_tadpole"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on tadpole presence; model with density instead of abundance"
+value = -0.03
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.63, 0.56] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.5"
+symbol = "omega_tadpole"
+quantity = "probit slope of ω (stay in low prevalence rather than move to high prevalence) on tadpole presence; model with density instead of abundance"
+value = -0.24
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-0.86, 0.34] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.25"
+symbol = "phi_tadpole"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on tadpole presence"
+value = -3.03
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-6.98, -0.76] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.33"
+symbol = "phi_tadpole"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on tadpole presence"
+value = -2.77
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-6.48, -0.73] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "abundance_rho0.5"
+symbol = "phi_tadpole"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on tadpole presence"
+value = -1.22
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-2.70, -0.18] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.25"
+symbol = "phi_tadpole"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on tadpole presence; model with density instead of abundance"
+value = -3.10
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-6.75, -0.96] (digitised, ±0.01). Prevalence cutoff ρ = 0.25 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.33"
+symbol = "phi_tadpole"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on tadpole presence; model with density instead of abundance"
+value = -2.88
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-6.78, -0.73] (digitised, ±0.01). Prevalence cutoff ρ = 0.33 (code 0.3333 for 0.33)."
+
+[[parameter]]
+set = "density_rho0.5"
+symbol = "phi_tadpole"
+quantity = "probit slope of φ (low prevalence to Bd-free: failed invasion) on tadpole presence; model with density instead of abundance"
+value = -1.22
+units = "probit (tadpoles present vs absent)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana sierrae/R. muscosa", stage = "population", setting = "field" }
+location = "Fig. 3 (posterior median; digitised from the deposit's results/effect_sizes_across_rhos_rarifyFALSE.jpg)"
+verified = true
+notes = "95% credible interval [-2.75, -0.18] (digitised, ±0.01). Prevalence cutoff ρ = 0.5 (code 0.3333 for 0.33)."
+

@@ -102,6 +102,11 @@ include("fitting/wilber2017.jl")
 include("models/canessa2018.jl")
 # Louca et al. 2014 DOI-distribution model of adults and tadpoles, Q_o and extinction risk
 include("models/louca2014.jl")
+# Generic HMM layer; Wilber et al. 2022 outbreak-state HMM and its companion analyses
+using Distributions: Distributions, Cauchy, TDist
+include("observation/hmm.jl")
+include("models/wilber2022.jl")
+include("fitting/wilber2022.jl")
 
 export solve
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
@@ -222,5 +227,15 @@ export LoucaParameters, LoucaDOIProblem, tadpoles_tolerate, louca_breeding_shape
        louca_transmission_from_growth, louca_endemic_transmission, louca_outcome,
        louca_ranges, louca_sample, louca_monte_carlo, louca_risk_effects,
        louca_outcome_probabilities, louca2014_path, load_louca2014
+# Generic hidden Markov models
+export hmm_forward, hmm_loglikelihood, hmm_backward, hmm_posterior, hmm_viterbi, hmm_sample,
+       CategoricalEmission, emission_likelihoods, CovariateTransitions, HMMLogDensity
+# Wilber et al. 2022 outbreak-state HMM, decline regression and path analysis
+export wilber2022_path, Wilber2022Data, wilber2022_data, wilber2022_emission,
+       OutbreakHMMProblem, Wilber2022Parameters, wilber2022_parameters,
+       outbreak_transition_matrix, outbreak_rates, outbreak_sequences,
+       outbreak_state_probabilities, outbreak_viterbi, OutbreakHMMFit, looic,
+       wilber2022_effect, wilber2022_fit, Wilber2022DeclineProblem, Wilber2022DeclineFit,
+       decline_effect, predicted_decline, wilber2022_decline, wilber2022_path_analysis
 
 end # module Chytridiomycosis

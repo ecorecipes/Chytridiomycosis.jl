@@ -3810,3 +3810,456 @@ tolerance = { atol = 0.05 }
 status = "reproduced"
 notes = "Plug-in 0.167. Eight 500-draw medians average 0.092 (sd 0.024)."
 
+
+# --- wilber2022 ----------------------------------------------------------------------------------
+# Wilber et al. 2022, J Anim Ecol 91:2451 (wiki obs-wilber2022-hmm-outbreak). The calls need the
+# authors' deposit (Zenodo doi:10.5281/zenodo.7114634), which is not bundled; the test skips these
+# targets when wilber2022_path() finds nothing (data/wilber2022/README.md). HMM posteriors are
+# sampled by adaptive Metropolis with a fixed seed and cached per (cutoff, model).
+
+[[target]]
+id = "wilber2022_hmm_lakes"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Methods, 'Data selection'" }
+quantity = "lakes in the Hypothesis 1 analysis (2004–2019)"
+published = 79
+call = "size(wilber2022_data().obs, 1)"
+status = "reproduced"
+notes = "Lakes of analysisI_failedinvasions_excluded.csv with at least three non-missing years (prepare_stan_data, num_to_include = 3)."
+
+[[target]]
+id = "wilber2022_fig3_rho025"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 3 (abundance, ρ = 0.25)" }
+quantity = "largest |posterior median − Fig. 3 median| over the nine slopes other than φ-tadpole, full abundance model"
+published = 0.0
+call = "_wilber2022_fig3_deviation(0.25)"
+tolerance = { atol = 0.05 }
+status = "reproduced"
+notes = """
+Fig. 3 medians digitised from the deposit's effect_sizes_across_rhos_rarifyFALSE.jpg (±0.005;
+data/compendium/wilber2022.toml). Ours (12 000 draws) vs Fig. 3: ω abundance 0.243 vs 0.24,
+temperature 0.188 vs 0.19, SWE 0.173 vs 0.18, tadpole −0.234 vs −0.23, temp × SWE −0.299 vs
+−0.29; φ abundance −0.214 vs −0.21, temperature 0.445 vs 0.45, SWE 0.059 vs 0.05, temp × SWE
+−0.528 vs −0.54. Largest difference 0.01. The 95% intervals agree to about 0.03 (Stan Monte
+Carlo error with 3 000 draws)."""
+
+[[target]]
+id = "wilber2022_fig3_rho033"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 3 (abundance, ρ = 0.33)" }
+quantity = "largest |posterior median − Fig. 3 median| over the nine slopes other than φ-tadpole"
+published = 0.0
+call = "_wilber2022_fig3_deviation(0.3333)"
+tolerance = { atol = 0.05 }
+status = "reproduced"
+notes = "ρ = 0.3333 in the code. Largest difference 0.022 (φ SWE 0.091 vs 0.07; φ temp × SWE −0.512 vs −0.50)."
+
+[[target]]
+id = "wilber2022_fig3_rho05"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 3 (abundance, ρ = 0.5)" }
+quantity = "largest |posterior median − Fig. 3 median| over the nine slopes other than φ-tadpole"
+published = 0.0
+call = "_wilber2022_fig3_deviation(0.5)"
+tolerance = { atol = 0.05 }
+status = "reproduced"
+notes = "Largest difference 0.025 (φ SWE 0.155 vs 0.13)."
+
+[[target]]
+id = "wilber2022_fig3_phi_tadpole_rho025"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 3 ('φ, tadpole', abundance, ρ = 0.25)" }
+quantity = "posterior median of the tadpole-presence effect on φ (failed invasion)"
+published = -3.03
+call = "wilber2022_effect(wilber2022_fit(cutoff = 0.25), :phi_tadpole).median"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+notes = """
+Long left tail (95% interval about [−6.6, −0.8]; Fig. 3 [−6.98, −0.76]), so the Monte Carlo
+error of the median is near 0.05–0.1 for either sampler; the panel is digitised at 0.01."""
+
+[[target]]
+id = "wilber2022_fig3_phi_tadpole_rho033"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 3 ('φ, tadpole', ρ = 0.33)" }
+quantity = "posterior median of the tadpole-presence effect on φ"
+published = -2.77
+call = "wilber2022_effect(wilber2022_fit(cutoff = 0.3333), :phi_tadpole).median"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2022_fig3_phi_tadpole_rho05"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 3 ('φ, tadpole', ρ = 0.5)" }
+quantity = "posterior median of the tadpole-presence effect on φ"
+published = -1.22
+call = "wilber2022_effect(wilber2022_fit(cutoff = 0.5), :phi_tadpole).median"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2022_density_omega_opposite"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Results ('Higher amphibian density has little effect…'); Fig. 3, Fig. 4A" }
+quantity = "abundance raises ω (the chance of staying at low prevalence), the opposite of the density-threshold prediction, at every ρ"
+published = true
+call = "_wilber2022_all_cutoffs(e -> e.median > 0.1, :omega_abundance)"
+status = "qualitative"
+notes = "Medians 0.24, 0.20, 0.18 (Fig. 3: 0.24, 0.20, 0.18). The 95% interval excludes zero only at ρ = 0.25 in both the paper and ours (lower bound 0.008 vs 0.02), so only the sign is registered."
+
+[[target]]
+id = "wilber2022_density_phi_none"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Results; Fig. 3, Fig. 4B" }
+quantity = "φ (failed invasion) is not associated with abundance: the 95% interval includes zero at every ρ"
+published = true
+call = "_wilber2022_all_cutoffs(e -> e.lower < 0 < e.upper, :phi_abundance)"
+status = "qualitative"
+
+[[target]]
+id = "wilber2022_temperature_phi"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Results ('…stronger effect of maximum temperature…'); Fig. 3" }
+quantity = "warmer summers raise the probability of failed invasion: φ-temperature interval above zero at every ρ"
+published = true
+call = "_wilber2022_all_cutoffs(e -> e.lower > 0, :phi_temperature)"
+status = "qualitative"
+
+[[target]]
+id = "wilber2022_winter_interaction_phi"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Results ('…temperature effect was modified by winter severity'); Fig. 3" }
+quantity = "more severe winters reduce the temperature effect on φ: temperature × SWE interval below zero at every ρ"
+published = true
+call = "_wilber2022_all_cutoffs(e -> e.upper < 0, :phi_temp_snow)"
+status = "qualitative"
+
+[[target]]
+id = "wilber2022_tadpoles"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Results ('Finally, tadpole presence decreased probability of failed invasion'); Fig. 3" }
+quantity = "tadpole presence lowers φ (interval below zero) but has little effect on ω (interval includes zero), at every ρ"
+published = true
+call = "_wilber2022_all_cutoffs(e -> e.upper < 0, :phi_tadpole) && _wilber2022_all_cutoffs(e -> e.lower < 0 < e.upper, :omega_tadpole)"
+status = "qualitative"
+
+[[target]]
+id = "wilber2022_hmm_density_models"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 (density rows); Fig. 3 (density estimates)" }
+quantity = "HMM fits with density (count per metre of shoreline) instead of abundance"
+published = "ΔLOOIC 2.74, 2.83, 0.90 (full model); Fig. 3 orange estimates"
+status = "pending"
+notes = "Needs lake areas (data/archival/sites_nov2020.csv), which are not in the deposit. The 79 lakes' perimeters cannot be rebuilt from the other deposit files."
+
+[[target]]
+id = "wilber2022_rarefied"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Results; Appendix S3 (rarefied data, at most 15 swabs)" }
+quantity = "effect sizes after rarefying swab samples to at most 15 per lake-year"
+published = "temperature effect most robust for φ; winter interaction most robust for ω"
+status = "pending"
+notes = "The rarefied data are a random subsample drawn in R (rarify_dat, no seed recorded) and Appendix S3 was not obtained."
+
+[[target]]
+id = "wilber2022_decline_lakes_subadults"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Methods, Hypothesis 2" }
+quantity = "lakes in the decline analysis, adults + subadults"
+published = 82
+call = "length(Wilber2022DeclineProblem().start)"
+status = "reproduced"
+
+[[target]]
+id = "wilber2022_decline_lakes_adults"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Methods, Hypothesis 2" }
+quantity = "lakes in the decline analysis, adults only"
+published = 52
+call = "length(Wilber2022DeclineProblem(subadults = false).start)"
+status = "reproduced"
+
+[[target]]
+id = "wilber2022_fig5a_lower"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 5A ('95% CI: [−0.1, 0.7]')" }
+quantity = "lower 95% bound of the abundance effect on the magnitude of decline, adults only"
+published = -0.1
+call = "decline_effect(wilber2022_decline(subadults = false)).lower"
+tolerance = { atol = 0.03 }
+status = "reproduced"
+notes = "Ours −0.100, upper 0.696, median 0.294 (40 000 Metropolis draws). The figure prints round(·, 2)."
+
+[[target]]
+id = "wilber2022_fig5a_upper"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 5A" }
+quantity = "upper 95% bound of the abundance effect, adults only"
+published = 0.7
+call = "decline_effect(wilber2022_decline(subadults = false)).upper"
+tolerance = { atol = 0.03 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2022_fig5b_lower"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 5B ('95% CI: [−0.01, 0.81]')" }
+quantity = "lower 95% bound of the density effect, adults only"
+published = -0.01
+call = "decline_effect(wilber2022_decline(subadults = false, covariate = :density)).lower"
+tolerance = { atol = 0.03 }
+status = "reproduced"
+notes = "Ours −0.027 (upper 0.805). The quantiles of 3 000 Stan draws carry a Monte Carlo error near 0.01–0.02."
+
+[[target]]
+id = "wilber2022_fig5b_upper"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 5B" }
+quantity = "upper 95% bound of the density effect, adults only"
+published = 0.81
+call = "decline_effect(wilber2022_decline(subadults = false, covariate = :density)).upper"
+tolerance = { atol = 0.03 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2022_fig5c_lower"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 5C ('95% CI: [0.12, 0.73]')" }
+quantity = "lower 95% bound of the abundance effect, adults + subadults"
+published = 0.12
+call = "decline_effect(wilber2022_decline()).lower"
+tolerance = { atol = 0.03 }
+status = "reproduced"
+notes = "Ours 0.109 (upper 0.735, median 0.419): the only interval clear of zero with abundance, as in the paper."
+
+[[target]]
+id = "wilber2022_fig5c_upper"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 5C" }
+quantity = "upper 95% bound of the abundance effect, adults + subadults"
+published = 0.73
+call = "decline_effect(wilber2022_decline()).upper"
+tolerance = { atol = 0.03 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2022_fig5d_lower"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 5D ('95% CI: [0.16, 0.78]')" }
+quantity = "lower 95% bound of the density effect, adults + subadults"
+published = 0.16
+call = "decline_effect(wilber2022_decline(covariate = :density)).lower"
+tolerance = { atol = 0.03 }
+status = "reproduced"
+notes = "Ours 0.165 (upper 0.780)."
+
+[[target]]
+id = "wilber2022_fig5d_upper"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Fig. 5D" }
+quantity = "upper 95% bound of the density effect, adults + subadults"
+published = 0.78
+call = "decline_effect(wilber2022_decline(covariate = :density)).upper"
+tolerance = { atol = 0.03 }
+status = "reproduced"
+
+[[target]]
+id = "wilber2022_decline_7_frogs"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Results ('…for a population with seven individuals… an 84% decline')" }
+quantity = "predicted proportional decline of a population of 7 adults + subadults (posterior median)"
+published = 0.84
+call = "predicted_decline(wilber2022_decline(), 7).median"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "Ours 0.838 [0.740, 0.906]; paper 84% [73%, 91%]: about six of seven frogs lost, so low density gives little protection."
+
+[[target]]
+id = "wilber2022_decline_7_frogs_interval"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Results" }
+quantity = "lower 95% bound of the predicted decline at 7 frogs"
+published = 0.73
+call = "predicted_decline(wilber2022_decline(), 7).lower"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+notes = "Ours 0.740; upper 0.906 (paper 0.91)."
+
+[[target]]
+id = "wilber2022_path_pairs"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Methods, Hypothesis 3" }
+quantity = "lake-year pairs and populations in the enzootic (Yosemite) path analysis"
+published = [111, 40]
+call = "(r = wilber2022_path_analysis(); [r.n, r.populations])"
+status = "reproduced"
+
+[[target]]
+id = "wilber2022_path_host_to_load"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Results ('The path coefficients… all overlapped zero'); Fig. S3" }
+quantity = "the path coefficient from host abundance and from host density in year t to mean Bd load in year t has a 95% interval that includes zero"
+published = true
+call = "all(c -> (e = wilber2022_path_analysis(covariate = c).host_to_load; e.lower < 0 < e.upper), (:abundance, :density))"
+status = "qualitative"
+notes = """
+Least squares, as the Rmd's lm() (the paper's Fig. S3 was not obtained; the Rmd also fits brms
+with default priors). Abundance 0.180 [−0.008, 0.367]; density 0.074 [−0.117, 0.265]. Load in
+t − 1 on abundance in t: −0.073 [−0.262, 0.116]."""
+
+[[target]]
+id = "wilber2022_translocation"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Results; Fig. 6B" }
+quantity = "difference in mean log10 load, translocated minus donor lake (50170, 50219, 50194)"
+published = "0.31 [0.03, 0.60]; 0.45 [0.14, 0.75]; −0.10 [−0.47, 0.26]; ΔLOOIC 10.9"
+status = "pending"
+notes = "Needs data/archival/humphreys_translocation_2010.csv, not in the deposit. Values are in data/compendium/wilber2022.toml."
+
+[[target]]
+id = "wilber2022_looic_full_rho025"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 (reference row); deposit results/looic_model_comparison_results.csv" }
+quantity = "LOOIC of the full model with abundance, ρ = 0.25 (mean over four sampler seeds)"
+published = 1169.13
+call = "_wilber2022_looic(:full, 0.25).mean"
+tolerance = { atol = 2.0 }
+status = "reproduced"
+notes = "Table 1 prints differences only; the absolute value is in the deposit. Ours 1169.02. Tolerance: our seed-to-seed sd is 0.2–0.8 (data/wilber2022/looic.toml) and the authors' single Stan run has a Monte Carlo error of the same order."
+
+[[target]]
+id = "wilber2022_looic_full_rho033"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 (reference row); deposit results/looic_model_comparison_results.csv" }
+quantity = "LOOIC of the full model with abundance, ρ = 0.33 (mean over four sampler seeds)"
+published = 1107.74
+call = "_wilber2022_looic(:full, 0.3333).mean"
+tolerance = { atol = 2.0 }
+status = "reproduced"
+notes = "Table 1 prints differences only; the absolute value is in the deposit. Ours 1107.98. Tolerance: our seed-to-seed sd is 0.2–0.8 (data/wilber2022/looic.toml) and the authors' single Stan run has a Monte Carlo error of the same order."
+
+[[target]]
+id = "wilber2022_looic_full_rho05"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 (reference row); deposit results/looic_model_comparison_results.csv" }
+quantity = "LOOIC of the full model with abundance, ρ = 0.5 (mean over four sampler seeds)"
+published = 1036.68
+call = "_wilber2022_looic(:full, 0.5).mean"
+tolerance = { atol = 2.0 }
+status = "reproduced"
+notes = "Table 1 prints differences only; the absolute value is in the deposit. Ours 1035.88. Tolerance: our seed-to-seed sd is 0.2–0.8 (data/wilber2022/looic.toml) and the authors' single Stan run has a Monte Carlo error of the same order."
+
+[[target]]
+id = "wilber2022_table1_log_tadpole_rho025"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 ('Replace tadpoles p/a with log10 tadpoles', abundance, ρ = 0.25)" }
+quantity = "ΔLOOIC relative to the full model"
+published = 6.61
+call = "_wilber2022_looic(:log_tadpole, 0.25).mean - _wilber2022_looic(:full, 0.25).mean"
+tolerance = { atol = 2.5 }
+status = "reproduced"
+notes = "Ours 6.85 (1175.87 − 1169.02), each a four-seed mean. A difference of two single runs carries roughly √2 times their Monte Carlo error on both sides."
+
+[[target]]
+id = "wilber2022_table1_log_tadpole_rho033"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 ('Replace tadpoles p/a with log10 tadpoles', abundance, ρ = 0.33)" }
+quantity = "ΔLOOIC relative to the full model"
+published = 7.44
+call = "_wilber2022_looic(:log_tadpole, 0.3333).mean - _wilber2022_looic(:full, 0.3333).mean"
+tolerance = { atol = 2.5 }
+status = "reproduced"
+notes = "Ours 6.91 (1114.89 − 1107.98), each a four-seed mean. A difference of two single runs carries roughly √2 times their Monte Carlo error on both sides."
+
+[[target]]
+id = "wilber2022_table1_log_tadpole_rho05"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 ('Replace tadpoles p/a with log10 tadpoles', abundance, ρ = 0.5)" }
+quantity = "ΔLOOIC relative to the full model"
+published = 3.78
+call = "_wilber2022_looic(:log_tadpole, 0.5).mean - _wilber2022_looic(:full, 0.5).mean"
+tolerance = { atol = 2.5 }
+status = "reproduced"
+notes = "Ours 4.28 (1040.16 − 1035.88), each a four-seed mean. A difference of two single runs carries roughly √2 times their Monte Carlo error on both sides."
+
+[[target]]
+id = "wilber2022_table1_linear_temp_rho025"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 ('Remove winter severity', abundance, ρ = 0.25)" }
+quantity = "ΔLOOIC relative to the full model"
+published = 2.3
+call = "_wilber2022_looic(:linear_temp, 0.25).mean - _wilber2022_looic(:full, 0.25).mean"
+tolerance = { atol = 2.5 }
+status = "reproduced"
+notes = "Ours 2.33 (1171.35 − 1169.02), each a four-seed mean. A difference of two single runs carries roughly √2 times their Monte Carlo error on both sides."
+
+[[target]]
+id = "wilber2022_table1_linear_temp_rho033"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 ('Remove winter severity', abundance, ρ = 0.33)" }
+quantity = "ΔLOOIC relative to the full model"
+published = 5.73
+call = "_wilber2022_looic(:linear_temp, 0.3333).mean - _wilber2022_looic(:full, 0.3333).mean"
+tolerance = { atol = 2.5 }
+status = "reproduced"
+notes = "Ours 5.82 (1113.80 − 1107.98), each a four-seed mean. A difference of two single runs carries roughly √2 times their Monte Carlo error on both sides."
+
+[[target]]
+id = "wilber2022_table1_linear_temp_rho05"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 ('Remove winter severity', abundance, ρ = 0.5)" }
+quantity = "ΔLOOIC relative to the full model"
+published = 4.94
+call = "_wilber2022_looic(:linear_temp, 0.5).mean - _wilber2022_looic(:full, 0.5).mean"
+tolerance = { atol = 2.5 }
+status = "reproduced"
+notes = "Ours 6.93 (1042.81 − 1035.88), each a four-seed mean. A difference of two single runs carries roughly √2 times their Monte Carlo error on both sides."
+
+[[target]]
+id = "wilber2022_table1_quadratic_temp_rho025"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 ('Remove winter severity, replace linear temperature with quadratic', abundance, ρ = 0.25)" }
+quantity = "ΔLOOIC relative to the full model"
+published = 6.54
+call = "_wilber2022_looic(:quadratic_temp, 0.25).mean - _wilber2022_looic(:full, 0.25).mean"
+tolerance = { atol = 2.5 }
+status = "reproduced"
+notes = "Ours 7.21 (1176.23 − 1169.02), each a four-seed mean. A difference of two single runs carries roughly √2 times their Monte Carlo error on both sides."
+
+[[target]]
+id = "wilber2022_table1_quadratic_temp_rho033"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 ('Remove winter severity, replace linear temperature with quadratic', abundance, ρ = 0.33)" }
+quantity = "ΔLOOIC relative to the full model"
+published = 9.96
+call = "_wilber2022_looic(:quadratic_temp, 0.3333).mean - _wilber2022_looic(:full, 0.3333).mean"
+tolerance = { atol = 2.5 }
+status = "reproduced"
+notes = "Ours 9.52 (1117.50 − 1107.98), each a four-seed mean. A difference of two single runs carries roughly √2 times their Monte Carlo error on both sides."
+
+[[target]]
+id = "wilber2022_table1_quadratic_temp_rho05"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1 ('Remove winter severity, replace linear temperature with quadratic', abundance, ρ = 0.5)" }
+quantity = "ΔLOOIC relative to the full model"
+published = 6.42
+call = "_wilber2022_looic(:quadratic_temp, 0.5).mean - _wilber2022_looic(:full, 0.5).mean"
+tolerance = { atol = 2.5 }
+status = "reproduced"
+notes = "Ours 7.31 (1043.19 − 1035.88), each a four-seed mean. A difference of two single runs carries roughly √2 times their Monte Carlo error on both sides."
+
+[[target]]
+id = "wilber2022_table1_full_best"
+model = "obs-wilber2022-hmm-outbreak"
+source = { ref = "wilber2022", location = "Table 1" }
+quantity = "the full model (eqn 1) has the lowest LOOIC of the four abundance models at every ρ"
+published = true
+call = """
+all(ρ -> all(m -> _wilber2022_looic(m, ρ).mean > _wilber2022_looic(:full, ρ).mean,
+             (:log_tadpole, :linear_temp, :quadratic_temp)), (0.25, 0.3333, 0.5))
+"""
+status = "qualitative"
+notes = "The smallest gap is 2.33 (no winter severity, ρ = 0.25; paper 2.30)."
+
