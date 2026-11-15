@@ -173,7 +173,7 @@ export KnappPosterior, knapp_prior, observed_swabs, pointwise_loglikelihood, psi
 # Miller et al. 2025 refugia CTMC
 export RefugiaParameters, RefugiaCTMCProblem, RefugiaODEProblem, transmissibility,
        refugia_initial_state, refugia_rates, refugia_stoichiometry, refugia_observation_weeks,
-       RefugiaMesocosmData, miller2025_path, load_miller2025, loss_rate, RefugiaPrior,
+       RefugiaMesocosmData, miller2025_path, load_miller2025, load_miller2025_abc, loss_rate, RefugiaPrior,
        refugia_distance, refugia_abc, refugia_abc_summary
 
 # Bozzuto & Canessa 2019 seasonal Bsal model
@@ -198,7 +198,7 @@ export TransmissionFunction, DensityDependent, FrequencyDependent, PowerLaw,
 export DrawertParameters, DrawertIBMProblem, DrawertODEProblem, DrawertIntervention,
        drawert_interventions, drawert_variant, model_variant, encystment_probability,
        sporangium_loss_rate, nondimensional_parameters, nondimensional_ranges,
-       nondimensional_distance, equilibrium_load_ratio, drawert2017_path, load_drawert2017,
+       nondimensional_distance, equilibrium_load_ratio, drawert2017_path, load_drawert2017, load_drawert2017_reproduction,
        drawert_summary, outcome_class, survival_group, intervention_effect
 # Chowdhury et al. 2025 stage- and temperature-structured Bsal model
 export ChowdhuryParameters, BsalStageTemperatureProblem, chowdhury_scenarios,

@@ -1,0 +1,109 @@
+comment = "OUR fits (N16, a new model), not published results; maximum likelihood from 8 starts, 2000 Nelder-Mead iterations each; written by scripts/knapp_families.jl"
+
+[none.gamma]
+sigma = 1.9948878354324135
+loglik = -5642.755174728997
+parameters = 9
+aic = 11303.510349457994
+iota = 31854.934885414787
+"starts_within_0.5" = 8
+seconds = 97.0
+
+[none.weibull]
+sigma = 2.6608926168471183
+loglik = -5667.79000094963
+parameters = 9
+aic = 11353.58000189926
+iota = 25166.3255259219
+"starts_within_0.5" = 8
+seconds = 65.8
+
+[none.lognormal]
+sigma = 3.898308467785584
+loglik = -5745.42064604684
+parameters = 9
+aic = 11508.84129209368
+iota = 13646.201561224472
+"starts_within_0.5" = 8
+seconds = 92.6
+
+[decay.gamma]
+sigma = 1.6215521227772653
+loglik = -5535.808736562847
+parameters = 12
+aic = 11095.617473125694
+iota = 108283.86654930413
+"starts_within_0.5" = 8
+seconds = 23.5
+
+[decay.weibull]
+sigma = 1.879697589880592
+loglik = -5561.488470428587
+parameters = 12
+aic = 11146.976940857174
+iota = 116314.63859810798
+"starts_within_0.5" = 8
+seconds = 20.5
+
+[decay.lognormal]
+sigma = 2.969806443057108
+loglik = -5656.130292166415
+parameters = 12
+aic = 11336.26058433283
+iota = 121825.51046912417
+"starts_within_0.5" = 8
+seconds = 15.4
+
+[bacteria.gamma]
+sigma = 1.9944588303682413
+loglik = -5642.658077476734
+parameters = 12
+aic = 11309.316154953469
+iota = 33963.22054367612
+"starts_within_0.5" = 8
+seconds = 38.3
+
+[bacteria.weibull]
+sigma = 2.660894431741568
+loglik = -5667.790000949047
+parameters = 12
+aic = 11359.580001898094
+iota = 25166.28194533034
+"starts_within_0.5" = 7
+seconds = 60.1
+
+[bacteria.lognormal]
+sigma = 3.898308567436979
+loglik = -5745.420646046848
+parameters = 12
+aic = 11514.841292093695
+iota = 13646.202746190662
+"starts_within_0.5" = 7
+seconds = 63.3
+
+[applied.gamma]
+sigma = 1.6177088487763471
+loglik = -5534.632271667938
+parameters = 12
+aic = 11093.264543335876
+iota = 105817.89490048404
+"starts_within_0.5" = 8
+seconds = 25.7
+
+[applied.weibull]
+sigma = 1.87057965586529
+loglik = -5558.704755247235
+parameters = 12
+aic = 11141.40951049447
+iota = 112351.85119153475
+"starts_within_0.5" = 7
+seconds = 27.3
+
+[applied.lognormal]
+sigma = 2.940503310086453
+loglik = -5653.021251367498
+parameters = 12
+aic = 11330.042502734996
+iota = 115371.7210658141
+"starts_within_0.5" = 7
+seconds = 18.3

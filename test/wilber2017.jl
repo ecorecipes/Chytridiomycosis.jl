@@ -18,6 +18,13 @@ using LogDensityProblems: LogDensityProblems
     q = parameter_set(:wilber2017)
     p = Wilber2017Parameters(:wilber2017)                    # Table 1 as printed
     pc = Wilber2017Parameters(:wilber2017; set = "coded")    # the code's s0 and tadpole survival
+    @testset "with" begin
+        pw = Chytridiomycosis.with(pc; μT = 0.0)    # not `q`: that is the compendium set below
+        @test pw.μT == 0.0 && pw.b11 == pc.b11 && pw.transmission === pc.transmission
+        same = Chytridiomycosis.with(pc)      # ν may be NaN, so compare with isequal
+        @test all(f -> isequal(getfield(same, f), getfield(pc, f)), fieldnames(typeof(pc)))
+        @test_throws ArgumentError Chytridiomycosis.with(pc; transmission = :no_such_function)
+    end
 
     @testset "parameters (Tables 1–2, compendium)" begin
         @test (p.b00, p.b10, p.b01, p.b11, p.b21, p.v01, p.c01) ==

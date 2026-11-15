@@ -334,6 +334,18 @@ function miller2025_path(dataset::Symbol = :exp)
     return joinpath(pkgdir(@__MODULE__), "data", "miller2025", string(dataset) * "_data.csv")
 end
 
+"""
+    load_miller2025_abc() -> Dict{String,Any}
+
+The stored summary of OUR reproduction of the Miller et al. (2025) ABC,
+`data/miller2025/abc_reproduction.toml`, written by `scripts/miller2025_abc.jl`: per prior
+set (`exp_code_priors`, `exp_paper_priors`, `exp_paper_priors_1e5`, ...) and parameter, the
+mean, sd, minimum and maximum over replicate seeds of the posterior summaries. These are our
+runs, not published results.
+"""
+load_miller2025_abc() =
+    TOML.parsefile(joinpath(pkgdir(@__MODULE__), "data", "miller2025", "abc_reproduction.toml"))
+
 const _MILLER_COMPARTMENTS = ("S", "I1", "I2", "I3", "SV", "IV1", "IV2", "IV3")
 
 """

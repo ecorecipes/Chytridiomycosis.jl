@@ -18,6 +18,7 @@ using TOML
     q = parameter_set(:drawert2017)
     pts = load_drawert2017()
     rep = TOML.parsefile(joinpath(dirname(drawert2017_path()), "reproduction.toml"))
+    @test load_drawert2017_reproduction() == rep
 
     @testset "parameters (Table 1, §3.3–3.4, ESM §1.4, Table S9)" begin
         @test all(r -> r.verified, parameter_records(:drawert2017))

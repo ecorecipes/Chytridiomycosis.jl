@@ -342,6 +342,18 @@ Path of the bundled table of the 2132 Baseline parameter points, with the author
 """
 drawert2017_path() = joinpath(pkgdir(@__MODULE__), "data", "drawert2017", "baseline_points.csv")
 
+"""
+    load_drawert2017_reproduction() -> Dict{String,Any}
+
+The stored summary of OUR simulation runs reproducing Drawert et al. (2017),
+`data/drawert2017/reproduction.toml`, written by `scripts/drawert2017_summarise.jl` from the
+seeded runs of the other `scripts/drawert2017_*.jl`. Tables include `baseline_sample`,
+`deterministic` and `interventions.*`. These are our runs, not published results; the
+authors' own per-point summaries are in [`load_drawert2017`](@ref).
+"""
+load_drawert2017_reproduction() =
+    TOML.parsefile(joinpath(pkgdir(@__MODULE__), "data", "drawert2017", "reproduction.toml"))
+
 const _DRAWERT_COLUMNS = (
     id = "ID", N = "param_Nfrogs", γ = "param_gamma", η = "param_eta", ν0 = "param_nu",
     f = "param_f", σ0 = "param_sigma", μ = "param_mu",

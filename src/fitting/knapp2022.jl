@@ -97,21 +97,40 @@ The model implements the LogDensityProblems interface: the log density is the lo
 of the parameters on the log scale (a flat prior), in the order of
 [`parameter_names`](@ref). Fit it with [`maximum_likelihood`](@ref), or add a prior with
 [`KnappPosterior`](@ref) for a Bayesian fit. `dt` is the step of the exponential integrator.
+
+`family` sets the distribution of a Bd swab around its group's median load `L` (censored
+below one copy in every case); *J. lividum* stays lognormal:
+
+- `:lognormal` (default, as first fitted): `log y ~ Normal(log L, σ)`;
+- `:gamma`: shape `1/σ²` (so `σ` is the coefficient of variation), scale set so the median
+  is `L`;
+- `:weibull`: shape `1/σ`, scale `L/(ln 2)^σ` so the median is `L`.
+
+All three have the same parameters, so their maximum log-likelihoods compare directly (as
+AIC). The choice of family is ours, prompted by the per-group comparison of these swabs with
+[`compare_load_families`](@ref); the gamma family uses a numerical median and is meant for
+derivative-free fits.
 """
 struct KnappLoadModel
     swabs::Vector{KnappSwab}
     mechanism::Symbol
     r0::Float64
     dt::Float64
+    family::Symbol
 end
+
+const KNAPP_FAMILIES = (:lognormal, :gamma, :weibull)
+
 function KnappLoadModel(mechanism::Symbol = :bacteria; swabs = load_knapp2022(),
-        p::BriggsParameters = BriggsParameters(:briggs2010), dt::Real = 0.05)
+        p::BriggsParameters = BriggsParameters(:briggs2010), dt::Real = 0.05,
+        family::Symbol = :lognormal)
     mechanism in KNAPP_MECHANISMS ||
         throw(ArgumentError("mechanism must be one of $(KNAPP_MECHANISMS)"))
+    family in KNAPP_FAMILIES || throw(ArgumentError("family must be one of $(KNAPP_FAMILIES)"))
     r0 = p.η * p.ν * p.f - p.σ
     r0 < 0 || throw(ArgumentError("the fit needs r0 = ηνf − σ < 0; got $r0"))
     dt > 0 || throw(ArgumentError("dt must be positive"))
-    return KnappLoadModel(collect(swabs), mechanism, r0, float(dt))
+    return KnappLoadModel(collect(swabs), mechanism, r0, float(dt), family)
 end
 
 """
@@ -121,7 +140,8 @@ Names of the parameters, all fitted on the log scale:
 
 - `ι`: infection from outside the frog (copies per swab per day);
 - `L0`: load of treated frogs on day 0;
-- `σ`: standard deviation of log Bd load;
+- `σ`: spread of Bd load around the median: the standard deviation of log load
+  (`:lognormal`), the coefficient of variation (`:gamma`) or 1/shape (`:weibull`);
 - `aT`, `aW`, `aC`: *J. lividum* on day 12 on treated, wild and control frogs (genomic
   equivalents);
 - `hT`, `hW`: its half-life (days) on treated frogs and on wild and control frogs;
@@ -224,6 +244,20 @@ end
 # log density of an observation y with log-median μ: lognormal, censored below 1
 knapp_obs(y, μ, σ) = y >= 1 ? logpdf(Normal(μ, σ), log(y)) - log(y) : logcdf(Normal(μ, σ), 0.0)
 
+# The Bd observation for a model's `family`, with median exp(μ) and spread σ (see
+# KnappLoadModel), censored below 1.
+function knapp_bd_obs(family::Symbol, y, μ, σ)
+    family === :lognormal && return knapp_obs(y, μ, σ)
+    L = exp(μ)
+    d = if family === :gamma
+        k = 1 / σ^2
+        Gamma(k, L / quantile(Gamma(k, 1.0), 0.5))
+    else
+        Weibull(1 / σ, L / log(2)^σ)
+    end
+    return y >= 1 ? logpdf(d, y) : logcdf(d, 1.0)
+end
+
 function knapp_check_dimension(m::KnappLoadModel, x::AbstractVector)
     length(x) == LogDensityProblems.dimension(m) ||
         throw(DimensionMismatch("expected $(LogDensityProblems.dimension(m)) parameters"))
@@ -270,7 +304,7 @@ function pointwise_loglikelihood(m::KnappLoadModel, x::AbstractVector)
         i = findfirst(==(s.day), pred.days)
         g = getfield(pred, s.group)
         v = zero(T)
-        knapp_bd_observed(s) && (v += knapp_obs(s.bd, log(g.bd[i]), q.σ))
+        knapp_bd_observed(s) && (v += knapp_bd_obs(m.family, s.bd, log(g.bd[i]), q.σ))
         knapp_jl_observed(s) && (v += knapp_obs(s.jl, log(g.jl[i]), q.σJ))
         out[k] = isfinite(v) ? v : T(-Inf)
     end

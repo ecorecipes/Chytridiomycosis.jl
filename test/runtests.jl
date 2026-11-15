@@ -736,6 +736,24 @@ using Random: Xoshiro
         @test isfinite(LDP.logdensity(m, x))
         @test_throws DimensionMismatch LDP.logdensity(m, x[1:3])
 
+        # Bd observation families: the default is the lognormal of the first fit; gamma and
+        # Weibull share the parameters and keep L as the median
+        @test m.family === :lognormal
+        @test_throws ArgumentError KnappLoadModel(:applied; family = :normal)
+        for fam in (:gamma, :weibull)
+            mf = KnappLoadModel(:applied; family = fam)
+            @test parameter_names(mf) == parameter_names(m) && isfinite(LDP.logdensity(mf, x))
+            # median exp(μ): P(Y ≤ L) = 1/2, from the censored mass plus the integrated density
+            μ, σ, L = log(500.0), 1.3, 500.0
+            dens(y) = exp(Chytridiomycosis.knapp_bd_obs(fam, y, μ, σ))
+            ys = range(1.0, L; length = 200_001)
+            mass = exp(Chytridiomycosis.knapp_bd_obs(fam, 0.0, μ, σ)) +
+                   sum(dens, ys[2:end-1]) * step(ys) + (dens(ys[1]) + dens(ys[end])) * step(ys) / 2
+            @test mass ≈ 0.5 rtol = 1e-3
+        end
+        @test Chytridiomycosis.knapp_bd_obs(:lognormal, 50.0, 3.0, 1.2) ==
+              Chytridiomycosis.knapp_obs(50.0, 3.0, 1.2)
+
         # equilibrium: the positive root, and no suppression gives ι/(−r0)
         r0 = m.r0
         L = Chytridiomycosis.knapp_equilibrium(1e5, r0, 2e5, 1e3)

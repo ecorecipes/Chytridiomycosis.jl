@@ -113,6 +113,7 @@ intervention_effect
 ```@docs
 drawert2017_path
 load_drawert2017
+load_drawert2017_reproduction
 ```
 
 ## What reproduces

@@ -158,6 +158,15 @@ end
 
 time_unit(::Type{<:Wilber2017Parameters}) = :day
 
+"""
+Return a copy of `p` with fields replaced, e.g. `with(p; μT = 0.0)` for a Bd-free reference.
+The constructor's checks run again. Changing `transmission` here does not reload that
+function's `β0` and `β1` from the compendium; use
+`Wilber2017Parameters(:wilber2017; transmission = ...)` for that.
+"""
+with(p::Wilber2017Parameters; kw...) =
+    Wilber2017Parameters(; (f => get(kw, f, getfield(p, f)) for f in fieldnames(Wilber2017Parameters))...)
+
 _with(p::Wilber2017Parameters; kw...) = Wilber2017Parameters(;
     (f => get(kw, f, getfield(p, f)) for f in fieldnames(Wilber2017Parameters))...)
 

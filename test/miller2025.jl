@@ -168,6 +168,7 @@ using TOML
     @testset "stored ABC reproduction vs Tables 3 and S3" begin
         path = joinpath(pkgdir(C), "data", "miller2025", "abc_reproduction.toml")
         res = TOML.parsefile(path)
+        @test load_miller2025_abc() == res
         # A published posterior mean is reproduced when it lies within 3 sd (over our
         # replicate ABC runs at the paper's settings) of our mean, allowing for the paper's
         # rounding to three decimals.
