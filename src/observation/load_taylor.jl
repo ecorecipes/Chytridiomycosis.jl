@@ -4,7 +4,7 @@
 # variance (n − 1) taken on the natural scale over all swabs INCLUDING the zeros, groups with
 # at least 10 swabs and at least 3 positives (their code 01_Aggregation_Groups.R and
 # 03_Fig.1_TPL_Plot.R, Zenodo doi:10.5281/zenodo.14291806, MIT). Their group summaries are on
-# Dryad (doi:10.5061/dryad.mgqnk998g, CC0) but are not bundled: see data/schrock2024/README.md.
+# Dryad (doi:10.5061/dryad.mgqnk998g, CC0), bundled in data/schrock2024/ (see the README).
 
 """
     TaylorPowerLawProblem(means, variances; base = 10)
@@ -119,25 +119,45 @@ end
     schrock2024_path()
 
 Where [`load_schrock2024`](@ref) looks for the group summary file of Schrock et al. (2025),
-`data/schrock2024/analysis_aggregation_dataset.csv`. The file is not bundled: download it
-from Dryad (doi:10.5061/dryad.mgqnk998g, CC0) as `data/schrock2024/README.md` describes.
+`data/schrock2024/analysis_aggregation_dataset.csv`, bundled unmodified from Dryad
+(doi:10.5061/dryad.mgqnk998g, version 2025-01-09, CC0); see `data/schrock2024/README.md`.
 """
 schrock2024_path() = joinpath(pkgdir(@__MODULE__), "data", "schrock2024", "analysis_aggregation_dataset.csv")
 
-# Split one CSV line, honouring double quotes.
-function _csv_fields(line::AbstractString)
-    out, buf, q = String[], IOBuffer(), false
-    for c in line
+# Split CSV text into rows of fields, honouring double quotes. A quoted field may contain
+# commas and line breaks (the Dryad file has 647 rows whose quoted fields contain newlines),
+# so the text is parsed as a whole rather than line by line. `""` inside a quoted field is a
+# literal quote; CR is dropped outside quotes; blank lines are skipped. (Named apart from
+# `_csv_rows(path)` in src/fitting/malagon2020.jl.)
+function _schrock_csv_rows(text::AbstractString)
+    rows, row, buf, q = Vector{String}[], String[], IOBuffer(), false
+    chars = collect(text)
+    i = 1
+    while i <= length(chars)
+        c = chars[i]
         if c == '"'
-            q = !q
+            if q && i < length(chars) && chars[i + 1] == '"'
+                print(buf, '"')
+                i += 1
+            else
+                q = !q
+            end
         elseif c == ',' && !q
-            push!(out, String(take!(buf)))
+            push!(row, String(take!(buf)))
+        elseif c == '\n' && !q
+            push!(row, String(take!(buf)))
+            (length(row) == 1 && isempty(strip(row[1]))) || push!(rows, row)
+            row = String[]
+        elseif c == '\r' && !q
+            # CRLF line ending
         else
             print(buf, c)
         end
+        i += 1
     end
-    push!(out, String(take!(buf)))
-    return out
+    push!(row, String(take!(buf)))
+    (length(row) == 1 && isempty(strip(row[1]))) || push!(rows, row)
+    return rows
 end
 
 _schrock_num(s) = (v = tryparse(Float64, strip(s)); v === nothing ? NaN : v)
@@ -152,8 +172,8 @@ it is missing.
 function load_schrock2024(path::AbstractString = schrock2024_path())
     isfile(path) || throw(ArgumentError("no file at $path: download analysis_aggregation_dataset.csv " *
         "from Dryad (doi:10.5061/dryad.mgqnk998g, CC0); see data/schrock2024/README.md"))
-    lines = filter(!isempty ∘ strip, readlines(path))
-    header = _csv_fields(lines[1])
+    rows = _schrock_csv_rows(read(path, String))
+    header = rows[1]
     function col(name)
         i = findfirst(==(name), header)
         i === nothing && throw(ArgumentError("column $name missing from $path"))
@@ -163,8 +183,9 @@ function load_schrock2024(path::AbstractString = schrock2024_path())
         col("life_stage"), col("site"), col("N"), col("num_infected"),
         col("mean_natural_with_zeros"), col("var_natural_with_zeros"), col("phase")
     groups = SchrockGroup[]
-    for line in lines[2:end]
-        r = _csv_fields(line)
+    for r in rows[2:end]
+        length(r) == length(header) || throw(ArgumentError(
+            "row with $(length(r)) fields, header has $(length(header)), in $path"))
         ph = r[iph] in ("NA", "Not Available", "Not Applicable") ? "" : r[iph]
         push!(groups, SchrockGroup(Symbol(r[ids]), r[isp], r[ils], r[isi],
             round(Int, _schrock_num(r[iN])), round(Int, _schrock_num(r[ii])),
@@ -199,6 +220,50 @@ function schrock_taylor_slopes(groups::AbstractVector{SchrockGroup}; by::Symbol 
         out[k] = solve(TaylorPowerLawProblem([g.mean for g in gs], [g.variance for g in gs]); level)
     end
     return out
+end
+
+"""
+    schrock_family_fractions(path = schrock2024_path(); min_infected = 10)
+
+Schrock et al.'s (2025) comparison of the continuous load distributions, recomputed from
+the AIC values they deposited (`gamma_aic`, `lnorm_aic`, `weibull_aic`, `exp_aic` in the
+Dryad group summaries), following their `05_Fig.2_Distribution_Fit_Boxplot.R`: groups with at
+least `min_infected` positive swabs and all four AICs, ΔAIC from the lowest of the four, and
+"as good" meaning ΔAIC ≤ 2. Returns a named tuple with
+
+- `n`: the number of groups;
+- `as_good`: for each family (`:gamma`, `:lognormal`, `:weibull`, `:exponential`), the
+  fraction of groups where it is best or within 2 AIC of the best;
+- `several`: the fraction of groups where more than one family is within 2 AIC;
+- `clearly_best`: for each family, the fraction where it beats every other by more than 2.
+
+These are the authors' own fits; [`compare_load_families`](@ref) repeats the fits on raw loads.
+"""
+function schrock_family_fractions(path::AbstractString = schrock2024_path(); min_infected::Integer = 10)
+    isfile(path) || throw(ArgumentError("no file at $path; see data/schrock2024/README.md"))
+    rows = _schrock_csv_rows(read(path, String))
+    header = rows[1]
+    function col(name)
+        i = findfirst(==(name), header)
+        i === nothing && throw(ArgumentError("column $name missing from $path"))
+        return i
+    end
+    ii = col("num_infected")
+    fams = (:gamma, :lognormal, :weibull, :exponential)
+    ia = col.(("gamma_aic", "lnorm_aic", "weibull_aic", "exp_aic"))
+    A = Vector{NTuple{4,Float64}}()
+    for r in rows[2:end]
+        _schrock_num(r[ii]) >= min_infected || continue
+        a = ntuple(j -> _schrock_num(r[ia[j]]), 4)
+        all(isfinite, a) && push!(A, a)
+    end
+    n = length(A)
+    Δ = [a .- minimum(a) for a in A]
+    as_good = Dict(f => count(d -> d[j] <= 2, Δ) / n for (j, f) in enumerate(fams))
+    several = count(d -> count(<=(2), d) > 1, Δ) / n
+    clearly_best = Dict(f => count(d -> d[j] == 0 && all(d[k] > 2 for k in 1:4 if k != j), Δ) / n
+                        for (j, f) in enumerate(fams))
+    return (; n, as_good, several, clearly_best)
 end
 
 # Validation helper: the TPL slope across lognormal groups with a common log-scale spread

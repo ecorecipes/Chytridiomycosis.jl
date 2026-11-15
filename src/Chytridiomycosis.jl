@@ -239,7 +239,7 @@ export QPCRStandardCurve, qpcr_efficiency, standard_quantity, cycle_threshold, l
        strain_copy_number, restandardize, dsdna_mass, genome_equivalents, shed_viability,
        LoadHurdleModel, hurdle_distribution, fit_positive_loads, compare_load_families,
        TaylorPowerLawProblem, load_moments, SchrockGroup, schrock2024_path, load_schrock2024,
-       schrock_taylor_slopes, SwabLoadDistribution, detection_probability, swab_logpdf,
+       schrock_taylor_slopes, schrock_family_fractions, SwabLoadDistribution, detection_probability, swab_logpdf,
        swab_loglikelihood, swab_distribution
 # Generic hidden Markov models
 export hmm_forward, hmm_loglikelihood, hmm_backward, hmm_posterior, hmm_viterbi, hmm_sample,

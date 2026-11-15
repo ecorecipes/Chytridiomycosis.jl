@@ -168,6 +168,21 @@ const CL = Chytridiomycosis
         rm(path)
     end
 
+    @testset "Schrock et al. group summaries (Dryad file)" begin
+        # quoted fields may hold commas, doubled quotes and line breaks (the Dryad file's phase
+        # labels do), and CRLF endings are accepted
+        rows = Chytridiomycosis._schrock_csv_rows("a,b,c\r\n1,\"x, \"\"y\"\"\",\"two\nlines\"\r\n\n2,z,w\n")
+        @test rows == [["a", "b", "c"], ["1", "x, \"y\"", "two\nlines"], ["2", "z", "w"]]
+        gs = load_schrock2024()
+        @test length(gs) == 1861
+        @test count(g -> occursin('\n', g.phase), gs) > 0
+        f = schrock_family_fractions()
+        @test f.n == 524
+        @test sum(values(f.clearly_best)) + f.several ≤ 1 + 1e-12
+        @test all(v -> 0 ≤ v ≤ 1, values(f.as_good)) && f.as_good[:lognormal] > f.as_good[:weibull]
+        @test_throws ArgumentError schrock_family_fractions(joinpath(tempdir(), "no_such_schrock.csv"))
+    end
+
     @testset "observation operators" begin
         # a hand-built distribution: one uniform and one point component with noise
         d = SwabLoadDistribution(0.5, [1.0, 3.0], [2.0, 3.0], [1.0, 3.0]; σ = 0.4, lod = 10.0)

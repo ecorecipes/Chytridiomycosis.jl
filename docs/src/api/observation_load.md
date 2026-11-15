@@ -109,11 +109,16 @@ when every swab is positive. Their groups include the uninfected swabs, so with 
 `π`, `Var/mean² = (e^{σ²} − π)/π` ([`load_moments`](@ref)): groups whose prevalence rises
 with their mean load pull the slope below 2.
 
-Their group summaries are on Dryad (CC0) but are not bundled: the download was refused to the
-package's automated client. [`load_schrock2024`](@ref) reads the file once it is placed in
-`data/schrock2024/` (see the README there), and [`schrock_taylor_slopes`](@ref) reproduces
-their Fig. 1 regressions; the validation targets for the published slopes are pending until
-then.
+Their group summaries (Dryad, CC0) are bundled in `data/schrock2024/`.
+[`load_schrock2024`](@ref) reads them and [`schrock_taylor_slopes`](@ref) reproduces the
+published slopes: Sierra Nevada 1.901 (paper 1.90), Brazil 2.055 (2.06), adults 2.030 (2.03),
+larvae 1.854 (1.85), subadults 1.933 (1.93). The enzootic Sierra slope is 1.98, not the
+published 2.08, so the claimed difference from post-invasion populations (1.93) is not
+reproduced; the authors' phase script is not in their code deposit.
+[`schrock_family_fractions`](@ref) recomputes their distribution comparison from the AICs
+they deposited: the lognormal is best or within 2 AIC in 76.1% of 524 groups (paper 76.7% of
+525), and the fractions where several families tie (57.3%) or one is clearly best (lognormal
+38.0%) match the printed values.
 
 ```@docs
 TaylorPowerLawProblem
@@ -122,6 +127,7 @@ SchrockGroup
 schrock2024_path
 load_schrock2024
 schrock_taylor_slopes
+schrock_family_fractions
 ```
 
 ## Observation operators

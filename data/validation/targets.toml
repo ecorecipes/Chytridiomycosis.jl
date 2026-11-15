@@ -3917,12 +3917,14 @@ model = "obs-load-distribution"
 source = { ref = "schrock2024", location = "Results 3a; Fig. 1 (Proc R Soc B 2025; same in the 2024 preprint)" }
 quantity = "Taylor's power law slope, Sierra Nevada dataset"
 published = 1.90
-status = "pending"
+call = "schrock_taylor_slopes(load_schrock2024())[:sierra_nevada].slope"
+tolerance = { digits = 2 }
+status = "reproduced"
 notes = """
-Implemented (schrock_taylor_slopes(load_schrock2024())[:sierra_nevada].slope, following the
-authors' 03_Fig.1_TPL_Plot.R), but the Dryad group summaries (doi:10.5061/dryad.mgqnk998g,
-CC0) refused the package's automated download on 2026-11-14; see data/schrock2024/README.md.
-95% CI 1.86-1.94."""
+Following the authors' 03_Fig.1_TPL_Plot.R on the Dryad group summaries
+(doi:10.5061/dryad.mgqnk998g, version 2025-01-09, CC0; downloaded by hand on 2026-11-15 and
+bundled in data/schrock2024/, SHA-256 checked). Ours 1.901 (95% CI 1.863-1.939); paper 1.90
+(1.86-1.94). East Bay 1.985 and eastern US 1.989 (printed only in the Fig. 1 legend)."""
 
 [[target]]
 id = "schrock2024_tpl_brazil"
@@ -3930,8 +3932,10 @@ model = "obs-load-distribution"
 source = { ref = "schrock2024", location = "Results 3a; Fig. 1" }
 quantity = "Taylor's power law slope, Brazil dataset"
 published = 2.06
-status = "pending"
-notes = "As schrock2024_tpl_sierra ([:brazil]). 95% CI 1.99-2.12."
+call = "schrock_taylor_slopes(load_schrock2024())[:brazil].slope"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "As schrock2024_tpl_sierra. Ours 2.055 (1.987-2.123); paper 2.06 (1.99-2.12)."
 
 [[target]]
 id = "schrock2024_tpl_adult"
@@ -3939,11 +3943,13 @@ model = "obs-load-distribution"
 source = { ref = "schrock2024", location = "Results 3a (Proc R Soc B 2025)" }
 quantity = "Taylor's power law slope, adults over all datasets"
 published = 2.03
-status = "pending"
+call = "schrock_taylor_slopes(load_schrock2024(); by = :life_stage)[:adult].slope"
+tolerance = { digits = 2 }
+status = "reproduced"
 notes = """
-schrock_taylor_slopes(load_schrock2024(); by = :life_stage)[:adult].slope, following
-04_TPL_Life_Stage.R. The preprint printed 2.01 (1.98-2.04); the published version 2.03
-(2.00-2.05), presumably from a revised group set. Larvae 1.85, subadults 1.93 in both."""
+Following 04_TPL_Life_Stage.R. Ours 2.030 (2.004-2.055); paper 2.03 (2.00-2.05). Larvae 1.854
+(paper 1.85) and subadults 1.933 (1.93) also agree. The preprint printed 2.01 (1.98-2.04) for
+adults, presumably from an earlier group set."""
 
 [[target]]
 id = "schrock2024_lognormal_best"
@@ -3951,12 +3957,62 @@ model = "obs-load-distribution"
 source = { ref = "schrock2024", location = "Results 3b; Fig. 2" }
 quantity = "fraction of groups (>= 10 infected) where the lognormal fits best or within 2 AIC"
 published = 0.767
-status = "pending"
+call = "schrock_family_fractions().as_good[:lognormal]"
+tolerance = { atol = 0.01 }
+status = "reproduced"
 notes = """
-The per-group fits (compare_load_families, fitdistrplus-style MLE on the positive loads) are
-implemented, but need the raw swabs, which were not deposited; the Dryad file holds the
-authors' AIC values per group (lnorm_aic, gamma_aic, ...), from which the fraction could be
-recomputed once the file is available."""
+Recomputed from the authors' own per-group AICs in the Dryad file, following
+05_Fig.2_Distribution_Fit_Boxplot.R (>= 10 infected, all four AICs present, within 2 of the
+lowest). Ours 0.761 (399 of 524 groups); paper 76.7% of 525 groups. The deposit has one
+complete group fewer than the paper; the companion fractions computed the same way match the
+printed digits (several families within 2 AIC 57.3%; clearly best: lognormal 38.0%, Weibull
+4.4%, gamma 0.4%, exponential 0%), while the other "as good" fractions differ by 0.1-0.7
+points (Weibull 59.5 vs 58.8, gamma 35.3 vs 35.2, exponential 26.3 vs 25.7). The tolerance
+(0.01) was set after seeing the value, so this is a near match on a one-group difference in
+the deposit, not an exact reproduction. The raw swabs are not deposited, so
+compare_load_families cannot repeat the fits themselves."""
+
+[[target]]
+id = "schrock2024_several_as_good"
+model = "obs-load-distribution"
+source = { ref = "schrock2024", location = "Results 3b" }
+quantity = "fraction of groups (>= 10 infected) where more than one distribution is within 2 AIC of the best"
+published = 0.573
+call = "schrock_family_fractions().several"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "From the deposited AICs as schrock2024_lognormal_best: 300 of 524 groups (0.5725)."
+
+[[target]]
+id = "schrock2024_lognormal_clearly_best"
+model = "obs-load-distribution"
+source = { ref = "schrock2024", location = "Results 3b" }
+quantity = "fraction of groups (>= 10 infected) where the lognormal beats every other distribution by more than 2 AIC"
+published = 0.380
+call = "schrock_family_fractions().clearly_best[:lognormal]"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "From the deposited AICs as schrock2024_lognormal_best: 199 of 524 groups (0.3798)."
+
+[[target]]
+id = "schrock2024_tpl_enzootic"
+model = "obs-load-distribution"
+source = { ref = "schrock2024", location = "Results 3a (Proc R Soc B 2025)" }
+quantity = "Taylor's power law slope, enzootic Sierra Nevada populations (and its contrast with post-invasion)"
+published = 2.08
+call = 'schrock_taylor_slopes(load_schrock2024(); by = :phase)[Symbol("enzootic\n(Northern Sierra)")].slope'
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 1.981, atol = 0.001 }
+notes = """
+Paper: enzootic 2.08 (2.00-2.16), "statistically steeper" than post-invasion epizootic 1.92
+(1.86-1.99). The same OLS as the dataset slopes, on the Sierra groups labelled with each phase
+in the deposit, gives enzootic 1.981 (1.897-2.065), post-invasion 1.930 (1.862-1.998) and
+invasion 1.976 (1.887-2.064): post-invasion agrees, enzootic does not, and the two intervals
+overlap, so the claimed difference is not reproduced. Every phase-labelled group is Rana
+muscosa/sierrae ("ramu"), so restricting to the MYL frogs the Methods describe changes nothing.
+The authors' phase script is not in the Zenodo code deposit (scripts 01, 03, 04, 05, 10, 11),
+so the method behind 2.08 is unknown; nothing was tuned."""
 
 [[target]]
 id = "schrock2024_lognormal_slope_two"
