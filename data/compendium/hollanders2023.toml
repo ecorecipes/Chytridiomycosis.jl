@@ -1,0 +1,378 @@
+# Hollanders M, Grogan LF, Nock CJ, McCallum HI, Newell DA (2023) Recovered frog populations
+# coexist with endemic Batrachochytrium dendrobatidis despite load-dependent mortality.
+# Ecological Applications 33:e2724. https://doi.org/10.1002/eap.2724 (open access, CC BY)
+#
+# Read on 2026-11-15 from the paper (lab/papers/hollanders2023.pdf: Methods, Results,
+# Figs 3–5), Appendix S1 and the authors' code and posterior draws (Zenodo
+# doi:10.5281/zenodo.6981761; repository mhollanders/mfleayi-adults at a325a4c, in
+# lab/papers/hollanders2023_si/). The PDF text layer drops minus signs; signs below were
+# checked against the posterior draws.
+#
+# System: adult (86% male) Mixophyes fleayi, three rainforest streams, NSW, 2017–2021. All
+# fitted values are posterior medians [95% HDI] of the NIMBLE robust-design continuous-time
+# multistate model. Rates are hazards per six-week interval (42 days) unless the units say
+# yr^-1; slopes are per two standard deviations of the centred covariate, reported
+# conditional on RJMCMC inclusion. The load covariate is log10 ITS1 copies per swab, centred
+# at 3.174 and divided by 2 × 0.911 (the mean and sd of the 248 observed loads).
+
+source = { ref = "hollanders2023", doi = "10.1002/eap.2724", review_ref = 28 }
+
+[[parameter]]
+symbol = "mortality_status"
+quantity = "change in log apparent mortality hazard for Bd infection status (infected at average load)"
+value = -0.167
+units = "log hazard ratio"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results, 'Apparent mortality rates' (−0.167 [−1.714, 1.053], pd 60%, 79.4% inclusion)"
+verified = true
+notes = "Median conditional on RJMCMC inclusion (checked against the draws)."
+
+[[parameter]]
+symbol = "mortality_load"
+quantity = "change in log apparent mortality hazard per two sd of log10 Bd load"
+value = 1.953
+units = "log hazard ratio per 2 sd of log10(ITS1 copies swab^-1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (1.953 [−0.011, 3.834], pd 97.5%, 2.8% in ROPE, 99.9% inclusion)"
+verified = true
+notes = "Per log10 unit: 1.953 / (2 × 0.911) = 1.07. The review left the scale unstated."
+
+[[parameter]]
+symbol = "mortality_condition"
+quantity = "change in log mortality hazard per two sd of scaled mass index"
+value = 0.414
+units = "log hazard ratio per 2 sd"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (0.414 [0.002, 0.823], pd 97.2%)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "mortality_temperature"
+quantity = "change in log mortality hazard per two sd of interval mean temperature"
+value = 0.176
+units = "log hazard ratio per 2 sd"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (0.176 [−0.393, 0.686], pd 73.3%)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "mortality_sixweek_min"
+quantity = "smallest site median six-weekly apparent mortality hazard (Tuntable)"
+value = 0.077
+units = "hazard per six-week interval"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results ('ranged from 0.077 to 0.104'); Appendix S3 Table S2"
+verified = true
+notes = "Corresponds to 0.93 survival per six weeks."
+
+[[parameter]]
+symbol = "mortality_sixweek_max"
+quantity = "largest site median six-weekly apparent mortality hazard (Brindle)"
+value = 0.104
+units = "hazard per six-week interval"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "mortality_annual"
+quantity = "annual apparent mortality hazard averaged over sites"
+value = 0.783
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (0.783 [0.571, 0.997])"
+verified = true
+notes = "Six-weekly site-geometric-mean hazard × 52/6 (a 52-week year). 365.25/42 would give 0.786."
+
+[[parameter]]
+symbol = "survival_annual"
+quantity = "annual apparent survival probability averaged over sites"
+value = 0.457
+units = "probability per annual interval"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (0.457 [0.364, 0.56])"
+verified = true
+notes = "exp(−annual hazard)."
+
+[[parameter]]
+symbol = "gain"
+quantity = "hazard of gaining Bd infection, site average"
+value = 0.283
+units = "hazard per six-week interval"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results, 'Infection dynamics' (0.283 [0.12, 0.564]; sites 0.163–0.564)"
+verified = true
+notes = "A rate. The review's 'gain / clearance 0.283 / 0.927' mixes this rate with a probability."
+
+[[parameter]]
+symbol = "gain_probability"
+quantity = "probability of gaining infection over six weeks, 1 − exp(−gain)"
+value = 0.246
+units = "probability per six-week interval"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (0.246 [0.129, 0.445])"
+verified = true
+notes = "Formula 1 − exp(−rate) ignores competing clearance and death."
+
+[[parameter]]
+symbol = "clearance"
+quantity = "hazard of clearing Bd infection, site average"
+value = 2.623
+units = "hazard per six-week interval"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (2.623 [1.308, 4.961]; sites 2.418–2.892)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "clearance_probability"
+quantity = "probability of clearing infection over six weeks, 1 − exp(−clearance)"
+value = 0.927
+units = "probability per six-week interval"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (0.927 [0.817, 1])"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "gain_rain"
+quantity = "change in log hazard of gaining infection per two sd of six-weekly rainfall"
+value = 1.141
+units = "log hazard ratio per 2 sd"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (1.141 [−0.013, 2.253], pd 98.1%)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "gain_temperature"
+quantity = "change in log hazard of gaining infection per two sd of interval temperature"
+value = -0.419
+units = "log hazard ratio per 2 sd"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (−0.419 [−1.61, 0.79], pd 76.4%)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "clear_temperature"
+quantity = "change in log hazard of clearing infection per two sd of interval temperature"
+value = 1.101
+units = "log hazard ratio per 2 sd"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (1.101 [−0.094, 2.302], pd 96.4%)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "clear_rain"
+quantity = "change in log hazard of clearing infection per two sd of rainfall"
+value = -0.246
+units = "log hazard ratio per 2 sd"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (−0.246 [−1.42, 0.797], pd 67.8%)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "clear_load"
+quantity = "change in log hazard of clearing infection per two sd of log10 load"
+value = 0.297
+units = "log hazard ratio per 2 sd of log10(ITS1 copies swab^-1)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (0.297 [−0.407, 1.024], pd 80.3%)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "hazard_ratio_1e5"
+quantity = "median ratio of mortality hazard at 10^5 ITS1 copies per swab to uninfected"
+value = 4.4
+units = "hazard ratio"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Discussion, 'Impact of Bd on individual mortality'"
+verified = true
+notes = "Not reproduced from the deposited draws (about 6.4); see validation target hollanders2023_hazard_ratio_1e5."
+
+[[parameter]]
+symbol = "hazard_ratio_1e6"
+quantity = "median ratio of mortality hazard at 10^6 ITS1 copies per swab to uninfected"
+value = 11.0
+units = "hazard ratio"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Discussion"
+verified = true
+notes = "Not reproduced from the deposited draws (about 19)."
+
+[[parameter]]
+symbol = "load_mean_log10"
+quantity = "mean observed Bd load of M. fleayi"
+value = 3.17
+units = "log10(ITS1 copies swab^-1)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Discussion ('average observed Bd infection loads, 10^3.17 ITS copies per swab')"
+verified = true
+notes = "Recomputed from the bundled loads: 3.174 (sd 0.911, n = 248)."
+
+[[parameter]]
+symbol = "load_min_log10"
+quantity = "smallest observed Bd load"
+value = 1.425
+units = "log10(ITS1 copies swab^-1)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results, 'Sampling summary'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "load_max_log10"
+quantity = "largest observed Bd load (a female in winter with a diminished righting reflex)"
+value = 6.18
+units = "log10(ITS1 copies swab^-1)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results, 'Sampling summary'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "individuals"
+quantity = "unique M. fleayi captured (Brindle 462, Tuntable 136, Bat Cave 88)"
+value = 686
+units = "individuals"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results, 'Sampling summary'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "primary_detections"
+quantity = "primary-occasion detections"
+value = 1609
+units = "detections"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results ('1609 primary detections (2384 including recaptures during secondary surveys), of which 248 (15%) involved a frog infected')"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "detections"
+quantity = "detections including recaptures in secondary surveys"
+value = 2384
+units = "detections"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "infected_detections"
+quantity = "primary detections of an infected frog"
+value = 248
+units = "detections"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "observed_gains"
+quantity = "observations of frogs gaining Bd infection"
+value = 118
+units = "events"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results ('118 observations of frogs gaining Bd infection and 124 observations of frogs clearing')"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "observed_clearances"
+quantity = "observations of frogs clearing Bd infection"
+value = 124
+units = "events"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "survey_sd_mortality"
+quantity = "sd of the random survey effect on log mortality hazard"
+value = 0.334
+units = "log hazard"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "adult", setting = "field" }
+location = "Results (0.334 [0, 0.7])"
+verified = true
+notes = "Gaining 0.492 [0.004, 0.981], clearing 0.29 [0.003, 0.786]."
+
+[[parameter]]
+symbol = "prevalence_mfleayi"
+quantity = "Bd prevalence of M. fleayi, community logistic model (intercept)"
+value = 0.152
+units = "proportion"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Mixophyes fleayi", stage = "post-metamorphic", setting = "field" }
+location = "Results, 'Bd infection prevalence and intensity in the frog communities' (0.152 [0.065, 0.272])"
+verified = true
+notes = "From the community model (m1-infections.qmd), not implemented here."

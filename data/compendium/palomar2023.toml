@@ -1,0 +1,219 @@
+# Palomar G, Fernández-Chacón A, Bosch J (2023) Amphibian survival compromised by long-term
+# effects of chytrid fungus. Biodiversity and Conservation 32:793–809.
+# https://doi.org/10.1007/s10531-022-02525-3 (open access, CC BY)
+#
+# Read on 2026-11-15 from the paper (lab/papers/palomar2023.pdf: Methods, Results, Table 1,
+# Figs 2–4) and Online Appendices A and B (lab/papers/palomar2023_si1.docx, _si2.docx).
+# System: adult male Bufo spinosus, Laguna Grande, Peñalara Massif, Sierra de Guadarrama
+# National Park, Spain; 13 annual breeding-season occasions 2006–2018. Fitted values are
+# E-SURGE maximum-likelihood estimates of the retained multi-event model (Table 1, model 1:
+# S state + time, ψ state × time, p time, δ state), reported as "mean annual" estimate ± SE
+# (means over the time-specific estimates; how the mean and its SE were formed is not stated).
+# The capture histories were not deposited ("Data will be available online upon
+# publication"; nothing found 2026-11-15), so none of these is refitted.
+
+source = { ref = "palomar2023", doi = "10.1007/s10531-022-02525-3", review_ref = 58 }
+
+[[parameter]]
+symbol = "survival_infected"
+quantity = "mean annual apparent survival of Bd-positive males, S_I"
+value = 0.754
+units = "probability per annual interval"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results, 'Survival, transition, recapture…' (± 0.016 SE)"
+verified = true
+notes = "An annual probability, not a rate; SE 0.016."
+
+[[parameter]]
+symbol = "survival_uninfected"
+quantity = "mean annual apparent survival of Bd-negative males, S_U"
+value = 0.883
+units = "probability per annual interval"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results (± 0.027 SE)"
+verified = true
+notes = "SE 0.027."
+
+[[parameter]]
+symbol = "infection"
+quantity = "mean annual probability of becoming Bd-positive, ψ_U→I (conditional on survival)"
+value = 0.583
+units = "probability per annual interval"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results (± 0.039 SE)"
+verified = true
+notes = "SE 0.039."
+
+[[parameter]]
+symbol = "clearance"
+quantity = "mean annual probability of becoming Bd-negative, ψ_I→U (conditional on survival)"
+value = 0.225
+units = "probability per annual interval"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results (± 0.019 SE)"
+verified = true
+notes = "SE 0.019."
+
+[[parameter]]
+symbol = "recapture_mean"
+quantity = "mean annual recapture probability, p"
+value = 0.593
+units = "probability"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results (± 0.017 SE; range 0.375 ± 0.056 to 0.794 ± 0.042)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "assignment_infected"
+quantity = "state-assignment probability of an encountered Bd-positive toad (recorded positive), δ_I"
+value = 0.119
+units = "probability"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results (± 0.011 SE)"
+verified = true
+notes = "The review's 'δ = 0.119 for positives' is this value."
+
+[[parameter]]
+symbol = "assignment_uninfected"
+quantity = "state-assignment probability of an encountered Bd-negative toad (recorded negative), δ_U"
+value = 1.0
+units = "probability"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results ('δU = 1.000; standard error could not be computed')"
+verified = true
+notes = "At the boundary of the parameter space."
+
+[[parameter]]
+symbol = "chat"
+quantity = "overdispersion ĉ, U-CARE global multistate test (Test 3G + Test M), χ² 244.751 on 166 df"
+value = 1.474
+units = "dimensionless"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results; Online Appendix B table"
+verified = true
+notes = "Test 3G χ² 208.193 on 146 df; Test M χ² 36.558 on 20 df."
+
+[[parameter]]
+symbol = "qaic_best"
+quantity = "QAIC of the retained multi-event model 1 (S state + time, ψ state * time, p time, δ state)"
+value = 4293.7
+units = "dimensionless"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Table 1"
+verified = true
+notes = "Next best: model 2 (S time), ΔQAIC 3.4 (text: 3.35)."
+
+[[parameter]]
+symbol = "prevalence_observed"
+quantity = "overall Bd prevalence among swabbed toads, 2008–2016"
+value = 0.2779
+units = "proportion"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult", setting = "field" }
+location = "Results, first paragraph ('27.79%')"
+verified = true
+notes = "Both sexes, all swabbed captures."
+
+[[parameter]]
+symbol = "swabbed_captures"
+quantity = "captures tested for Bd (a random subsample), 2008–2016"
+value = 588
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult", setting = "field" }
+location = "Methods, 'Sampling' ('588 of 1369 captures')"
+verified = true
+notes = "'a randomly chosen sub-sample of animals'."
+
+[[parameter]]
+symbol = "captures_2008_2016"
+quantity = "captures from which the swabbed subsample was drawn, 2008–2016"
+value = 1369
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult", setting = "field" }
+location = "Methods, 'Sampling'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "males_marked"
+quantity = "male toads marked and released, 2006–2018"
+value = 632
+units = "individuals"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results ('632 male toads were marked … 438 animals were subsequently reencountered')"
+verified = true
+notes = "879 toads in all; 246 females marked, 69 recaptured (Methods)."
+
+[[parameter]]
+symbol = "males_reencountered"
+quantity = "marked males re-encountered at least once"
+value = 438
+units = "individuals"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "pradel_lambda_geomean"
+quantity = "geometric mean of the annual population growth rates λ, Pradel model (φ(t), λ(t), p(.)), MARK"
+value = 0.92
+units = "dimensionless (annual multiplier)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results, 'Survival, recruitment, and population growth in Pradel model'"
+verified = true
+notes = "Annual λ ranged 0.71 (SE 0.04) to 1.13 (SE 0.07). Units: a dimensionless annual multiplier."
+
+[[parameter]]
+symbol = "pradel_survival_geomean"
+quantity = "geometric mean of apparent survival φ, Pradel model"
+value = 0.78
+units = "probability per annual interval"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results (range 0.59 to 0.94)"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "pradel_recruitment"
+quantity = "constant recruitment f, Pradel model φ(t), f(.), p(.)"
+value = 0.15
+units = "dimensionless (annual multiplier)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Bufo spinosus", stage = "adult male", setting = "field" }
+location = "Results (SE 0.01; time-dependent f 0.03–0.34; AIC 6652.088 vs 6663.903)"
+verified = true
+notes = "Units: recruits per animal per year, dimensionless."

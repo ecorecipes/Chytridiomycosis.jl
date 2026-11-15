@@ -44,7 +44,8 @@ makedocs(;
                                       "Management decisions with an IPM (Canessa 2018)" => "api/canessa2018.md",
                                       "Load distributions and extinction risk (Louca 2014)" => "api/louca2014.md",
                                       "Swab loads: units, likelihoods, operators" => "api/observation_load.md",
-                                      "Outbreak-state HMM (Wilber 2022)" => "api/wilber2022.md"]])
+                                      "Outbreak-state HMM (Wilber 2022)" => "api/wilber2022.md",
+                                      "Multistate survival (Hollanders 2023, Palomar 2023)" => "api/multistate.md"]])
 
 if get(ENV, "CI", "false") == "true"
     deploydocs(; repo = "github.com/ecorecipes/Chytridiomycosis.jl.git", push_preview = true)
