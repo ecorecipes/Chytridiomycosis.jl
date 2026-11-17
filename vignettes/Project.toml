@@ -1,4 +1,7 @@
 [deps]
+DynamicalResilience = "54629d0c-0bd5-4489-a333-4d325b057304"
+ResilienceCore = "e31f93f6-99b1-4a70-b0c5-c402beffe4e1"
+StructuredPopulationCore = "33358fd2-7d60-4541-bded-caea801370e0"
 Chytridiomycosis = "225de920-55da-40a7-8ddb-3f32ee84be8d"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 MCMCDiagnosticTools = "be115224-59cd-429b-ad48-344e309966f0"
@@ -8,4 +11,7 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Turing = "fce5fe82-541a-59a6-adf8-730c64b5f9a0"
 
 [sources]
+DynamicalResilience = {url = "https://github.com/ecorecipes/DynamicalResilience.jl"}
+ResilienceCore = {url = "https://github.com/ecorecipes/ResilienceCore.jl"}
+StructuredPopulationCore = {url = "https://github.com/ecorecipes/ProjectionModels.jl"}
 Chytridiomycosis = {path = ".."}
