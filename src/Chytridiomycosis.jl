@@ -17,13 +17,15 @@ using Random: Random, AbstractRNG
 using Dates: Date, @dateformat_str
 using LogDensityProblems: LogDensityProblems
 using TOML
+using ResilienceCore: ResilienceCore, ContinuousJacobian
+using DynamicalResilience: DynamicalResilience
 
 """
     to_ode_problem(prob)
 
 The `SciMLBase.ODEProblem` that `solve(prob)` integrates, for the problems that lower to a
 single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
-[`LoadTippingProblem`](@ref), [`BsalLarvalProblem`](@ref),
+[`LoadTippingProblem`](@ref), [`LoadTipping`](@ref) (one host, pool fixed), [`BsalLarvalProblem`](@ref),
 [`MultiHostPoolProblem`](@ref) (with its inoculation callback),
 [`ZoosporePersistenceProblem`](@ref), [`RefugiaODEProblem`](@ref),
 [`SeasonalBsalProblem`](@ref) (with its inflow switch times as `tstops`),
@@ -121,8 +123,10 @@ include("models/hollanders2023.jl")
 include("fitting/hollanders2023.jl")
 include("models/palomar2023.jl")
 include("fitting/palomar2023.jl")
+include("resilience.jl")
 
 export solve
+export equilibrium_state
 export ParameterRecord, compendium_sources, parameter_records, parameter_set
 export SchmidtParameters, SchmidtSLIProblem, to_ode_problem, invasion_threshold,
        removal_fraction, basic_reproduction_number, endemic_equilibrium, hopf_threshold,

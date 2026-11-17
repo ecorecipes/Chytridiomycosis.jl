@@ -19,7 +19,8 @@ makedocs(;
                                   "Fitting to a field trial" => "tutorials/03_knapp_fit.md",
                                   "Chance and persistence" => "tutorials/04_stochastic.md",
                                   "Can a Bsal outbreak be stopped?" => "tutorials/05_bsal.md",
-                                  "Load-structured models" => "tutorials/06_load_ipm.md"],
+                                  "Load-structured models" => "tutorials/06_load_ipm.md",
+                                  "Thresholds and resilience" => "tutorials/07_resilience.md"],
                   "API reference" => ["Parameter compendium" => "api/compendium.md",
                                       "Published models" => "api/published.md",
                                       "Several hosts, one pool" => "api/daversa2022.md",
@@ -45,7 +46,8 @@ makedocs(;
                                       "Load distributions and extinction risk (Louca 2014)" => "api/louca2014.md",
                                       "Swab loads: units, likelihoods, operators" => "api/observation_load.md",
                                       "Outbreak-state HMM (Wilber 2022)" => "api/wilber2022.md",
-                                      "Multistate survival (Hollanders 2023, Palomar 2023)" => "api/multistate.md"]])
+                                      "Multistate survival (Hollanders 2023, Palomar 2023)" => "api/multistate.md",
+                                      "Resilience and thresholds" => "api/resilience.md"]])
 
 if get(ENV, "CI", "false") == "true"
     deploydocs(; repo = "github.com/ecorecipes/Chytridiomycosis.jl.git", push_preview = true)
