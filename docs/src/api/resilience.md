@@ -10,7 +10,7 @@ R₀ by the next-generation method, Floquet multipliers, following resilience al
 and [ResilienceCore.jl](https://ecorecipes.github.io/ResilienceCore.jl/dev/) (what a linearised
 operator means and which metrics apply to it). This package only says where its models'
 equilibria are and which of their terms are new infections. The tutorial
-[Thresholds and resilience](../tutorials/07_resilience.md) uses them on Schmidt's Bsal model and
+[Thresholds and resilience](../tutorials/06_resilience.md) uses them on Schmidt's Bsal model and
 on the load-tipping model.
 
 ```@docs

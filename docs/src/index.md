@@ -94,20 +94,33 @@ return a named tuple of time series and summaries; see each problem's documentat
 
 ## Tutorials
 
-- [Building biological realism](tutorials/01_building_realism.md): for three systems, the
-  treatment model is built from the simplest model one piece of biology at a time, ending
-  with chance.
-- [One model, many switches](tutorials/02_nested_model.md): a single nested model in which
-  every combination of biology is compared like for like, and a stochastic version.
-- [Fitting to a field trial](tutorials/03_knapp_fit.md): the frog load equation fitted to
-  field swabs of treated, wild and control frogs, comparing four explanations for why treated
-  frogs stayed low.
-- [Chance and persistence](tutorials/04_stochastic.md): does chance decide whether frogs
-  survive Bd?
-- [Can a Bsal outbreak be stopped?](tutorials/05_bsal.md)
-- [Load-structured models](tutorials/06_load_ipm.md): does it matter that frogs carry
-  different Bd loads?
-- [Thresholds and resilience](tutorials/07_resilience.md)
+Every tutorial opens with a table of the models it uses and the category of each.
+
+**Part I. Published models**
+
+1. [Can a Bsal outbreak be stopped?](tutorials/01_bsal.md): five published Bsal models, from
+   transmission and host density to seasons, life stages, temperature, load and management.
+2. [Does it matter that frogs carry different Bd loads?](tutorials/02_load_ipm.md): from the
+   mean load to load distributions and integral projection models fitted to swabs.
+3. [Does chance decide whether frogs survive Bd?](tutorials/03_stochastic.md): whole frogs and
+   whole zoospores, in a frog population and in outdoor mesocosms.
+4. [Where does Bd live between hosts?](tutorials/04_environment.md): zoospores in water,
+   several host species sharing one pool, and temperature.
+5. [What do field data say about Bd?](tutorials/05_field_data.md): swab loads, outbreak states
+   of lakes, and survival of infected frogs with imperfect detection.
+6. [Thresholds and resilience](tutorials/06_resilience.md): how robust a state is on the way
+   to a threshold.
+
+**Part II. Modified and new models**
+
+7. [Does a protective skin microbiome save the population?](tutorials/07_building_realism.md):
+   for three systems, the treatment model is built from the simplest model one piece of
+   biology at a time, ending with chance.
+8. [One model, many switches](tutorials/08_nested_model.md): a single nested model in which
+   every combination of biology is compared like for like, and a stochastic version.
+9. [Fitting to a field trial](tutorials/09_knapp_fit.md): the frog load equation fitted to
+   field swabs of treated, wild and control frogs, comparing four explanations for why
+   treated frogs stayed low.
 
 The tutorials are Quarto documents in `vignettes/`, rendered to HTML, PDF and Markdown.
 

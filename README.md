@@ -72,56 +72,95 @@ and glue to DynamicalResilience.jl.
 
 ## Vignettes
 
-[Does a protective skin microbiome save the population?](vignettes/01_building_realism/01_building_realism.md)
-([PDF](vignettes/01_building_realism/01_building_realism.pdf),
-[HTML](vignettes/01_building_realism/01_building_realism.html),
-[source](vignettes/01_building_realism/01_building_realism.qmd))
+Every vignette opens with a table of the models it uses and the category of each.
 
-For three systems (Bsal in fire salamanders, Bd in common toads, Bd in frogs) it starts from
-the simplest model, adds the biology of the host and pathogen one piece at a time, then the
-biology of the treatment, and records after every step how the population fares with and
-without treatment. It ends by measuring how far each step moved the answer and, with a
-factorial design, whether the effect of one piece depends on the others.
+### Part I. Published models
 
-[One model, many switches](vignettes/02_nested_model/02_nested_model.md)
-([PDF](vignettes/02_nested_model/02_nested_model.pdf),
-[HTML](vignettes/02_nested_model/02_nested_model.html),
-[source](vignettes/02_nested_model/02_nested_model.qmd))
+[Can a Bsal outbreak be stopped?](vignettes/01_bsal/01_bsal.md)
+([PDF](vignettes/01_bsal/01_bsal.pdf),
+[HTML](vignettes/01_bsal/01_bsal.html),
+[source](vignettes/01_bsal/01_bsal.qmd))
 
-Uses a single nested model in which each piece of biology is a switch, runs all 48
-combinations at three host densities, and measures the effect of each piece like for like.
-It ends with a stochastic version, which overturns one of the deterministic results.
+Climbs five published Bsal models (Malagon et al. 2020 and Tompros et al. 2022, Schmidt et al.
+2017, Bozzuto & Canessa 2019, Chowdhury et al. 2025, Canessa et al. 2018), adding transmission,
+demography, seasons, life stages and temperature, then load and management, and asks at each
+step whether reducing host numbers stops an outbreak.
 
-[Fitting the frog load model to a field trial](vignettes/03_knapp_fit/03_knapp_fit.md)
-([PDF](vignettes/03_knapp_fit/03_knapp_fit.pdf),
-[HTML](vignettes/03_knapp_fit/03_knapp_fit.html),
-[source](vignettes/03_knapp_fit/03_knapp_fit.qmd))
+[Does it matter that frogs carry different Bd loads?](vignettes/02_load_ipm/02_load_ipm.md)
+([PDF](vignettes/02_load_ipm/02_load_ipm.pdf),
+[HTML](vignettes/02_load_ipm/02_load_ipm.html),
+[source](vignettes/02_load_ipm/02_load_ipm.qmd))
+
+From the mean load on identical frogs (Briggs et al. 2010) to load distributions (Louca et al.
+2014) and integral projection models fitted to swabs (Wilber et al. 2016, 2017), reporting at
+each step the invasion number, the hosts left and the spread of load.
+
+[Does chance decide whether frogs survive Bd?](vignettes/03_stochastic/03_stochastic.md)
+([PDF](vignettes/03_stochastic/03_stochastic.pdf),
+[HTML](vignettes/03_stochastic/03_stochastic.html),
+[source](vignettes/03_stochastic/03_stochastic.qmd))
+
+Whole frogs and whole zoospores: one outbreak in a frog population (Briggs et al. 2010, Drawert
+et al. 2017), then recovery and reinfection in outdoor mesocosms (Miller et al. 2025).
+
+[Where does Bd live between hosts?](vignettes/04_environment/04_environment.md)
+([PDF](vignettes/04_environment/04_environment.pdf),
+[HTML](vignettes/04_environment/04_environment.html),
+[source](vignettes/04_environment/04_environment.qmd))
+
+Zoospores in water (Rumschlag et al. 2022), several host species sharing one pool (Daversa et
+al. 2022), and temperature setting the pathogen's growth (Woodhams et al. 2008 and thermal
+performance curves).
+
+[What do field data say about Bd?](vignettes/05_field_data/05_field_data.md)
+([PDF](vignettes/05_field_data/05_field_data.pdf),
+[HTML](vignettes/05_field_data/05_field_data.html),
+[source](vignettes/05_field_data/05_field_data.qmd))
+
+From one qPCR swab to the spread of loads across swabs (Schrock et al. 2025), outbreak states of
+lakes from yearly surveys (Wilber et al. 2022), and survival of infected frogs with imperfect
+detection (Hollanders et al. 2023, Palomar et al. 2023).
+
+[Thresholds and resilience](vignettes/06_resilience/06_resilience.md)
+([PDF](vignettes/06_resilience/06_resilience.pdf),
+[HTML](vignettes/06_resilience/06_resilience.html),
+[source](vignettes/06_resilience/06_resilience.qmd))
+
+How robust a state is on the way to a threshold: the Hopf threshold of the Schmidt et al. (2017)
+Bsal model and the fold of the load tipping model (a modified Briggs model).
+
+### Part II. Modified and new models
+
+[Does a protective skin microbiome save the population?](vignettes/07_building_realism/07_building_realism.md)
+([PDF](vignettes/07_building_realism/07_building_realism.pdf),
+[HTML](vignettes/07_building_realism/07_building_realism.html),
+[source](vignettes/07_building_realism/07_building_realism.qmd))
+
+For three systems (Bsal in fire salamanders, Bd in common toads, Bd in frogs) it starts from the
+simplest model, adds the biology of the host and pathogen one piece at a time, then the biology
+of the treatment, and records after every step how the population fares with and without
+treatment. It ends by measuring how far each step moved the answer and, with a factorial design,
+whether the effect of one piece depends on the others.
+
+[One model, many switches](vignettes/08_nested_model/08_nested_model.md)
+([PDF](vignettes/08_nested_model/08_nested_model.pdf),
+[HTML](vignettes/08_nested_model/08_nested_model.html),
+[source](vignettes/08_nested_model/08_nested_model.qmd))
+
+Uses a single nested model in which each piece of biology is a switch, runs all 48 combinations
+at three host densities, and measures the effect of each piece like for like. It ends with a
+stochastic version, which overturns one of the deterministic results.
+
+[Fitting the frog load model to a field trial](vignettes/09_knapp_fit/09_knapp_fit.md)
+([PDF](vignettes/09_knapp_fit/09_knapp_fit.pdf),
+[HTML](vignettes/09_knapp_fit/09_knapp_fit.html),
+[source](vignettes/09_knapp_fit/09_knapp_fit.qmd))
 
 Fits the frog load equation to field swabs from frogs treated with itraconazole and then
 *Janthinobacterium lividum* (Knapp et al. 2022), building up from no treatment effect to four
 explanations. Something held treated frogs' loads down for weeks. A waning drug and the applied
 bacteria fit about equally well, but resident *J. lividum* at the measured abundances did not
 protect.
-
-[Does chance decide whether frogs survive Bd?](vignettes/04_stochastic/04_stochastic.md)
-([PDF](vignettes/04_stochastic/04_stochastic.pdf),
-[HTML](vignettes/04_stochastic/04_stochastic.html),
-[source](vignettes/04_stochastic/04_stochastic.qmd))
-
-[Can a Bsal outbreak be stopped?](vignettes/05_bsal/05_bsal.md)
-([PDF](vignettes/05_bsal/05_bsal.pdf),
-[HTML](vignettes/05_bsal/05_bsal.html),
-[source](vignettes/05_bsal/05_bsal.qmd))
-
-[Does it matter that frogs carry different Bd loads?](vignettes/06_load_ipm/06_load_ipm.md)
-([PDF](vignettes/06_load_ipm/06_load_ipm.pdf),
-[HTML](vignettes/06_load_ipm/06_load_ipm.html),
-[source](vignettes/06_load_ipm/06_load_ipm.qmd))
-
-[Thresholds and resilience](vignettes/07_resilience/07_resilience.md)
-([PDF](vignettes/07_resilience/07_resilience.pdf),
-[HTML](vignettes/07_resilience/07_resilience.html),
-[source](vignettes/07_resilience/07_resilience.qmd))
 
 Each vignette writes out the equations of every model it runs, with a symbol table and a
 diagram of the model.
