@@ -1,4 +1,4 @@
-# Units layer (lab/wiki/parameters/units.md): typed loads, explicit conversions, time units.
+# Units layer: typed loads, explicit conversions, time units.
 @testset "Units (Phase 0)" begin
     # Loads store log10 and read back exactly.
     z = ZEPerSwab(1e4)

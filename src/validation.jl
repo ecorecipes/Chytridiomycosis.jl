@@ -1,6 +1,6 @@
 # Validation-target registry: published numbers and outcomes that the implementations must
 # reproduce, each with its source, the call that reproduces it, a tolerance and a status.
-# Registry: data/validation/targets.toml. Spec: lab/wiki/validation/targets.md
+# Registry: data/validation/targets.toml.
 
 const VALIDATION_FILE = normpath(joinpath(@__DIR__, "..", "data", "validation", "targets.toml"))
 const TARGET_STATUSES = (:reproduced, :qualitative, :discrepant, :pending)
@@ -10,7 +10,7 @@ const TARGET_STATUSES = (:reproduced, :qualitative, :discrepant, :pending)
 
 One published reproduction target, read from `data/validation/targets.toml`. Fields:
 
-- `id`, `model` (the wiki model page or model name), `source` (a `references.tsv` key) and
+- `id`, `model` (a model identifier), `source` (a `references.tsv` key) and
   `location` (where in the paper);
 - `quantity` and `published`, the value or outcome the paper reports;
 - `call`, the package code that reproduces it, evaluated in the package module;

@@ -1,7 +1,6 @@
 # Wilber MQ, Langwig KE, Kilpatrick AM, McCallum HI, Briggs CJ (2016) Integral projection
 # models for host–parasite systems with an application to amphibian chytrid fungus.
 # Methods Ecol Evol 7:1182–1194. doi:10.1111/2041-210X.12561
-# Wiki: lab/wiki/models/bd-wilber2016-ipm.md
 #
 # Checked against the published PDF (eqns 1–13, Table 1, Figs 2–5) and the authors' R code
 # and results (github.com/mqwilber/ipm_for_parasites, commit 240b5e67; IPM_functions_for_R.R,
@@ -25,9 +24,12 @@
 # as_coded = true). See the validation targets for what this changes.
 #
 # Printed and coded details that differ (see also the compendium notes):
-# - Table 1's survival coefficients (11.824, −0.8605) are not those of the deposited fit or of
-#   a refit of the deposited data (11.597, −0.8873). WilberParameters(:wilber2016) uses Table
-#   1; set = "deposited" uses the deposit, which is what the authors' figures were made with.
+# - Table 1's survival coefficients (11.824, −0.8605) and the survival test (χ² = 12.197) are
+#   those of a fit to all three temperatures (fit_wilber2016(; survival_temperatures =
+#   (4, 12, 20)), Appendix S2's alternative), not of the 20 °C fit the text and Fig. 2a
+#   describe. The 20 °C fit (11.597, −0.8873) is the deposited fit, which the authors' figures
+#   were made with. WilberParameters(:wilber2016) uses Table 1; set = "deposited" uses the
+#   deposit.
 # - The text says 20 frogs at three temperatures, 5 per temperature: the data have 20 frogs at
 #   four temperatures (4, 12, 20, 26 °C); 26 °C was excluded from all fits.
 # - The bootstrap (monte_carlo_params) stores the survival slope draw as surv_size, which
@@ -60,7 +62,8 @@ swab and `T` the temperature in °C. Probabilities are per time step of `Δt` da
 The keyed constructor reads `data/compendium/wilber2016.toml`: Table 1 as printed by
 default, or with `set = "deposited"` the authors' deposited fit at full precision (identical
 to Table 1 to the printed digits, except survival: `b00 = 11.597`, `b10 = −0.8873`, which a
-refit of the data reproduces). The authors' figures were made with the deposited values.
+refit to the 20 °C frogs reproduces; Table 1's survival values come from a fit to all three
+temperatures). The authors' figures were made with the deposited values.
 `WilberParameters(fit)` takes the coefficients of [`fit_wilber2016`](@ref).
 """
 struct WilberParameters

@@ -1,6 +1,5 @@
 # N5 (new model, not a published result): identifiability of the Briggs et al. 2010 load
-# model from swabs, eDNA and load aggregation. Reproduces the tables on the wiki page
-# lab/wiki/models/new-swab-edna-identifiability.md.
+# model from swabs, eDNA and load aggregation; prints the identifiability tables.
 #
 #   julia --project scripts/n5_identifiability.jl            # from the package root
 #   N5_MC=0 julia --project scripts/n5_identifiability.jl    # skip the Monte Carlo (~4 min)

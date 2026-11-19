@@ -1,4 +1,4 @@
-# Louca et al. (2014) discrepancy check (see wiki card): run with julia --project.
+# Louca et al. (2014) discrepancy check (see the discrepant louca2014 validation targets): run with julia --project.
 # Result (2026-11-14, n = 600 per row): extinction 0.135–0.225 and T_A within ±0.06 for every reading.
 # Hypothesis: the duplicated "r" in the ESM §5.2 log-uniform list is τm or τbr, not Tbr.
 # Extinction fraction (Z_o = 0) and selected risk effects for each reading, 600 runs each.

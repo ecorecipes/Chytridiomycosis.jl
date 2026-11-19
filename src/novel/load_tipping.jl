@@ -1,6 +1,6 @@
 # MODIFIED MODEL (not a published result): the Briggs et al. (2010) within-host
 # equation with one extra term, a saturating clearance of sporangia by constitutive skin
-# defences. Wiki: lab/wiki/models/mod-load-tipping.md
+# defences.
 #
 # One host, pool held fixed:
 #   dS/dt = ι + (λ − σ) S − c S/(h + S)

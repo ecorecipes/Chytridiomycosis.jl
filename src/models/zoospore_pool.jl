@@ -2,7 +2,7 @@
 # measured by DNA (qPCR or eDNA) but infects only while alive. Structure from Rumschlag et al.
 # 2022 (J Anim Ecol 91:170, eqs 1-2): live zoospores die at per capita rate m and the dead
 # decompose at per capita rate d. qPCR detects DNA from both, so it counts ZL + ZD; only ZL
-# infects. Wiki: lab/wiki/models/bd-rumschlag2022-zoospore-persistence.md
+# infects.
 #
 #   dZL/dt = shedding − m ZL − uptake
 #   dZD/dt = m ZL − d ZD

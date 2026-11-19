@@ -1,6 +1,6 @@
 # NEW MODEL (not from a published paper): treating amphibians with a skin microbiome selected
 # to produce antifungal compounds. A starter model: hosts are either "treated" (carrying the
-# microbiome) or "untreated". Wiki: lab/wiki/models/new-microbiome-treatment.md
+# microbiome) or "untreated".
 #
 # The same treatment layer is put on three host–pathogen models:
 #   ProbioticSLIProblem   Bsal in fire salamanders (Schmidt et al. 2017): treated adults are
@@ -17,7 +17,7 @@
 #   E (environmental reservoir of the microbiome, scaled so that E = 1 balances a fully
 #     treated population) relaxes at rate δ = log 2 / reservoir_half_life
 # Protection has two separate endpoints, because trials report better survival without fewer
-# infections (lab/wiki/references/manus-microbiome-review-2026.md):
+# infections:
 #   efficacy   proportional reduction in the infection rate of a treated host
 #   tolerance  proportional reduction in the disease-induced death of a treated, infected host,
 #              which stays infectious

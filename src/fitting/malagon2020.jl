@@ -1,7 +1,7 @@
 # Reproduction of the analyses of Malagon et al. (2020) Sci Rep 10:5584
 # (doi:10.1038/s41598-020-62351-x) from the authors' Supplementary File 2 (data, R script and
 # MATLAB code; data/malagon2020). This reproduces a published analysis; it is not a new
-# model. Wiki: lab/wiki/models/bsal-transmission-functions.md
+# model.
 #
 # The pipeline, as the supplement and the code do it:
 #   1. Experiment 1: contacts per hour in 1-m² pools at 2, 4 and 8 newts, without and with

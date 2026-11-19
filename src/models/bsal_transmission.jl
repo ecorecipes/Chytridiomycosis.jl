@@ -13,7 +13,7 @@
 #
 # Equations were read from the papers, the supplements and the authors' code. Discrepancies
 # between them are listed in the docstrings and in
-# lab/wiki/models/bsal-transmission-functions.md.
+# docs/src/api/bsal_transmission.md.
 #
 # A transmission function gives φ(S, I, N), the total rate of new infections (time⁻¹) with S
 # susceptible and I infectious hosts in a population of N. Tompros et al. write

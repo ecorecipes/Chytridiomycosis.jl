@@ -5,7 +5,7 @@ using LinearAlgebra: diag, eigvals, Symmetric
 @testset "N5 swab and eDNA identifiability (new)" begin
     LDP = Chytridiomycosis.LogDensityProblems
     p = BriggsParameters(:briggs2010)
-    # assay scales are illustrative assumptions (no published values), as in the wiki page
+    # assay scales are illustrative assumptions (no published values)
     obs = SurveyObservation(ρ = 10.0, κ = 1.0, σe = 0.5)
     days = [5.0, 10, 15, 20, 30, 40]
     B = (:γ, :ν, :f, :μ, :η, :σ)

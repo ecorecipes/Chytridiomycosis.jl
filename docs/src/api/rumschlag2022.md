@@ -24,7 +24,8 @@ bundled in `data/rumschlag2022`. It reproduces the paper's estimates:
 The other two are the models in which both `m` and `β` have two estimates (ASW and ponds).
 Ours are 3.3 units lower. Table 1's own values show that the original fits of these two
 models fell short of the maximum. Each has a lower implied log-likelihood, by 1.32 and 1.37
-units, than the same model with a single `β`, which is nested in it. No other nested pair in
+units, than the same model with a single `β`, which is nested in it, and falls 1.64 and 1.66
+units short of our maximum. No other nested pair in
 Table 1 is out of order.
 
 ## Model

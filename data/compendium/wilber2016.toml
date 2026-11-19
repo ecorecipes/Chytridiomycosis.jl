@@ -22,7 +22,9 @@
 #   results/IPM_parameters_no_26_linear.rds (parsed with a minimal XDR reader; see notes).
 #   They agree with Table 1 to the printed digits except the survival function: the deposit
 #   has b00 = 11.597, b10 = −0.8873 where Table 1 prints 11.824, −0.8605. A refit of the
-#   bundled data (fit_wilber2016) reproduces the deposit, not Table 1.
+#   bundled data to the 20 °C frogs (fit_wilber2016, as the text describes) reproduces the
+#   deposit; a refit to all three temperatures (survival_temperatures = (4, 12, 20))
+#   reproduces Table 1.
 
 source = { ref = "wilber2016", doi = "10.1111/2041-210X.12561", review_ref = 38 }
 
@@ -441,7 +443,7 @@ role = "estimated"
 system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", temperature_C = "20", setting = "lab" }
 location = "results/IPM_parameters_no_26_linear.rds: surv_int"
 verified = true
-notes = "Differs from Table 1 (11.824). Our refit of the bundled data gives 11.5973."
+notes = "Differs from Table 1 (11.824), which is the fit to all three temperatures. Our refit to the 20 °C frogs gives 11.5973."
 
 [[parameter]]
 symbol = "b10"

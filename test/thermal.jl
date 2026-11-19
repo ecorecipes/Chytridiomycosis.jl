@@ -1,4 +1,4 @@
-# Thermal performance curves (lab/wiki/models/thermal-performance.md). Curve parameters other
+# Thermal performance curves. Curve parameters other
 # than published fits are illustrative, chosen to test the algebra, not published values.
 @testset "Thermal performance curves (Phase 0)" begin
     # Brière from cardinal temperatures: the optimum and peak are where they were put.

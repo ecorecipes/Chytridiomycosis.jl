@@ -1,7 +1,6 @@
 # Daversa, Bosch, Manica, Garner & Fenton (2022) Am Nat 200(4). doi:10.1086/720638
 # Host species share one zoospore pool in a mesocosm (salamander, toad and tree frog larvae).
 # Units: time in days; hosts and zoospores are numbers per tank (80 L), not densities.
-# Wiki: lab/wiki/models/bd-daversa2022-multihost.md
 #
 # Model (p. 5, checked against the PDF and against the authors' R code, Zenodo 5068208):
 #   dH_i/dt = -μ_i H_i

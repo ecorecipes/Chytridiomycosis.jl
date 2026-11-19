@@ -1,7 +1,7 @@
 # Hollanders M, Grogan LF, Nock CJ, McCallum HI, Newell DA (2023) Recovered frog populations
 # coexist with endemic Batrachochytrium dendrobatidis despite load-dependent mortality.
 # Ecological Applications 33:e2724. https://doi.org/10.1002/eap.2724
-# Wiki: lab/wiki/models/obs-multistate-survival.md. This reproduces a published analysis; it is
+# This reproduces a published analysis; it is
 # not a new model.
 #
 # Read from the paper (CC BY), Appendix S1 and the authors' code: Zenodo

@@ -4,7 +4,6 @@
 # first author's site bundles after the article (lab/papers/louca2014_si/). No code or data
 # were deposited. Units: days; degree of infection (DOI) = zoospores on a host, read in the
 # ESM (§5.1) as the qPCR load of a standardised swab (ZE swab⁻¹).
-# Wiki: lab/wiki/models/bd-louca2014-load-distribution.md
 #
 # State: the numbers of adults P_A(t, n) and tadpoles P_T(t, n) with DOI n = 0, 1, 2, … and the
 # free zoospore pool Z(t). Master equations (main eqs 2.1–2.2; ESM eqs 1–3):
@@ -35,7 +34,7 @@
 # rate μ_s(0)/f_s, each killing Binomial(⌊N_s⌋, f_s) hosts of stage s, every DOI bin being
 # scaled by (1 − k_s/N_s).
 #
-# Departures and interpretations (see the wiki page):
+# Departures and interpretations (see also the validation targets):
 # - Table 1 writes F_T = ∞ for tolerant tadpoles; the ESM (§1.3, Table S1) uses T_T = F_T with
 #   S_T,max = F_T − 1. We follow the ESM with F_T = 10⁴.
 # - ESM §5.2 lists r twice among the log-uniform parameters; the second is taken as T_br.

@@ -1,6 +1,6 @@
 # Bayesian fit of the frog load equation to the Knapp et al. 2022 swabs (new): the prior and
 # posterior, pointwise log-likelihoods, PSIS-LOO and WAIC, and the Turing extension. The long
-# NUTS run that the wiki and docs report is not repeated here; one very short chain checks that
+# NUTS run that the docs report is not repeated here; one very short chain checks that
 # the extension samples.
 using Turing: Turing
 using LogDensityProblems: LogDensityProblems

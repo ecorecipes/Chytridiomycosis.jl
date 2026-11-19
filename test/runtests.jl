@@ -21,7 +21,7 @@ using Random: Xoshiro
         @test round(100 * removal_fraction(p)) == 96                      # p_remove ≈ 96%
         eq = endemic_equilibrium(p)
         # Paper reports S_eq = 1.0027; eq. (2.3) with Table 1 values gives 1.0030 (not explained
-        # by rounding of e, d_I or β). Open discrepancy: lab/wiki/models/bsal-schmidt2017-sli.md
+        # by rounding of e, d_I or β). Discrepant target schmidt2017_S_eq.
         @test_broken round(eq.S, digits = 4) == 1.0027
         @test round(eq.S, digits = 4) == 1.0030                           # regression
         # The published 1.0027 equals (d + e)(d + d_I)/(βe), eq. (2.3) without the γN losses
@@ -48,7 +48,8 @@ using Random: Xoshiro
         @test crash.Smin < 0.05 * p.K                                     # "almost zero"
         @test 1 / 12 < crash.tmin < 4 / 12                                # "two to three months"
         # Eq. (2.5): the paper's ≈9% (μ = 1) and ≈0.1% (μ = 0.1) of 258 750 km² after 8 yr
-        # equal A(t)/100 — a probable km²/ha slip, recorded in the wiki.
+        # equal A(t)/100 as a share of the habitat, i.e. A(t)/H read as a percentage: fig. S3
+        # labels the ratio as a percentage (targets schmidt2017_habitat_share_*).
         habitat = 258_750.0
         f1 = scattered_colony_area(p, 8.0; μ = 1.0) / 100 / habitat
         f01 = scattered_colony_area(p, 8.0; μ = 0.1) / 100 / habitat
@@ -146,7 +147,7 @@ using Random: Xoshiro
         @test isapprox(base.A[i0 - 2], base.A[i0 - 4]; rtol = 1e-6)
     end
 
-    # New model: birth–death–immigration load process (lab/wiki/models/mod-load-bdi.md).
+    # Modified model: birth–death–immigration load process.
     @testset "Load BDI (new)" begin
         m = LoadBDI(0.04, 0.14, 0.2)
         d = load_distribution(m)
@@ -189,8 +190,8 @@ using Random: Xoshiro
         @test isapprox(mean(sim.mean_adult_load), mean(e); rtol = 0.5)
     end
 
-    # New model: load tipping, the Briggs equation plus saturating clearance
-    # (lab/wiki/models/mod-load-tipping.md). c and h are illustrative, not published.
+    # Modified model: load tipping, the Briggs equation plus saturating clearance.
+    # c and h are illustrative, not published.
     @testset "Load tipping (new)" begin
         rate(m, S) = m.ι + net_growth_rate(m) * S - m.c * S / (m.h + S)
         slope(m, S) = net_growth_rate(m) - m.c * m.h / (m.h + S)^2
@@ -314,7 +315,7 @@ using Random: Xoshiro
     end
 
     # New model: a "treated" class carrying a protective microbiome, on three host–pathogen
-    # models (lab/wiki/models/new-microbiome-treatment.md). Treatment values are illustrative.
+    # models. Treatment values are illustrative.
     @testset "Microbiome treatment (new)" begin
         tr = MicrobiomeTreatment(efficacy = 0.99, half_life = 1.0, direct = 50.0)
         @test reversion_rate(tr) ≈ log(2) && reversion_rate(MicrobiomeTreatment()) == 0

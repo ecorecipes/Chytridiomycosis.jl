@@ -1,5 +1,5 @@
 # Load observation layer: units map, load likelihoods, Taylor's power law, observation
-# operators (src/observation/load_*.jl; wiki obs-load-distribution).
+# operators (src/observation/load_*.jl).
 using Chytridiomycosis, Test
 using Distributions: Distributions, LogNormal, Gamma, NegativeBinomial, Normal, logpdf, logcdf,
     cdf, pdf, mean, var

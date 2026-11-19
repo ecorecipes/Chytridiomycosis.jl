@@ -1,5 +1,5 @@
 # Load observation layer, part 1: the units map from a qPCR reaction to the load bases of
-# src/units.jl. Wiki: lab/wiki/models/obs-load-distribution.md
+# src/units.jl.
 #
 #   Ct ──standard curve──▶ quantity per reaction ──extraction, dilution──▶ per swab
 #      zoospore-count standards of strain s  ──▶ ZE (strain s)           ZEPerSwab

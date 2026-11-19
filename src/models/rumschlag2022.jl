@@ -2,7 +2,7 @@
 # doi:10.1111/1365-2656.13612 (preprint doi:10.1101/2021.03.17.435818). Bd zoospores in four
 # waters at 21 °C (artificial spring water and three Florida ponds), with Osteopilus
 # septentrionalis tadpoles as hosts. Equations checked against the published PDF and the
-# preprint, which agree. Wiki: lab/wiki/models/bd-rumschlag2022-zoospore-persistence.md
+# preprint, which agree.
 #
 #   dZL/dt = −m ZL           (1)   live zoospores, per capita death rate m
 #   dZD/dt =  m ZL − d ZD    (2)   dead zoospores, per capita decomposition rate d

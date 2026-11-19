@@ -1,7 +1,6 @@
 # Canessa S, Bozzuto C, Campbell Grant EH, et al. (2018) Decision-making for mitigating wildlife
 # diseases: from theory to practice for an emerging fungal pathogen of amphibians. J Appl Ecol
 # 55:1987-1996. doi:10.1111/1365-2664.13089
-# Wiki: lab/wiki/models/bsal-canessa2018-ipm-decision.md
 #
 # Fire salamanders and Bsal over three months (30 steps of 3 days), with no recruitment, no
 # density dependence and no recovery. Checked against the review copy of the paper (main text,

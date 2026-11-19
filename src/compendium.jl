@@ -1,5 +1,4 @@
 # Parameter compendium: one TOML file per source paper in data/compendium/.
-# Schema: lab/wiki/parameters/compendium-schema.md
 
 const COMPENDIUM_DIR = normpath(joinpath(@__DIR__, "..", "data", "compendium"))
 const PROVENANCE_CODES = ("M", "F", "E", "A", "D")

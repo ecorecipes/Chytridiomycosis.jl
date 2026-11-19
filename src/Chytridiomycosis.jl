@@ -5,8 +5,7 @@ Models of amphibian chytridiomycosis (*Batrachochytrium dendrobatidis*, Bd, and
 *B. salamandrivorans*, Bsal) in three categories: reference implementations of published models,
 checked against the papers by validation targets; modified versions of published models; and new
 models. Results from the last two are not published results. Published parameter values come
-from a compendium that records units and provenance. Plans and verification notes: the OKF wiki
-in `../../wiki`, one page per model with its category.
+from a compendium that records units and provenance.
 """
 module Chytridiomycosis
 

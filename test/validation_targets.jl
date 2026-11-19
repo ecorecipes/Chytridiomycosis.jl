@@ -1,4 +1,4 @@
-# Validation-target registry (data/validation/targets.toml; lab/wiki/validation/targets.md).
+# Validation-target registry (data/validation/targets.toml).
 # Runs every registered target that has an implementation. Discrepant targets are
 # @test_broken against the paper and @test against our recorded value.
 @testset "Validation targets (Phase 0)" begin

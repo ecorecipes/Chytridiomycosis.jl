@@ -1,7 +1,6 @@
 # MODIFIED MODEL (not a published result): the stochastic counterpart of the Briggs
 # et al. (2010) within-host equation is a linear birth–death–immigration (BDI) process, whose
 # distribution is negative binomial in closed form (Kendall 1948, Ann Math Stat 19:1).
-# Wiki: lab/wiki/models/mod-load-bdi.md
 #
 # For one host, counting sporangia S, with the zoospore pool Z held fixed:
 #   immigration  ι = νγZ/V   new sporangia per day from the pool

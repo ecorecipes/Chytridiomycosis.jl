@@ -1,5 +1,4 @@
-# Load observation layer, part 2: likelihoods for swab loads. Wiki:
-# lab/wiki/models/obs-load-distribution.md
+# Load observation layer, part 2: likelihoods for swab loads.
 #
 # Two-part (hurdle) model with left-censoring. A swab comes from an infected host with
 # probability π (the infected fraction among swabbed hosts); an infected host's load Y has

@@ -1,7 +1,6 @@
 # Wilber MQ, Knapp RA, Toothman M, Briggs CJ (2017) Resistance, tolerance and environmental
 # transmission dynamics determine host extinction risk in a load-dependent amphibian disease.
 # Ecology Letters 20:1169–1181. doi:10.1111/ele.12814
-# Wiki: lab/wiki/models/bd-wilber2017-ipm.md
 #
 # Checked against the published PDF (eqns 1–3, Tables 1–2, Methods, Figs 1–3) and the authors'
 # code (github.com/mqwilber/host_extinction, master archive: IPM_functions_for_R.R,
@@ -21,7 +20,7 @@
 # in the same step (Appendix S3 eqns 22–27): T1 ← pA λ (adult survivors), T2 ← pT1 T1,
 # T3 ← pT2 T2, S ← S + [(1−pT1) mT1 T1 + (1−pT2) mT2 T2 + mT3 T3] exp(−A(t)/K).
 #
-# As coded, and differing from or missing in the text (see the wiki card for the tests):
+# As coded, and differing from or missing in the text (see test/wilber2017.jl):
 # - ψ, the zoospores removed by newly infected frogs, is in the code (nonstochastic_step,
 #   stochastic_step) although the text says it "had very little effect … we do not consider
 #   it further": min(φ_Z S exp(μ0 + σ0²/2), ν Z), with φ_Z the pool-only infection

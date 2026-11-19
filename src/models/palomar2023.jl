@@ -1,7 +1,7 @@
 # Palomar G, Fernández-Chacón A, Bosch J (2023) Amphibian survival compromised by long-term
 # effects of chytrid fungus. Biodiversity and Conservation 32:793–809.
 # https://doi.org/10.1007/s10531-022-02525-3
-# Wiki: lab/wiki/models/obs-multistate-survival.md. This implements a published model; it is
+# This implements a published model; it is
 # not a new model.
 #
 # Read from the paper (CC BY) and Online Appendices A (E-SURGE model pattern) and B (U-CARE

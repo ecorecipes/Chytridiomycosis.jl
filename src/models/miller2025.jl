@@ -3,7 +3,7 @@
 # chain (CTMC) for Bd in outdoor mesocosms of Litoria aurea with shaded or sunlight-heated
 # ("unshaded") refugia. Checked against the paper (§2.1, Table 1, Table S1, eqs S1–S8) and
 # the authors' R code (Zenodo 10.5281/zenodo.15179344 v1.0, fns_stochastic_model.R).
-# Units: weeks; frogs per mesocosm. Wiki: lab/wiki/models/bd-miller2025-ctmc-refugia.md
+# Units: weeks; frogs per mesocosm.
 #
 # States, in the authors' order (their names in brackets):
 #   S_U [S], I_U1 [I1], I_U2 [I2], I_U3 [I3], S_V [SV], I_V1 [IV1], I_V2 [IV2], I_V3 [IV3]

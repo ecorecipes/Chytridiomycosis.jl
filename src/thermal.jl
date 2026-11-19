@@ -1,5 +1,5 @@
 # Thermal performance curves: rate as a function of temperature (°C), for pathogen isolates
-# and hosts, plus seasonal temperature forcing. Spec: lab/wiki/models/thermal-performance.md
+# and hosts, plus seasonal temperature forcing.
 #
 # The review gives no functional form (§9.1), so these are the standard families of thermal
 # biology. The published primary data are mostly cardinal temperatures (limits and optima)

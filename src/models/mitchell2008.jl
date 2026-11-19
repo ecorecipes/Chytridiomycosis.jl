@@ -1,7 +1,7 @@
 # Mitchell, Churcher, Garner & Fisher (2008) Proc R Soc B 275:329. Bufo bufo at one pond:
 # uninfected and infected tadpoles (P_X, P_Y), uninfected juveniles structured by age (J_X),
 # adults (A_X) and free-living zoospores (Z) that may reproduce saprobically.
-# Units: years, individuals, zoospores. Wiki: lab/wiki/models/bd-mitchell2008-pond.md
+# Units: years, individuals, zoospores.
 #
 #   dP_X/dt = δ(T−t1) ιψ A_X − (μP + νZ) P_X − δ(T−t2) P_X                      (2.1)
 #   dP_Y/dt = νZ P_X − (μP + αP) P_Y − δ(T−t2) P_Y                              (2.2)

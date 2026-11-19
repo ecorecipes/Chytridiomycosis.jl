@@ -1,7 +1,6 @@
 # Validation-target registry. Each [[target]] is a number or outcome published in a primary
 # paper, with the package call that reproduces it, a tolerance and a status. The test file
 # test/validation_targets.jl runs every target that is not pending.
-# Spec and human-readable table: lab/wiki/validation/targets.md
 #
 # status: reproduced | qualitative | discrepant | pending
 # tolerance: { digits = n } | { atol = x } | { rtol = x } | { lower = a, upper = b } | {} (exact)
@@ -10,7 +9,7 @@
 # Calls are evaluated in the Chytridiomycosis module; use Random.Xoshiro for seeded runs.
 # Published values used inside calls come from the compendium, never literals.
 
-# --- Schmidt et al. 2017, R Soc Open Sci 4:160801 (wiki R1–R3) ---------------------------
+# --- Schmidt et al. 2017, R Soc Open Sci 4:160801 ---------------------------
 
 [[target]]
 id = "schmidt2017_K_threshold"
@@ -21,7 +20,6 @@ published = 1.0086
 call = "invasion_threshold(SchmidtParameters(:schmidt2017))"
 tolerance = { digits = 4 }
 status = "reproduced"
-notes = "Wiki target R1."
 
 [[target]]
 id = "schmidt2017_removal"
@@ -32,7 +30,6 @@ published = 96.0
 call = "100 * removal_fraction(SchmidtParameters(:schmidt2017))"
 tolerance = { digits = 0 }
 status = "reproduced"
-notes = "Wiki target R2."
 
 [[target]]
 id = "schmidt2017_crash_time"
@@ -43,7 +40,7 @@ published = "two to three months"
 call = "population_crash(SchmidtParameters(:schmidt2017)).tmin"
 tolerance = { lower = 0.0833333, upper = 0.3333334 }
 status = "qualitative"
-notes = "Wiki target R2. Accepted between one and four months."
+notes = "Accepted between one and four months."
 
 [[target]]
 id = "schmidt2017_crash_depth"
@@ -58,7 +55,7 @@ end
 """
 tolerance = { lower = -1.0, upper = 0.05 }
 status = "qualitative"
-notes = "Wiki target R2. Accepted below 5% of K."
+notes = "Accepted below 5% of K."
 
 [[target]]
 id = "schmidt2017_S_eq"
@@ -71,7 +68,7 @@ tolerance = { digits = 4 }
 status = "discrepant"
 regression = { value = 1.0030, digits = 4 }
 notes = """
-Wiki target R2. Eq. (2.3) with the Table 1 values gives 1.0030, and the residual of the ODE
+Eq. (2.3) with the Table 1 values gives 1.0030, and the residual of the ODE
 right-hand side there is below 1e-10. Rounding of e, d_I or β does not explain the difference.
 The supplement offers no explanation. Probable cause, without tuning: the published value is
 (d + e)(d + d_I)/(βe) = 1.002748, which rounds to 1.0027. That is the equilibrium S with the
@@ -93,7 +90,7 @@ tolerance = { atol = 0.1 }
 status = "discrepant"
 regression = { value = 10.21, atol = 0.01 }
 notes = """
-Wiki target R2. The Jacobian at the verified equilibrium gives 10.21, and simulation confirms
+The Jacobian at the verified equilibrium gives 10.21, and simulation confirms
 it. Stability changes between K = 10.0 and 10.5. Ruled out: 365-day or rounded rates
 (e = 365: 10.23; β = 365/7: 10.19; d_I = 365/7: 10.22; all three: 10.21); density
 dependence on S only, or on
@@ -113,7 +110,7 @@ published = 11.15
 call = "wave_speed(SchmidtParameters(:schmidt2017))"
 tolerance = { digits = 2 }
 status = "reproduced"
-notes = "Wiki target R3 (D = 0.0625 km² yr⁻¹)."
+notes = "D = 0.0625 km² yr⁻¹."
 
 [[target]]
 id = "schmidt2017_colony_area_1yr"
@@ -140,7 +137,7 @@ notes = """
 The paper reports ≈9%. Eq. (2.5) divided by the habitat area gives 8.97: fig. S3 plots the
 ratio A/H labelled as a percentage. Read correctly, eq. (2.5) exceeds the whole habitat ninefold,
 so its no-overlap assumption has failed; the explicit jump process (SchmidtColonyProblem) gives
-about 93% of the habitat infected (wiki bsal-schmidt2017-sli)."""
+about 93% of the habitat infected."""
 
 [[target]]
 id = "schmidt2017_habitat_share_mu01"
@@ -154,7 +151,7 @@ status = "discrepant"
 regression = { value = 0.1284, rtol = 0.001 }
 notes = "The paper reports ≈0.1%; eq. (2.5) gives the ratio 0.128 (12.8%), as for μ = 1."
 
-# --- Briggs, Knapp & Vredenburg 2010, PNAS 107:9695 (wiki R4) -----------------------------
+# --- Briggs, Knapp & Vredenburg 2010, PNAS 107:9695 -----------------------------
 
 [[target]]
 id = "briggs2010_density_threshold"
@@ -167,7 +164,7 @@ tolerance = { atol = 5.0 }
 status = "reproduced"
 regression = { value = 23.15, digits = 2 }
 notes = """
-Wiki target R4. The legend says "a density of ∼20 frogs". The Fig. 2C values give
+The legend says "a density of ∼20 frogs". The Fig. 2C values give
 N* = 23.15, which is the regression value."""
 
 [[target]]
@@ -367,7 +364,7 @@ published = true
 status = "pending"
 notes = "Needs an in-host Bsal load model driven by temperature. Values in the compendium (blooi2015)."
 
-# --- Miller et al. 2025, arXiv:2503.06846 v3 (refugia CTMC; wiki bd-miller2025-ctmc-refugia) --
+# --- Miller et al. 2025, arXiv:2503.06846 v3 (refugia CTMC) --
 # The posterior targets run an ABC with 10^5 draws (0.2% accepted) and seed 1. This takes a
 # few seconds on one thread. Each tolerance is about 3 sd of its Monte Carlo spread over 20
 # seeds (scripts/miller2025_abc.jl, data/miller2025/abc_reproduction.toml).
@@ -454,7 +451,7 @@ status = "reproduced"
 regression = { value = 0.3228, atol = 1e-4 }
 notes = """
 This is a ratio of posterior means, and both posteriors stay close to their priors. The
-posterior probability that β_un < β_sh is in the wiki page."""
+posterior probability that β_un < β_sh (0.74 in our run) is in docs/src/api/miller2025.md."""
 
 [[target]]
 id = "miller2025_vaccination_effect_sh"
@@ -497,9 +494,9 @@ end
 status = "qualitative"
 notes = "SD ratios in the run with 10^6 draws: αβ_sh 0.08, α 0.64, β_sh 0.98."
 
-# --- Pending: models not yet implemented (wiki R5–R10) ------------------------------------
+# --- Pending: models not yet implemented ------------------------------------
 
-# Rumschlag et al. 2022 (wiki target R9): checked against the published version, J Anim Ecol
+# Rumschlag et al. 2022: checked against the published version, J Anim Ecol
 # 91:170; the preprint prints the same numbers. Refits use the authors' figshare deposit
 # (data/rumschlag2022). _rumschlag_reference_fit() fits a model once per session; it fits the
 # selected model (m by water, one d, one β) unless told otherwise.
@@ -514,7 +511,7 @@ call = "rumschlag_summary(_rumschlag_reference_fit()).lifespan.ASW[1]"
 tolerance = { digits = 1 }
 status = "reproduced"
 notes = """
-Wiki target R9. Refit to the deposited data with the recorded count times: 14.43 h. The
+Refit to the deposited data with the recorded count times: 14.43 h. The
 review's range 9.4–14.4 h is confirmed; see the next target and test/rumschlag2022.jl for
 the other waters (Trout Creek 13.31, Flatwoods 11.43)."""
 
@@ -623,9 +620,10 @@ imply these maximised log-likelihoods:
   1385.0, ours 1384.86);
 - the pair with one d, -688.83 against -687.46 (published 1389.1, ours 1389.0).
 A model cannot fit worse than a model nested in it. These are the only two violations among
-the nested pairs of Table 1, and the conclusion holds for any n above 25. So the original
-fits of these two models stopped short of the maximum, by 1.57 and 1.61 log-likelihood
-units against ours. The paper used bbmle::mle2. No code was deposited (the figshare item holds
+the nested pairs of Table 1 (shortfalls of 1.32 and 1.37 log-likelihood units against the
+nested model), and the conclusion holds for any n above 25. So the original fits of these two
+models stopped short of the maximum, by 1.64 and 1.66 log-likelihood units against ours
+(ours: -684.06 and -687.17). The paper used bbmle::mle2. No code was deposited (the figshare item holds
 only the two CSVs and a metadata sheet), so the published numbers cannot be rebuilt.
 Likelihoods that apply one group's m to every tadpole give 1383.5 (ASW) and 1387.7 (ponds),
 not 1389.7."""
@@ -643,7 +641,7 @@ notes = """
 Published values from the compendium; ZL0 = 1e5 is the inferred scale of the printed β.
 With ZL0 = 143 µl⁻¹ (Fig. 3a) the printed β gives a prevalence below 0.001."""
 
-# --- Daversa et al. 2022, Am Nat 200(4) (wiki target R10) --------------------------------
+# --- Daversa et al. 2022, Am Nat 200(4) --------------------------------
 # DaversaParameters(:daversa2022) holds posterior medians digitised from Fig. 4a, because the
 # paper prints no numbers. R0 values are therefore point estimates at those medians, whereas
 # the paper reports medians over 3,000 posterior draws. The tolerances allow for this.
@@ -664,7 +662,7 @@ tolerance = { lower = -1.0, upper = -0.5 }
 status = "qualitative"
 regression = { value = -0.699, atol = 0.002 }
 notes = """
-Wiki target R10. The x-axis Ss/(24 − Ss) is taken from the R code. The Fig. 4d medians
+The x-axis Ss/(24 − Ss) is taken from the R code. The Fig. 4d medians
 digitised from the paper give r = −0.69, and ours give −0.70."""
 
 [[target]]
@@ -820,7 +818,7 @@ status = "qualitative"
 regression = { value = 0.245, atol = 0.002 }
 notes = "Checks the digitisation against the text. λ_F/λ_S = 4.3 (text: ~4) is tested in test/daversa2022.jl."
 
-# --- Bozzuto & Canessa 2019, Glob Ecol Conserv 17:e00551 (wiki target R5) -------------------
+# --- Bozzuto & Canessa 2019, Glob Ecol Conserv 17:e00551 -------------------
 # Checked against the PDF and the online Appendix A (Elsevier mmc1.docx). Hibernation uses
 # c2 = 0.95 (Fig. A4 caption), not Table 1's 0.90; see bozzuto2019_table1_c2. Every
 # aestivation number is ~1.6% below the paper's although the seasonal ratios agree. The
@@ -836,7 +834,6 @@ published = 8.88
 call = "basic_reproduction_number(BozzutoParameters(:bozzuto2019))"
 tolerance = { digits = 2 }
 status = "reproduced"
-notes = "Wiki target R5."
 
 [[target]]
 id = "bozzuto2019_R0_aestivation"
@@ -1089,7 +1086,7 @@ tolerance = { lower = 1.0, upper = 10.0 }
 status = "qualitative"
 regression = { value = 1.581, atol = 2e-3 }
 # --- Malagon et al. 2020 Sci Rep 10:5584 and Tompros et al. 2022 Transbound Emerg Dis 69:731
-# (wiki R6, R7; bsal-transmission-functions). Checked against the published articles,
+# Checked against the published articles,
 # Malagon's Supplementary Information (Table S1) and Tompros's appendix. Refits use the
 # authors' deposits: Malagon Supplementary File 2 (data/malagon2020) and the Tompros TRACE
 # deposit doi:10.7290/xw8yy2RBeu (data/tompros2022).
@@ -1412,7 +1409,7 @@ Kaplan–Meier code, which has no censoring before day 62. Other readings, none 
 Only one subgroup is 45%: the contact-exposed newts at 25% prevalence (31/69 = 44.9%). That
 is not "total mortality among treatments". Unexplained."""
 
-# --- Drawert et al. 2017, J R Soc Interface 14:20170480 (wiki bd-drawert2017-stochastic-ibm) --
+# --- Drawert et al. 2017, J R Soc Interface 14:20170480 --
 # Stochastic individual-based Briggs model with one-time interventions. Calls that read
 # data/drawert2017/reproduction.toml use the stored output of scripts/drawert2017_*.jl (about
 # 6 CPU-hours: a stratified sample of 116 of the 2132 points with 30 runs each, a small
@@ -1927,7 +1924,7 @@ all(Iterators.product((6, 14), chowdhury_scenarios())) do (T, s)
 end
 """
 status = "qualitative"
-notes = "Also the wiki's target 1 (decline at every density 2-16 m⁻²)."
+notes = "Decline at every density 2-16 m⁻²."
 
 [[target]]
 id = "chowdhury2025_temperature_twofold"
@@ -1943,7 +1940,7 @@ all(chowdhury_scenarios()) do s
 end
 """
 status = "qualitative"
-notes = "Days to 80% decline: 81, 75, 72, 70 at 6 °C; 39, 38, 38, 38 at 14 °C (ratios 1.87-2.08). Wiki target 2."
+notes = "Days to 80% decline: 81, 75, 72, 70 at 6 °C; 39, 38, 38, 38 at 14 °C (ratios 1.87-2.08)."
 
 [[target]]
 id = "chowdhury2025_density_decline_speed"
@@ -2079,7 +2076,7 @@ published = "Fig. 8 (6 °C), Fig. H.6 (14 °C)"
 status = "pending"
 notes = "The sampling ranges and the number of runs are not given, so the PRCC values cannot be recomputed."
 
-# --- Canessa et al. 2018, J Appl Ecol 55:1987 (wiki target R8) ----------------------------
+# --- Canessa et al. 2018, J Appl Ecol 55:1987 ----------------------------
 # Checked against the review copy of the paper (the only version available; Table 1, Figs 2-4,
 # SI eqs S1-S12, Table S1) and the archived draws (Dryad doi:10.5061/dryad.0jh5p). Values
 # "read from Fig. 2/3" were measured on a 300-dpi rendering of the figure. The ensembles
@@ -2270,7 +2267,7 @@ tolerance = { digits = 1 }
 status = "discrepant"
 regression = { value = 9.435, atol = 0.01 }
 notes = """
-Wiki target R8. 9.43 with loads capped at Lmax (cap = :truncate); 8.25 with the SI formula
+9.43 with loads capped at Lmax (cap = :truncate); 8.25 with the SI formula
 alone (canessa2018_R0_printed_cap). Each draw is refitted as in the SI (logistic regressions
 on z = -1, ln 10, ..., ln 10⁴; eq. S9 from 10 Beverton-Holt steps), R0 = S0 s0 ∫β (I-P)⁻¹G0.
 Checked and ruled out as the cause of the remaining 2%: mesh size, the series length of eq.
@@ -2580,7 +2577,7 @@ status = "discrepant"
 regression = { value = 0.5366, atol = 1e-4 }
 notes = "Printed error: 0.87 is the transmission-only intercept of Fig. 4a, whose axes are transmission and initial density, not survival. Equal reductions of transmission and survival need 54%; of transmission and density, 64%."
 
-# --- Wilber et al. 2016, Methods Ecol Evol 7:1182 (wiki bd-wilber2016-ipm) -------------------
+# --- Wilber et al. 2016, Methods Ecol Evol 7:1182 -------------------
 # Host–parasite IPM of Bd on Rana muscosa. Refits use the bundled Dryad data (CC0); the IPM
 # analyses use the authors' deposited coefficients (set "deposited"), which made the figures.
 # "Deposit" values were decoded from the vector graphics of the authors' results/*.pdf (to
@@ -3012,7 +3009,7 @@ end
 """
 status = "qualitative"
 
-# --- Louca, Lampo & Doebeli 2014, Proc R Soc B 281:20132783 (wiki bd-louca2014-load-distribution) --
+# --- Louca, Lampo & Doebeli 2014, Proc R Soc B 281:20132783 --
 # Checked against the paper and its ESM (appended to the article on the first author's site).
 # Monte Carlo targets read data/louca2014/reproduction.toml, the stored output of
 # scripts/louca2014_montecarlo.jl (2000 runs per scenario, against the paper's 10^4).
@@ -3437,7 +3434,7 @@ end
 status = "qualitative"
 notes = "Rows: log10 β_A bins −10 … −3; columns: log10 μ_Z bins −3 … 0. Extinction 0.84 in the corner (β_A > 10⁻⁴, μ_Z < 10⁻²); clearance 0.91 at β_A ~ 10⁻⁹, μ_Z > 0.1."
 
-# --- Wilber et al. 2017, Ecol Lett 20:1169 (wiki bd-wilber2017-ipm) ---------------------------
+# --- Wilber et al. 2017, Ecol Lett 20:1169 ---------------------------
 
 [[target]]
 id = "wilber2017_survival_b00"
@@ -3812,7 +3809,7 @@ notes = "Plug-in 0.167. Eight 500-draw medians average 0.092 (sd 0.024)."
 
 
 # --- observation load -------------------------------------------------------------------
-# Load observation layer (src/observation/load_*.jl; wiki obs-load-distribution).
+# Load observation layer (src/observation/load_*.jl).
 # Longo et al. 2013 (PLoS ONE 8:e59499), Schrock et al. (preprint 2024, Proc R Soc B 2025),
 # Maguire et al. 2016 (Dis Aquat Org 119:179), Chestnut et al. 2014 (PLoS ONE 9:e106790).
 
@@ -4061,11 +4058,11 @@ The paper names the Nevada sites as the previous observations: 3,159,289/4,924 =
 orders) and 3,159,289/2,109 = 1,498 (3.18). Against the Oregon mean (100 per L) it is 4.50
 orders, against the 41-site mean (40) 4.90 and against the median (15) 5.32; none of these is
 "any previous observation". The review's "five orders of magnitude in force of infection" is
-the ratio to the mean, which the paper does not state. The draft wiki card's "nearly three
-orders" (to 4,924) is right."""
+the ratio to the mean, which the paper does not state. "Nearly three orders" (the
+ratio to 4,924) is right."""
 
 # --- wilber2022 ----------------------------------------------------------------------------------
-# Wilber et al. 2022, J Anim Ecol 91:2451 (wiki obs-wilber2022-hmm-outbreak). The calls need the
+# Wilber et al. 2022, J Anim Ecol 91:2451. The calls need the
 # authors' deposit (Zenodo doi:10.5281/zenodo.7114634), which is not bundled; the test skips these
 # targets when wilber2022_path() finds nothing (data/wilber2022/README.md). HMM posteriors are
 # sampled by adaptive Metropolis with a fixed seed and cached per (cutoff, model).
@@ -4518,8 +4515,8 @@ notes = "The smallest gap is 2.33 (no winter severity, ρ = 0.25; paper 2.30)."
 
 
 # --- multistate survival ---------------------------------------------------------------------------
-# Hollanders et al. 2023, Ecol Appl 33:e2724, and Palomar et al. 2023, Biodivers Conserv 32:793
-# (wiki obs-multistate-survival). Hollanders data are bundled (Dryad, CC0; data/hollanders2023).
+# Hollanders et al. 2023, Ecol Appl 33:e2724, and Palomar et al. 2023, Biodivers Conserv 32:793.
+# Hollanders data are bundled (Dryad, CC0; data/hollanders2023).
 # The targets that read the authors' posterior draws (repository mhollanders/mfleayi-adults, no
 # licence, not bundled) are skipped when hollanders2023_draws_path() finds nothing. The refit
 # targets use the reduced maximum-likelihood refit (CTMultistateProblem), computed once per
