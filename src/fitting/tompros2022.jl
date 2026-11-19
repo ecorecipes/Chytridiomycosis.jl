@@ -1,6 +1,6 @@
 # Refit of Tompros et al. (2022) Transbound Emerg Dis 69:731-741 (doi:10.1111/tbed.14043) to
 # the authors' TRACE deposit (doi:10.7290/xw8yy2RBeu; data/tompros2022). This reproduces a
-# published analysis; it is not a new model. Wiki: lab/wiki/models/bsal-transmission-functions.md
+# published analysis; it is not a new model.
 #
 # Likelihood (appendix eqs 9-10): for each tank and each interval between swab days, the
 # probability of the observed number of susceptibles at the end of the interval given the

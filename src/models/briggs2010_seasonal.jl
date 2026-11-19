@@ -2,7 +2,7 @@
 # Three of the paper's variants: unstructured host, external zoospore source (εZ > 0), and a
 # long-lived tadpole stage that is infected but not killed. The full six-stage R. muscosa
 # model of Fig. 4 is in briggs2010_stages.jl.
-# Units: days, sporangia per host, zoospores per pool. Wiki: lab/wiki/models/bd-briggs2010-load.md
+# Units: days, sporangia per host, zoospores per pool.
 #
 # Within a summer, each step of length Δt applies the exact solutions of the two linear
 # equations with the other variable frozen at its start-of-step value (SI Eqs. S1, S2):

@@ -1,7 +1,6 @@
 # Schmidt, Bozzuto, Lötters & Steinfartz (2017) R Soc Open Sci 4:160801.
 # Bsal S–L–I model for adult female fire salamanders with logistic density dependence.
 # Units: time in years, densities in adult females per hectare, space in km.
-# Wiki: lab/wiki/models/bsal-schmidt2017-sli.md
 
 """
     SchmidtParameters(; b, d, d_I, e, β, K, D = 0.0625, μ = 1.0)
@@ -136,8 +135,10 @@ end
     scattered_colony_area(p, t; c = wave_speed(p), μ = p.μ) -> km²
 
 Eq. (2.5) as printed: total infected area `A(t) = (2πc²/μ)((e^{μt} - 1)/μ - t)`.
-Note: the paper's reported proportions of German habitat (≈9% at μ = 1, ≈0.1% at μ = 0.1,
-after 8 years, of 258 750 km²) equal this value divided by 100; see the wiki page.
+Note: the paper's reported shares of German habitat (≈9% at μ = 1, ≈0.1% at μ = 0.1, after
+8 years, of 258 750 km²) are this area divided by the habitat area (8.97 at μ = 1), which the
+paper's fig. S3 labels as a percentage. Read as a ratio, the area exceeds the habitat ninefold,
+so the no-overlap assumption of eq. (2.5) has failed; `SchmidtColonyProblem` counts overlaps.
 """
 scattered_colony_area(p::SchmidtParameters, t; c = wave_speed(p), μ = p.μ) =
     2π * c^2 / μ * ((exp(μ * t) - 1) / μ - t)

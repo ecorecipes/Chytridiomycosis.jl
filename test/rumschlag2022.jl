@@ -2,7 +2,6 @@
 # persistence model. Oracles were read from the PUBLISHED version (Results p. 176, Table 1,
 # Figs 2-4); the bioRxiv preprint (doi:10.1101/2021.03.17.435818) prints the same numbers.
 # The refit uses the authors' figshare deposit (doi:10.6084/m9.figshare.16814701).
-# Wiki: lab/wiki/models/bd-rumschlag2022-zoospore-persistence.md
 using Chytridiomycosis
 using Test
 using Distributions: Chisq, ccdf
@@ -101,7 +100,7 @@ using Distributions: Chisq, ccdf
     end
 
     @testset "ratio to Mitchell et al. 2008" begin
-        # Review §9.2 / wiki card: a four-week lifespan (672 h) is 47-71 times longer.
+        # Review §9.2: a four-week lifespan (672 h) is 47-71 times longer.
         @test round(Int, 672 / published_lifespan.ASW) == 47
         @test round(Int, 672 / published_lifespan.GreenSwamp) == 71
         # Mitchell's own value is μZ = 13 yr⁻¹, a lifespan of 673.8 h (365-day year): 47-72.

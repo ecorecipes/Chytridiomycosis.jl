@@ -2,7 +2,7 @@
 # with state uncertainty, discrete- or continuous-time state processes, and robust-design
 # (secondary-occasion) observations. Built on the HMM layer (src/observation/hmm.jl): every
 # individual capture history is one HMM sequence, conditioned on first capture.
-# Wiki: lab/wiki/models/obs-multistate-survival.md. Users: Palomar et al. 2023
+# Users: Palomar et al. 2023
 # (src/models/palomar2023.jl) and Hollanders et al. 2023 (src/models/hollanders2023.jl).
 #
 # Conventions. K alive states, then one absorbing dead state (index K + 1). Events are coded

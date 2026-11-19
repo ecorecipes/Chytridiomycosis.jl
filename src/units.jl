@@ -1,5 +1,5 @@
 # Units layer: typed pathogen loads with explicit conversions, and explicit time units for
-# rates. Spec: lab/wiki/parameters/units.md
+# rates.
 #
 # A light internal layer rather than Unitful.jl. Most of the package's units are domain
 # counts (sporangia, ZE, ITS1 copies, frogs, an arbitrary pool volume) that Unitful does not

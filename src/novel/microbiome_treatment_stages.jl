@@ -1,5 +1,5 @@
 # NEW MODEL (not from a published paper): the microbiome treatment layer on the Bsal model
-# with a larval stage (bsal_larval.jl). Wiki: lab/wiki/models/new-microbiome-treatment.md
+# with a larval stage (bsal_larval.jl).
 #
 # Every class of bsal_larval.jl is split into untreated (U) and treated (T). State
 # (S_U, S_T, L_U, L_T, I_U, I_T, W_SU, W_ST, W_IU, W_IT, E); years; per ha. Treatment acts as

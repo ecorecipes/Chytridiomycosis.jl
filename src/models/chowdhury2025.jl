@@ -2,7 +2,6 @@
 # Peace A (2025) Fungal pathogen transmission dynamics in North American salamanders:
 # mathematical insights for disease management. Ecol Model 501:111028.
 # doi:10.1016/j.ecolmodel.2025.111028
-# Wiki: lab/wiki/models/bsal-chowdhury2025-stage-temperature.md
 #
 # Eastern newt (Notophthalmus viridescens) and Bsal at 6 and 14 °C. Larvae (never infected),
 # terrestrial efts and aquatic adults, SEIR in efts and adults, and one zoospore pool per

@@ -13,7 +13,7 @@
 #    be counted, which eq. (2.5) ignores.
 #
 # Units: time in years, densities in adult females per hectare, space in km (D in km² yr⁻¹,
-# c in km yr⁻¹, areas in km²). Wiki: lab/wiki/models/bsal-schmidt2017-sli.md
+# c in km yr⁻¹, areas in km²).
 
 const SCHMIDT_GEOMETRIES = (:planar, :radial)
 

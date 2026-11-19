@@ -4,7 +4,7 @@
 # subadult year classes (sub1-2) and adults. Each stage has its own γ, ν, f, Smax and
 # overwinter survival θ. Tadpoles are capped at Smax but never killed by Bd; subadults and
 # adults die when their load reaches Smax.
-# Units: days, sporangia per host, zoospores per pool. Wiki: lab/wiki/models/bd-briggs2010-load.md
+# Units: days, sporangia per host, zoospores per pool.
 #
 # Summer (100 days): the SI Eqs. S1-S2 step of briggs2010_seasonal.jl, summed over stages.
 # Spring, in this order (the SI lists the events but not their order; see below):

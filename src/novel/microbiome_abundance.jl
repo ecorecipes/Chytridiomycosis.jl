@@ -1,5 +1,5 @@
 # NEW MODEL (not from a published paper): bacterial abundance as a state of each frog, on the
-# load tipping model (load_tipping.jl). Wiki: lab/wiki/models/new-microbiome-abundance.md
+# load tipping model (load_tipping.jl).
 #
 # The treated/untreated models give every treated animal the same clock. Here each of N frogs
 # sharing a pool carries its own abundance B_i of the applied bacteria, in dose units (B = 1

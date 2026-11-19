@@ -18,9 +18,6 @@ Every model belongs to one of three categories. They differ in what a result fro
    **Their results are not published results**, and most of their added parameter values are
    illustrative.
 
-The project wiki (`lab/wiki`, an OKF knowledge bundle kept outside this repository) has one
-page per model with the reasoning behind its classification.
-
 ### 1. Published models
 
 | System | Source | Entry points |

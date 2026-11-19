@@ -205,5 +205,5 @@ malagon_table_s1
 
 ## A nonparametric transmission term
 
-The wiki plans to estimate the transmission function nonparametrically, as a term in the
+A planned extension would estimate the transmission function nonparametrically, as a term in the
 compartmental skeleton (PartiallySpecifiedModels.jl). That is not implemented here.

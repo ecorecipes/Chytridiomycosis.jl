@@ -1,5 +1,5 @@
 # NEW MODEL (not from a published paper): a stochastic version of the nested model
-# (nested.jl). Wiki: lab/wiki/models/new-nested-model.md
+# (nested.jl).
 #
 # Animals are whole numbers in an area of `area` hectares. Time advances in short steps of
 # `dt` years. In each step every animal in a class leaves it with probability 1 − exp(−R dt),

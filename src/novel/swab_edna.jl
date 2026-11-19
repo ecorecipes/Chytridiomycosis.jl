@@ -1,7 +1,6 @@
 # NEW MODEL (N5, not a published analysis): an observation model linking the Briggs et al.
 # (2010) load and zoospore-pool states to skin-swab qPCR (per frog, or pooled) and to eDNA
 # in pond water, and an identifiability analysis of the Briggs parameters from these data.
-# Wiki: lab/wiki/models/new-swab-edna-identifiability.md
 #
 # Latent state (one pond of N frogs, linear phase: every load well below Smax). Frogs start
 # free of Bd and the pool is seeded with Z0 zoospores. Counting sporangia as a linear
@@ -488,8 +487,6 @@ richer and richer data (new work, not a published result):
   `ρν/κ`);
 - `ηf`: add the aggregation of loads among frogs, `k = γZ/(Vηf)`, with the pool `Z` on an
   absolute scale; then `η`, `f` and `σ` follow.
-
-See the wiki page `models/new-swab-edna-identifiability.md`.
 """
 identifiable_combinations(p::BriggsParameters) =
     (γ_V = p.γ / p.V, μ = p.μ, r0 = p.η * p.ν * p.f - p.σ, νη_1mf = p.ν * p.η * (1 - p.f),

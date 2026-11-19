@@ -6,7 +6,6 @@
 #   F mZ exp(−λ s) − λ − (mZ + dZ) = 0,
 #
 # where F is the number of viable zoospores per zoosporangium. Units: hours.
-# Wiki: lab/wiki/models/thermal-performance.md
 
 """
     WoodhamsParameters(; F, s, dZ, mZ)

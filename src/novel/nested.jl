@@ -1,6 +1,6 @@
 # NEW MODEL (not from a published paper): one nested host–pathogen–microbiome model in which
 # each piece of biology is a switch, so that models of different complexity can be compared
-# like for like. Wiki: lab/wiki/models/new-nested-model.md
+# like for like.
 #
 # It is anchored on Schmidt et al. (2017): with only `latent` on it is their S–L–I model, and
 # with everything off it is an S–I model with the same rates. The switches:

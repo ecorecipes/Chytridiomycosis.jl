@@ -1,7 +1,6 @@
 # Briggs, Knapp & Vredenburg (2010) PNAS 107:9695. Bd sporangial load on each frog plus a
 # shared zoospore pool; a frog dies when its load reaches Smax.
 # Units: time in days, loads in sporangia per frog, zoospores per pool of volume V.
-# Wiki: lab/wiki/models/bd-briggs2010-load.md
 #
 #   dS_i/dt = (νγ/V) Z + ηνf S_i − σ S_i                        (main text; β = νγ)
 #   dZ/dt   = η(1−f) Σ_alive S_i − μZ − (γ/V) Z N_alive          (checked against the PNAS SI;

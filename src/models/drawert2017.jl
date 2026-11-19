@@ -8,7 +8,6 @@
 # §1, Table S3, eqs 10–12, Table S9) and the authors' C code and parameter table (figshare
 # 10.6084/m9.figshare.5328127; WithinHostModel.c, FrogFunctions.c, FrogAdditions.c,
 # issa/core.c, determ_frogs.c). Units: days; sporangia per frog; zoospores per pool.
-# Wiki: lab/wiki/models/bd-drawert2017-stochastic-ibm.md
 #
 # Deterministic model (eqs 3.1–3.2; ESM eqs 1–2), for live frogs i:
 #   dS_i/dt = ν(S_i) γ Z + ν(S_i) η f S_i − σ(S_i) S_i,   frog i dies when S_i > Smax

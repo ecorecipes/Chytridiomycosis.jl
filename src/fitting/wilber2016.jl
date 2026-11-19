@@ -1,7 +1,6 @@
 # Refit of the vital-rate regressions of Wilber et al. (2016) Methods Ecol Evol 7:1182
 # (doi:10.1111/2041-210X.12561) to the deposited data (Dryad doi:10.5061/dryad.06sd9;
 # data/wilber2016). This reproduces a published analysis; it is not a new model.
-# Wiki: lab/wiki/models/bd-wilber2016-ipm.md
 #
 # Data preparation follows ipm_vital_rate_parameter_analysis.R exactly:
 # - loads are natural-log transformed except zeros (a load of 1 ZE would become 0 and be

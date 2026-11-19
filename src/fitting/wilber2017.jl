@@ -3,7 +3,6 @@
 # (data/wilber2016), and the transmission functions with a constant zoospore pool (Table 2,
 # rows 1–3) from the mesocosm experiment (Dryad doi:10.5061/dryad.p614h, CC0;
 # data/wilber2017). This reproduces published analyses; it is not a new model.
-# Wiki: lab/wiki/models/bd-wilber2017-ipm.md
 #
 # The authors fitted everything in Stan and report posterior means. Their priors
 # (stat_analysis/stan_files/*.stan):

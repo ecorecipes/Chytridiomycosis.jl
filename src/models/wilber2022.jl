@@ -1,7 +1,7 @@
 # Wilber MQ, Knapp RA, Smith TC, Briggs CJ (2022) Host density has limited effects on pathogen
 # invasion, disease-induced declines and within-host infection dynamics across a landscape of
 # disease. J Anim Ecol 91:2451–2464. https://doi.org/10.1111/1365-2656.13823
-# Wiki: lab/wiki/models/obs-wilber2022-hmm-outbreak.md. This reproduces a published analysis;
+# This reproduces a published analysis;
 # it is not a new model.
 #
 # Hypothesis 1 of the paper is a four-state hidden Markov model of the Bd status of Rana

@@ -2,7 +2,6 @@
 # A two-compartment Bsal model for fire salamanders with seasonal larval inflow, contact rate,
 # transmission proportion and Bsal-induced mortality, analysed with a "Floquet-R0".
 # Units: time in decimal years (t = 0 is the start of January); densities per hectare.
-# Wiki: lab/wiki/models/bsal-bozzuto2019-seasonal.md
 #
 # Model (eq. 1, checked against the PDF and the online Appendix A):
 #   dS/dt = v(t) - d S - c(t) p(t) S I

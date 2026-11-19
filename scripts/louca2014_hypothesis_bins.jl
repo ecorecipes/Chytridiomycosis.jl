@@ -1,4 +1,4 @@
-# Louca et al. (2014) discrepancy check (see wiki card): run with julia --project.
+# Louca et al. (2014) discrepancy check (see the discrepant louca2014 validation targets): run with julia --project.
 # Result (2026-11-14, n = 300, suffer, Z_o = 0): m = 100 ext 0.210; m = 1000 ext 0.223, 276/300
 # outcomes agree; risk effects T_A −0.01/−0.03, K_T 0.04/0.01, β_A 0.48/0.47.
 # Hypothesis: outcomes depend on the number of DOI bins m (ESM §5 says they do not).

@@ -3,7 +3,6 @@
 # (doi:10.1111/tbed.14043). Oracles were read from the published articles, Malagon's
 # Supplementary Information (Table S1) and Tompros's appendix; the data are the authors'
 # deposits (Malagon Supplementary File 2; Tompros TRACE doi:10.7290/xw8yy2RBeu).
-# Wiki: lab/wiki/models/bsal-transmission-functions.md
 using Chytridiomycosis
 using Test
 using LogDensityProblems: LogDensityProblems

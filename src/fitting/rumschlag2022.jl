@@ -1,7 +1,6 @@
 # Refit of Rumschlag et al. 2022 (J Anim Ecol 91:170, doi:10.1111/1365-2656.13612) to the
 # authors' deposited assay data (figshare doi:10.6084/m9.figshare.16814701, CC BY 4.0;
 # data/rumschlag2022). This reproduces a published analysis; it is not a new model.
-# Wiki: lab/wiki/models/bd-rumschlag2022-zoospore-persistence.md
 #
 # Likelihood (paper eqs 7 and 10):
 #   survival assay, each unit:  log(Z_obs + 0.1) ~ Normal(log(Z_pred + 0.1), SD_i), i = L, D
