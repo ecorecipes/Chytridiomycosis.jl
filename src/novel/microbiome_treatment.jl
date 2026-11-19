@@ -17,7 +17,10 @@
 #   E (environmental reservoir of the microbiome, scaled so that E = 1 balances a fully
 #     treated population) relaxes at rate δ = log 2 / reservoir_half_life
 # Protection has two separate endpoints, because trials report better survival without fewer
-# infections:
+# infections. In Kueneman et al. (2016, Proc R Soc B 283:20161553), all 31 boreal toads
+# exposed to Bd became infected, but those given Janthinobacterium lividum first had 60%
+# mortality against 100% in the Bd-only group, with only a trend toward lower loads
+# (compendium: kueneman2016):
 #   efficacy   proportional reduction in the infection rate of a treated host
 #   tolerance  proportional reduction in the disease-induced death of a treated, infected host,
 #              which stays infectious
