@@ -1,6 +1,6 @@
-# NEW MODEL FIT (not a published analysis): the frog load equation fitted to the Dusy Basin
+# MODIFIED MODEL FIT (not a published analysis): the frog load equation fitted to the Dusy Basin
 # 2012 field swabs of Knapp et al. 2022 (doi:10.7717/peerj.12712), data in data/knapp2022.
-# Wiki: lab/wiki/models/new-knapp-load-fit.md
+# Wiki: lab/wiki/models/mod-knapp-load-fit.md
 #
 # Each group of frogs is described by its median load L (Bd ITS copies per swab):
 #   dL/dt = ι + r0 L − s(t) L/(h + L)
@@ -436,7 +436,7 @@ end
 # order of magnitude that is plausible before seeing these swabs and spans several orders of
 # magnitude (scales) or a factor of about 20 (standard deviations and half-lives). r0 stays
 # fixed at its compendium value, as in the maximum likelihood fit. Wiki:
-# lab/wiki/models/new-knapp-load-fit.md, section "Bayesian fit".
+# lab/wiki/models/mod-knapp-load-fit.md, section "Bayesian fit".
 
 # (median, standard deviation of the log) for each parameter
 const KNAPP_PRIOR = (ι = (1e4, 3.0), L0 = (100.0, 3.0), σ = (2.0, 1.0), aT = (100.0, 3.0),

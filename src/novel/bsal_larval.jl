@@ -1,6 +1,6 @@
-# NEW MODEL (not from a published paper): the Schmidt et al. (2017) Bsal model with an aquatic
+# MODIFIED MODEL (not a published result): the Schmidt et al. (2017) Bsal model with an aquatic
 # larval stage that can be infected and can carry infection through metamorphosis.
-# Wiki: lab/wiki/models/new-bsal-larval-carryover.md
+# Wiki: lab/wiki/models/mod-bsal-larval-carryover.md
 #
 # Why: Schmidt's model has adult females only. Wang et al. (2021) infected fire salamander
 # larvae experimentally; the larvae showed no disease, and half carried the infection through

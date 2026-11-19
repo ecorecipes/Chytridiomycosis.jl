@@ -146,7 +146,7 @@ using Random: Xoshiro
         @test isapprox(base.A[i0 - 2], base.A[i0 - 4]; rtol = 1e-6)
     end
 
-    # New model: birth–death–immigration load process (lab/wiki/models/new-load-bdi.md).
+    # New model: birth–death–immigration load process (lab/wiki/models/mod-load-bdi.md).
     @testset "Load BDI (new)" begin
         m = LoadBDI(0.04, 0.14, 0.2)
         d = load_distribution(m)
@@ -190,7 +190,7 @@ using Random: Xoshiro
     end
 
     # New model: load tipping, the Briggs equation plus saturating clearance
-    # (lab/wiki/models/new-load-tipping.md). c and h are illustrative, not published.
+    # (lab/wiki/models/mod-load-tipping.md). c and h are illustrative, not published.
     @testset "Load tipping (new)" begin
         rate(m, S) = m.ι + net_growth_rate(m) * S - m.c * S / (m.h + S)
         slope(m, S) = net_growth_rate(m) - m.c * m.h / (m.h + S)^2

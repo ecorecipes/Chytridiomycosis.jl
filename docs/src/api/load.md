@@ -4,8 +4,9 @@
 CurrentModule = Chytridiomycosis
 ```
 
-!!! note "New models"
-    These models are new work in this package, not published results.
+!!! note "Modified published models"
+    These models modify the Briggs et al. (2010) load model (a stochastic version, and an added
+    saturating clearance term). They are new work in this package, not published results.
 
 ## Stochastic load on one host
 

@@ -4,9 +4,9 @@
 CurrentModule = Chytridiomycosis
 ```
 
-!!! note "New analysis"
-    The load equation, its priors and these posteriors are new work in this package, not a
-    published analysis. The data are from Knapp et al. (2022), CC BY 4.0.
+!!! note "Modified model, new analysis"
+    The load equation (a modification of Briggs et al. 2010), its priors and these posteriors
+    are new work in this package, not a published analysis. The data are from Knapp et al. (2022), CC BY 4.0.
 
 The maximum likelihood fit of [Fitting to field data](fitting.md) gives point estimates, AIC
 and profile likelihoods. The Bayesian fit puts a weakly informative prior on every parameter

@@ -1,7 +1,7 @@
 # Bayesian fit of the frog load equation to the Knapp et al. 2022 swabs (NEW analysis, not a
 # published result): NUTS for each mechanism, convergence diagnostics, posterior summaries and
 # PSIS-LOO / WAIC comparison. This is the run reported in docs/src/api/knapp_bayes.md and the
-# wiki page models/new-knapp-load-fit.md ("Bayesian fit"). About 10 minutes with 4 threads.
+# wiki page models/mod-knapp-load-fit.md ("Bayesian fit"). About 10 minutes with 4 threads.
 #
 # Needs an environment with this package (dev'ed), Turing and MCMCDiagnosticTools:
 #   julia --project=<env> -e 'using Pkg; Pkg.develop(path = "."); Pkg.add(["Turing", "MCMCDiagnosticTools"])'
