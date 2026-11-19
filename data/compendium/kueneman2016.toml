@@ -1,12 +1,13 @@
 # Kueneman JG, Woodhams DC, Harris R, Archer HM, Knight R, McKenzie VJ (2016) Probiotic
 # treatment restores protection against lethal fungal infection lost during amphibian
 # captivity. Proc R Soc B 283:20161553. https://doi.org/10.1098/rspb.2016.1553
-# Trial outcomes, not model parameters. Copied from the microbiome literature review
-# (lab/papers/litreview, Manus AI). Only the abstract was checked (PubMed, 2026-11-10): it
-# gives "a 40% increase in survival" and infection rising "to 100%", which agrees with the
-# values below but does not confirm the group sizes. Death counts are not reported, and 60% of
-# 21 is not a whole number. Second Bd challenge, after earlier treatments and repeated
-# bacterial applications.
+# Trial outcomes, not model parameters. First copied from a literature review; checked against
+# the full text (eScholarship author copy, escholarship.org/uc/item/25p823wx, read 2026-11-19):
+# Results, Fig. 4b and Fig. 5 with its legend. Second Bd challenge, after earlier treatments and
+# repeated bacterial applications. All 31 exposed toads became infected, yet survival with
+# J. lividum was 40 percentage points higher (Mantel-Cox chi2 = 6.021, p = 0.0141), with only "a
+# trend toward lower Bd loads": better survival without fewer infections. Death counts are not
+# reported, and 60% of 21 is not a whole number (the Kaplan-Meier curve ends at 40% survival).
 
 source = { ref = "kueneman2016", doi = "10.1098/rspb.2016.1553" }
 
@@ -18,8 +19,8 @@ units = "toads"
 provenance = "M"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Anaxyrus boreas", stage = "juvenile" }
-location = "Results; Figure 5 (per the review)"
-verified = false
+location = "Results; Figure 5 and legend"
+verified = true
 
 [[parameter]]
 symbol = "mortality_control"
@@ -29,8 +30,8 @@ units = "proportion"
 provenance = "M"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Anaxyrus boreas", stage = "juvenile" }
-location = "Results; Figure 5 (per the review)"
-verified = false
+location = "Results; Figure 5 and legend"
+verified = true
 
 [[parameter]]
 symbol = "n_treated"
@@ -40,8 +41,8 @@ units = "toads"
 provenance = "M"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Anaxyrus boreas", stage = "juvenile" }
-location = "Results; Figure 5 (per the review)"
-verified = false
+location = "Results; Figure 5 and legend"
+verified = true
 
 [[parameter]]
 symbol = "mortality_treated"
@@ -51,8 +52,8 @@ units = "proportion"
 provenance = "M"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Anaxyrus boreas", stage = "juvenile" }
-location = "Results; Figure 5 (per the review)"
-verified = false
+location = "Results; Figure 5 and legend"
+verified = true
 
 [[parameter]]
 symbol = "infected"
@@ -62,5 +63,5 @@ units = "toads"
 provenance = "M"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Anaxyrus boreas", stage = "juvenile" }
-location = "Figure 4b (per the review)"
-verified = false
+location = "Results; Figure 4b and legend (31 of 31 infected in the second exposure)"
+verified = true
