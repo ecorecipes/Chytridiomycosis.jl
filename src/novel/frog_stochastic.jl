@@ -1,5 +1,5 @@
-# NEW MODEL (not from a published paper): a stochastic version of the frog load models
-# (load_tipping.jl, microbiome_abundance.jl). Wiki: lab/wiki/models/new-load-tipping.md
+# MODIFIED MODEL (not a published result): a stochastic version of the frog load models
+# (load_tipping.jl, microbiome_abundance.jl). Wiki: lab/wiki/models/mod-load-tipping.md
 #
 # Sporangia on each frog and zoospores in the shared pool are whole numbers. In each step of
 # `dt` days, with β = νγ (transmission_rate):

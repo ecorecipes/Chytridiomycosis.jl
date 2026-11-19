@@ -1,5 +1,5 @@
-# NEW MODEL (not from a published paper): the Mitchell et al. (2008) toad–Bd pond model with
-# infection after metamorphosis. Wiki: lab/wiki/models/new-toad-postmetamorphic.md
+# MODIFIED MODEL (not a published result): the Mitchell et al. (2008) toad–Bd pond model with
+# infection after metamorphosis. Wiki: lab/wiki/models/mod-toad-postmetamorphic.md
 #
 # Why: Mitchell's model has Bd infecting tadpoles only, with every infected tadpole removed at
 # metamorphosis and adults playing no part. Experiments show that toadlets exposed after

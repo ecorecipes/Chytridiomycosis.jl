@@ -5,31 +5,73 @@ Models of amphibian chytridiomycosis (*Batrachochytrium dendrobatidis*, Bd, and
 
 ## What is here
 
-Reference implementations of published models (`src/models/`), checked against the papers:
+Every model belongs to one of three categories. They differ in what a result from them means:
 
-| Model | Source | Entry point |
+1. **Published models** reimplement a paper's equations. The only departures are documented
+   choices where the paper is silent, and switches between what was printed and what the
+   authors coded (`as_printed`, `as_coded`). Their results are checked against the papers
+   by 352 validation targets (`data/validation/targets.toml`). Some are not reproduced, and
+   those are recorded as discrepant.
+2. **Modified published models** add structure the paper did not have: a term, a stage, a
+   stochastic version, a geometry. **Their results are not published results.**
+3. **New models** are new structure, built on top of published or modified host models.
+   **Their results are not published results**, and most of their added parameter values are
+   illustrative.
+
+The project wiki (`lab/wiki`, an OKF knowledge bundle kept outside this repository) has one
+page per model with the reasoning behind its classification.
+
+### 1. Published models
+
+| System | Source | Entry points |
 |---|---|---|
-| Bsal S–L–I in fire salamanders | Schmidt et al. 2017, doi:10.1098/rsos.160801 | `SchmidtSLIProblem` |
-| Bd load model in frogs | Briggs et al. 2010, doi:10.1073/pnas.0912886107 | `BriggsLoadProblem`, `BriggsSeasonalProblem` |
+| Bsal S–L–I in fire salamanders, with diffusive spread | Schmidt et al. 2017, doi:10.1098/rsos.160801 | `SchmidtSLIProblem`, `SchmidtPDEProblem` |
+| Bd loads in frogs; seasonal and stage-structured stochastic versions | Briggs et al. 2010, doi:10.1073/pnas.0912886107 | `BriggsLoadProblem`, `BriggsSeasonalProblem`, `BriggsStagedProblem` |
 | Bd in common toads at a pond | Mitchell et al. 2008, doi:10.1098/rspb.2007.1356 | `MitchellPondProblem` |
+| Bd growth in culture | Woodhams et al. 2008, doi:10.1890/06-1842.1 | `intrinsic_growth_rate` |
+| Several host species sharing one zoospore pool | Daversa et al. 2022, doi:10.1086/720638 | `MultiHostPoolProblem` |
+| Live and dead zoospores in pond water | Rumschlag et al. 2022, doi:10.1111/1365-2656.13612 | `ZoosporePersistenceProblem`, `RumschlagModel` |
+| Sunlight-heated refugia (CTMC, ABC) | Miller et al. 2025, arXiv:2503.06846 | `RefugiaCTMCProblem`, `RefugiaODEProblem`, `refugia_abc` |
+| Seasonal Bsal and a Floquet R0 | Bozzuto & Canessa 2019, doi:10.1016/j.gecco.2019.e00551 | `SeasonalBsalProblem` |
+| Bsal transmission functions in eastern newts | Malagon et al. 2020, doi:10.1038/s41598-020-62351-x; Tompros et al. 2022, doi:10.1111/tbed.14043 | `TransmissionSLIProblem`, `SusceptibleChainProblem`, `CohabitationProblem` |
+| Stochastic individual-based Bd model with interventions | Drawert et al. 2017, doi:10.1098/rsif.2017.0480 | `DrawertIBMProblem`, `DrawertODEProblem` |
+| Bsal with life stages and temperature in eastern newts | Chowdhury et al. 2025, doi:10.1016/j.ecolmodel.2025.111028 | `BsalStageTemperatureProblem` |
+| Integral projection model of Bd load | Wilber et al. 2016, doi:10.1111/2041-210X.12561 | `BdIPMProblem` |
+| Hybrid IPM with a zoospore pool and tadpoles | Wilber et al. 2017, doi:10.1111/ele.12814 | `HybridIPMProblem` |
+| Bsal IPM and management decisions | Canessa et al. 2018, doi:10.1111/1365-2664.13089 | `CanessaIPMProblem`, `CanessaSIProblem` |
+| Load distributions and extinction risk | Louca et al. 2014, doi:10.1098/rspb.2013.2783 | `LoucaDOIProblem`, `louca_monte_carlo` |
+| Outbreak-state hidden Markov model | Wilber et al. 2022, doi:10.1111/1365-2656.13823 | `OutbreakHMMProblem`, `Wilber2022DeclineProblem` |
+| Multistate capture–recapture survival | Hollanders et al. 2023, doi:10.1002/eap.2724; Palomar et al. 2023, doi:10.1007/s10531-022-02525-3 | `CTMultistateProblem`, `MultiEventProblem` |
+| Aggregation of swab loads (Taylor's power law) | Schrock et al. 2025, doi:10.1098/rspb.2024.2013 | `TaylorPowerLawProblem` |
 
-New models (`src/novel/`). **These are not published results**, and most of their added
-parameter values are illustrative:
+### 2. Modified published models
 
-| Model | Entry point |
-|---|---|
-| Stochastic load birth–death–immigration | `LoadBDI` |
-| Load tipping with saturating clearance, host differences and recruitment | `LoadTippingProblem`, `LoadTippingRecruitmentProblem` |
-| Microbiome (probiotic) treatment on the three host models | `MicrobiomeTreatment`, `ProbioticSLIProblem`, `ProbioticPondProblem`, `ProbioticLoadProblem` |
-| Microbiome treatment on Bsal with larvae | `ProbioticLarvalProblem` |
-| Bacterial abundance on each frog, with repeated baths | `ProbioticAbundanceProblem` |
-| One nested model with each piece of biology as a switch | `ChytridBiology`, `NestedChytridProblem` |
-| Stochastic version of the nested model (whole animals) | `StochasticNestedProblem` |
-| Stochastic toad pond (whole animals and zoospores) | `solve(::ProbioticPondProblem; rng)` |
-| Stochastic frog loads (whole sporangia and zoospores) | `StochasticFrogProblem` |
-| Bsal with an infectable larval stage | `BsalLarvalStage`, `BsalLarvalProblem` |
-| Toads with infection after metamorphosis | `PostMetamorphicInfection`, `ToadStageProblem` |
-| Frog load equation fitted to field swabs (Knapp et al. 2022), LogDensityProblems interface | `load_knapp2022`, `KnappLoadModel`, `maximum_likelihood`, `profile_likelihood` |
+| Model | Modifies | Entry points |
+|---|---|---|
+| Radial spread, and scattered colonies simulated in a finite habitat | Schmidt et al. 2017 | `SchmidtPDEProblem(...; geometry = :radial)`, `SchmidtColonyProblem` |
+| Live/dead zoospore pool with shedding and uptake, for any host model | Rumschlag et al. 2022 | `ZoosporePool` |
+| Stochastic load on one host (birth–death–immigration) | Briggs et al. 2010 | `LoadBDI` |
+| Load tipping: saturating clearance, host differences, recruitment; stochastic version | Briggs et al. 2010 | `LoadTippingProblem`, `LoadTippingRecruitmentProblem`, `StochasticFrogProblem` |
+| Bsal with an infectable larval stage | Schmidt et al. 2017 | `BsalLarvalStage`, `BsalLarvalProblem` |
+| Toads with infection after metamorphosis | Mitchell et al. 2008 | `PostMetamorphicInfection`, `ToadStageProblem` |
+| Frog load equation fitted to field swabs (data: Knapp et al. 2022) | Briggs et al. 2010 | `load_knapp2022`, `KnappLoadModel`, `maximum_likelihood`, `profile_likelihood`, `KnappPosterior` |
+| Moments of loads in a pond | Briggs et al. 2010 | `BriggsMomentProblem` |
+
+### 3. New models
+
+| Model | Built on | Entry points |
+|---|---|---|
+| Microbiome (probiotic) treatment | Schmidt, Mitchell, load tipping, Bsal with larvae | `MicrobiomeTreatment`, `ProbioticSLIProblem`, `ProbioticPondProblem` (also stochastic, `solve(prob; rng)`), `ProbioticLoadProblem`, `ProbioticLarvalProblem` |
+| Bacterial abundance on each frog, with repeated baths | Load tipping | `ProbioticAbundanceProblem` |
+| One nested model with each piece of biology as a switch, and its stochastic version | Reduces to Schmidt et al. 2017 | `ChytridBiology`, `NestedChytridProblem`, `StochasticNestedProblem` |
+| Swab and eDNA observation model, and identifiability of the Briggs parameters | Briggs moments | `SurveyModel`, `simulate_survey`, `identifiable_combinations` |
+
+### Shared infrastructure
+
+These are not models of any one paper: the parameter compendium, units of loads and rates,
+thermal performance curves, validation targets, generic integral projection model, hidden
+Markov model and multistate capture–recapture machinery, qPCR load units and likelihoods,
+and glue to DynamicalResilience.jl.
 
 ## Vignettes
 
@@ -63,6 +105,26 @@ Fits the frog load equation to field swabs from frogs treated with itraconazole 
 explanations. Something held treated frogs' loads down for weeks. A waning drug and the applied
 bacteria fit about equally well, but resident *J. lividum* at the measured abundances did not
 protect.
+
+[Does chance decide whether frogs survive Bd?](vignettes/04_stochastic/04_stochastic.md)
+([PDF](vignettes/04_stochastic/04_stochastic.pdf),
+[HTML](vignettes/04_stochastic/04_stochastic.html),
+[source](vignettes/04_stochastic/04_stochastic.qmd))
+
+[Can a Bsal outbreak be stopped?](vignettes/05_bsal/05_bsal.md)
+([PDF](vignettes/05_bsal/05_bsal.pdf),
+[HTML](vignettes/05_bsal/05_bsal.html),
+[source](vignettes/05_bsal/05_bsal.qmd))
+
+[Does it matter that frogs carry different Bd loads?](vignettes/06_load_ipm/06_load_ipm.md)
+([PDF](vignettes/06_load_ipm/06_load_ipm.pdf),
+[HTML](vignettes/06_load_ipm/06_load_ipm.html),
+[source](vignettes/06_load_ipm/06_load_ipm.qmd))
+
+[Thresholds and resilience](vignettes/07_resilience/07_resilience.md)
+([PDF](vignettes/07_resilience/07_resilience.pdf),
+[HTML](vignettes/07_resilience/07_resilience.html),
+[source](vignettes/07_resilience/07_resilience.qmd))
 
 Each vignette writes out the equations of every model it runs, with a symbol table and a
 diagram of the model.

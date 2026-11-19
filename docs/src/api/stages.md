@@ -4,8 +4,10 @@
 CurrentModule = Chytridiomycosis
 ```
 
-!!! note "New models"
-    These models are new work in this package, not published results.
+!!! note "Modified published models"
+    These models add a life stage to a published model: an infectable larval stage to
+    Schmidt et al. (2017), and infection after metamorphosis to Mitchell et al. (2008). They
+    are new work in this package, not published results.
 
 ## Bsal with an infectable larval stage
 

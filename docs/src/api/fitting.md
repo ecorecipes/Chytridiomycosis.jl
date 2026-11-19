@@ -4,8 +4,9 @@
 CurrentModule = Chytridiomycosis
 ```
 
-!!! note "New analysis"
-    The load equation and these fits are new work in this package, not a published analysis.
+!!! note "Modified model, new analysis"
+    The load equation modifies the Briggs et al. (2010) within-host equation. It and these
+    fits are new work in this package, not a published analysis.
     The data are from Knapp et al. (2022), CC BY 4.0.
 
 The frog load equation `dL/dt = ι + r0 L − s(t) L/(h + L)` fitted by maximum likelihood to the

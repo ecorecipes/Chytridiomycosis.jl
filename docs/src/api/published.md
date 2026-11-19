@@ -38,6 +38,12 @@ The reaction–diffusion version (§2.2) is discretised by finite volumes and lo
 behind eq. (2.5) is simulated as a jump process with colonies placed in a square habitat, so
 that overlaps can be counted.
 
+!!! note "Modifications of the published model"
+    The planar reaction–diffusion model is the paper's. The radial geometry
+    (`SchmidtPDEProblem(p; geometry = :radial)`) and the explicit colony simulation
+    ([`SchmidtColonyProblem`](@ref)), which counts overlaps and the habitat edge that eq. (2.5)
+    ignores, are modifications made in this package.
+
 ```@docs
 SchmidtPDEProblem
 front_position

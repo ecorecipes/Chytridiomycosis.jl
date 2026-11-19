@@ -64,6 +64,10 @@ The live and dead compartments form a reusable component. A qPCR or eDNA count s
 live and dead zoospores (`ZL + ZD`), but only live zoospores infect (`ZL`). Other models can
 add this pool to their own right-hand side through [`pool_derivatives`](@ref).
 
+!!! note "Modification of the published model"
+    The pool with shedding and uptake terms is a generalisation made in this package; the
+    Rumschlag et al. assays have neither.
+
 ```@docs
 ZoosporePool
 pool_derivatives
