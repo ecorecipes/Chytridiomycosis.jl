@@ -4969,3 +4969,68 @@ quantity = "geometric mean annual population growth rate λ (Pradel model, MARK)
 published = 0.92
 status = "pending"
 notes = "The Pradel (1996) temporal-symmetry model is not implemented, and the data are not deposited."
+
+# ---- mosher2018 ----
+# The published article was not readable (paywalled) and the Dryad deposit
+# (doi:10.5061/dryad.1c990) could not be downloaded, so the outcomes stated in the abstract
+# are pending. Mosher2018Model and maximum_likelihood fit the model once the data are read.
+
+[[target]]
+id = "mosher2018_elevation_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Abstract; Results (model selection table)" }
+quantity = "models with elevation effects on toad and Bd colonisation and extinction are the best supported"
+published = true
+status = "pending"
+notes = "Needs the Dryad histories and a reader for them. In the dissertation version (Mosher 2017, Ch. 2, Table 2.3, 82 sites) the top model has γAB, γB, γBA, εAB, εBA quadratic in elevation, AICc 2228.07, K = 25, deviance 2175.3."
+
+[[target]]
+id = "mosher2018_toad_extinction_elevation"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Abstract" }
+quantity = "boreal toad extinction risk with Bd present (εAB) is lowest at high elevations"
+published = true
+status = "pending"
+notes = "Needs the data. The dissertation version reports εAB highest (about 0.30) at intermediate elevations."
+
+[[target]]
+id = "mosher2018_toad_recolonisation_elevation"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Abstract" }
+quantity = "boreal toads are more likely to recolonise high-elevation sites after local extinction (γAB increases with elevation)"
+published = true
+status = "pending"
+notes = "Needs the data."
+
+# ---- adams2010 ----
+# Only the abstract and the Ecological Archives appendices were readable; no detection
+# histories are deposited.
+
+[[target]]
+id = "adams2010_psi_native"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Abstract" }
+quantity = "estimated probability that Bd occurs in a native-amphibian population (78 populations)"
+published = 0.534
+status = "pending"
+notes = "Detection histories not deposited; the covariate models were not read (article paywalled)."
+
+[[target]]
+id = "adams2010_psi_bullfrog"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Abstract" }
+quantity = "estimated probability that Bd occurs in a bullfrog (Rana catesbeiana) population (40 populations)"
+published = 0.664
+status = "pending"
+notes = "Detection histories not deposited; the covariate models were not read (article paywalled)."
+
+[[target]]
+id = "adams2010_finite_ratio"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Appendix A, Fig. A1 caption" }
+quantity = "the ratio ψ[1 − (1 − p′)^N]/ψ approaches 1 as N and p′ increase"
+published = "approaches 1"
+call = "finite_population_occurrence(1.0, 0.5, 50) / 1.0"
+tolerance = { lower = 0.999, upper = 1.0000001 }
+status = "qualitative"
+notes = "Checks the limit at N = 50, p′ = 0.5 (values chosen here); monotonicity in N and p′ is in test/mosher2018.jl."

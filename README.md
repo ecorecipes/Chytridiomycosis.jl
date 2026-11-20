@@ -40,6 +40,8 @@ Every model belongs to one of three categories. They differ in what a result fro
 | Outbreak-state hidden Markov model | Wilber et al. 2022, doi:10.1111/1365-2656.13823 | `OutbreakHMMProblem`, `Wilber2022DeclineProblem` |
 | Multistate capture–recapture survival | Hollanders et al. 2023, doi:10.1002/eap.2724; Palomar et al. 2023, doi:10.1007/s10531-022-02525-3 | `CTMultistateProblem`, `MultiEventProblem` |
 | Aggregation of swab loads (Taylor's power law) | Schrock et al. 2025, doi:10.1098/rspb.2024.2013 | `TaylorPowerLawProblem` |
+| Host–pathogen dynamic occupancy of boreal toads and Bd (equations from the first author's dissertation; data not yet read) | Mosher et al. 2018, doi:10.1002/eap.1699 | `Mosher2018Problem`, `Mosher2018Model` |
+| Bd occurrence in host populations by single-season occupancy (likelihood and Appendix A only) | Adams et al. 2010, doi:10.1890/08-2319.1 | `occupancy_loglikelihood`, `finite_population_occurrence` |
 
 ### 2. Modified published models
 
