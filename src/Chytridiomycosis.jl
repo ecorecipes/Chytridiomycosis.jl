@@ -342,7 +342,11 @@ export occupancy_loglikelihood, occupancy_mle, dynamic_occupancy_loglikelihood,
 export Mosher2018Parameters, Mosher2018Problem, initial_state, transition_matrix,
        detection_matrix, simulate_mosher2018, Mosher2018Data, mosher2018_path,
        Mosher2018Model, mosher2018_site_parameters, mosher2018_loglikelihood
+export load_mosher2018, mosher2018_models, mosher2018_model, mosher2018_model_selection,
+       mosher2018_parameters_at
 export finite_population_occurrence
+export SingleSeasonOccupancyModel, adams2010_coefficients, adams2010_odds_ratio,
+       adams2010_occupancy
 
 # Woodhams et al. 2011 adaptive immunity and treatments
 export ImmuneFrogParameters, FrogTreatment, ConstantPoolFrogProblem, infection_fraction,

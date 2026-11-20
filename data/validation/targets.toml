@@ -5433,69 +5433,438 @@ status = "discrepant"
 regression = { value = 1.2974, atol = 1e-4 }
 notes = "From the Table 1 survival times, uncensored: χ² = 1.30 (p = 0.25). The conclusion (no difference, p > 0.05) holds. Figure 1's curves carry censoring marks at sampling days and different death times, so the paper's test was not run on the Table 1 times."
 # ---- mosher2018 ----
-# The published article was not readable (paywalled) and the Dryad deposit
-# (doi:10.5061/dryad.1c990) could not be downloaded, so the outcomes stated in the abstract
-# are pending. Mosher2018Model and maximum_likelihood fit the model once the data are read.
+# Refits to the bundled Dryad data (data/mosher2018), Site 33 dropped (82 sites). Each model
+# is fitted once per session (_mosher2018_reference_fit, a few seconds each). Checked against
+# the accepted manuscript of the article. AICc uses n = 494 site-years surveyed, the sample
+# size implied by Table 3 (our inference). scripts/mosher2018_refit.jl prints the full set.
+
+[[target]]
+id = "mosher2018_aicc_model1"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 1" }
+quantity = "AICc of the model with γAB, γB, γBA, εAB, εBA quadratic in elevation (best)"
+published = 2228.07
+call = "_mosher2018_reference_fit(1).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model2"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 2" }
+quantity = "AICc of the model with γAB, γB, γBA, εAB, εBA linear in elevation"
+published = 2229.27
+call = "_mosher2018_reference_fit(2).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model3"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 3" }
+quantity = "AICc of the model with γB, γBA, εBA quadratic in elevation"
+published = 2231.05
+call = "_mosher2018_reference_fit(3).aicc"
+tolerance = { atol = 0.015 }
+regression = { value = 2230.83, atol = 0.02 }
+status = "discrepant"
+notes = "Our maximum is 0.22 higher in log-likelihood terms (deviance 2186.87 against the printed 2187.09, K = 21 as printed), so the printed fit appears to fall short of the maximum. Every other model of Table 3 except the null is reproduced to 0.01."
+
+[[target]]
+id = "mosher2018_aicc_model4"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 4" }
+quantity = "AICc of the model with γB, γBA, εBA linear in elevation"
+published = 2231.42
+call = "_mosher2018_reference_fit(4).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model5"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 5" }
+quantity = "AICc of the model with γB, γBA linear in elevation"
+published = 2231.61
+call = "_mosher2018_reference_fit(5).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model6"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 6" }
+quantity = "AICc of the model with εBA linear in elevation"
+published = 2232.02
+call = "_mosher2018_reference_fit(6).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model7"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 7" }
+quantity = "AICc of the model with γB, γBA, εBA by permanence"
+published = 2232.2
+call = "_mosher2018_reference_fit(7).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model8"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 8" }
+quantity = "AICc of the model with εBA by permanence"
+published = 2232.55
+call = "_mosher2018_reference_fit(8).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model9"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 9" }
+quantity = "AICc of the model with γAB by other amphibians"
+published = 2232.65
+call = "_mosher2018_reference_fit(9).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model10"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 10" }
+quantity = "AICc of the model with εBA quadratic in elevation"
+published = 2233.0
+call = "_mosher2018_reference_fit(10).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model11"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 11" }
+quantity = "AICc of the model with all rates constant, state-dependent"
+published = 2235.26
+call = "_mosher2018_reference_fit(11).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_deviance_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 1" }
+quantity = "deviance (−2 log L) of the best model"
+published = 2175.3
+call = "_mosher2018_reference_fit(1).deviance"
+tolerance = { digits = 1 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_k_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 1" }
+quantity = "number of parameters K of the best model"
+published = 25
+call = "_mosher2018_reference_fit(1).k"
+tolerance = {}
+status = "reproduced"
+notes = "Pairs with the same covariate share slopes (the 'additive relationships between parameter pairs' of the Table 3 caption)."
+
+[[target]]
+id = "mosher2018_aicc_null"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, null model" }
+quantity = "AICc of the null model (each rate independent of the other species)"
+published = 2261.03
+call = "_mosher2018_reference_fit(12).aicc"
+tolerance = { atol = 0.015 }
+regression = { value = 2257.69, atol = 0.02 }
+status = "discrepant"
+notes = "Printed K = 14, deviance 2232.15. Our null model (one constant per rate pair, 3 + 4 + 6 = 13 parameters) has deviance 2230.93, lower with fewer parameters, so the printed model is not this one or was not at its maximum. The paper does not say which."
 
 [[target]]
 id = "mosher2018_elevation_best"
 model = "obs-mosher2018-host-pathogen-occupancy"
-source = { ref = "mosher2018", location = "Abstract; Results (model selection table)" }
-quantity = "models with elevation effects on toad and Bd colonisation and extinction are the best supported"
+source = { ref = "mosher2018", location = "Abstract; Results, para. 2" }
+quantity = "the six best-supported models all have elevation effects on vital rates (models 1-6 of Table 3 rank first among the 12 models refitted)"
 published = true
-status = "pending"
-notes = "Needs the Dryad histories and a reader for them. In the dissertation version (Mosher 2017, Ch. 2, Table 2.3, 82 sites) the top model has γAB, γB, γBA, εAB, εBA quadratic in elevation, AICc 2228.07, K = 25, deviance 2175.3."
+call = "sort(sortperm([_mosher2018_reference_fit(i).aicc for i in 1:12])[1:6]) == 1:6"
+tolerance = {}
+status = "qualitative"
+notes = "Akaike weights cannot be compared: the paper's weights are over 33 models, of which only the 12 printed are refitted. Printed ΔAICc of rows 10 and 11 (4.77, 7.03) do not equal their AICc minus the best (4.93, 7.19); the AICc values are reproduced."
+
+[[target]]
+id = "mosher2018_epsA_initial"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Methods, Modeling Approach" }
+quantity = "toad extinction probability without Bd, εA, in the all-constant model (K = 14)"
+published = 0.0
+call = "(f = _mosher2018_constant_fit(); mosher2018_site_parameters(f.model, f.fit.θ, 1).εA)"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_epsB_initial"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Methods, Modeling Approach" }
+quantity = "Bd extinction probability without toads, εB, in the all-constant model (K = 14)"
+published = 0.0
+call = "(f = _mosher2018_constant_fit(); mosher2018_site_parameters(f.model, f.fit.θ, 1).εB)"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_epsB_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 4" }
+quantity = "Bd extinction probability without toads, εB, best model"
+published = 0.02
+call = "_mosher2018_best_at(3000.0).εB"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "The profile-likelihood interval (0.00-0.15) is not computed."
+
+[[target]]
+id = "mosher2018_gammaA_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 5" }
+quantity = "toad colonisation probability without Bd, γA, best model"
+published = 1.0
+call = "_mosher2018_best_at(3000.0).γA"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "The profile-likelihood interval (0.21-1.00) is not computed."
+
+[[target]]
+id = "mosher2018_epsA_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 4" }
+quantity = "toad extinction probability without Bd, εA, best model"
+published = 0.0
+call = "_mosher2018_best_at(3000.0).εA"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_toad_extinction_peak"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 4; Fig. 5A" }
+quantity = "toad extinction with Bd present, εAB, peaks at intermediate elevations at about 0.30"
+published = "~0.30 at intermediate elevations"
+call = """
+let c = _mosher2018_best_curve(:εAB)
+    k = argmax(c.value)
+    (2900 < c.elevation[k] < 3400) ? c.value[k] : -1.0
+end
+"""
+tolerance = { lower = 0.25, upper = 0.35 }
+status = "qualitative"
+notes = "Our peak is 0.283 at about 3170 m. Accepted between 0.25 and 0.35, with the peak between 2900 and 3400 m (choices made here)."
+
+[[target]]
+id = "mosher2018_bd_extinction_peak"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 4; Fig. 5B" }
+quantity = "Bd extinction with toads present, εBA, peaks at intermediate elevations at about 0.30 and is near zero at the extremes"
+published = "~0.30 at intermediate elevations"
+call = """
+let c = _mosher2018_best_curve(:εBA)
+    k = argmax(c.value)
+    (2900 < c.elevation[k] < 3400 && c.value[1] < 0.01 && c.value[end] < 0.01) ? c.value[k] : -1.0
+end
+"""
+tolerance = { lower = 0.25, upper = 0.35 }
+status = "qualitative"
+notes = "Our peak is 0.32 at about 3080 m."
 
 [[target]]
 id = "mosher2018_toad_extinction_elevation"
 model = "obs-mosher2018-host-pathogen-occupancy"
-source = { ref = "mosher2018", location = "Abstract" }
-quantity = "boreal toad extinction risk with Bd present (εAB) is lowest at high elevations"
-published = true
-status = "pending"
-notes = "Needs the data. The dissertation version reports εAB highest (about 0.30) at intermediate elevations."
+source = { ref = "mosher2018", location = "Abstract; Results, para. 6" }
+quantity = "at high elevations boreal toads with Bd were unlikely to go locally extinct (εAB at the highest site)"
+published = "unlikely"
+call = "_mosher2018_best_curve(:εAB).value[end]"
+tolerance = { lower = 0.0, upper = 0.1 }
+status = "qualitative"
+notes = "Our εAB is 0.044 at 3679 m. The abstract says toad extinction risk is 'lowest at high elevations'; in the refitted best model εAB is lower still at the lowest sites (0.005 at 2468 m), as the Results' quadratic curve implies, so the target follows the Results wording."
 
 [[target]]
 id = "mosher2018_toad_recolonisation_elevation"
 model = "obs-mosher2018-host-pathogen-occupancy"
-source = { ref = "mosher2018", location = "Abstract" }
-quantity = "boreal toads are more likely to recolonise high-elevation sites after local extinction (γAB increases with elevation)"
-published = true
-status = "pending"
-notes = "Needs the data."
+source = { ref = "mosher2018", location = "Abstract; Results, para. 5; Fig. 5C" }
+quantity = "with Bd present, toads were more likely to recolonise high-elevation sites: γAB at the highest site minus its maximum below 3000 m"
+published = "higher at high elevations"
+call = """
+let c = _mosher2018_best_curve(:γAB)
+    c.value[end] - maximum(c.value[c.elevation .< 3000])
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0 }
+status = "qualitative"
+notes = "Our γAB rises from 0.002 at 2468 m to 0.27 at 3679 m."
+
+[[target]]
+id = "mosher2018_bd_colonisation_elevation"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 5; Fig. 5D" }
+quantity = "Bd was more likely to colonise low and mid-elevation sites: γBA at the highest site is below its maximum"
+published = "lower at high elevations"
+call = """
+let c = _mosher2018_best_curve(:γBA)
+    c.value[end] / maximum(c.value)
+end
+"""
+tolerance = { lower = 0.0, upper = 0.5 }
+status = "qualitative"
+notes = "Our γBA peaks at 0.20 near 2800 m and is 0.011 at 3679 m."
 
 # ---- adams2010 ----
-# Only the abstract and the Ecological Archives appendices were readable; no detection
-# histories are deposited.
+# Checked against the published PDF. No detection histories are deposited, so nothing is
+# refitted: the targets below are derived from the printed coefficients (Tables 4 and 6, in
+# the compendium), which checks the paper's internal consistency, not a refit.
 
 [[target]]
 id = "adams2010_psi_native"
 model = "obs-adams2010-bd-occupancy"
-source = { ref = "adams2010", location = "Abstract" }
-quantity = "estimated probability that Bd occurs in a native-amphibian population (78 populations)"
+source = { ref = "adams2010", location = "Abstract; Results, Native anurans" }
+quantity = "estimated probability that Bd occurs in a native-anuran population, top-ranked model"
 published = 0.534
-status = "pending"
-notes = "Detection histories not deposited; the covariate models were not read (article paywalled)."
+call = "adams2010_occupancy(:native)"
+tolerance = { digits = 3 }
+regression = { value = 0.741, atol = 0.001 }
+status = "discrepant"
+notes = "From the Table 4 intercept (1.053, CI −0.035 to 2.141) ψ = 0.741 (0.491-0.895) for populations other than R. luteiventris (0.923 for R. luteiventris). The printed 53.4% (36.6-69.4%) matches neither; it may be another summary of the model, which the paper does not define. Needs the detection histories to resolve."
 
 [[target]]
 id = "adams2010_psi_bullfrog"
 model = "obs-adams2010-bd-occupancy"
-source = { ref = "adams2010", location = "Abstract" }
-quantity = "estimated probability that Bd occurs in a bullfrog (Rana catesbeiana) population (40 populations)"
+source = { ref = "adams2010", location = "Abstract; Results, Bullfrogs" }
+quantity = "estimated probability that Bd occurs in a bullfrog population, top-ranked model (at mean latitude)"
 published = 0.664
-status = "pending"
-notes = "Detection histories not deposited; the covariate models were not read (article paywalled)."
+call = "adams2010_occupancy(:bullfrog)"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "expit of the Table 6 ψ intercept; not a refit (no data)."
+
+[[target]]
+id = "adams2010_psi_bullfrog_ci"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Bullfrogs" }
+quantity = "95% CI of bullfrog ψ, lower and upper bounds summed (0.429 + 0.838)"
+published = 1.267
+call = "sum(round.(adams2010_occupancy(:bullfrog; level = 0.95); digits = 3))"
+tolerance = { atol = 1e-9 }
+status = "reproduced"
+notes = "Each bound is matched to three decimals (0.429, 0.838)."
+
+[[target]]
+id = "adams2010_or_ralu"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Native anurans" }
+quantity = "odds ratio of Bd occurrence for R. luteiventris versus other native populations"
+published = 4.2
+call = "adams2010_odds_ratio(:native, :ψ_ralu)"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "95% CI 1.4-12.4 also matches (1.41-12.38)."
+
+[[target]]
+id = "adams2010_or_larvae_native"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Native anurans" }
+quantity = "odds ratio of a positive swab, larvae versus post-metamorphic native anurans"
+published = 0.10
+call = "adams2010_odds_ratio(:native, :p_larv)"
+tolerance = { digits = 2 }
+regression = { value = 0.0879, atol = 0.0001 }
+status = "discrepant"
+notes = "Table 4 gives exp(−2.432) = 0.088 (CI 0.041-0.188) against the printed 0.10 (0.04-0.20)."
+
+[[target]]
+id = "adams2010_or_hf"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Native anurans" }
+quantity = "odds ratio of a positive swab per additional point of the human footprint index"
+published = 2.37
+call = "adams2010_odds_ratio(:native, :p_hf)"
+tolerance = { digits = 2 }
+regression = { value = 1.539, atol = 0.001 }
+status = "discrepant"
+notes = "Per point (β/scale = 0.872/2.023) the odds ratio is 1.54. The printed 2.37 (1.63-3.43) is close to exp(β) = 2.39 (1.65-3.47), the odds ratio per standard deviation of the index."
+
+[[target]]
+id = "adams2010_or_date_bullfrog"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Bullfrogs" }
+quantity = "odds ratio of a positive bullfrog swab per 30 days"
+published = 0.75
+call = "adams2010_odds_ratio(:bullfrog, :p_date; per = 30)"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "95% CI 0.61-0.93 also matches."
+
+[[target]]
+id = "adams2010_or_stag"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Bullfrogs" }
+quantity = "odds ratio of a positive bullfrog swab, stagnant versus flowing water"
+published = 0.59
+call = "adams2010_odds_ratio(:bullfrog, :p_stag)"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "95% CI 0.41-0.85 also matches."
+
+[[target]]
+id = "adams2010_or_larvae_bullfrog"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Bullfrogs" }
+quantity = "odds ratio of a positive bullfrog swab, larvae versus post-metamorphic"
+published = 1.09
+call = "adams2010_odds_ratio(:bullfrog, :p_larv)"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "95% CI 0.77-1.53 also matches."
+
+[[target]]
+id = "adams2010_or_lat"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Bullfrogs" }
+quantity = "odds ratio of Bd occurrence in bullfrog populations per degree of north latitude"
+published = 1.61
+call = "adams2010_odds_ratio(:bullfrog, :ψ_lat)"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "95% CI 0.94-2.78 also matches."
 
 [[target]]
 id = "adams2010_finite_ratio"
 model = "obs-adams2010-bd-occupancy"
-source = { ref = "adams2010", location = "Appendix A, Fig. A1 caption" }
-quantity = "the ratio ψ[1 − (1 − p′)^N]/ψ approaches 1 as N and p′ increase"
-published = "approaches 1"
-call = "finite_population_occurrence(1.0, 0.5, 50) / 1.0"
-tolerance = { lower = 0.999, upper = 1.0000001 }
+source = { ref = "adams2010", location = "Introduction; Appendix A" }
+quantity = "for p′ > 0.05 and N > 50 the factor 1 − (1 − p′)^N is near 1"
+published = "near 1.0"
+call = "(q = parameter_set(:adams2010); finite_population_occurrence(1.0, q.finite_p_threshold, q.finite_N_threshold))"
+tolerance = { lower = 0.9, upper = 1.0 }
 status = "qualitative"
-notes = "Checks the limit at N = 50, p′ = 0.5 (values chosen here); monotonicity in N and p′ is in test/mosher2018.jl."
+notes = "At the thresholds the factor is 0.923 and it increases with p′ and N. 'Near' is accepted above 0.9 (our choice)."
+
+[[target]]
+id = "adams2010_aicc_native"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Table 3" }
+quantity = "AICc of the best native-anuran model p(larv, date, elev, date×elev, hf), w(ralu)"
+published = 487.328
+status = "pending"
+notes = "Needs the detection histories, which are not deposited. SingleSeasonOccupancyModel fits the model once they are available."
+
+[[target]]
+id = "adams2010_aicc_bullfrog"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Table 5" }
+quantity = "AICc of the best bullfrog model p(larv, date, stag), w(lat)"
+published = 493.576
+status = "pending"
+notes = "Needs the detection histories, which are not deposited."
 # ---- doddington2013 ----
 # Doddington et al. 2013 Ecology 94:1795 (doi:10.1890/12-1270.1): exposure trial (Table 1) and
 # the stochastic midwife toad-zoospore model of the authors' Berkeley Madonna code (Appendix B,
