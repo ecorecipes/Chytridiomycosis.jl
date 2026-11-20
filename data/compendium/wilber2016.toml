@@ -9,6 +9,10 @@
 # data are on Dryad (doi:10.5061/dryad.06sd9, CC0) and bundled as data/wilber2016/. The
 # journal's Appendices S1–S3 could not be retrieved (HTTP 403); the R code is the record of
 # what they contain (R0 in R0_calculation.R, eviction in eviction_functions.R).
+# Checked on 2026-11-19: the R0 appendix (β_R0, S_R0) against the reprint of this paper as
+# Chapter 4 of Wilber's PhD dissertation (UC Santa Barbara, 2017; eScholarship
+# https://escholarship.org/uc/item/8wz6q3hq), Appendix 4.C.2 and Fig. 4.S10. This is the
+# author's copy of Appendix S1, not the journal's version of record.
 #
 # System: adult Rana muscosa/R. sierrae (the data file says R. sierrae) and Bd. One time step
 # is 3 days (the swabbing interval). Loads: x is the NATURAL log of the qPCR zoospore load in
@@ -412,9 +416,9 @@ units = "frog^-1 per time step"
 provenance = "F"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Rana muscosa", setting = "lab" }
-location = "code/R0_calculation.R ('from Rach. and Briggs')"
-verified = false
-notes = "Attributed in the code to Rachowicz & Briggs (2007); Appendix S1 (not retrieved) and Rachowicz & Briggs not checked."
+location = "Appendix S1 as reprinted in Wilber (2017, dissertation), Appendix 4.C.2 (printed p. 201) and Fig. 4.S10 caption (p. 216); code/R0_calculation.R ('from Rach. and Briggs')"
+verified = true
+notes = "Checked 2026-11-19: 'We set the transmission coefficient β = 9.82e10−4 [i.e. 9.82 × 10^-4] which was the transmission coefficient estimated in Rachowicz and Briggs (2007) for density-dependent transmission in Bd-Rana muscosa'. Rachowicz & Briggs (2007) itself not checked."
 
 [[parameter]]
 symbol = "S_R0"
@@ -424,9 +428,9 @@ units = "frogs"
 provenance = "A"
 role = "structural"
 system = { pathogen = "Bd", host = "Rana muscosa", setting = "model" }
-location = "code/R0_calculation.R (S_init = 100)"
-verified = false
-notes = "Appendix S1 not retrieved."
+location = "Appendix S1 as reprinted in Wilber (2017, dissertation), Appendix 4.C.2 (printed p. 201); code/R0_calculation.R (S_init = 100)"
+verified = true
+notes = "Checked 2026-11-19: '... and assumed an initial susceptible population of 100 frogs (S∗ = 100)'."
 
 # --- "deposited": the authors' fitted values at full precision ----------------------------------
 # results/IPM_parameters_no_26_linear.rds (2016-02-09). The nonlinear growth alternative

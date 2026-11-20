@@ -97,16 +97,16 @@ All of these are validation targets (`canessa2018_*` in `data/validation/targets
 The medians and 95% intervals over the 1,000 draws (`cap = :truncate`,
 `units = :transect`):
 
-| Action | R0, paper (Fig. 2) | R0, here | P(R0 < 1) | final density ratio, here |
-|:--|:--|:--|:--|:--|
-| a no action | 9.6 (5.8–14.3) | 9.43 (5.60–14.35) | 0 | <0.001 |
-| b body condition | ≈ 9.6 | 8.98 | 0 | <0.001 |
-| c probiotic | ≈ 8.3 (text: increases) | 9.68 | 0 | <0.001 |
-| d antifungal, 100% | ≈ 0.2 | 0.21 | 1 | 1.00 |
-| e antifungal, 80% | ≈ 2.4; P < 2.5% | 2.26 (1.33–3.44) | 0.003 | 0.69 (paper 1.0) |
-| f thinning 50% | ≈ 4.8 | 4.72 (2.80–7.17) | 0 | 0.006 (paper 0.083) |
-| g thinning 90% | ≈ 0.93; P ≈ 50% | 0.94 (0.56–1.44) | 0.59 | 0.10 |
-| h removal 90%/step | ≈ 0.2–0.3 | 0.34 | 1 | 0 |
+| Action | R0, paper (Fig. 2) | R0, here | P(R0 < 1) | final density ratio, here | per ha (`units = :density`) |
+|:--|:--|:--|:--|:--|:--|
+| a no action | 9.6 (5.8–14.3) | 9.43 (5.60–14.35) | 0 | 0.013 | <0.001 |
+| b body condition | ≈ 9.6 | 8.98 | 0 | 0.016 | <0.001 |
+| c probiotic | ≈ 8.3 (text: increases) | 9.68 | 0 | 0.012 | <0.001 |
+| d antifungal, 100% | ≈ 0.2 | 0.21 | 1 | 1.00 | 1.00 |
+| e antifungal, 80% | ≈ 2.4; P < 2.5% | 2.26 (1.33–3.44) | 0.003 | 0.95 (paper 1.0) | 0.69 |
+| f thinning 50% | ≈ 4.8 | 4.72 (2.80–7.17) | 0 | 0.081 (paper 0.083) | 0.006 |
+| g thinning 90% | ≈ 0.93; P ≈ 50% | 0.94 (0.56–1.44) | 0.59 | 0.097 | 0.10 |
+| h removal 90%/step | ≈ 0.2–0.3 | 0.34 | 1 | 0 | 0 |
 
 The paper's ranking is reproduced:
 

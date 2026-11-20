@@ -321,6 +321,7 @@ role = "estimated"
 system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
 location = "inferred from Table S1 b4-b6 (not printed); archived draws: median 10808"
 verified = false
+notes = "Unverified on purpose: the review copy prints only the fitted b4-b6, not the elicited Lmax; inferred with growth_series_steps (see that record)."
 
 [[parameter]]
 symbol = "growth_best"
@@ -332,6 +333,7 @@ role = "estimated"
 system = { pathogen = "Bsal", host = "Salamandra salamandra", stage = "adult" }
 location = "inferred from Table S1 b4-b6 (not printed); archived draws: median 55.7"
 verified = false
+notes = "Unverified on purpose: not printed; inferred with Lmax_best and growth_series_steps from Table S1 b4-b6."
 
 [[parameter]]
 symbol = "σ2G"

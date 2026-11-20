@@ -100,11 +100,8 @@ nothing
 ```
 
     Precompiling packages...
-        945.2 ms  ✓ QuartoNotebookWorkerJSONExt (serial)
-      1 dependency successfully precompiled in 1 seconds
-    Precompiling packages...
-       1991.8 ms  ✓ QuartoNotebookWorkerPlotsExt (serial)
-      1 dependency successfully precompiled in 2 seconds
+       4917.5 ms  ✓ Chytridiomycosis
+      1 dependency successfully precompiled in 5 seconds. 161 already precompiled.
 
 ## Step 1. Transmission and host density
 
@@ -373,7 +370,7 @@ end
     bozzuto2019_target_hibernation       ours 0.121, paper 0.12 (reproduced)
 
 For the aestivating population of north-eastern Spain every value in the
-package is about 1.6% below the paper’s:
+package is 1.3–1.7% below the paper’s:
 
 ``` julia
 for id in ("bozzuto2019_R0_aestivation", "bozzuto2019_floquet_R0_aestivation")

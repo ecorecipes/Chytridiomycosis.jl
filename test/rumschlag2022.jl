@@ -148,7 +148,8 @@ using Distributions: Chisq, ccdf
         # β on the paper's scale: β ZL0 / 1e5 (an inferred convention; see the compendium)
         @test round(s.β.ASW[1], sigdigits = 2) == 7.1e-6
         # Its 95% half-width is 2.6e-6 in the paper; the delta method on β ZL0 gives 2.54e-6.
-        # Ignoring the β-ZL0 covariance (−0.28) would give 2.63e-6. Unexplained, small.
+        # Ignoring the β-ZL0 covariance (−0.28) widens it to 2.83e-6; ignoring ZL0's variance
+        # altogether (1.96 β SE(log β)) gives 2.63e-6. Unexplained, small.
         @test_broken round(s.β.ASW[2], sigdigits = 2) == 2.6e-6
         @test round(s.β.ASW[2], sigdigits = 3) == 2.54e-6                       # regression
         @test s.β.ASW == s.β.GreenSwamp                       # one β for all waters

@@ -9,7 +9,10 @@ read from the [compendium](compendium.md), for example `SchmidtParameters(:schmi
 
 ## Bsal in fire salamanders (Schmidt et al. 2017)
 
-Two Results values are not reproduced (see `data/validation/targets.toml`):
+Four values are not reproduced (see `data/validation/targets.toml`): S_eq and K_H below,
+and the shares of the German habitat infected after 8 years by scattered colonies (Results;
+ESM fig. S3), where eq. (2.5) divided by the habitat area gives 8.97 and 0.128 against the
+paper's ≈9% and ≈0.1% (see [`scattered_colony_area`](@ref)).
 
 - **S_eq.** The paper gives 1.0027. Eq. (2.3) gives 1.0030. The paper's value equals
   `(d + e)(d + d_I)/(βe)`, the large-K limit of eq. (2.3), so the authors probably reported

@@ -12,6 +12,10 @@
 # (docs/ipm_extinction_{manuscript,appendix}.pdf); the journal's Appendices S1–S4 returned
 # HTTP 403. The mesocosm data are on Dryad (doi:10.5061/dryad.p614h, CC0) and bundled as
 # data/wilber2017/.
+# Checked on 2026-11-19: cv_β0 and cv_β1 against the reprint of this paper as Chapter 5 of
+# Wilber's PhD dissertation (UC Santa Barbara, 2017; eScholarship
+# https://escholarship.org/uc/item/8wz6q3hq), Fig. 5.S3 (the appendix figure, author's copy,
+# not the journal's version of record).
 #
 # System: adult Rana muscosa/R. sierrae, three tadpole stages, Bd. One time step is 3 days.
 # Loads: x is the NATURAL log of the qPCR load in zoospore equivalents per swab,
@@ -941,9 +945,9 @@ units = "1"
 provenance = "F"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
-location = "preprint appendix Fig. 3 (bar labels; docs/ipm_extinction_appendix.pdf in the authors' repository) and manuscript_sensitivity_and_plots.ipynb (cvs_trans)"
-verified = false
-notes = "The published Appendix Fig. S3 could not be retrieved (HTTP 403). Used only to approximate the posterior of β for the medians of Fig. 2."
+location = "Appendix Fig. S3C bar labels, as reprinted in Wilber (2017, dissertation), Fig. 5.S3C (printed p. 264); preprint appendix Fig. 3 (docs/ipm_extinction_appendix.pdf in the authors' repository); manuscript_sensitivity_and_plots.ipynb (cvs_trans)"
+verified = true
+notes = "Checked 2026-11-19: panel C ('Density-dependent w/ dynamic zoospore pool') labels the bar 'φ zoospore pool, β0' with CV 0.19 ('The values under each bar give the coefficient of variance (CV) for each parameter, calculated from that parameter's posterior distribution'). The journal's Appendix S3 itself could not be retrieved (HTTP 403). Used only to approximate the posterior of β for the medians of Fig. 2."
 
 [[parameter]]
 symbol = "cv_β1"
@@ -954,9 +958,9 @@ units = "1"
 provenance = "F"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Rana muscosa/R. sierrae", stage = "adult", setting = "mesocosm" }
-location = "preprint appendix Fig. 3 (bar labels); notebook cvs_trans"
-verified = false
-notes = "As cv_β0."
+location = "Appendix Fig. S3C bar labels, as reprinted in Wilber (2017, dissertation), Fig. 5.S3C (printed p. 264); preprint appendix Fig. 3; notebook cvs_trans"
+verified = true
+notes = "Checked 2026-11-19: panel C labels the bar 'φ density/frequency, β1' with CV 0.2. See cv_β0."
 
 [[parameter]]
 symbol = "WAIC"

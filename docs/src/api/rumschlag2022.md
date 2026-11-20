@@ -17,7 +17,8 @@ bundled in `data/rumschlag2022`. It reproduces the paper's estimates:
 
 - the lifespans 14.4, 13.3, 11.4 and 9.4 h;
 - the persistence time of 21.6 h;
-- their "± 95% CI" values;
+- their "± 95% CI" values, except that of β (2.54e-6 against 2.6e-6; target
+  `rumschlag2022_beta_ci`);
 - the likelihood ratio χ² of 7.581;
 - 13 of the 15 AICc values in Table 1.
 

@@ -93,9 +93,9 @@ Table 3.
 | Result | Paper | Here |
 |---|---|---|
 | Adult infected peak, 16 m⁻² (Fig. 4) | ≈ 8.3 (6 °C), 7.5 (14 °C) | 8.3, 7.5 |
-| Aquatic zoospore peak, 16 m⁻² (Fig. 5) | ≈ 8,300 (6 °C), 17,900 (14 °C) | 8,300, 17,900 |
+| Aquatic zoospore peak, 16 m⁻² (Fig. 5) | ≈ 8,250 (6 °C), 17,450 (14 °C) | 8,320, 17,870 |
 | ID50 exceeded by `Z_a` (Fig. 5) | 16 m⁻² only at 6 °C; 3 of 4 at 14 °C | same |
-| `β_a` at the start (Fig. 7) | ≈ 51 … 12 (6 °C), 218 … 75 (14 °C) | same (by construction of `χ_a`) |
+| `β_a` at the start (Fig. 7) | ≈ 50.5 … 12.2 (6 °C), 216 … 74.5 (14 °C) | 50.5 … 12.6, 218 … 75.6 (6 °C by construction of `χ_a`) |
 | `R_a`, Table 3, 14 °C | 16.55, 27.85, 43.72, 65.67 | 16.55, 27.86, 43.75, 65.73 |
 | `R_j`, Table 3, 14 °C (`:table3`) | 1.26, 2.22, 4.15, 8.01 | 1.26, 2.22, 4.14, 7.99 |
 | `R_a`, Table 3, 6 °C (`:table3`) | 4.82, 9.1, 16.5, 28.1 | 4.83, 9.11, 16.48, 28.11 |

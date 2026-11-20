@@ -1,0 +1,35 @@
+name: Vignettes
+# Re-executes every tutorial and fails if its rendered Markdown differs from the committed
+# version (scripts/check_vignettes.jl). Slow (about 15 minutes), so it runs on demand and
+# monthly rather than on every pull request.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 1 * *'
+jobs:
+  check:
+    name: Tutorials match the code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1'
+      - uses: julia-actions/cache@v3
+        with:
+          cache-compiled: 'true'
+      - uses: quarto-dev/quarto-actions/setup@v2
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+      - name: Instantiate the vignettes environment
+        run: julia --project=vignettes -e 'using Pkg; Pkg.instantiate()'
+      - name: Re-render the tutorials and compare
+        run: julia scripts/check_vignettes.jl
+      - name: Save the differences
+        if: failure()
+        run: git diff -- 'vignettes/*/*.md' > vignettes-diff.txt
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: vignettes-diff
+          path: vignettes-diff.txt

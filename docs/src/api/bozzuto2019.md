@@ -81,7 +81,8 @@ follow:
 | 1/max R0(t), hibernation and aestivation | ≈5%, 20% | 4.8%, 20.0% |
 | Elasticity to ℓc (Fig. A5) | ≈2.37, 1.58 | 2.367, 1.581 |
 
-Every aestivation value in the package is about 1.6% below the paper's, while the seasonal
+Every aestivation value in the package is 1.3–1.7% below the paper's (R0 1.65%, Floquet-R0
+1.69%, numerical 1.48%, high activity 1.32%), while the seasonal
 ratios agree (Floquet-R0/R0 is 0.901 in both). The paper's numbers all imply R0 ≈ 2.127.
 Three single changes would give that:
 

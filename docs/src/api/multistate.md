@@ -137,13 +137,16 @@ hollanders2023_refit_path
   reproduced: the status and load effects, the annual hazard and survival, and the gain and
   clearance rates and probabilities. The hazard ratios printed in the Discussion are not:
   4.4 at 10⁵ and 11 at 10⁶ ITS1 copies per swab, against about 6.4 and 19 from the draws.
-- **From the reduced refit** (maximum likelihood, 26 parameters, about 15 minutes on two
-  threads).
+- **From the reduced refit** (maximum likelihood, 26 parameters, about 10 minutes on two
+  threads; 593 s recorded in `data/hollanders2023/refit.toml`).
   - Matched within one posterior sd: the clearance hazard (2.62 against 2.623), the gain
     hazard (0.23 against 0.283), the intensity effect (1.29 against 1.953) and temperature on
     clearing (1.11 against 1.101).
-  - Outside one posterior sd: the status effect (1.22 against −0.167) and the annual hazard
-    (0.67 against 0.783), although both published values lie inside our Wald intervals.
+  - Outside one posterior sd: the status effect (1.22 against −0.167), the annual hazard
+    (0.67 against 0.783) and rainfall on gaining (1.93 against 1.141), although all three
+    published values lie inside our Wald intervals.
+  - The intensity effect, though within one sd, is not 'present' by the paper's rule: Wald
+    P(β ≤ 0) = 0.12 against the paper's pd of 97.5%.
   - The two effects are confounded (sampling correlation −0.89). Fixing status at −0.167
     lowers the log-likelihood by only 0.11, and the profiled fit gives intensity 2.58 and
     annual hazard 0.81.

@@ -26,7 +26,7 @@
 # Printed and coded details that differ (see also the compendium notes):
 # - Table 1's survival coefficients (11.824, −0.8605) and the survival test (χ² = 12.197) are
 #   those of a fit to all three temperatures (fit_wilber2016(; survival_temperatures =
-#   (4, 12, 20)), Appendix S2's alternative), not of the 20 °C fit the text and Fig. 2a
+#   (4, 12, 20)); our refit, as the appendices were not retrieved), not of the 20 °C fit the text and Fig. 2a
 #   describe. The 20 °C fit (11.597, −0.8873) is the deposited fit, which the authors' figures
 #   were made with. WilberParameters(:wilber2016) uses Table 1; set = "deposited" uses the
 #   deposit.

@@ -28,7 +28,7 @@
 # What the PDF does not give, and what does not agree (details in the compendium notes):
 # - χ_a, the half-saturation density of the adult contact function, is never printed. At
 #   14 °C three figures agree on χ_a ≈ 5.9 m⁻² (the Fig. 1 curve, β_a(0) in Fig. 7 and the
-#   R_a column of Table 3). At 6 °C, Fig. 7 with Table 2's c_a = 464.77 gives χ_a ≈ 11.7, and
+#   R_a column of Table 3). At 6 °C, Fig. 7 with Table 2's c_a = 464.77 gives χ_a ≈ 12, and
 #   this reproduces Figs 4, 5 and 7. The Fig. 1 curve and the 6 °C R_a column of Table 3
 #   instead imply c_a ≈ 729 day⁻¹ and χ_a ≈ 23.3 m⁻². `variant = :table3` uses those.
 # - Table 3's R_j needs c_j = 8/(14 × 12) = 0.0476 day⁻¹ (8 contacts in 14 days among 12
