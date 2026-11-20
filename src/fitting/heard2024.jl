@@ -1,7 +1,8 @@
 # Catch-curve estimate of annual adult survival before and after Bd, Heard et al. (2024)
 # J Anim Ecol 93:1670-1683 (doi:10.1111/1365-2656.14177), following Age_structure_analysis.R
-# in the authors' Zenodo archive (doi:10.5281/zenodo.10457229, CC BY 4.0). The paper itself
-# could not be retrieved; the model is read from the authors' NIMBLE code.
+# in the authors' Zenodo archive (doi:10.5281/zenodo.10457229, CC BY 4.0). The likelihood,
+# link and priors were checked against the paper (Methods 2.1, read 2026-11-20), which prints
+# the posterior means 0.688, 0.352 (L. aurea pre/post-Bd), 0.655, 0.318 (L. raniformis).
 #
 # Data: skeletochronology ages (lines of arrested growth, LAG) of 403 frogs, Litoria aurea
 # (55 historical museum specimens, 49 contemporary) and L. raniformis (45 historical, 254

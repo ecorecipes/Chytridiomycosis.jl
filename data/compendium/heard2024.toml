@@ -4,11 +4,14 @@
 # Data and code: Zenodo doi:10.5281/zenodo.10457229 (CC BY 4.0), retrieved 2026-11-19 into
 # lab/papers/heard2024/zenodo/.
 #
-# VERSION CHECKED: NOT the paper. The full text (Wiley, behind a bot check) could not be
-# retrieved; only the PubMed abstract was read. Every value below was read from the authors'
-# R code in the Zenodo archive (Run_STEPS_simulations.R, STEPS_model.R,
-# Age_structure_analysis.R), so every record has verified = false and its `location` names
-# the script. The abstract says only that adult survival roughly halved after Bd.
+# VERSION CHECKED: the published version (lab/papers/heard2024/paper.pdf), read 2026-11-20.
+# Records with verified = true were checked against its text and their `location` cites it.
+# The rest (carrying capacities, dispersal proportions, the 1500 m truncation, the initial
+# abundance) are given only in the Supplementary Material, which was not read, and come from
+# the authors' R code (Zenodo archive), so they stay unverified. The paper prints posterior
+# means of survival (Results 3.1) that differ from the values entered in the simulation
+# script for the pre-Bd period (0.655 vs 0.641, 0.688 vs 0.673): both are recorded, as
+# adult_survival (as coded) and adult_survival_printed (as printed).
 #
 # Species: Litoria aurea (green and golden bell frog; Southern Highlands / Canberra region,
 # NSW and ACT) and Litoria raniformis (growling grass frog; northern Melbourne, Victoria).
@@ -28,9 +31,9 @@ value = 0.1
 units = "1"
 provenance = "A"
 role = "structural"
-location = "Run_STEPS_simulations.R, FUNDAMENTAL SETTINGS"
-verified = false
-notes = "From the authors' code; paper text not checked."
+location = "Methods 2.2 ('metamorph survival probability through to emergence from their first winter brumation (0.1)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20); same as Run_STEPS_simulations.R."
 
 [[parameter]]
 symbol = "sex_ratio"
@@ -39,9 +42,9 @@ value = 0.5
 units = "1"
 provenance = "A"
 role = "structural"
-location = "Run_STEPS_simulations.R, FUNDAMENTAL SETTINGS"
-verified = false
-notes = "From the authors' code; paper text not checked."
+location = "Methods 2.2 ('the proportion of metamorphs that are female (0.5)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 [[parameter]]
 symbol = "subadult_breeding_fraction"
@@ -50,9 +53,9 @@ value = 0.2
 units = "1"
 provenance = "A"
 role = "structural"
-location = "STEPS_model.R, steps.func"
-verified = false
-notes = "From the authors' code ('only 20% of subadult females breed'); paper text not checked."
+location = "Methods 2.2 ('0.2 for females in their first breeding season')"
+verified = true
+notes = "Checked against the published paper (2026-11-20); the first-season stage is the paper's 'sub-adult' stage of the code (1 LAG)."
 
 [[parameter]]
 symbol = "initial_fraction"
@@ -72,9 +75,9 @@ value = 50
 units = "yr"
 provenance = "A"
 role = "structural"
-location = "Run_STEPS_simulations.R, FUNDAMENTAL SETTINGS"
-verified = false
-notes = "From the authors' code; one replicate per scenario."
+location = "Methods 2.2 ('a single simulation of metapopulation dynamics over 50 years')"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 [[parameter]]
 symbol = "cell_size"
@@ -83,9 +86,9 @@ value = 65
 units = "m"
 provenance = "M"
 role = "structural"
-location = "sample_landscapes.grd header (25 cells over 1625 m); Run_STEPS_simulations.R axis labels"
-verified = false
-notes = "From the archived raster."
+location = "Methods 2.2 ('25 x 25, with the pixel size of 65 x 65 m')"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 [[parameter]]
 symbol = "distance_decay"
@@ -94,9 +97,9 @@ value = 200
 units = "m"
 provenance = "A"
 role = "structural"
-location = "STEPS_model.R, exponential_dispersal_kernel(distance_decay = 200)"
-verified = false
-notes = "From the authors' code; steps package, unnormalised kernel."
+location = "Methods 2.2 (dispersal kernel e^(-d/200))"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 [[parameter]]
 symbol = "max_distance"
@@ -107,7 +110,7 @@ provenance = "A"
 role = "structural"
 location = "STEPS_model.R, kernel_dispersal(max_distance = 1500)"
 verified = false
-notes = "From the authors' code."
+notes = "From the authors' code. The paper (Methods 2.2) describes the kernel as giving dispersal 'up to a maximum of ~1 km'; the coded truncation is 1500 m. The Supplementary Material (not read) may give the value."
 
 [[parameter]]
 symbol = "mets_min"
@@ -116,9 +119,9 @@ value = 3
 units = "yr^-1"
 provenance = "A"
 role = "scenario"
-location = "Run_STEPS_simulations.R, mets.vect <- seq(3, 30, 3)"
-verified = false
-notes = "Scenario grid seq(3, 30, 3)."
+location = "Methods 2.2 ('varied from 3-30 metamorphs ... at increments of 3')"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 [[parameter]]
 symbol = "mets_max"
@@ -127,9 +130,9 @@ value = 30
 units = "yr^-1"
 provenance = "A"
 role = "scenario"
-location = "Run_STEPS_simulations.R, mets.vect <- seq(3, 30, 3)"
-verified = false
-notes = "Scenario grid seq(3, 30, 3)."
+location = "Methods 2.2 ('varied from 3-30 metamorphs ... at increments of 3')"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 [[parameter]]
 symbol = "mets_step"
@@ -138,9 +141,9 @@ value = 3
 units = "yr^-1"
 provenance = "A"
 role = "scenario"
-location = "Run_STEPS_simulations.R, mets.vect <- seq(3, 30, 3)"
-verified = false
-notes = "Scenario grid seq(3, 30, 3)."
+location = "Methods 2.2 ('varied from 3-30 metamorphs ... at increments of 3')"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 [[parameter]]
 symbol = "cv_min"
@@ -149,9 +152,9 @@ value = 0.1
 units = "1"
 provenance = "A"
 role = "scenario"
-location = "Run_STEPS_simulations.R, mets.cv and mortality.cv <- seq(0.1, 1, 0.1)"
-verified = false
-notes = "Both CV grids are seq(0.1, 1, 0.1)."
+location = "Methods 2.2 (CV of fertility and of mortality 10%-100% at increments of 10%)"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 [[parameter]]
 symbol = "cv_max"
@@ -160,9 +163,9 @@ value = 1.0
 units = "1"
 provenance = "A"
 role = "scenario"
-location = "Run_STEPS_simulations.R, seq(0.1, 1, 0.1)"
-verified = false
-notes = "Both CV grids are seq(0.1, 1, 0.1)."
+location = "Methods 2.2 (CV of fertility and of mortality 10%-100% at increments of 10%)"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 [[parameter]]
 symbol = "cv_step"
@@ -171,9 +174,9 @@ value = 0.1
 units = "1"
 provenance = "A"
 role = "scenario"
-location = "Run_STEPS_simulations.R, seq(0.1, 1, 0.1)"
-verified = false
-notes = "Both CV grids are seq(0.1, 1, 0.1)."
+location = "Methods 2.2 (CV of fertility and of mortality 10%-100% at increments of 10%)"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 [[parameter]]
 symbol = "prior_precision"
@@ -182,9 +185,9 @@ value = 0.001
 units = "1"
 provenance = "A"
 role = "structural"
-location = "Age_structure_analysis.R, nimbleCode: dnorm(0, 0.001)"
-verified = false
-notes = "NIMBLE dnorm takes a precision: prior SD = 1/sqrt(0.001) = 31.6 on the logit scale."
+location = "Methods 2.1 ('beta ~ dnorm(0, 0.001)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20). NIMBLE dnorm takes a precision: prior SD = 31.6 on the logit scale."
 
 [[parameter]]
 symbol = "sigma_site_max"
@@ -193,9 +196,9 @@ value = 10
 units = "1"
 provenance = "A"
 role = "structural"
-location = "Age_structure_analysis.R, nimbleCode: sigma.site ~ dunif(0, 10)"
-verified = false
-notes = "Logit scale."
+location = "Methods 2.1 ('sigma_site ~ dunif(0, 10)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 # ---- species and epoch sets -------------------------------------------------------------
 
@@ -210,7 +213,7 @@ role = "estimated"
 system = { pathogen = "Bd", host = "Litoria raniformis", stage = "adult", setting = "remnant populations, northern Melbourne (contemporary)" }
 location = "Run_STEPS_simulations.R, 'as estimated from age structure data'"
 verified = false
-notes = "Catch-curve estimate (Age_structure_analysis.R) as entered in the simulation script; sub-adult survival is set equal. Posterior summary statistic (mean or median) not stated in the code."
+notes = "Value entered in Run_STEPS_simulations.R and used in the simulations. The paper (Results 3.1) prints the posterior mean 0.318; see adult_survival_printed. Sub-adult survival is set equal (Methods 2.2: two stages with equal survival)."
 
 [[parameter]]
 set = "Lran_contemporary"
@@ -249,7 +252,7 @@ role = "estimated"
 system = { host = "Litoria raniformis", stage = "adult", setting = "museum specimens collected before Bd emerged (historical)" }
 location = "Run_STEPS_simulations.R, 'as estimated from age structure data'"
 verified = false
-notes = "Catch-curve estimate as entered in the simulation script."
+notes = "Value entered in Run_STEPS_simulations.R and used in the simulations. The paper (Results 3.1) prints the posterior mean 0.655; see adult_survival_printed. Sub-adult survival is set equal (Methods 2.2: two stages with equal survival)."
 
 [[parameter]]
 set = "Lran_historical"
@@ -288,7 +291,7 @@ role = "estimated"
 system = { pathogen = "Bd", host = "Litoria aurea", stage = "adult", setting = "remnant populations, Southern Highlands and Canberra region (contemporary)" }
 location = "Run_STEPS_simulations.R, 'as estimatd from age structure data'"
 verified = false
-notes = "Catch-curve estimate as entered in the simulation script."
+notes = "Value entered in Run_STEPS_simulations.R and used in the simulations. The paper (Results 3.1) prints the posterior mean 0.352; see adult_survival_printed. Sub-adult survival is set equal (Methods 2.2: two stages with equal survival)."
 
 [[parameter]]
 set = "Laur_contemporary"
@@ -327,7 +330,7 @@ role = "estimated"
 system = { host = "Litoria aurea", stage = "adult", setting = "museum specimens collected before Bd emerged (historical)" }
 location = "Run_STEPS_simulations.R, 'as estimateed from age structure data'"
 verified = false
-notes = "Catch-curve estimate as entered in the simulation script."
+notes = "Value entered in Run_STEPS_simulations.R and used in the simulations. The paper (Results 3.1) prints the posterior mean 0.688; see adult_survival_printed. Sub-adult survival is set equal (Methods 2.2: two stages with equal survival)."
 
 [[parameter]]
 set = "Laur_historical"
@@ -354,3 +357,61 @@ system = { host = "Litoria aurea" }
 location = "Run_STEPS_simulations.R"
 verified = false
 notes = "Same as contemporary (set once in the script)."
+
+# ---- posterior means of annual adult survival as printed (Results 3.1) ---------------------
+
+[[parameter]]
+set = "Lran_contemporary"
+symbol = "adult_survival_printed"
+quantity = "posterior mean annual adult survival, L. raniformis, post-Bd (catch curve)"
+value = 0.318
+units = "yr^-1"
+uncertainty = { kind = "ci95", lo = 0.222, hi = 0.424, as_printed = "0.318 (95% CI = 0.222, 0.424)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Litoria raniformis", stage = "adult", setting = "remnant populations, northern Melbourne (post-Bd)" }
+location = "Results 3.1, para. 3"
+verified = true
+notes = "Checked against the published paper (2026-11-20). The simulation script uses 0.319."
+
+[[parameter]]
+set = "Lran_historical"
+symbol = "adult_survival_printed"
+quantity = "posterior mean annual adult survival, L. raniformis, pre-Bd (catch curve)"
+value = 0.655
+units = "yr^-1"
+uncertainty = { kind = "ci95", lo = 0.533, hi = 0.768, as_printed = "0.655 (95% CI = 0.533, 0.768)" }
+provenance = "F"
+role = "estimated"
+system = { host = "Litoria raniformis", stage = "adult", setting = "museum specimens before 1978 (pre-Bd)" }
+location = "Results 3.1, para. 3"
+verified = true
+notes = "Checked against the published paper (2026-11-20). The simulation script uses 0.641."
+
+[[parameter]]
+set = "Laur_contemporary"
+symbol = "adult_survival_printed"
+quantity = "posterior mean annual adult survival, L. aurea, post-Bd (catch curve)"
+value = 0.352
+units = "yr^-1"
+uncertainty = { kind = "ci95", lo = 0.217, hi = 0.500, as_printed = "0.352 (95% CI = 0.217, 0.500)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Litoria aurea", stage = "adult", setting = "remnant population, Molonglo River (post-Bd)" }
+location = "Results 3.1, para. 3"
+verified = true
+notes = "Checked against the published paper (2026-11-20). Same as the simulation script."
+
+[[parameter]]
+set = "Laur_historical"
+symbol = "adult_survival_printed"
+quantity = "posterior mean annual adult survival, L. aurea, pre-Bd (catch curve)"
+value = 0.688
+units = "yr^-1"
+uncertainty = { kind = "ci95", lo = 0.578, hi = 0.784, as_printed = "0.688 (95% CI = 0.578, 0.784)" }
+provenance = "F"
+role = "estimated"
+system = { host = "Litoria aurea", stage = "adult", setting = "museum specimens before 1978 (pre-Bd)" }
+location = "Results 3.1, para. 3"
+verified = true
+notes = "Checked against the published paper (2026-11-20). The simulation script uses 0.673."

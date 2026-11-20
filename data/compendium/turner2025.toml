@@ -4,12 +4,11 @@
 # Code and data: Zenodo doi:10.5281/zenodo.10921748 (TurnerBdModel.zip, CC BY 4.0),
 # retrieved 2026-11-19 into lab/papers/turner2025/zenodo/.
 #
-# VERSION CHECKED: NOT the paper. The full text (Wiley and the CSU repository, both behind a
-# bot check) could not be retrieved; only the Crossref abstract was read (it gives the three
-# extinction probabilities used as validation targets and the 10/15/20 °C inflow
-# temperatures). Every value below was read from the authors' R code,
-# customFunctions/PVA_functionsV2.R (function pop.func), so every record has
-# verified = false.
+# VERSION CHECKED: the published version (lab/papers/turner2025/paper.pdf), read 2026-11-20.
+# Records with verified = true were checked against its text (Methods 2.2) and their
+# `location` cites it. The rest (carrying capacities, density-dependence curves, tadpole
+# survival distribution, sex ratio) are not printed in the paper and come from the authors'
+# R code, customFunctions/PVA_functionsV2.R (function pop.func); they stay unverified.
 #
 # Species: Litoria raniformis (southern bell frog), a semi-permanent wetland ("NapNap") in
 # the regulated floodplain of south-western NSW. Female-only, age-classified (0-1, 1-2, ...,
@@ -33,9 +32,9 @@ value = 52
 units = "yr"
 provenance = "A"
 role = "structural"
-location = "PVA_functionsV2.R, pop.func (yr.end <- 2020 + 52)"
-verified = false
-notes = "From the authors' code."
+location = "Methods 2.2 and 2.2.4 ('the 52-year projection interval')"
+verified = true
+notes = "Checked against the published paper (2026-11-20); same as pop.func."
 
 [[parameter]]
 symbol = "longevity"
@@ -44,9 +43,9 @@ value = 5
 units = "yr"
 provenance = "A"
 role = "structural"
-location = "PVA_functionsV2.R, pop.func (longev <- 5; popmat[stages,stages] <- 0)"
-verified = false
-notes = "From the authors' code."
+location = "Methods 2.2.2 ('a maximum age class of 5-6 years and forced senescence during the fifth year')"
+verified = true
+notes = "Checked against the published paper (2026-11-20); in pop.func the 5+ class does not survive."
 
 [[parameter]]
 symbol = "sex_ratio"
@@ -69,7 +68,7 @@ role = "estimated"
 system = { host = "Litoria raniformis", stage = "adult female" }
 location = "PVA_functionsV2.R, pop.func main loop: rnorm(stages, 3245, 897)"
 verified = false
-notes = "'mean and sd of fertility from Germano and White, and Humphries'. Equals mean(clutch.size.lr) rounded."
+notes = "Value used in pop.func (rnorm(stages, 3245, 897)). The paper (Methods 2.2.2) prints 3244 (mean(clutch.size.lr) = 3244.857 truncated); see set as_printed."
 
 [[parameter]]
 symbol = "fecundity_sd"
@@ -79,9 +78,9 @@ units = "eggs yr^-1"
 provenance = "M"
 role = "estimated"
 system = { host = "Litoria raniformis", stage = "adult female" }
-location = "PVA_functionsV2.R, pop.func main loop: rnorm(stages, 3245, 897)"
-verified = false
-notes = "Equals sd(clutch.size.lr) rounded."
+location = "Methods 2.2.2 ('Normal distribution (x = 3244; sigma = 897)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
 
 [[parameter]]
 symbol = "clutch_size_mean"
@@ -103,9 +102,9 @@ units = "1"
 provenance = "M"
 role = "estimated"
 system = { host = "Litoria aurea", stage = "egg" }
-location = "PVA_functionsV2.R, pop.func (hatch.pr; 'Christy PhD', L. aurea)"
-verified = false
-notes = "Drawn each year from Normal(mean, sd), capped at 1 (no lower cap in pop.func)."
+location = "Methods 2.2.2 ('probability of hatch in the closely related Litoria aurea (0.9258, sigma = 0.0645) (Christy, 2000)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20): it prints 0.9258, the code uses 0.92575 (consistent with rounding). Drawn each year from Normal(mean, sd), capped at 1."
 
 [[parameter]]
 symbol = "hatch_sd"
@@ -115,9 +114,9 @@ units = "1"
 provenance = "M"
 role = "estimated"
 system = { host = "Litoria aurea", stage = "egg" }
-location = "PVA_functionsV2.R, pop.func (hatch.pr)"
-verified = false
-notes = "From the authors' code."
+location = "Methods 2.2.2 (sigma = 0.0645)"
+verified = true
+notes = "Checked against the published paper (2026-11-20): it prints 0.0645, the code 0.0644825."
 
 [[parameter]]
 symbol = "tadpole_alpha"
@@ -150,9 +149,9 @@ value = 0.996
 units = "d^-1"
 provenance = "A"
 role = "structural"
-location = "PVA_functionsV2.R, pop.func (toad.daily.surv)"
-verified = false
-notes = "From the authors' code."
+location = "Methods 2.2.1 (base daily survival 0.996, SD 0.001, from skeletochronology)"
+verified = true
+notes = "Checked against the published paper (2026-11-20). The paper uses it (with SD 0.001) for post-metamorphic frogs when building the survival arrays; pop.func uses the fixed value for first-year winter survival."
 
 [[parameter]]
 symbol = "winter_duration"
@@ -161,9 +160,9 @@ value = 92
 units = "d"
 provenance = "A"
 role = "structural"
-location = "PVA_functionsV2.R, pop.func (winter.dur)"
-verified = false
-notes = "First-year survival = metamorphosis survival x summer survival x 0.996^92."
+location = "Methods 2.2.1 ('winter survival probability (0.692; ... the number of days in the winter inactive period of May-July)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20): 0.996^92 = 0.692."
 
 [[parameter]]
 symbol = "spawn_capacity"
@@ -359,6 +358,30 @@ value = 0.7
 units = "yr^-1"
 provenance = "A"
 role = "scenario"
-location = "Run_scenariosV2.R comments ('70% of years watered')"
-verified = false
-notes = "The archived wetness arrays have year 1 always wet and later years wet independently with probability 0.70 (random), or forced wet after 2 (max2dry) or 1 (max1dry) consecutive dry years; inferred from the arrays, the generating code is not archived."
+location = "Methods 2.2.1 ('water delivered 7 out of 10 years on average')"
+verified = true
+notes = "Checked against the published paper (2026-11-20). The three regimes (independent; at most two; at most one consecutive dry year) are as in the paper."
+
+[[parameter]]
+symbol = "quasi_extinction_threshold"
+quantity = "minimum adult female population below which a run counts as quasi-extinct"
+value = 20
+units = "females"
+provenance = "A"
+role = "structural"
+location = "Results ('the probability that the number of females dropped below 20'); Fig. 3"
+verified = true
+notes = "Checked against the published paper (2026-11-20). The Discussion writes 'n <= 20'; the Results write '<20', used here."
+
+[[parameter]]
+set = "as_printed"
+symbol = "fecundity_mean"
+quantity = "mean clutch size (eggs per breeding female per year), ages 1-5, as printed"
+value = 3244
+units = "eggs yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Litoria raniformis", stage = "adult female" }
+location = "Methods 2.2.2 ('Normal distribution (x = 3244; sigma = 897) (Germano et al., 2009; Humphries, 1979)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20). The code uses 3245."
