@@ -33,7 +33,9 @@ single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
 [`SeasonalBsalProblem`](@ref) (with its inflow switch times as `tstops`),
 [`TransmissionSLIProblem`](@ref), [`SusceptibleChainProblem`](@ref),
 [`CohabitationProblem`](@ref), [`DrawertODEProblem`](@ref),
-[`BsalStageTemperatureProblem`](@ref) and [`LoucaDOIProblem`](@ref) (method of lines over
+[`BsalStageTemperatureProblem`](@ref), [`DoddingtonODEProblem`](@ref) (with its overwintering,
+ageing and introduction callbacks), [`OverlappingHabitatProblem`](@ref) and
+[`LoucaDOIProblem`](@ref) (method of lines over
 DOI bins, with exposure, disturbance and end-of-run callbacks). Use it to solve with
 other options or to pass the model to other SciML tools.
 """

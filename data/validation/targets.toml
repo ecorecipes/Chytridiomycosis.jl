@@ -7263,3 +7263,135 @@ quantity = "the 30-day maximum temperature with 10-day precipitation is the best
 published = true
 status = "pending"
 notes = "The selection is visible in the authors' code (06 onward uses m30max and t10precip) but its printed table was not read; the LOO comparison of ~60 brms fits is not implemented."
+
+# ---- espira2022 (supplement and published version) ----
+# Checked against the published version and the online supplement (eqs S1-S18, Table S1,
+# Figs S1-S2), obtained after the targets above were written.
+
+[[target]]
+id = "espira2022_S12"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, eqs S8-S12" }
+quantity = "the host block of F V⁻¹ printed as eq. S12 equals the package's next-generation matrix (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> isapprox(_espira_S12(p), next_generation_matrix(p); rtol = 1e-10); geometric = false)"
+status = "reproduced"
+notes = "S12 has μ ε_i and θ_j in the denominators, as derived from eq. 1 before the supplement was obtained. S15 and S16 follow from it."
+
+[[target]]
+id = "espira2022_eq6_misprint"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 6 (published version and author manuscript); supplement eq. S15" }
+quantity = "eq. 6 as printed equals R0,C of eq. 1 (S15) (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> isapprox(community_reproduction_number(p; as_printed = true), community_reproduction_number(p); rtol = 1e-8))"
+tolerance = { atol = 1e-9 }
+status = "discrepant"
+regression = { value = 0.0, atol = 1e-9 }
+notes = """
+Eq. 6 (and eq. 7) of the main text, in both the published version and the manuscript, prints
+the denominators as κ_iρ_iN_i + θ_iκ_jρ_jN_j + μ. The supplement's own S15 and S16 have
+κ_iρ_iN_i + θ_jκ_jρ_jN_j + μ ε_i, which is the next-generation matrix of eq. 1. Eq. 6 is
+therefore a misprint (μ without ε_i, θ_i for θ_j); it agrees with S15 only when ε₁ = ε₂ = 1
+(espira2022_eq6_as_printed). The package uses S15."""
+
+[[target]]
+id = "espira2022_S17"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, eq. S17" }
+quantity = "dilution (R0,C < R0,1) iff R0,2/R0,1 is below the right-hand side of S17 (fraction of random parameter sets with θ₁ε₁ = θ₂ε₂)"
+published = 1.0
+call = "_espira_fraction(p -> (R = species_reproduction_numbers(p); dilution_effect(p) == (R[2] / R[1] < _espira_S17(p))))"
+status = "reproduced"
+notes = "S17 is eq. 8 rearranged; like eq. 8 it needs θ₁ε₁ = θ₂ε₂."
+
+[[target]]
+id = "espira2022_fig4_equal_overlap"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Fig. 4 (rows θ₁ = θ₂ = 0.1, 0.5, 0.9); Results ('Effects also attenuate as the relative size of the habitat overlap decreases')" }
+quantity = "|R0,C/R0,1 - 1| is smaller at θ₁ = θ₂ = 0.1 than at 0.9 for four points of the axes (η₁, η₂, R0,2/R0,1)"
+published = true
+call = "all(c -> abs(_espira_panel_ratio(:fig4, c..., 0.1) - 1) < abs(_espira_panel_ratio(:fig4, c..., 0.9) - 1), ((0.2, 0.8, 0.3), (0.2, 0.3, 0.9), (0.1, 0.9, 0.1), (0.1, 0.05, 1.0)))"
+status = "qualitative"
+notes = """
+The published Fig. 4 has equal overlaps (equal habitats); espira2022_fig4_overlap used
+ε = (2, 1). The attenuation is not monotone everywhere: at (η₁, η₂, r) = (0.2, 0.8, 0.3) the
+ratio is 0.762, 0.513 and 0.518 for θ = 0.1, 0.5 and 0.9."""
+
+[[target]]
+id = "espira2022_figS1"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, Fig. S1 (θ₁ = 1, θ₂ = 0.1, 0.5, 0.9); text: 'only subtly different from those in the main text'" }
+quantity = "largest |R0,C/R0,1 (Fig. S1) - R0,C/R0,1 (Fig. 4)| over the nine panels"
+published = 0.0
+call = "_espira_figure_difference(:S1)"
+tolerance = { atol = 0.05 }
+status = "discrepant"
+regression = { value = 0.519, atol = 0.005 }
+notes = """
+The heat maps printed as Figs S1 and S2 are the same raster as Fig. 4 (S1 and S2
+byte-identical; Fig. 4 differs only by colour conversion, mean absolute difference 1.8/255),
+so as printed the difference is 0 (tolerance: colour resolution). On the figure axes
+R0,C/R0,1 depends on θ₁ and θ₂ separately, and with θ₁ = 1 it differs from Fig. 4 by up to
+0.52 at θ₂ = 0.1 (top left of panel a: 0.14 against 0.55). With habitat 1 inside habitat 2,
+dilution is stronger, not weaker, at small θ₂. The figure seems not to have been regenerated
+for this configuration."""
+
+[[target]]
+id = "espira2022_figS2"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, Fig. S2 (θ₂ = 1, θ₁ = 0.1, 0.5, 0.9)" }
+quantity = "largest |R0,C/R0,1 (Fig. S2) - R0,C/R0,1 (Fig. 4)| over the nine panels"
+published = 0.0
+call = "_espira_figure_difference(:S2)"
+tolerance = { atol = 0.05 }
+status = "discrepant"
+regression = { value = 0.171, atol = 0.005 }
+notes = """
+As for espira2022_figS1: the printed raster is that of Fig. 4. With θ₂ = 1 the dilution
+boundary is η₂ = R0,2/R0,1 in every panel (eq. 9), and the ratio differs from Fig. 4 by up to
+0.17 (largest at θ₁ = 0.1, η₁ = 0.1)."""
+
+[[target]]
+id = "espira2022_S1_overlap_area"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, Table S1" }
+quantity = "overlap area seen from each habitat, θ₁ε₁ and θ₂ε₂ (acre), in the worked example"
+published = [1.0, 1.0]
+call = "collect(_espira_worked_example().overlap)"
+status = "reproduced"
+notes = "The worked example satisfies θ₁ε₁ = θ₂ε₂, the condition under which eq. 8 holds."
+
+[[target]]
+id = "espira2022_S3_species1_removal"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, p. 3 (worked example)" }
+quantity = "removal of species-1 pathogens by species 1, κ₁ρ₁N₁E₁ (PU day⁻¹)"
+published = 1.0
+call = "_espira_worked_example().removal_species1"
+tolerance = { rtol = 1e-12 }
+status = "reproduced"
+
+[[target]]
+id = "espira2022_S3_species2_removal"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, p. 3 (worked example)" }
+quantity = "removal of species-1 pathogens by species 2 (when in the overlap), κ₂ρ₂N₂E₁ (PU day⁻¹)"
+published = 10.0
+call = "_espira_worked_example().removal_species2"
+tolerance = { rtol = 1e-12 }
+status = "discrepant"
+regression = { value = 5.0, rtol = 1e-12 }
+notes = "The text computes 0.0002 × 500 × 100 = 10, but Table S1 gives κ₂ρ₂ = 0.0001, which gives 5. The compendium keeps Table S1."
+
+[[target]]
+id = "espira2022_S3_decay"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, p. 3 (worked example)" }
+quantity = "decay term ε₁μ of the worked example"
+published = 4.0
+call = "_espira_worked_example().decay"
+tolerance = { rtol = 1e-12 }
+status = "discrepant"
+regression = { value = 8.0, rtol = 1e-12 }
+notes = "The text prints '4 acres × 2 PU/acre/day = 4 PU/day'; the product is 8. An arithmetic slip in the illustration; eq. S3 itself is right."

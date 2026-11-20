@@ -1,9 +1,11 @@
-# Espira et al. 2022 Am Nat 199:E43 (doi:10.1086/717413; author manuscript PMC9136953): two
-# hosts, environmental transmission, partially overlapping habitats. Oracles: eqs 1-11 of the
-# paper (closed forms), a numerical next-generation matrix of eq. 1, the stability of the
-# disease-free state of eq. 1 (R0,C > 1 iff it is unstable), and the epidemic ODE. No values
-# are published; the parameters below are illustrative. The paper's statements are checked on
-# random parameter sets by the validation targets.
+# Espira et al. 2022 Am Nat 199:E43 (doi:10.1086/717413; published version, author manuscript
+# PMC9136953 and online supplement): two hosts, environmental transmission, partially
+# overlapping habitats. Oracles: eqs 1-11 of the paper and S1-S18 of the supplement (closed
+# forms; S12 is the next-generation matrix and S15 the community R0), a numerical
+# next-generation matrix of eq. 1, the stability of the disease-free state of eq. 1 (R0,C > 1
+# iff it is unstable), the epidemic ODE, and the worked example of Table S1 (compendium). The
+# figures use no published values; the parameters below are illustrative. The paper's
+# statements, Figs 3-4 and S1-S2 are validation targets.
 using Chytridiomycosis
 using Test
 using LinearAlgebra: eigvals
@@ -66,6 +68,24 @@ using Random: Xoshiro
               community_reproduction_number(q)
         @test !isapprox(community_reproduction_number(p; as_printed = true),
             community_reproduction_number(p); rtol = 1e-3)
+    end
+
+    @testset "supplement (S12, S15, S17, Table S1)" begin
+        @test C._espira_S12(p) ≈ C.next_generation_matrix(p) rtol = 1e-12
+        R = species_reproduction_numbers(p)
+        @test dilution_effect(p) == (R[2] / R[1] < C._espira_S17(p))
+        recs = parameter_records(:espira2022)
+        @test all(r -> r.verified, recs)
+        w = C._espira_worked_example()
+        @test w.overlap[1] ≈ w.overlap[2]          # θ₁ε₁ = θ₂ε₂ in the worked example
+        @test w.removal_species1 ≈ 1.0             # printed: 1 PU/day
+        @test w.λ1 ≈ 0.01 * 0.0001 * (0.75 * 100 + 0.25 * 140)
+        # Figs S1/S2 configurations: habitat 1 inside 2 (θ₁ = 1) and 2 inside 1 (θ₂ = 1)
+        @test C._espira_panel_ratio(:S2, 0.3, 0.6, 0.5, 0.2) < 1      # η₂ > r: dilution (eq. 9)
+        @test C._espira_panel_ratio(:S2, 0.3, 0.4, 0.5, 0.2) > 1
+        @test C._espira_panel_ratio(:fig4, 0.3, 0.6, 0.5, 1.0) ≈
+              C._espira_panel_ratio(:S1, 0.3, 0.6, 0.5, 1.0)
+        @test_throws ArgumentError C._espira_panel_ratio(:x, 0.3, 0.6, 0.5, 0.5)
     end
 
     @testset "dilution (eqs 8-11)" begin

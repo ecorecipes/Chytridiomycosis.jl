@@ -1,11 +1,11 @@
 # Espira, Brouwer, Han, Foufopoulos & Eisenberg (2022) Am Nat 199(2):E43-E56,
-# doi:10.1086/717413 (author manuscript PMC9136953). Two host species with susceptible,
-# infectious and recovered classes; each species sheds into its own habitat, and the habitats
-# overlap. Checked against the author manuscript (PMC full text, JATS XML, 2026-11-19). The
-# online supplement (Eqs S1-S19, Figs A1-A2) could not be downloaded; the derivation of eq. 6
-# was redone here from eq. 1.
+# doi:10.1086/717413. Two host species with susceptible, infectious and recovered classes;
+# each species sheds into its own habitat, and the habitats overlap. Checked against the
+# published version (lab/papers/espira2022/espira2022.pdf), the author manuscript
+# (PMC9136953; its equations 1-11 are identical to the published ones) and the online
+# supplement (espira2022_si.pdf, identical in text to the manuscript supplement NIHMS1800855).
 #
-# Model (eq. 1), i = 1, 2 and j the other species:
+# Model (eq. 1 = eq. S5), i = 1, 2 and j the other species:
 #   dS_i/dt = -κ_i ρ_i π_i S_i (E_i + θ_i E_j)
 #   dI_i/dt =  κ_i ρ_i π_i S_i (E_i + θ_i E_j) - γ_i I_i
 #   dR_i/dt =  γ_i I_i
@@ -18,18 +18,29 @@
 # Reproduction numbers:
 #   η_i    = (κ_i ρ_i N_i/ε_i)/(κ_i ρ_i N_i/ε_i + μ)                       (eq. 4)
 #   R0,i   = (π_i α_i/γ_i) η_i                                              (eq. 5)
-#   R0,C   = spectral radius of the next-generation matrix of eq. 1          (eq. 6)
+#   R0,C   = spectral radius of the next-generation matrix of eq. 1          (eq. 6, S15)
 #   dilution (R0,C < R0,1) iff η_2 > [(a_2 + b_12 + θ_2 μ)/(a_2 + b_12 + μ)] R0,2/R0,1   (eq. 8)
 # with a_2 = κ_2ρ_2N_2/ε_2 and b_12 = θ_1κ_1ρ_1N_1/ε_2.
 #
-# Eq. 6 as printed. The next-generation matrix of eq. 1, reduced to hosts, is
-#   K_ii = (π_i α_i/γ_i) a_i/D_i,  K_ji = θ_j (π_j κ_j ρ_j N_j) α_i/(γ_i ε_i D_i),
-#   D_i = κ_i ρ_i N_i/ε_i + θ_j κ_j ρ_j N_j/ε_i + μ  (the loss rate of E_i),
-# so det K = K_11 K_22 (1 - θ_1 θ_2) and R0,C = ρ(K). Eq. 6 prints K_11 with denominator
-# γ_1(κ_1ρ_1N_1 + θ_1 κ_2ρ_2N_2 + μ): no ε, and θ_1 where eq. 1 gives θ_2. The two agree when
-# ε_1 = ε_2 = 1 (then θ_1 = θ_2 by the definition of θ). `community_reproduction_number`
-# uses the next-generation matrix; `as_printed = true` gives eq. 6 as printed. Eq. 7 has the
-# same form and is not implemented separately. Eqs. 8-10 are consistent with eq. 1.
+# Next-generation matrix (supplement eqs S6-S12): F and V on [I1, I2, E1, E2] as here; the
+# host block of F V⁻¹ (S12) is
+#   K_ii = α_i π_i κ_i ρ_i N_i / (γ_i (κ_i ρ_i N_i + θ_j κ_j ρ_j N_j + μ ε_i)),
+#   K_ij = α_j θ_i π_i κ_i ρ_i N_i / (γ_j (κ_j ρ_j N_j + θ_i κ_i ρ_i N_i + μ ε_j)),
+# so det K = K_11 K_22 (1 - θ_1 θ_2) (S14) and R0,C is S15. This is what
+# `community_reproduction_number` computes.
+#
+# Eq. 6 as printed (in the published version and in the manuscript, and eq. 7 in the same
+# way) has denominators γ_1(κ_1ρ_1N_1 + θ_1κ_2ρ_2N_2 + μ): μ without ε_1, and θ_1 where S15
+# has θ_2. The supplement's own S15 and S16 have μ ε_i and θ_j, so eqs 6-7 are misprints of
+# S15-S16; they coincide when ε_1 = ε_2 = 1 (then θ_1 = θ_2). `as_printed = true` evaluates
+# eq. 6 as printed.
+#
+# Figures S1 and S2 (the supplement's "figs. A1, A2"): the embedded heat-map rasters of S1, S2
+# and the published Fig. 4 are the same image (S1 and S2 byte-identical; Fig. 4 differs only by
+# its CMYK-to-RGB conversion, mean absolute difference 1.8/255). Under eq. 1, R0,C/R0,1 on the
+# figure axes depends on θ_1 and θ_2 separately (θ_1 ε_1 = θ_2 ε_2 gives b_21 = θ_1 a_2 and
+# b_12 = θ_2 a_1), so S1 (θ_1 = 1) and S2 (θ_2 = 1) cannot equal Fig. 4 (θ_1 = θ_2); see the
+# targets espira2022_figS1 and espira2022_figS2.
 
 """
     EspiraParameters(; N, γ, κ, ρ, π, α, ε, θ, μ)
@@ -48,8 +59,10 @@ eq. 1. Every argument but `μ` is a pair, one value per species:
   `θ_1 ε_1 = θ_2 ε_2`; the constructor does not enforce it, since eq. 1 does not need it.
 - `μ`: pathogen decay rate (day⁻¹), the same in both habitats.
 
-The paper is analytical and prints no parameter values, so there is no keyed constructor; see
-[`espira_parameters_from_efficiencies`](@ref) for the axes of its Figs 3 and 4.
+The paper is analytical and its figures use no printed parameter values; the only numbers are
+the worked example of the supplement (Table S1, in the compendium under `:espira2022`), which
+has no recovery or shedding rates. There is therefore no keyed constructor; see
+[`espira_parameters_from_efficiencies`](@ref) for the axes of Figs 3 and 4.
 """
 struct EspiraParameters
     N::NTuple{2,Float64}
@@ -142,9 +155,10 @@ of the next-generation matrix of eq. 1 ([`next_generation_matrix`](@ref)), in cl
     R0,C = (K₁₁ + K₂₂)/2 + sqrt((K₁₁ + K₂₂)² - 4 K₁₁ K₂₂ (1 - θ₁θ₂))/2,
     K_ii = (π_i α_i/γ_i) (κ_iρ_iN_i/ε_i)/(κ_iρ_iN_i/ε_i + θ_jκ_jρ_jN_j/ε_i + μ).
 
-`as_printed = true` evaluates eq. 6 exactly as printed, whose `K_ii` denominators are
-`κ_iρ_iN_i + θ_iκ_jρ_jN_j + μ` (no habitat areas, and the other overlap parameter). The two
-agree when `ε₁ = ε₂ = 1` and `θ₁ = θ₂`; see the source header.
+This is eq. S15 of the supplement. `as_printed = true` evaluates eq. 6 of the main text
+exactly as printed, whose `K_ii` denominators are `κ_iρ_iN_i + θ_iκ_jρ_jN_j + μ`: `μ` without
+`ε_i`, and the other overlap parameter. S15 shows these are misprints; the two agree when
+`ε₁ = ε₂ = 1` and `θ₁ = θ₂`.
 """
 function community_reproduction_number(p::EspiraParameters; as_printed::Bool = false)
     K = zeros(2)
@@ -281,3 +295,52 @@ end
 # R0,C/R0,1 on the axes of Figs 3 and 4.
 _espira_ratio(η1, η2, r; kw...) = (q = espira_parameters_from_efficiencies(η1, η2, r; kw...);
     community_reproduction_number(q) / species_reproduction_numbers(q)[1])
+
+# R0,C/R0,1 for the configurations of Fig. 4 (θ₁ = θ₂ = θ, equal habitats), Fig. S1
+# (θ₁ = 1, θ₂ = θ: habitat 1 inside habitat 2) and Fig. S2 (θ₂ = 1, θ₁ = θ: habitat 2 inside
+# habitat 1), with ε₂ = 1 fixed as in the supplement.
+function _espira_panel_ratio(fig::Symbol, η1, η2, r, θ)
+    θ1, θ2 = fig === :fig4 ? (θ, θ) : fig === :S1 ? (1.0, θ) : fig === :S2 ? (θ, 1.0) :
+             throw(ArgumentError("fig must be :fig4, :S1 or :S2"))
+    return _espira_ratio(η1, η2, r; θ₂ = θ2, ε = (θ2 / θ1, 1.0))
+end
+
+# Largest |R0,C/R0,1(fig) - R0,C/R0,1(Fig. 4)| over the nine panels (η₁ ∈ {0.1, 0.5, 0.9},
+# θ ∈ {0.1, 0.5, 0.9}) and a grid of the axes (η₂, R0,2/R0,1).
+function _espira_figure_difference(fig::Symbol)
+    d = 0.0
+    for θ in (0.1, 0.5, 0.9), η1 in (0.1, 0.5, 0.9), η2 in 0.01:0.02:0.99, r in 0.0:0.02:1.0
+        d = max(d, abs(_espira_panel_ratio(fig, η1, η2, r, θ) -
+                       _espira_panel_ratio(:fig4, η1, η2, r, θ)))
+    end
+    return d
+end
+
+# The worked example of the supplement (Table S1, eqs S1-S3), from the compendium: the force
+# of infection on species 1, the overlap area seen from each habitat, and the three loss rates
+# of the pathogens of habitat 1 (PU day⁻¹).
+function _espira_worked_example(key::Symbol = :espira2022)
+    v = parameter_set(key)
+    return (; λ1 = v.π1 * v.κρ1 * ((1 - v.θ1) * v.E1 + v.θ1 * (v.E1 + v.E2)),
+        overlap = (v.θ1 * v.ε1, v.θ2 * v.ε2),
+        removal_species1 = v.κρ1 * v.N1 * v.E1,
+        removal_species2 = v.κρ2 * v.N2 * v.E1,
+        decay = v.ε1 * v.μ)
+end
+
+# The host block of F V⁻¹ exactly as printed in supplement eq. S12.
+function _espira_S12(p::EspiraParameters)
+    a(i) = p.κ[i] * p.ρ[i] * p.N[i]
+    d1 = p.γ[1] * (a(1) + p.θ[2] * a(2) + p.μ * p.ε[1])
+    d2 = p.γ[2] * (a(2) + p.θ[1] * a(1) + p.μ * p.ε[2])
+    return [p.α[1] * p.π[1] * a(1)/d1          p.α[2] * p.θ[1] * p.π[1] * a(1)/d2
+            p.α[1] * p.θ[2] * p.π[2] * a(2)/d1 p.α[2] * p.π[2] * a(2)/d2]
+end
+
+# The right-hand side of supplement eq. S17: dilution iff R0,2/R0,1 is below it.
+function _espira_S17(p::EspiraParameters)
+    a1, a2 = p.κ[1] * p.ρ[1] * p.N[1], p.κ[2] * p.ρ[2] * p.N[2]
+    m = p.μ * p.ε[2]
+    return 1 - (p.θ[2] * a2 + p.θ[1] * a1 + p.θ[2] * m) / (a2 + p.θ[1] * a1 + p.θ[2] * m) *
+               (m / (a2 + m))
+end
