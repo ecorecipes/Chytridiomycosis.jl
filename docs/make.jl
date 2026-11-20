@@ -26,6 +26,8 @@ makedocs(;
                   "Published models" => ["Schmidt 2017, Briggs 2010, Mitchell 2008" => "api/published.md",
                                          "Several hosts, one pool (Daversa 2022)" => "api/daversa2022.md",
                                          "Zoospore persistence (Rumschlag 2022)" => "api/rumschlag2022.md",
+                                         "Bd growth in varying temperatures (Gajewski 2021)" => "api/gajewski2021.md",
+                                         "Thermal performance of Bd isolates (Sheets 2021)" => "api/sheets2021.md",
                                          "Refugia CTMC (Miller 2025)" => "api/miller2025.md",
                                          "Seasonal Bsal (Bozzuto 2019)" => "api/bozzuto2019.md",
                                          "Bsal transmission functions" => "api/bsal_transmission.md",

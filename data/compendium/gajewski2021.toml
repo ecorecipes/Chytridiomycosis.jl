@@ -1,0 +1,3052 @@
+# Gajewski Z, Stevenson LA, Pike DA, Roznik EA, Alford RA, Johnson LR (2021) Predicting the
+# growth of the amphibian chytrid fungus in varying temperature environments. Ecol Evol
+# 11:17920-17931. https://doi.org/10.1002/ece3.8379 (CC BY 4.0)
+# Code and data: Zenodo doi:10.5281/zenodo.4525954 (V1.0, GitHub gzach93/Predict_Bd_Growth_
+# VaryEnvir; licence "other-open", no licence file, so the data are not bundled).
+#
+# Checked on 2026-11-19 against the full text (PMC8717292: Tables 1 and 2) and Appendix S1
+# (ECE3-11-17920-s001.pdf: Tables B.1-B.7), and against the authors' code (functions.R,
+# TPCurves.R, RunModels.R, HierarchicalModel_*.bug, jags-logistic.bug).
+#
+# System: one Queensland Bd isolate (Paluma-Lgenimaculata #2-2011-CO) in TGhL broth, optical
+# density at 492 nm minus the heat-killed controls. Constant-temperature data are those of
+# Stevenson et al. (2013) (13, 15, 17, 19, 21, 23, 25, 26, 27, 28 degC, days 0-14); the three
+# varying regimes (Dry Low Air, Wet High Frog, Wet Low Frog) are from Stevenson et al. (2020).
+# Time in DAYS. Temperatures in degC except where the paper's curve is in kelvin (Ratkowsky
+# Tmin/Tmax, Ikemoto TΦ/TL/TH): the fits used T + 273.15, the predictions T + 273.16.
+#
+# Sets: one per TPC ("briere2", "ratkowsky", "ikemoto", "logan10", "stinner") holding that fit's
+# posterior medians (Appendix S1 Tables B.3-B.7; d and K from Table 2), its Table 1 summaries and
+# its Table B.2 regime rates; "logistic_<regime>" for Table B.1; "prior*" for the JAGS priors
+# (which the appendix also prints); "regime_<name>" for the piecewise temperature functions of
+# the code. HDIs are 95% highest posterior density intervals as printed.
+
+source = { ref = "gajewski2021", doi = "10.1002/ece3.8379", review_ref = 30 }
+
+# --- Base set: shared by every fit -------------------------------------------------------------
+
+[[parameter]]
+symbol = "Y0"
+quantity = "initial optical density Y0 (posterior median; the same in all five fits)"
+value = 0.001
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.001, hi = 0.00104, as_printed = "All median values for Y0 are 1e-3 and all models have an interval that falls between (1e-3, 1.04e-3)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2, notes"
+verified = true
+
+[[parameter]]
+symbol = "inoculum"
+quantity = "zoospore concentration of the filtered inoculum (Stevenson et al. 2013 protocol)"
+value = 57500000.0
+units = "zoospores ml^-1"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Methods 2.2"
+verified = true
+
+# --- Briere 2 fit (set "briere2") --------------------------------------------------------------
+
+[[parameter]]
+set = "briere2"
+symbol = "c"
+quantity = "Briere 2: constant c of r(T) = c T (T - Tmin) (Tmax - T)^(1/b) (posterior median)"
+value = 0.00049
+units = "d^-1 degC^-(2+1/b)"
+uncertainty = { kind = "hdi95", lo = 0.00044, hi = 0.00055, as_printed = "0.00049 (0.00044, 0.00055)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.4"
+verified = true
+
+[[parameter]]
+set = "briere2"
+symbol = "Tmin"
+quantity = "Briere 2: lower temperature limit Tmin (posterior median)"
+value = 7.214
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 5.949, hi = 8.403, as_printed = "7.214 (5.949, 8.403)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.4; Table 2"
+verified = true
+
+[[parameter]]
+set = "briere2"
+symbol = "Tmax"
+quantity = "Briere 2: upper temperature limit Tmax (posterior median)"
+value = 27.95
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 27.806, hi = 28.04, as_printed = "27.95 (27.806, 28.04)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.4; Table 2"
+verified = true
+
+[[parameter]]
+set = "briere2"
+symbol = "b"
+quantity = "Briere 2: exponent b (r uses (Tmax - T)^(1/b)) (posterior median)"
+value = 0.966
+units = "1"
+uncertainty = { kind = "hdi95", lo = 0.895, hi = 1.043, as_printed = "0.966 (0.895, 1.043)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.4"
+verified = true
+
+[[parameter]]
+set = "briere2"
+symbol = "d"
+quantity = "Briere 2: delay before logistic growth d (posterior median)"
+value = 1.026
+units = "d"
+uncertainty = { kind = "hdi95", lo = 0.985, hi = 1.114, as_printed = "1.026 (0.985, 1.114)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "briere2"
+symbol = "K"
+quantity = "Briere 2: maximum optical density K (posterior median)"
+value = 0.122
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.113, hi = 0.131, as_printed = "0.122 (0.113, 0.131)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "briere2"
+symbol = "Topt"
+quantity = "Briere 2: temperature at which the fitted r(T) peaks (posterior median)"
+value = 19.92
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 19.74, hi = 20.11, as_printed = "19.92 (19.74, 20.11)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "briere2"
+symbol = "Tmin_adj"
+quantity = "Briere 2: adjusted Tmin: lowest temperature at which r(T) exceeds 0.01 d^-1"
+value = 7.33
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 6.01, hi = 8.39, as_printed = "7.33 (6.01, 8.39)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "briere2"
+symbol = "Tmax_adj"
+quantity = "Briere 2: adjusted Tmax: highest temperature at which r(T) exceeds 0.01 d^-1"
+value = 27.92
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 27.78, hi = 27.99, as_printed = "27.92 (27.78, 27.99)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "briere2"
+symbol = "r_max"
+quantity = "Briere 2: maximum of r(T) over temperature"
+value = 1.07
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 1.015, hi = 1.128, as_printed = "1.07 (1.015, 1.128)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "briere2"
+symbol = "penalized_deviance"
+quantity = "Briere 2: penalized deviance (DIC) from rjags dic.samples"
+value = -28076.0
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "The Stinner, Logan 10 and Ikemoto fits use a truncated normal likelihood in the authors' JAGS code; Briere 2 and Ratkowsky use a lognormal one. The deviances are on different likelihoods."
+
+[[parameter]]
+set = "briere2"
+symbol = "ΔDIC"
+quantity = "Briere 2: DIC minus the lowest DIC (Stinner)"
+value = 3193.0
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "briere2"
+symbol = "r_DLA"
+quantity = "Briere 2: median logistic growth rate r(T(t)) over the DLA temperature regime"
+value = 1.044
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.934, hi = 1.069, as_printed = "1.044 (0.934, 1.069)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+[[parameter]]
+set = "briere2"
+symbol = "r_WHF"
+quantity = "Briere 2: median logistic growth rate r(T(t)) over the WHF temperature regime"
+value = 1.06
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 1.045, hi = 1.068, as_printed = "1.06 (1.045, 1.068)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+[[parameter]]
+set = "briere2"
+symbol = "r_WLF"
+quantity = "Briere 2: median logistic growth rate r(T(t)) over the WLF temperature regime"
+value = 0.666
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0, hi = 0.973, as_printed = "0.666 (0, 0.973)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+# --- Ratkowsky fit (set "ratkowsky") -----------------------------------------------------------
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "c"
+quantity = "Ratkowsky: regression coefficient c of r(T) = (c (T - Tmin)(1 - exp(k (T - Tmax))))^2 (posterior median)"
+value = 0.069
+units = "d^-1/2 K^-1"
+uncertainty = { kind = "hdi95", lo = 0.059, hi = 0.082, as_printed = "0.069 (0.059, 0.082)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.6"
+verified = true
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "k"
+quantity = "Ratkowsky: regression coefficient k (posterior median)"
+value = 0.215
+units = "K^-1"
+uncertainty = { kind = "hdi95", lo = 0.181, hi = 0.249, as_printed = "0.215 (0.181, 0.249)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.6"
+verified = true
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "Tmin"
+quantity = "Ratkowsky: thermal minimum Tmin (kelvin) (posterior median)"
+value = 274.6
+units = "K"
+uncertainty = { kind = "hdi95", lo = 272.9, hi = 276.5, as_printed = "274.6 (272.9, 276.5)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.6; Table 2"
+verified = true
+notes = "Table 2 prints 274.6 (272.9, 276.5) in kelvin; the fit used T + 273.15."
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "Tmax"
+quantity = "Ratkowsky: thermal maximum Tmax (kelvin) (posterior median)"
+value = 301.6
+units = "K"
+uncertainty = { kind = "hdi95", lo = 301.4, hi = 301.7, as_printed = "301.6 (301.4, 301.7)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.6; Table 2"
+verified = true
+notes = "Kelvin; the fit used T + 273.15."
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "d"
+quantity = "Ratkowsky: delay before logistic growth d (posterior median)"
+value = 1.065
+units = "d"
+uncertainty = { kind = "hdi95", lo = 0.993, hi = 1.186, as_printed = "1.065 (0.993, 1.186)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "K"
+quantity = "Ratkowsky: maximum optical density K (posterior median)"
+value = 0.119
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.11, hi = 0.128, as_printed = "0.119 (0.11, 0.128)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "Topt"
+quantity = "Ratkowsky: temperature at which the fitted r(T) peaks (posterior median)"
+value = 20.94
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 20.68, hi = 21.19, as_printed = "20.94 (20.68, 21.19)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "Tmin_adj"
+quantity = "Ratkowsky: adjusted Tmin: lowest temperature at which r(T) exceeds 0.01 d^-1"
+value = 3.07
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 1.45, hi = 4.6, as_printed = "3.07 (1.45, 4.6)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "Tmax_adj"
+quantity = "Ratkowsky: adjusted Tmax: highest temperature at which r(T) exceeds 0.01 d^-1"
+value = 28.31
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 28.22, hi = 28.4, as_printed = "28.31 (28.22, 28.4)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "r_max"
+quantity = "Ratkowsky: maximum of r(T) over temperature"
+value = 1.166
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 1.106, hi = 1.238, as_printed = "1.166 (1.106, 1.238)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "penalized_deviance"
+quantity = "Ratkowsky: penalized deviance (DIC) from rjags dic.samples"
+value = -28055.0
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "The Stinner, Logan 10 and Ikemoto fits use a truncated normal likelihood in the authors' JAGS code; Briere 2 and Ratkowsky use a lognormal one. The deviances are on different likelihoods."
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "ΔDIC"
+quantity = "Ratkowsky: DIC minus the lowest DIC (Stinner)"
+value = 3214.0
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "r_DLA"
+quantity = "Ratkowsky: median logistic growth rate r(T(t)) over the DLA temperature regime"
+value = 1.084
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.926, hi = 1.165, as_printed = "1.084 (0.926, 1.165)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "r_WHF"
+quantity = "Ratkowsky: median logistic growth rate r(T(t)) over the WHF temperature regime"
+value = 1.163
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 1.159, hi = 1.166, as_printed = "1.163 (1.159, 1.166)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+[[parameter]]
+set = "ratkowsky"
+symbol = "r_WLF"
+quantity = "Ratkowsky: median logistic growth rate r(T(t)) over the WLF temperature regime"
+value = 0.719
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0, hi = 1.101, as_printed = "0.719 (0, 1.101)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+# --- Ikemoto fit (set "ikemoto") ---------------------------------------------------------------
+
+[[parameter]]
+set = "ikemoto"
+symbol = "TΦ"
+quantity = "Ikemoto: intrinsic optimum temperature TΦ (posterior median)"
+value = 291.5
+units = "K"
+uncertainty = { kind = "hdi95", lo = 286.5, hi = 295.3, as_printed = "291.5 (286.5, 295.3)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.7"
+verified = true
+
+[[parameter]]
+set = "ikemoto"
+symbol = "TH"
+quantity = "Ikemoto: temperature at which half the enzymes are active, high side (posterior median)"
+value = 294.4
+units = "K"
+uncertainty = { kind = "hdi95", lo = 294.3, hi = 294.5, as_printed = "294.4 (294.3, 294.5)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.7"
+verified = true
+
+[[parameter]]
+set = "ikemoto"
+symbol = "TL"
+quantity = "Ikemoto: temperature at which half the enzymes are active, low side (posterior median)"
+value = 282.7
+units = "K"
+uncertainty = { kind = "hdi95", lo = 282.3, hi = 283.1, as_printed = "282.7 (282.3, 283.1)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.7"
+verified = true
+
+[[parameter]]
+set = "ikemoto"
+symbol = "ΔHA"
+quantity = "Ikemoto: enthalpy of activation (posterior median)"
+value = 16651.0
+units = "cal mol^-1"
+uncertainty = { kind = "hdi95", lo = 16650.1, hi = 16651.9, as_printed = "16651.0 (16650.1, 16651.9)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.7"
+verified = true
+
+[[parameter]]
+set = "ikemoto"
+symbol = "ΔHH"
+quantity = "Ikemoto: change in enthalpy at high temperatures (posterior median)"
+value = 67500.0
+units = "cal mol^-1"
+uncertainty = { kind = "hdi95", lo = 67499.2, hi = 67500.9, as_printed = "67500.0 (67499.2, 67500.9)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.7"
+verified = true
+
+[[parameter]]
+set = "ikemoto"
+symbol = "ΔHL"
+quantity = "Ikemoto: change in enthalpy at low temperatures (posterior median)"
+value = -72500.0
+units = "cal mol^-1"
+uncertainty = { kind = "hdi95", lo = -72500.8, hi = -72499.1, as_printed = "-72500.0 (-72500.8, -72499.1)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.7"
+verified = true
+
+[[parameter]]
+set = "ikemoto"
+symbol = "ρ"
+quantity = "Ikemoto: development rate at the intrinsic optimum (φ in the paper) (posterior median)"
+value = 1.341
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.781, hi = 1.949, as_printed = "1.341 (0.781, 1.949)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.7"
+verified = true
+notes = "The paper and code call it φ (phi)."
+
+[[parameter]]
+set = "ikemoto"
+symbol = "d"
+quantity = "Ikemoto: delay before logistic growth d (posterior median)"
+value = 0.007
+units = "d"
+uncertainty = { kind = "hdi95", lo = 0.001, hi = 0.033, as_printed = "0.007 (0.001, 0.033)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+notes = "In the authors' JAGS model for this fit the delay is exp(d), not d (HierarchicalModel_Ikemoto.bug), so the fitted delay is about 1.007 days; Predictions.R uses d itself."
+
+[[parameter]]
+set = "ikemoto"
+symbol = "K"
+quantity = "Ikemoto: maximum optical density K (posterior median)"
+value = 0.135
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.133, hi = 0.136, as_printed = "0.135 (0.133, 0.136)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "ikemoto"
+symbol = "Topt"
+quantity = "Ikemoto: temperature at which the fitted r(T) peaks (posterior median)"
+value = 18.92
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 18.87, hi = 18.97, as_printed = "18.92 (18.87, 18.97)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "ikemoto"
+symbol = "Tmin_adj"
+quantity = "Ikemoto: adjusted Tmin: lowest temperature at which r(T) exceeds 0.01 d^-1"
+value = 2.93
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 2.64, hi = 3.18, as_printed = "2.93 (2.64, 3.18)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "ikemoto"
+symbol = "Tmax_adj"
+quantity = "Ikemoto: adjusted Tmax: highest temperature at which r(T) exceeds 0.01 d^-1"
+value = 40.35
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 40.3, hi = 40.42, as_printed = "40.35 (40.3, 40.42)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "ikemoto"
+symbol = "r_max"
+quantity = "Ikemoto: maximum of r(T) over temperature"
+value = 1.01
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.991, hi = 1.021, as_printed = "1.01 (0.991, 1.021)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "ikemoto"
+symbol = "penalized_deviance"
+quantity = "Ikemoto: penalized deviance (DIC) from rjags dic.samples"
+value = -28014.0
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "The Stinner, Logan 10 and Ikemoto fits use a truncated normal likelihood in the authors' JAGS code; Briere 2 and Ratkowsky use a lognormal one. The deviances are on different likelihoods."
+
+[[parameter]]
+set = "ikemoto"
+symbol = "ΔDIC"
+quantity = "Ikemoto: DIC minus the lowest DIC (Stinner)"
+value = 3255.0
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "ikemoto"
+symbol = "r_DLA"
+quantity = "Ikemoto: median logistic growth rate r(T(t)) over the DLA temperature regime"
+value = 0.972
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.916, hi = 1.004, as_printed = "0.972 (0.916, 1.004)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+[[parameter]]
+set = "ikemoto"
+symbol = "r_WHF"
+quantity = "Ikemoto: median logistic growth rate r(T(t)) over the WHF temperature regime"
+value = 0.935
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.896, hi = 0.966, as_printed = "0.935 (0.896, 0.966)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+[[parameter]]
+set = "ikemoto"
+symbol = "r_WLF"
+quantity = "Ikemoto: median logistic growth rate r(T(t)) over the WLF temperature regime"
+value = 0.494
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0, hi = 0.773, as_printed = "0.494 (0, 0.773)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+# --- Logan 10 fit (set "logan10") --------------------------------------------------------------
+
+[[parameter]]
+set = "logan10"
+symbol = "α"
+quantity = "Logan 10: constant a of r(T) = a (1/(1 + c exp(-b T)) - exp(-(Tmax - T)/ΔT)) (posterior median)"
+value = 0.134
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.885, hi = 0.957, as_printed = "0.134 (0.885, 0.957)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.5"
+verified = true
+notes = "AS PRINTED, and inconsistent: the printed median 0.134 lies outside its own HDI (0.885, 0.957) and equals the K median of the same fit. With a near 0.92 the curve gives Table 1's maximum r of 0.852; with 0.134 it gives 0.124 (target gajewski2021_logan10_rmax_printed)."
+
+[[parameter]]
+set = "logan10"
+symbol = "c"
+quantity = "Logan 10: constant c (posterior median)"
+value = 90.005
+units = "1"
+uncertainty = { kind = "hdi95", lo = 89.409, hi = 90.686, as_printed = "90.005 (89.409, 90.686)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.5"
+verified = true
+
+[[parameter]]
+set = "logan10"
+symbol = "b"
+quantity = "Logan 10: constant b (posterior median)"
+value = 0.384
+units = "degC^-1"
+uncertainty = { kind = "hdi95", lo = 0.378, hi = 0.39, as_printed = "0.384 (0.378, 0.39)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.5"
+verified = true
+
+[[parameter]]
+set = "logan10"
+symbol = "ΔT"
+quantity = "Logan 10: breadth of range ΔT (posterior median)"
+value = 2.078
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 1.995, hi = 2.158, as_printed = "2.078 (1.995, 2.158)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.5"
+verified = true
+
+[[parameter]]
+set = "logan10"
+symbol = "Tmax"
+quantity = "Logan 10: maximum temperature Tmax (posterior median)"
+value = 27.001
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 27.0, hi = 27.005, as_printed = "27.001 (27.0, 27.005)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.5; Table 2"
+verified = true
+
+[[parameter]]
+set = "logan10"
+symbol = "d"
+quantity = "Logan 10: delay before logistic growth d (posterior median)"
+value = 0.22
+units = "d"
+uncertainty = { kind = "hdi95", lo = 0.055, hi = 0.381, as_printed = "0.22 (0.055, 0.381)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "logan10"
+symbol = "K"
+quantity = "Logan 10: maximum optical density K (posterior median)"
+value = 0.134
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.133, hi = 0.136, as_printed = "0.134 (0.133, 0.136)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "logan10"
+symbol = "Topt"
+quantity = "Logan 10: temperature at which the fitted r(T) peaks (posterior median)"
+value = 19.86
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 19.8, hi = 19.93, as_printed = "19.86 (19.8, 19.93)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "logan10"
+symbol = "Tmin_adj"
+quantity = "Logan 10: adjusted Tmin: lowest temperature at which r(T) exceeds 0.01 d^-1"
+value = -0.03
+units = "degC"
+uncertainty = { kind = "hdi95", lo = -0.15, hi = 0.06, as_printed = "-0.03 (-0.15, 0.06)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "logan10"
+symbol = "Tmax_adj"
+quantity = "Logan 10: adjusted Tmax: highest temperature at which r(T) exceeds 0.01 d^-1"
+value = 26.98
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 26.98, hi = 26.98, as_printed = "26.98 (26.98, 26.98)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "logan10"
+symbol = "r_max"
+quantity = "Logan 10: maximum of r(T) over temperature"
+value = 0.852
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.826, hi = 0.881, as_printed = "0.852 (0.826, 0.881)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "logan10"
+symbol = "penalized_deviance"
+quantity = "Logan 10: penalized deviance (DIC) from rjags dic.samples"
+value = -30369.0
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "The Stinner, Logan 10 and Ikemoto fits use a truncated normal likelihood in the authors' JAGS code; Briere 2 and Ratkowsky use a lognormal one. The deviances are on different likelihoods."
+
+[[parameter]]
+set = "logan10"
+symbol = "ΔDIC"
+quantity = "Logan 10: DIC minus the lowest DIC (Stinner)"
+value = 900.0
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "logan10"
+symbol = "r_DLA"
+quantity = "Logan 10: median logistic growth rate r(T(t)) over the DLA temperature regime"
+value = 0.841
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.788, hi = 0.851, as_printed = "0.841 (0.788, 0.851)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+[[parameter]]
+set = "logan10"
+symbol = "r_WHF"
+quantity = "Logan 10: median logistic growth rate r(T(t)) over the WHF temperature regime"
+value = 0.847
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.839, hi = 0.851, as_printed = "0.847 (0.839, 0.851)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+[[parameter]]
+set = "logan10"
+symbol = "r_WLF"
+quantity = "Logan 10: median logistic growth rate r(T(t)) over the WLF temperature regime"
+value = 0.563
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0, hi = 0.8, as_printed = "0.563 (0, 0.8)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+# --- Stinner fit (set "stinner") ---------------------------------------------------------------
+
+[[parameter]]
+set = "stinner"
+symbol = "C"
+quantity = "Stinner: constant C of r(T) = C/(1 + exp(k1 + k2 T)), mirrored about Topt (posterior median)"
+value = 0.813
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.789, hi = 0.839, as_printed = "0.813 (0.789, 0.839)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.3"
+verified = true
+
+[[parameter]]
+set = "stinner"
+symbol = "k1"
+quantity = "Stinner: constant k1 (posterior median)"
+value = 32.364
+units = "1"
+uncertainty = { kind = "hdi95", lo = 31.017, hi = 33.983, as_printed = "32.364 (31.017, 33.983)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.3"
+verified = true
+
+[[parameter]]
+set = "stinner"
+symbol = "k2"
+quantity = "Stinner: constant k2 (posterior median)"
+value = -2.555
+units = "degC^-1"
+uncertainty = { kind = "hdi95", lo = -2.68, hi = -2.45, as_printed = "-2.555 (-2.68, -2.45)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.3"
+verified = true
+notes = "Printed HDI is (-2.450, -2.680); stored with lo < hi."
+
+[[parameter]]
+set = "stinner"
+symbol = "Topt"
+quantity = "Stinner: thermal optimum Topt (posterior median)"
+value = 19.234
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 19.22, hi = 19.25, as_printed = "19.234 (19.22, 19.25)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table B.3; Table 2 (19.23 (19.22, 19.25))"
+verified = true
+
+[[parameter]]
+set = "stinner"
+symbol = "d"
+quantity = "Stinner: delay before logistic growth d (posterior median)"
+value = 0.356
+units = "d"
+uncertainty = { kind = "hdi95", lo = 0.191, hi = 0.539, as_printed = "0.356 (0.191, 0.539)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "stinner"
+symbol = "K"
+quantity = "Stinner: maximum optical density K (posterior median)"
+value = 0.134
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.133, hi = 0.136, as_printed = "0.134 (0.133, 0.136)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "stinner"
+symbol = "Tmin_adj"
+quantity = "Stinner: adjusted Tmin: lowest temperature at which r(T) exceeds 0.01 d^-1"
+value = 10.95
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 10.86, hi = 11.04, as_printed = "10.95 (10.86, 11.04)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "stinner"
+symbol = "Tmax_adj"
+quantity = "Stinner: adjusted Tmax: highest temperature at which r(T) exceeds 0.01 d^-1"
+value = 27.52
+units = "degC"
+uncertainty = { kind = "hdi95", lo = 27.44, hi = 27.58, as_printed = "27.52 (27.44, 27.58)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "stinner"
+symbol = "r_max"
+quantity = "Stinner: maximum of r(T) over temperature"
+value = 0.813
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.789, hi = 0.839, as_printed = "0.813 (0.789, 0.839)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "Table 1 labels these as posterior means; its notes and the authors' code (Predictions.R) use medians over posterior draws of the curve."
+
+[[parameter]]
+set = "stinner"
+symbol = "penalized_deviance"
+quantity = "Stinner: penalized deviance (DIC) from rjags dic.samples"
+value = -31269.0
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+notes = "The Stinner, Logan 10 and Ikemoto fits use a truncated normal likelihood in the authors' JAGS code; Briere 2 and Ratkowsky use a lognormal one. The deviances are on different likelihoods."
+
+[[parameter]]
+set = "stinner"
+symbol = "ΔDIC"
+quantity = "Stinner: DIC minus the lowest DIC (Stinner)"
+value = 0.0
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+set = "stinner"
+symbol = "r_DLA"
+quantity = "Stinner: median logistic growth rate r(T(t)) over the DLA temperature regime"
+value = 0.8126
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.8126, hi = 0.8129, as_printed = "0.8126 (0.8126, 0.8129)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+[[parameter]]
+set = "stinner"
+symbol = "r_WHF"
+quantity = "Stinner: median logistic growth rate r(T(t)) over the WHF temperature regime"
+value = 0.81269
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.81269, hi = 0.8127, as_printed = "0.81269 (0.81269, 0.8127)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+[[parameter]]
+set = "stinner"
+symbol = "r_WLF"
+quantity = "Stinner: median logistic growth rate r(T(t)) over the WLF temperature regime"
+value = 0.72
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.003, hi = 0.813, as_printed = "0.72 (0.003, 0.813)" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.2"
+verified = true
+
+# --- Logistic model (Eq. 1) refitted to each varying-temperature regime, no TPC (sets "logistic_<regime>") ---
+
+[[parameter]]
+set = "logistic_DLA"
+symbol = "r"
+quantity = "Dry Low Air (DLA): r of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.409
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.388, hi = 0.429, as_printed = "0.409 (0.388, 0.429)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+[[parameter]]
+set = "logistic_DLA"
+symbol = "K"
+quantity = "Dry Low Air (DLA): K of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.196
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.167, hi = 0.227, as_printed = "0.196 (0.167, 0.227)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+[[parameter]]
+set = "logistic_DLA"
+symbol = "d"
+quantity = "Dry Low Air (DLA): d of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.61
+units = "d"
+uncertainty = { kind = "hdi95", lo = 0.132, hi = 0.687, as_printed = "0.61 (0.132, 0.687)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+[[parameter]]
+set = "logistic_DLA"
+symbol = "Y0"
+quantity = "Dry Low Air (DLA): Y0 of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.0039
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.0036, hi = 0.0042, as_printed = "0.0039 (0.0036, 0.0042)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+[[parameter]]
+set = "logistic_WHF"
+symbol = "r"
+quantity = "Wet High Frog (WHF): r of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.443
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.428, hi = 0.46, as_printed = "0.443 (0.428, 0.46)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+[[parameter]]
+set = "logistic_WHF"
+symbol = "K"
+quantity = "Wet High Frog (WHF): K of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.167
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.154, hi = 0.182, as_printed = "0.167 (0.154, 0.182)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+[[parameter]]
+set = "logistic_WHF"
+symbol = "d"
+quantity = "Wet High Frog (WHF): d of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.156
+units = "d"
+uncertainty = { kind = "hdi95", lo = 0.005, hi = 0.339, as_printed = "0.156 (0.005, 0.339)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+[[parameter]]
+set = "logistic_WHF"
+symbol = "Y0"
+quantity = "Wet High Frog (WHF): Y0 of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.0035
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.003, hi = 0.0038, as_printed = "0.0035 (0.003, 0.0038)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+[[parameter]]
+set = "logistic_WLF"
+symbol = "r"
+quantity = "Wet Low Frog (WLF): r of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.337
+units = "d^-1"
+uncertainty = { kind = "hdi95", lo = 0.321, hi = 0.352, as_printed = "0.337 (0.321, 0.352)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+[[parameter]]
+set = "logistic_WLF"
+symbol = "K"
+quantity = "Wet Low Frog (WLF): K of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.125
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.109, hi = 0.146, as_printed = "0.125 (0.109, 0.146)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+[[parameter]]
+set = "logistic_WLF"
+symbol = "d"
+quantity = "Wet Low Frog (WLF): d of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.014
+units = "d"
+uncertainty = { kind = "hdi95", lo = 5e-05, hi = 0.058, as_printed = "0.014 (5e-05, 0.058)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+[[parameter]]
+set = "logistic_WLF"
+symbol = "Y0"
+quantity = "Wet Low Frog (WLF): Y0 of Eq. 1 fitted without a TPC (posterior median)"
+value = 0.004
+units = "OD"
+uncertainty = { kind = "hdi95", lo = 0.004, hi = 0.0041, as_printed = "0.004 (0.004, 0.0041)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.1"
+verified = true
+
+# --- Priors of the authors' JAGS models (sets "prior" and "prior_<form>"; JAGS normals are (mean, precision)) ---
+
+[[parameter]]
+set = "prior"
+symbol = "σ_rate"
+quantity = "prior: σ ~ Exp(rate)"
+value = 0.001
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Methods 2.5 (hierarchical model); RunModels.R and HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior"
+symbol = "Y0_lo"
+quantity = "prior: Y0 ~ Uniform(lo, hi)"
+value = 0.001
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Methods 2.5 (hierarchical model); RunModels.R and HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior"
+symbol = "Y0_hi"
+quantity = "prior: Y0 ~ Uniform(lo, hi)"
+value = 0.01
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Methods 2.5 (hierarchical model); RunModels.R and HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior"
+symbol = "d_rate"
+quantity = "prior: d ~ Exp(rate)"
+value = 2.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Methods 2.5 (hierarchical model); RunModels.R and HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior"
+symbol = "K_lo"
+quantity = "prior: K ~ Uniform(lo, hi)"
+value = 0.1
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Methods 2.5 (hierarchical model); RunModels.R and HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior"
+symbol = "K_hi"
+quantity = "prior: K ~ Uniform(lo, hi)"
+value = 0.6
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Methods 2.5 (hierarchical model); RunModels.R and HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_briere2"
+symbol = "c_shape"
+quantity = "prior: c ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.4; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_briere2"
+symbol = "c_rate"
+quantity = "prior: c ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.4; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_briere2"
+symbol = "Tmin_mean"
+quantity = "prior: Tmin ~ Normal(mean, precision)"
+value = 4.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.4; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_briere2"
+symbol = "Tmin_precision"
+quantity = "prior: Tmin ~ Normal(mean, precision)"
+value = 0.5
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.4; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_briere2"
+symbol = "Tmax_lo"
+quantity = "prior: Tmax ~ Uniform(lo, hi)"
+value = 27.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.4; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_briere2"
+symbol = "Tmax_hi"
+quantity = "prior: Tmax ~ Uniform(lo, hi)"
+value = 35.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.4; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_briere2"
+symbol = "b_shape"
+quantity = "prior: b ~ Gamma(shape, rate)"
+value = 10.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.4; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_briere2"
+symbol = "b_rate"
+quantity = "prior: b ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.4; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ratkowsky"
+symbol = "c_shape"
+quantity = "prior: c ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.6; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ratkowsky"
+symbol = "c_rate"
+quantity = "prior: c ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.6; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ratkowsky"
+symbol = "k_shape"
+quantity = "prior: k ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.6; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ratkowsky"
+symbol = "k_rate"
+quantity = "prior: k ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.6; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ratkowsky"
+symbol = "Tmin_mean"
+quantity = "prior: Tmin ~ Normal(mean, precision), kelvin"
+value = 277.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.6; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ratkowsky"
+symbol = "Tmin_precision"
+quantity = "prior: Tmin ~ Normal(mean, precision), kelvin"
+value = 0.5
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.6; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ratkowsky"
+symbol = "Tmax_lo"
+quantity = "prior: Tmax ~ Uniform(lo, hi), kelvin"
+value = 300.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.6; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ratkowsky"
+symbol = "Tmax_hi"
+quantity = "prior: Tmax ~ Uniform(lo, hi), kelvin"
+value = 308.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.6; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "TΦ_lo"
+quantity = "prior: TΦ ~ Uniform(lo, hi)"
+value = 286.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "TΦ_hi"
+quantity = "prior: TΦ ~ Uniform(lo, hi)"
+value = 298.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "TH_shape"
+quantity = "prior: TH ~ Gamma(shape, rate)"
+value = 310.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "TH_rate"
+quantity = "prior: TH ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "TL_shape"
+quantity = "prior: TL ~ Gamma(shape, rate)"
+value = 273.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "TL_rate"
+quantity = "prior: TL ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "ΔHA_mean"
+quantity = "prior: ΔHA ~ Normal(mean, precision)"
+value = 16651.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "ΔHA_precision"
+quantity = "prior: ΔHA ~ Normal(mean, precision)"
+value = 5.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "ΔHH_mean"
+quantity = "prior: ΔHH ~ Normal(mean, precision)"
+value = 67500.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "ΔHH_precision"
+quantity = "prior: ΔHH ~ Normal(mean, precision)"
+value = 5.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "ΔHL_mean"
+quantity = "prior: ΔHL ~ Normal(mean, precision)"
+value = -72500.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "ΔHL_precision"
+quantity = "prior: ΔHL ~ Normal(mean, precision)"
+value = 5.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "ρ_lo"
+quantity = "prior: ρ ~ Uniform(lo, hi)"
+value = 0.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "ρ_hi"
+quantity = "prior: ρ ~ Uniform(lo, hi)"
+value = 2.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_ikemoto"
+symbol = "R"
+quantity = "prior: gas constant R, fixed (cal K^-1 mol^-1)"
+value = 1.987
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.7; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logan10"
+symbol = "α_lo"
+quantity = "prior: α ~ Uniform(lo, hi)"
+value = 0.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.5; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logan10"
+symbol = "α_hi"
+quantity = "prior: α ~ Uniform(lo, hi)"
+value = 2.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.5; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logan10"
+symbol = "c_mean"
+quantity = "prior: c ~ Normal(mean, precision)"
+value = 90.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.5; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logan10"
+symbol = "c_precision"
+quantity = "prior: c ~ Normal(mean, precision)"
+value = 10.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.5; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logan10"
+symbol = "b_shape"
+quantity = "prior: b ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.5; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logan10"
+symbol = "b_rate"
+quantity = "prior: b ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.5; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logan10"
+symbol = "ΔT_shape"
+quantity = "prior: ΔT ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.5; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logan10"
+symbol = "ΔT_rate"
+quantity = "prior: ΔT ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.5; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logan10"
+symbol = "Tmax_lo"
+quantity = "prior: Tmax ~ Uniform(lo, hi)"
+value = 27.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.5; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logan10"
+symbol = "Tmax_hi"
+quantity = "prior: Tmax ~ Uniform(lo, hi)"
+value = 35.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.5; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "C_shape"
+quantity = "prior: C ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "C_rate"
+quantity = "prior: C ~ Gamma(shape, rate)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "k1_mean"
+quantity = "prior: k1 ~ Normal(mean, precision) truncated to (lo, hi)"
+value = 32.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "k1_precision"
+quantity = "prior: k1 ~ Normal(mean, precision) truncated to (lo, hi)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "k1_lo"
+quantity = "prior: k1 truncation"
+value = 30.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "k1_hi"
+quantity = "prior: k1 truncation"
+value = 40.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "k2_mean"
+quantity = "prior: k2 ~ Normal(mean, precision) truncated to (lo, hi)"
+value = 0.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "k2_precision"
+quantity = "prior: k2 ~ Normal(mean, precision) truncated to (lo, hi)"
+value = 5.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "k2_lo"
+quantity = "prior: k2 truncation"
+value = -5.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "k2_hi"
+quantity = "prior: k2 truncation"
+value = 10.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "Topt_lo"
+quantity = "prior: Topt ~ Uniform(lo, hi)"
+value = 13.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_stinner"
+symbol = "Topt_hi"
+quantity = "prior: Topt ~ Uniform(lo, hi)"
+value = 25.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Appendix S1, Table B.3; HierarchicalModel_*.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logistic"
+symbol = "r_shape"
+quantity = "prior: r ~ Gamma(shape, rate) (varying-temperature refit)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Methods 2.7; jags-logistic.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logistic"
+symbol = "r_rate"
+quantity = "prior: r ~ Gamma(shape, rate) (varying-temperature refit)"
+value = 1.0
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Methods 2.7; jags-logistic.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logistic"
+symbol = "K_lo"
+quantity = "prior: K ~ Uniform(lo, hi) (varying-temperature refit)"
+value = 0.08
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Methods 2.7; jags-logistic.bug"
+verified = true
+
+[[parameter]]
+set = "prior_logistic"
+symbol = "K_hi"
+quantity = "prior: K ~ Uniform(lo, hi) (varying-temperature refit)"
+value = 0.2
+units = "as the parameter"
+provenance = "A"
+role = "prior"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Methods 2.7; jags-logistic.bug"
+verified = true
+
+# --- Varying-temperature regimes: the authors' piecewise-linear fits to the incubator loggers (sets "regime_<name>") ---
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "start_1"
+quantity = "Dry Low Air (DLA) regime, segment 1: start, as a fraction of the day"
+value = 0.0
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "T0_1"
+quantity = "Dry Low Air (DLA) regime, segment 1: intercept a of T = a + b t (t the fraction of the day)"
+value = 18.5
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "slope_1"
+quantity = "Dry Low Air (DLA) regime, segment 1: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "start_2"
+quantity = "Dry Low Air (DLA) regime, segment 2: start, as a fraction of the day"
+value = 0.03848604
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "T0_2"
+quantity = "Dry Low Air (DLA) regime, segment 2: intercept a of T = a + b t (t the fraction of the day)"
+value = 18.858696
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "slope_2"
+quantity = "Dry Low Air (DLA) regime, segment 2: slope b of T = a + b t"
+value = -9.320158
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "start_3"
+quantity = "Dry Low Air (DLA) regime, segment 3: start, as a fraction of the day"
+value = 0.2530747
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "T0_3"
+quantity = "Dry Low Air (DLA) regime, segment 3: intercept a of T = a + b t (t the fraction of the day)"
+value = 16.5
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "slope_3"
+quantity = "Dry Low Air (DLA) regime, segment 3: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "start_4"
+quantity = "Dry Low Air (DLA) regime, segment 4: start, as a fraction of the day"
+value = 0.3321566
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "T0_4"
+quantity = "Dry Low Air (DLA) regime, segment 4: intercept a of T = a + b t (t the fraction of the day)"
+value = 11.58362
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "slope_4"
+quantity = "Dry Low Air (DLA) regime, segment 4: slope b of T = a + b t"
+value = 14.80139
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "start_5"
+quantity = "Dry Low Air (DLA) regime, segment 5: start, as a fraction of the day"
+value = 0.6361821
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "T0_5"
+quantity = "Dry Low Air (DLA) regime, segment 5: intercept a of T = a + b t (t the fraction of the day)"
+value = 21.0
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "slope_5"
+quantity = "Dry Low Air (DLA) regime, segment 5: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "start_6"
+quantity = "Dry Low Air (DLA) regime, segment 6: start, as a fraction of the day"
+value = 0.8402777
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "T0_6"
+quantity = "Dry Low Air (DLA) regime, segment 6: intercept a of T = a + b t (t the fraction of the day)"
+value = 68.53571
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "slope_6"
+quantity = "Dry Low Air (DLA) regime, segment 6: slope b of T = a + b t"
+value = -56.57143
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "start_7"
+quantity = "Dry Low Air (DLA) regime, segment 7: start, as a fraction of the day"
+value = 0.8844696
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "T0_7"
+quantity = "Dry Low Air (DLA) regime, segment 7: intercept a of T = a + b t (t the fraction of the day)"
+value = 18.5
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_DLA"
+symbol = "slope_7"
+quantity = "Dry Low Air (DLA) regime, segment 7: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.dla()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_1"
+quantity = "Wet High Frog (WHF) regime, segment 1: start, as a fraction of the day"
+value = 0.0
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_1"
+quantity = "Wet High Frog (WHF) regime, segment 1: intercept a of T = a + b t (t the fraction of the day)"
+value = 20.75
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_1"
+quantity = "Wet High Frog (WHF) regime, segment 1: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_2"
+quantity = "Wet High Frog (WHF) regime, segment 2: start, as a fraction of the day"
+value = 0.1273148
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_2"
+quantity = "Wet High Frog (WHF) regime, segment 2: intercept a of T = a + b t (t the fraction of the day)"
+value = 21.732143
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_2"
+quantity = "Wet High Frog (WHF) regime, segment 2: slope b of T = a + b t"
+value = -7.714286
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_3"
+quantity = "Wet High Frog (WHF) regime, segment 3: start, as a fraction of the day"
+value = 0.1921296
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_3"
+quantity = "Wet High Frog (WHF) regime, segment 3: intercept a of T = a + b t (t the fraction of the day)"
+value = 20.25
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_3"
+quantity = "Wet High Frog (WHF) regime, segment 3: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_4"
+quantity = "Wet High Frog (WHF) regime, segment 4: start, as a fraction of the day"
+value = 0.3402778
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_4"
+quantity = "Wet High Frog (WHF) regime, segment 4: intercept a of T = a + b t (t the fraction of the day)"
+value = 32.5
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_4"
+quantity = "Wet High Frog (WHF) regime, segment 4: slope b of T = a + b t"
+value = -36.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_5"
+quantity = "Wet High Frog (WHF) regime, segment 5: start, as a fraction of the day"
+value = 0.3472222
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_5"
+quantity = "Wet High Frog (WHF) regime, segment 5: intercept a of T = a + b t (t the fraction of the day)"
+value = 20.0
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_5"
+quantity = "Wet High Frog (WHF) regime, segment 5: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_6"
+quantity = "Wet High Frog (WHF) regime, segment 6: start, as a fraction of the day"
+value = 0.37499999
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_6"
+quantity = "Wet High Frog (WHF) regime, segment 6: intercept a of T = a + b t (t the fraction of the day)"
+value = 6.5
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_6"
+quantity = "Wet High Frog (WHF) regime, segment 6: slope b of T = a + b t"
+value = 36.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_7"
+quantity = "Wet High Frog (WHF) regime, segment 7: start, as a fraction of the day"
+value = 0.3819444
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_7"
+quantity = "Wet High Frog (WHF) regime, segment 7: intercept a of T = a + b t (t the fraction of the day)"
+value = 20.25
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_7"
+quantity = "Wet High Frog (WHF) regime, segment 7: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_8"
+quantity = "Wet High Frog (WHF) regime, segment 8: start, as a fraction of the day"
+value = 0.5277778
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_8"
+quantity = "Wet High Frog (WHF) regime, segment 8: intercept a of T = a + b t (t the fraction of the day)"
+value = 8.875
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_8"
+quantity = "Wet High Frog (WHF) regime, segment 8: slope b of T = a + b t"
+value = 21.6
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_9"
+quantity = "Wet High Frog (WHF) regime, segment 9: start, as a fraction of the day"
+value = 0.5486111
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_9"
+quantity = "Wet High Frog (WHF) regime, segment 9: intercept a of T = a + b t (t the fraction of the day)"
+value = 20.75
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_9"
+quantity = "Wet High Frog (WHF) regime, segment 9: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_10"
+quantity = "Wet High Frog (WHF) regime, segment 10: start, as a fraction of the day"
+value = 0.6805556
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_10"
+quantity = "Wet High Frog (WHF) regime, segment 10: intercept a of T = a + b t (t the fraction of the day)"
+value = -28.25
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_10"
+quantity = "Wet High Frog (WHF) regime, segment 10: slope b of T = a + b t"
+value = 72.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_11"
+quantity = "Wet High Frog (WHF) regime, segment 11: start, as a fraction of the day"
+value = 0.6875
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_11"
+quantity = "Wet High Frog (WHF) regime, segment 11: intercept a of T = a + b t (t the fraction of the day)"
+value = 21.25
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_11"
+quantity = "Wet High Frog (WHF) regime, segment 11: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_12"
+quantity = "Wet High Frog (WHF) regime, segment 12: start, as a fraction of the day"
+value = 0.8611111
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_12"
+quantity = "Wet High Frog (WHF) regime, segment 12: intercept a of T = a + b t (t the fraction of the day)"
+value = 39.825
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_12"
+quantity = "Wet High Frog (WHF) regime, segment 12: slope b of T = a + b t"
+value = -21.6
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "start_13"
+quantity = "Wet High Frog (WHF) regime, segment 13: start, as a fraction of the day"
+value = 0.8819444
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "T0_13"
+quantity = "Wet High Frog (WHF) regime, segment 13: intercept a of T = a + b t (t the fraction of the day)"
+value = 20.75
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WHF"
+symbol = "slope_13"
+quantity = "Wet High Frog (WHF) regime, segment 13: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.whf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "start_1"
+quantity = "Wet Low Frog (WLF) regime, segment 1: start, as a fraction of the day"
+value = 0.0
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "T0_1"
+quantity = "Wet Low Frog (WLF) regime, segment 1: intercept a of T = a + b t (t the fraction of the day)"
+value = 25.0
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "slope_1"
+quantity = "Wet Low Frog (WLF) regime, segment 1: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "start_2"
+quantity = "Wet Low Frog (WLF) regime, segment 2: start, as a fraction of the day"
+value = 0.1875
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "T0_2"
+quantity = "Wet Low Frog (WLF) regime, segment 2: intercept a of T = a + b t (t the fraction of the day)"
+value = 48.625
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "slope_2"
+quantity = "Wet Low Frog (WLF) regime, segment 2: slope b of T = a + b t"
+value = -126.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "start_3"
+quantity = "Wet Low Frog (WLF) regime, segment 3: start, as a fraction of the day"
+value = 0.2083333
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "T0_3"
+quantity = "Wet Low Frog (WLF) regime, segment 3: intercept a of T = a + b t (t the fraction of the day)"
+value = 22.5
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "slope_3"
+quantity = "Wet Low Frog (WLF) regime, segment 3: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "start_4"
+quantity = "Wet Low Frog (WLF) regime, segment 4: start, as a fraction of the day"
+value = 0.3333333
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "T0_4"
+quantity = "Wet Low Frog (WLF) regime, segment 4: intercept a of T = a + b t (t the fraction of the day)"
+value = -43.625
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "slope_4"
+quantity = "Wet Low Frog (WLF) regime, segment 4: slope b of T = a + b t"
+value = 198.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "start_5"
+quantity = "Wet Low Frog (WLF) regime, segment 5: start, as a fraction of the day"
+value = 0.3472222
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "T0_5"
+quantity = "Wet Low Frog (WLF) regime, segment 5: intercept a of T = a + b t (t the fraction of the day)"
+value = 24.75
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "slope_5"
+quantity = "Wet Low Frog (WLF) regime, segment 5: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "start_6"
+quantity = "Wet Low Frog (WLF) regime, segment 6: start, as a fraction of the day"
+value = 0.5416667
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "T0_6"
+quantity = "Wet Low Frog (WLF) regime, segment 6: intercept a of T = a + b t (t the fraction of the day)"
+value = -71.075
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "slope_6"
+quantity = "Wet Low Frog (WLF) regime, segment 6: slope b of T = a + b t"
+value = 176.4
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "start_7"
+quantity = "Wet Low Frog (WLF) regime, segment 7: start, as a fraction of the day"
+value = 0.5625
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "T0_7"
+quantity = "Wet Low Frog (WLF) regime, segment 7: intercept a of T = a + b t (t the fraction of the day)"
+value = 28.0
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "slope_7"
+quantity = "Wet Low Frog (WLF) regime, segment 7: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "start_8"
+quantity = "Wet Low Frog (WLF) regime, segment 8: start, as a fraction of the day"
+value = 0.8541667
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "T0_8"
+quantity = "Wet Low Frog (WLF) regime, segment 8: intercept a of T = a + b t (t the fraction of the day)"
+value = 458.5
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "slope_8"
+quantity = "Wet Low Frog (WLF) regime, segment 8: slope b of T = a + b t"
+value = -504.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "start_9"
+quantity = "Wet Low Frog (WLF) regime, segment 9: start, as a fraction of the day"
+value = 0.8611111
+units = "d"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+notes = "In the code this last segment returns 25 without adding the kelvin offset, so with Kelvin = TRUE (Ratkowsky and Ikemoto predictions) the temperature is 25 K and r = 0 for the last 3.3 h of each day."
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "T0_9"
+quantity = "Wet Low Frog (WLF) regime, segment 9: intercept a of T = a + b t (t the fraction of the day)"
+value = 25.0
+units = "degC"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
+
+[[parameter]]
+set = "regime_WLF"
+symbol = "slope_9"
+quantity = "Wet Low Frog (WLF) regime, segment 9: slope b of T = a + b t"
+value = 0.0
+units = "degC d^-1"
+provenance = "F"
+role = "structural"
+system = { pathogen = "Bd", isolate = "Paluma-Lgenimaculata #2-2011-CO (QLD)", setting = "culture, TGhL broth, optical density at 492 nm" }
+location = "Zenodo code, functions.R, temperature.wlf()"
+verified = true
