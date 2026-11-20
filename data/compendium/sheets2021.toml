@@ -19,3 +19,1719 @@ system = { pathogen = "Bd", isolate = "LA, TN, VT, NM, OH (BdGPL)", setting = "c
 location = "Abstract; Results, Differential Responses to Temperature"
 verified = true
 notes = "On the tested grid, so known only to within the 17 and 25 degC neighbours."
+
+
+# --- Table 2: viability (MTT), and the logistic r and K, by isolate and temperature ---------------
+# Sets "<isolate>_<T>C"; thermal_data(:sheets2021, :r; set_prefix = "LA_") gives one isolate's r(T).
+# r and K are maximum likelihood fits of a logistic curve to the normalised MTT series
+# (Supplementary R code); "Mean (±SE)" is the mean maximum viability (OD after the MTT assay).
+
+[[parameter]]
+set = "LA_4C"
+symbol = "MTT_mean"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum viability (MTT optical density) at 4 degC"
+value = 0.75
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.053, as_printed = "0.75 ± 0.053" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_4C"
+symbol = "r"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: intrinsic growth rate r of the logistic fit to normalised MTT at 4 degC"
+value = 0.2591
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_4C"
+symbol = "K"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: carrying capacity K of the logistic fit to normalised MTT at 4 degC"
+value = 0.6246
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_12C"
+symbol = "MTT_mean"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum viability (MTT optical density) at 12 degC"
+value = 0.91
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.036, as_printed = "0.91 ± 0.036" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_12C"
+symbol = "r"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: intrinsic growth rate r of the logistic fit to normalised MTT at 12 degC"
+value = 0.5867
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_12C"
+symbol = "K"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: carrying capacity K of the logistic fit to normalised MTT at 12 degC"
+value = 0.8337
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_17C"
+symbol = "MTT_mean"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum viability (MTT optical density) at 17 degC"
+value = 1.19
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.050, as_printed = "1.19 ± 0.050" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_17C"
+symbol = "r"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: intrinsic growth rate r of the logistic fit to normalised MTT at 17 degC"
+value = 0.8546
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_17C"
+symbol = "K"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: carrying capacity K of the logistic fit to normalised MTT at 17 degC"
+value = 1.275
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_21C"
+symbol = "MTT_mean"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum viability (MTT optical density) at 21 degC"
+value = 1.12
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.104, as_printed = "1.12 ± 0.104" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_21C"
+symbol = "r"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: intrinsic growth rate r of the logistic fit to normalised MTT at 21 degC"
+value = 1.504
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_21C"
+symbol = "K"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: carrying capacity K of the logistic fit to normalised MTT at 21 degC"
+value = 1.048
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_25C"
+symbol = "MTT_mean"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum viability (MTT optical density) at 25 degC"
+value = 0.78
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.046, as_printed = "0.78 ± 0.046" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_25C"
+symbol = "r"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: intrinsic growth rate r of the logistic fit to normalised MTT at 25 degC"
+value = 0.9155
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_25C"
+symbol = "K"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: carrying capacity K of the logistic fit to normalised MTT at 25 degC"
+value = 0.9878
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_26C"
+symbol = "MTT_mean"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum viability (MTT optical density) at 26 degC"
+value = 0.40
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.049, as_printed = "0.40 ± 0.049" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_26C"
+symbol = "r"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: intrinsic growth rate r of the logistic fit to normalised MTT at 26 degC"
+value = 0.482
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+notes = "Printed as 107300: K is not identified (exponential phase only; see the paper's Fig. 4B and the Supplementary profiles)."
+
+[[parameter]]
+set = "LA_26C"
+symbol = "K"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: carrying capacity K of the logistic fit to normalised MTT at 26 degC"
+value = 107300
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+notes = "Printed as 107300: not identified (exponential growth only)."
+
+[[parameter]]
+set = "LA_27C"
+symbol = "MTT_mean"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum viability (MTT optical density) at 27 degC"
+value = 0.02
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.007, as_printed = "0.02 ± 0.007" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_27C"
+symbol = "r"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: intrinsic growth rate r of the logistic fit to normalised MTT at 27 degC"
+value = 0.4817
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "LA_27C"
+symbol = "K"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: carrying capacity K of the logistic fit to normalised MTT at 27 degC"
+value = 0.0462
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_4C"
+symbol = "MTT_mean"
+quantity = "Vermont, from Lithobates clamitans: mean maximum viability (MTT optical density) at 4 degC"
+value = 0.09
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.013, as_printed = "0.09 ± 0.013" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_4C"
+symbol = "r"
+quantity = "Vermont, from Lithobates clamitans: intrinsic growth rate r of the logistic fit to normalised MTT at 4 degC"
+value = 0.1644
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_4C"
+symbol = "K"
+quantity = "Vermont, from Lithobates clamitans: carrying capacity K of the logistic fit to normalised MTT at 4 degC"
+value = 2.022
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_12C"
+symbol = "MTT_mean"
+quantity = "Vermont, from Lithobates clamitans: mean maximum viability (MTT optical density) at 12 degC"
+value = 0.46
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.016, as_printed = "0.46 ± 0.016" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_12C"
+symbol = "r"
+quantity = "Vermont, from Lithobates clamitans: intrinsic growth rate r of the logistic fit to normalised MTT at 12 degC"
+value = 0.2312
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_12C"
+symbol = "K"
+quantity = "Vermont, from Lithobates clamitans: carrying capacity K of the logistic fit to normalised MTT at 12 degC"
+value = 0.4757
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_17C"
+symbol = "MTT_mean"
+quantity = "Vermont, from Lithobates clamitans: mean maximum viability (MTT optical density) at 17 degC"
+value = 0.47
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.021, as_printed = "0.47 ± 0.021" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_17C"
+symbol = "r"
+quantity = "Vermont, from Lithobates clamitans: intrinsic growth rate r of the logistic fit to normalised MTT at 17 degC"
+value = 0.4321
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_17C"
+symbol = "K"
+quantity = "Vermont, from Lithobates clamitans: carrying capacity K of the logistic fit to normalised MTT at 17 degC"
+value = 0.6248
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_21C"
+symbol = "MTT_mean"
+quantity = "Vermont, from Lithobates clamitans: mean maximum viability (MTT optical density) at 21 degC"
+value = 0.53
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.011, as_printed = "0.53 ± 0.011" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_21C"
+symbol = "r"
+quantity = "Vermont, from Lithobates clamitans: intrinsic growth rate r of the logistic fit to normalised MTT at 21 degC"
+value = 0.3991
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_21C"
+symbol = "K"
+quantity = "Vermont, from Lithobates clamitans: carrying capacity K of the logistic fit to normalised MTT at 21 degC"
+value = 0.602
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_25C"
+symbol = "MTT_mean"
+quantity = "Vermont, from Lithobates clamitans: mean maximum viability (MTT optical density) at 25 degC"
+value = 0.04
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.003, as_printed = "0.04 ± 0.003" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_25C"
+symbol = "r"
+quantity = "Vermont, from Lithobates clamitans: intrinsic growth rate r of the logistic fit to normalised MTT at 25 degC"
+value = 0.9506
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_25C"
+symbol = "K"
+quantity = "Vermont, from Lithobates clamitans: carrying capacity K of the logistic fit to normalised MTT at 25 degC"
+value = 0.0716
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_26C"
+symbol = "MTT_mean"
+quantity = "Vermont, from Lithobates clamitans: mean maximum viability (MTT optical density) at 26 degC"
+value = 0.02
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.004, as_printed = "0.02 ± 0.004" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_26C"
+symbol = "r"
+quantity = "Vermont, from Lithobates clamitans: intrinsic growth rate r of the logistic fit to normalised MTT at 26 degC"
+value = 5.431
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+notes = "Fig. 4 legend: VT-26 degC r estimate is 8.58, CI (4.61, 14.12), which differs from the 5.431 printed in Table 2."
+
+[[parameter]]
+set = "VT_26C"
+symbol = "K"
+quantity = "Vermont, from Lithobates clamitans: carrying capacity K of the logistic fit to normalised MTT at 26 degC"
+value = 0.0035
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_27C"
+symbol = "MTT_mean"
+quantity = "Vermont, from Lithobates clamitans: mean maximum viability (MTT optical density) at 27 degC"
+value = 0.00
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.001, as_printed = "0.00 ± 0.001" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_27C"
+symbol = "r"
+quantity = "Vermont, from Lithobates clamitans: intrinsic growth rate r of the logistic fit to normalised MTT at 27 degC"
+value = 1.433
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "VT_27C"
+symbol = "K"
+quantity = "Vermont, from Lithobates clamitans: carrying capacity K of the logistic fit to normalised MTT at 27 degC"
+value = 5.725
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_4C"
+symbol = "MTT_mean"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum viability (MTT optical density) at 4 degC"
+value = 0.02
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.002, as_printed = "0.02 ± 0.002" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_4C"
+symbol = "r"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: intrinsic growth rate r of the logistic fit to normalised MTT at 4 degC"
+value = 0.07248
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_4C"
+symbol = "K"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: carrying capacity K of the logistic fit to normalised MTT at 4 degC"
+value = 3.661
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_12C"
+symbol = "MTT_mean"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum viability (MTT optical density) at 12 degC"
+value = 0.45
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.019, as_printed = "0.45 ± 0.019" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_12C"
+symbol = "r"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: intrinsic growth rate r of the logistic fit to normalised MTT at 12 degC"
+value = 0.8495
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_12C"
+symbol = "K"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: carrying capacity K of the logistic fit to normalised MTT at 12 degC"
+value = 0.4357
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_17C"
+symbol = "MTT_mean"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum viability (MTT optical density) at 17 degC"
+value = 0.57
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.027, as_printed = "0.57 ± 0.027" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_17C"
+symbol = "r"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: intrinsic growth rate r of the logistic fit to normalised MTT at 17 degC"
+value = 0.7361
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_17C"
+symbol = "K"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: carrying capacity K of the logistic fit to normalised MTT at 17 degC"
+value = 0.6317
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_21C"
+symbol = "MTT_mean"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum viability (MTT optical density) at 21 degC"
+value = 0.63
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.052, as_printed = "0.63 ± 0.052" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_21C"
+symbol = "r"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: intrinsic growth rate r of the logistic fit to normalised MTT at 21 degC"
+value = 0.8277
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_21C"
+symbol = "K"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: carrying capacity K of the logistic fit to normalised MTT at 21 degC"
+value = 0.6702
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_25C"
+symbol = "MTT_mean"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum viability (MTT optical density) at 25 degC"
+value = 0.23
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.019, as_printed = "0.23 ± 0.019" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_25C"
+symbol = "r"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: intrinsic growth rate r of the logistic fit to normalised MTT at 25 degC"
+value = 1.017
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_25C"
+symbol = "K"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: carrying capacity K of the logistic fit to normalised MTT at 25 degC"
+value = 0.3259
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_26C"
+symbol = "MTT_mean"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum viability (MTT optical density) at 26 degC"
+value = 0.14
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.018, as_printed = "0.14 ± 0.018" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_26C"
+symbol = "r"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: intrinsic growth rate r of the logistic fit to normalised MTT at 26 degC"
+value = 1.314
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_26C"
+symbol = "K"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: carrying capacity K of the logistic fit to normalised MTT at 26 degC"
+value = 0.1533
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_27C"
+symbol = "MTT_mean"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum viability (MTT optical density) at 27 degC"
+value = 0.06
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.005, as_printed = "0.06 ± 0.005" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_27C"
+symbol = "r"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: intrinsic growth rate r of the logistic fit to normalised MTT at 27 degC"
+value = 1.874
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "TN_27C"
+symbol = "K"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: carrying capacity K of the logistic fit to normalised MTT at 27 degC"
+value = 0.0533
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_4C"
+symbol = "MTT_mean"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum viability (MTT optical density) at 4 degC"
+value = 0.10
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.015, as_printed = "0.10 ± 0.015" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_4C"
+symbol = "r"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: intrinsic growth rate r of the logistic fit to normalised MTT at 4 degC"
+value = 0.1939
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_4C"
+symbol = "K"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: carrying capacity K of the logistic fit to normalised MTT at 4 degC"
+value = 0.1047
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_12C"
+symbol = "MTT_mean"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum viability (MTT optical density) at 12 degC"
+value = 0.74
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.023, as_printed = "0.74 ± 0.023" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_12C"
+symbol = "r"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: intrinsic growth rate r of the logistic fit to normalised MTT at 12 degC"
+value = 0.6297
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_12C"
+symbol = "K"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: carrying capacity K of the logistic fit to normalised MTT at 12 degC"
+value = 0.5608
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_17C"
+symbol = "MTT_mean"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum viability (MTT optical density) at 17 degC"
+value = 0.76
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.076, as_printed = "0.76 ± 0.076" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_17C"
+symbol = "r"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: intrinsic growth rate r of the logistic fit to normalised MTT at 17 degC"
+value = 0.8781
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_17C"
+symbol = "K"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: carrying capacity K of the logistic fit to normalised MTT at 17 degC"
+value = 0.8241
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_21C"
+symbol = "MTT_mean"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum viability (MTT optical density) at 21 degC"
+value = 0.82
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.029, as_printed = "0.82 ± 0.029" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_21C"
+symbol = "r"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: intrinsic growth rate r of the logistic fit to normalised MTT at 21 degC"
+value = 0.808
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_21C"
+symbol = "K"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: carrying capacity K of the logistic fit to normalised MTT at 21 degC"
+value = 0.882
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_25C"
+symbol = "MTT_mean"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum viability (MTT optical density) at 25 degC"
+value = 0.40
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.018, as_printed = "0.40 ± 0.018" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_25C"
+symbol = "r"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: intrinsic growth rate r of the logistic fit to normalised MTT at 25 degC"
+value = 1.324
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_25C"
+symbol = "K"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: carrying capacity K of the logistic fit to normalised MTT at 25 degC"
+value = 0.4455
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_26C"
+symbol = "MTT_mean"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum viability (MTT optical density) at 26 degC"
+value = 0.21
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.021, as_printed = "0.21 ± 0.021" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_26C"
+symbol = "r"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: intrinsic growth rate r of the logistic fit to normalised MTT at 26 degC"
+value = 1.187
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_26C"
+symbol = "K"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: carrying capacity K of the logistic fit to normalised MTT at 26 degC"
+value = 0.2709
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_27C"
+symbol = "MTT_mean"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum viability (MTT optical density) at 27 degC"
+value = 0.07
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.007, as_printed = "0.07 ± 0.007" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_27C"
+symbol = "r"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: intrinsic growth rate r of the logistic fit to normalised MTT at 27 degC"
+value = 1.063
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "NM_27C"
+symbol = "K"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: carrying capacity K of the logistic fit to normalised MTT at 27 degC"
+value = 0.075
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_4C"
+symbol = "MTT_mean"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum viability (MTT optical density) at 4 degC"
+value = 0.06
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.005, as_printed = "0.06 ± 0.005" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_4C"
+symbol = "r"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: intrinsic growth rate r of the logistic fit to normalised MTT at 4 degC"
+value = 0.1305
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_4C"
+symbol = "K"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: carrying capacity K of the logistic fit to normalised MTT at 4 degC"
+value = 0.0996
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_12C"
+symbol = "MTT_mean"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum viability (MTT optical density) at 12 degC"
+value = 0.25
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.019, as_printed = "0.25 ± 0.019" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_12C"
+symbol = "r"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: intrinsic growth rate r of the logistic fit to normalised MTT at 12 degC"
+value = 0.3071
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_12C"
+symbol = "K"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: carrying capacity K of the logistic fit to normalised MTT at 12 degC"
+value = 0.2313
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_17C"
+symbol = "MTT_mean"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum viability (MTT optical density) at 17 degC"
+value = 0.52
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.029, as_printed = "0.52 ± 0.029" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_17C"
+symbol = "r"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: intrinsic growth rate r of the logistic fit to normalised MTT at 17 degC"
+value = 0.9106
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_17C"
+symbol = "K"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: carrying capacity K of the logistic fit to normalised MTT at 17 degC"
+value = 0.5445
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_21C"
+symbol = "MTT_mean"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum viability (MTT optical density) at 21 degC"
+value = 0.60
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.046, as_printed = "0.60 ± 0.046" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_21C"
+symbol = "r"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: intrinsic growth rate r of the logistic fit to normalised MTT at 21 degC"
+value = 0.8264
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_21C"
+symbol = "K"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: carrying capacity K of the logistic fit to normalised MTT at 21 degC"
+value = 0.6487
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_25C"
+symbol = "MTT_mean"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum viability (MTT optical density) at 25 degC"
+value = 0.44
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.036, as_printed = "0.44 ± 0.036" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_25C"
+symbol = "r"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: intrinsic growth rate r of the logistic fit to normalised MTT at 25 degC"
+value = 1.498
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_25C"
+symbol = "K"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: carrying capacity K of the logistic fit to normalised MTT at 25 degC"
+value = 0.3906
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_26C"
+symbol = "MTT_mean"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum viability (MTT optical density) at 26 degC"
+value = 0.21
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.032, as_printed = "0.21 ± 0.032" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_26C"
+symbol = "r"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: intrinsic growth rate r of the logistic fit to normalised MTT at 26 degC"
+value = 1.451
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_26C"
+symbol = "K"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: carrying capacity K of the logistic fit to normalised MTT at 26 degC"
+value = 0.2994
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_27C"
+symbol = "MTT_mean"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum viability (MTT optical density) at 27 degC"
+value = 0.10
+units = "OD (570 nm)"
+uncertainty = { kind = "se", value = 0.012, as_printed = "0.10 ± 0.012" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_27C"
+symbol = "r"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: intrinsic growth rate r of the logistic fit to normalised MTT at 27 degC"
+value = 0.9965
+units = "d^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+[[parameter]]
+set = "OH_27C"
+symbol = "K"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: carrying capacity K of the logistic fit to normalised MTT at 27 degC"
+value = 0.1123
+units = "OD (570 nm)"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 2"
+verified = true
+
+# --- Table 4: mean zoospore densities (no zoospores were seen at 25-27 degC; NA at 25) ------------
+
+[[parameter]]
+set = "LA_4C"
+symbol = "zoospore_density"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum zoospore density at 4 degC (hemocytometer)"
+value = 431.9
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 27.141, as_printed = "431.9 ± 27.141" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "LA_12C"
+symbol = "zoospore_density"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum zoospore density at 12 degC (hemocytometer)"
+value = 314.7
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 92.641, as_printed = "314.7 ± 92.641" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "LA_17C"
+symbol = "zoospore_density"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum zoospore density at 17 degC (hemocytometer)"
+value = 235.7
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 27.795, as_printed = "235.7 ± 27.795" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "LA_21C"
+symbol = "zoospore_density"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum zoospore density at 21 degC (hemocytometer)"
+value = 172.8
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 10.806, as_printed = "172.8 ± 10.806" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "LA_26C"
+symbol = "zoospore_density"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum zoospore density at 26 degC (hemocytometer)"
+value = 0.0
+units = "zoospores per hemocytometer count (units not stated)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "LA_27C"
+symbol = "zoospore_density"
+quantity = "Louisiana (New Orleans, LA), from Acris crepitans: mean maximum zoospore density at 27 degC (hemocytometer)"
+value = 0.0
+units = "zoospores per hemocytometer count (units not stated)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "VT_4C"
+symbol = "zoospore_density"
+quantity = "Vermont, from Lithobates clamitans: mean maximum zoospore density at 4 degC (hemocytometer)"
+value = 38.9
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 3.998, as_printed = "38.9 ± 3.998" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "VT_12C"
+symbol = "zoospore_density"
+quantity = "Vermont, from Lithobates clamitans: mean maximum zoospore density at 12 degC (hemocytometer)"
+value = 89.1
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 5.996, as_printed = "89.1 ± 5.996" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "VT_17C"
+symbol = "zoospore_density"
+quantity = "Vermont, from Lithobates clamitans: mean maximum zoospore density at 17 degC (hemocytometer)"
+value = 127.3
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 4.525, as_printed = "127.3 ± 4.525" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "VT_21C"
+symbol = "zoospore_density"
+quantity = "Vermont, from Lithobates clamitans: mean maximum zoospore density at 21 degC (hemocytometer)"
+value = 84.6
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 16.238, as_printed = "84.6 ± 16.238" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "VT_26C"
+symbol = "zoospore_density"
+quantity = "Vermont, from Lithobates clamitans: mean maximum zoospore density at 26 degC (hemocytometer)"
+value = 0.0
+units = "zoospores per hemocytometer count (units not stated)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "VT_27C"
+symbol = "zoospore_density"
+quantity = "Vermont, from Lithobates clamitans: mean maximum zoospore density at 27 degC (hemocytometer)"
+value = 0.0
+units = "zoospores per hemocytometer count (units not stated)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "TN_4C"
+symbol = "zoospore_density"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum zoospore density at 4 degC (hemocytometer)"
+value = 78.4
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 4.296, as_printed = "78.4 ± 4.296" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "TN_12C"
+symbol = "zoospore_density"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum zoospore density at 12 degC (hemocytometer)"
+value = 56.1
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 10.333, as_printed = "56.1 ± 10.333" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "TN_17C"
+symbol = "zoospore_density"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum zoospore density at 17 degC (hemocytometer)"
+value = 119.7
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 17.980, as_printed = "119.7 ± 17.980" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "TN_21C"
+symbol = "zoospore_density"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum zoospore density at 21 degC (hemocytometer)"
+value = 120.6
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 9.395, as_printed = "120.6 ± 9.395" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "TN_26C"
+symbol = "zoospore_density"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum zoospore density at 26 degC (hemocytometer)"
+value = 0.0
+units = "zoospores per hemocytometer count (units not stated)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "TN_27C"
+symbol = "zoospore_density"
+quantity = "Tennessee (Memphis, TN), from Lithobates sphenocephala: mean maximum zoospore density at 27 degC (hemocytometer)"
+value = 0.0
+units = "zoospores per hemocytometer count (units not stated)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "NM_4C"
+symbol = "zoospore_density"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum zoospore density at 4 degC (hemocytometer)"
+value = 492.1
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 13.133, as_printed = "492.1 ± 13.133" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "NM_12C"
+symbol = "zoospore_density"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum zoospore density at 12 degC (hemocytometer)"
+value = 37.4
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 6.995, as_printed = "37.4 ± 6.995" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "NM_17C"
+symbol = "zoospore_density"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum zoospore density at 17 degC (hemocytometer)"
+value = 4.5
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 0.885, as_printed = "4.5 ± 0.885" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "NM_21C"
+symbol = "zoospore_density"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum zoospore density at 21 degC (hemocytometer)"
+value = 2.8
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 0.433, as_printed = "2.8 ± 0.433" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "NM_26C"
+symbol = "zoospore_density"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum zoospore density at 26 degC (hemocytometer)"
+value = 0.0
+units = "zoospores per hemocytometer count (units not stated)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "NM_27C"
+symbol = "zoospore_density"
+quantity = "New Mexico (Beaver Creek, NM), from Lithobates catesbeianus: mean maximum zoospore density at 27 degC (hemocytometer)"
+value = 0.0
+units = "zoospores per hemocytometer count (units not stated)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "OH_4C"
+symbol = "zoospore_density"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum zoospore density at 4 degC (hemocytometer)"
+value = 70.3
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 4.853, as_printed = "70.3 ± 4.853" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "OH_12C"
+symbol = "zoospore_density"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum zoospore density at 12 degC (hemocytometer)"
+value = 89.2
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 16.559, as_printed = "89.2 ± 16.559" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "OH_17C"
+symbol = "zoospore_density"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum zoospore density at 17 degC (hemocytometer)"
+value = 65.7
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 11.233, as_printed = "65.7 ± 11.233" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "OH_21C"
+symbol = "zoospore_density"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum zoospore density at 21 degC (hemocytometer)"
+value = 30.7
+units = "zoospores per hemocytometer count (units not stated)"
+uncertainty = { kind = "se", value = 3.596, as_printed = "30.7 ± 3.596" }
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "OH_26C"
+symbol = "zoospore_density"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum zoospore density at 26 degC (hemocytometer)"
+value = 0.0
+units = "zoospores per hemocytometer count (units not stated)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."
+
+[[parameter]]
+set = "OH_27C"
+symbol = "zoospore_density"
+quantity = "Ohio (Toledo, OH), from Lithobates pipiens: mean maximum zoospore density at 27 degC (hemocytometer)"
+value = 0.0
+units = "zoospores per hemocytometer count (units not stated)"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Table 4"
+verified = true
+notes = "The paper gives no unit; the figshare data hold the same counts."

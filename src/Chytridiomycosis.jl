@@ -75,6 +75,12 @@ include("fitting/rumschlag2022.jl")
 # overlapping habitats and environmental transmission
 include("models/doddington2013.jl")
 include("models/espira2022.jl")
+# Gajewski et al. 2021 and Sheets et al. 2021: Bd growth in culture against temperature
+using Distributions: logccdf
+include("models/gajewski2021.jl")
+include("fitting/gajewski2021.jl")
+include("models/sheets2021.jl")
+include("fitting/sheets2021.jl")
 
 # N5
 using LinearAlgebra: svd, eigen, Symmetric, Diagonal
@@ -170,6 +176,13 @@ export RumschlagParameters, ZoosporePersistenceProblem, zoospore_lifespan, persi
        infection_probability, RumschlagCount, RumschlagTadpole, rumschlag2022_path,
        load_rumschlag2022, RumschlagModel, rumschlag_parameters, rumschlag_model_selection,
        rumschlag_covariance, rumschlag_summary
+export Stinner, Logan10, SharpeSchoolfieldIkemoto, delayed_logistic, gajewski_curve,
+       GajewskiParameters, optical_density, GajewskiRegime, GajewskiGrowthProblem,
+       gajewski_prediction, regime_growth_rate, adjusted_limits, gajewski_summary
+export gajewski2021_path, load_gajewski2021, GajewskiModel, GajewskiLogisticModel,
+       gajewski_start, posterior_mode
+export SheetsReading, sheets2021_path, load_sheets2021, SheetsGrowthModel, sheets_fits,
+       sheets_tpc
 export LoadBDI, aggregation, load_distribution, mean_load, prevalence, infection_gain_rate,
        infection_loss_rate, swab, enzootic_pool, enzootic_load_distribution
 export LoadTipping, LoadTippingProblem, pool_feedback, net_growth_rate, critical_immigration,

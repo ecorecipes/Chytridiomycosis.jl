@@ -6404,3 +6404,630 @@ end
 tolerance = { lower = 0.0, upper = 1.0 }
 status = "qualitative"
 notes = "Ours 0.160 > 0.057 > 0.040."
+# ---- gajewski2021 ----
+# Gajewski et al. 2021 Ecol Evol 11:17920 (doi:10.1002/ece3.8379). Curve summaries are computed
+# from the curve at the printed posterior medians (gajewski_summary), which approximates the
+# paper's posterior medians of each summary; tolerances: 0.2 degC for temperatures, 1% for rates.
+# Targets that need the authors' data (Zenodo doi:10.5281/zenodo.4525954, not bundled: no
+# licence) are pending; their notes give the values we get with the data in the lab workspace.
+
+[[target]]
+id = "gajewski2021_briere2_Topt"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 2" }
+quantity = "Briere 2 fit: temperature at which r(T) peaks (degC), from the curve at the posterior medians"
+published = 19.92
+call = "gajewski_summary(:briere2).Topt"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_r_max"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Briere 2 fit: maximum logistic growth rate over temperature (d⁻¹), from the curve at the posterior medians"
+published = 1.07
+call = "gajewski_summary(:briere2).r_max"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_Tmin_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Briere 2 fit: adjusted Tmin, where r(T) rises above 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 7.33
+call = "gajewski_summary(:briere2).Tmin_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_Tmax_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Briere 2 fit: adjusted Tmax, where r(T) falls below 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 27.92
+call = "gajewski_summary(:briere2).Tmax_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_r_DLA"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Briere 2 fit: median r over a day of the Dry Low Air regime (d⁻¹), from the curve at the posterior medians"
+published = 1.044
+call = "gajewski_summary(:briere2).r_DLA"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_r_WHF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Briere 2 fit: median r over a day of the Wet High Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 1.06
+call = "gajewski_summary(:briere2).r_WHF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_r_WLF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Briere 2 fit: median r over a day of the Wet Low Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.666
+call = "gajewski_summary(:briere2).r_WLF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_Topt"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 2" }
+quantity = "Ratkowsky fit: temperature at which r(T) peaks (degC), from the curve at the posterior medians"
+published = 20.94
+call = "gajewski_summary(:ratkowsky).Topt"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_r_max"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ratkowsky fit: maximum logistic growth rate over temperature (d⁻¹), from the curve at the posterior medians"
+published = 1.166
+call = "gajewski_summary(:ratkowsky).r_max"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_Tmin_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ratkowsky fit: adjusted Tmin, where r(T) rises above 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 3.07
+call = "gajewski_summary(:ratkowsky).Tmin_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_Tmax_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ratkowsky fit: adjusted Tmax, where r(T) falls below 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 28.31
+call = "gajewski_summary(:ratkowsky).Tmax_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_r_DLA"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ratkowsky fit: median r over a day of the Dry Low Air regime (d⁻¹), from the curve at the posterior medians"
+published = 1.084
+call = "gajewski_summary(:ratkowsky).r_DLA"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_r_WHF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ratkowsky fit: median r over a day of the Wet High Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 1.163
+call = "gajewski_summary(:ratkowsky).r_WHF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_r_WLF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ratkowsky fit: median r over a day of the Wet Low Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.719
+call = "gajewski_summary(:ratkowsky).r_WLF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+As coded: kelvin offset 273.16 and the authors' slip in the last WLF segment (25 K, r = 0 for 3.3 h a day)."""
+
+[[target]]
+id = "gajewski2021_ikemoto_Topt"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 2" }
+quantity = "Ikemoto fit: temperature at which r(T) peaks (degC), from the curve at the posterior medians"
+published = 18.92
+call = "gajewski_summary(:ikemoto).Topt"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_r_max"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ikemoto fit: maximum logistic growth rate over temperature (d⁻¹), from the curve at the posterior medians"
+published = 1.01
+call = "gajewski_summary(:ikemoto).r_max"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_Tmin_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ikemoto fit: adjusted Tmin, where r(T) rises above 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 2.93
+call = "gajewski_summary(:ikemoto).Tmin_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_Tmax_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ikemoto fit: adjusted Tmax, where r(T) falls below 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 40.35
+call = "gajewski_summary(:ikemoto).Tmax_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_r_DLA"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ikemoto fit: median r over a day of the Dry Low Air regime (d⁻¹), from the curve at the posterior medians"
+published = 0.972
+call = "gajewski_summary(:ikemoto).r_DLA"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_r_WHF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ikemoto fit: median r over a day of the Wet High Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.935
+call = "gajewski_summary(:ikemoto).r_WHF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_r_WLF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ikemoto fit: median r over a day of the Wet Low Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.494
+call = "gajewski_summary(:ikemoto).r_WLF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+As coded: kelvin offset 273.16 and the authors' slip in the last WLF segment (25 K, r = 0 for 3.3 h a day)."""
+
+[[target]]
+id = "gajewski2021_stinner_r_max"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Stinner fit: maximum logistic growth rate over temperature (d⁻¹), from the curve at the posterior medians"
+published = 0.813
+call = "gajewski_summary(:stinner).r_max"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_stinner_Tmin_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Stinner fit: adjusted Tmin, where r(T) rises above 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 10.95
+call = "gajewski_summary(:stinner).Tmin_adj"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_stinner_Tmax_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Stinner fit: adjusted Tmax, where r(T) falls below 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 27.52
+call = "gajewski_summary(:stinner).Tmax_adj"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_stinner_r_DLA"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Stinner fit: median r over a day of the Dry Low Air regime (d⁻¹), from the curve at the posterior medians"
+published = 0.8126
+call = "gajewski_summary(:stinner).r_DLA"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_stinner_r_WHF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Stinner fit: median r over a day of the Wet High Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.81269
+call = "gajewski_summary(:stinner).r_WHF"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_stinner_r_WLF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Stinner fit: median r over a day of the Wet Low Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.72
+call = "gajewski_summary(:stinner).r_WLF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_logan10_Topt"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 2" }
+quantity = "Logan 10 fit: temperature at which r(T) peaks (degC), from the curve at the posterior medians"
+published = 19.86
+call = "gajewski_summary(:logan10).Topt"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+notes = """
+α scales the curve and does not move its optimum, so the printed α (see the next target) does not matter here."""
+
+[[target]]
+id = "gajewski2021_logan10_r_max"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Logan 10 fit: maximum logistic growth rate (d⁻¹), from the curve at the printed posterior medians"
+published = 0.852
+call = "gajewski_summary(:logan10).r_max"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 0.12406, rtol = 0.001 }
+notes = """
+Appendix S1 Table B.5 prints the median of α as 0.134 with HDI (0.885, 0.957); 0.134 is the K median of the same fit. With
+the printed 0.134 the maximum is 0.124. With α at the HDI midpoint (0.921) it is 0.853, and the posterior mode on the
+authors' data has α = 0.914 (target gajewski2021_logan10_alpha_refit). A misprint of α, not a model difference."""
+
+[[target]]
+id = "gajewski2021_logan10_Tmin_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Logan 10 fit: adjusted Tmin (degC), from the curve at the printed posterior medians"
+published = -0.03
+call = "gajewski_summary(:logan10).Tmin_adj"
+tolerance = { atol = 0.2 }
+status = "discrepant"
+regression = { value = 5.163, atol = 0.01 }
+notes = """
+Follows from the misprinted α (0.134): the curve is about 7 times too low, so it crosses 0.01 d⁻¹ at 5.2 degC. With α = 0.921 it is −0.03."""
+
+[[target]]
+id = "gajewski2021_logan10_r_DLA"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Logan 10 fit: median r over a day of the Dry Low Air regime (d⁻¹)"
+published = 0.841
+call = "gajewski_summary(:logan10).r_DLA"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 0.12253, rtol = 0.001 }
+notes = """
+Follows from the misprinted α (0.134); with α = 0.921 it is 0.84."""
+
+[[target]]
+id = "gajewski2021_briere2_dic"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Briere 2 fit: penalized deviance (DIC) of the hierarchical model"
+published = -28076.0
+call = "_gajewski_dic(:briere2)"
+tolerance = { atol = 15 }
+status = "pending"
+notes = """
+Needs the authors' data, which cannot be bundled (no licence); test/gajewski2021.jl runs it when the data are present.
+With the data, −2 log L at the posterior mode + 2k (≈ DIC with pD ≈ k) is -28076: reproduced. This also confirms
+the likelihoods of the code (lognormal for Briere 2 and Ratkowsky, truncated normal for the others), so the ΔDIC of
+Table 1 compares deviances of different likelihoods."""
+
+[[target]]
+id = "gajewski2021_ratkowsky_dic"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ratkowsky fit: penalized deviance (DIC) of the hierarchical model"
+published = -28055.0
+call = "_gajewski_dic(:ratkowsky)"
+tolerance = { atol = 15 }
+status = "pending"
+notes = """
+Needs the authors' data, which cannot be bundled (no licence); test/gajewski2021.jl runs it when the data are present.
+With the data, −2 log L at the posterior mode + 2k (≈ DIC with pD ≈ k) is -28053: reproduced. This also confirms
+the likelihoods of the code (lognormal for Briere 2 and Ratkowsky, truncated normal for the others), so the ΔDIC of
+Table 1 compares deviances of different likelihoods."""
+
+[[target]]
+id = "gajewski2021_ikemoto_dic"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ikemoto fit: penalized deviance (DIC) of the hierarchical model"
+published = -28014.0
+call = "_gajewski_dic(:ikemoto)"
+tolerance = { atol = 15 }
+status = "pending"
+notes = """
+Needs the authors' data, which cannot be bundled (no licence); test/gajewski2021.jl runs it when the data are present.
+With the data, −2 log L at the posterior mode + 2k (≈ DIC with pD ≈ k) is -28006: reproduced. This also confirms
+the likelihoods of the code (lognormal for Briere 2 and Ratkowsky, truncated normal for the others), so the ΔDIC of
+Table 1 compares deviances of different likelihoods."""
+
+[[target]]
+id = "gajewski2021_logan10_dic"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Logan 10 fit: penalized deviance (DIC) of the hierarchical model"
+published = -30369.0
+call = "_gajewski_dic(:logan10)"
+tolerance = { atol = 15 }
+status = "pending"
+notes = """
+Needs the authors' data, which cannot be bundled (no licence); test/gajewski2021.jl runs it when the data are present.
+With the data, −2 log L at the posterior mode + 2k (≈ DIC with pD ≈ k) is -30366: reproduced. This also confirms
+the likelihoods of the code (lognormal for Briere 2 and Ratkowsky, truncated normal for the others), so the ΔDIC of
+Table 1 compares deviances of different likelihoods."""
+
+[[target]]
+id = "gajewski2021_stinner_dic"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Stinner fit: penalized deviance (DIC) of the hierarchical model"
+published = -31269.0
+call = "_gajewski_dic(:stinner)"
+tolerance = { atol = 15 }
+status = "pending"
+notes = """
+Needs the authors' data, which cannot be bundled (no licence); test/gajewski2021.jl runs it when the data are present.
+With the data, −2 log L at the posterior mode + 2k (≈ DIC with pD ≈ k) is -31268: reproduced. This also confirms
+the likelihoods of the code (lognormal for Briere 2 and Ratkowsky, truncated normal for the others), so the ΔDIC of
+Table 1 compares deviances of different likelihoods."""
+
+[[target]]
+id = "gajewski2021_logan10_alpha_refit"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.5" }
+quantity = "Logan 10 fit: posterior median of α"
+published = 0.134
+call = "_gajewski_reference_mode(:logan10).estimates.α"
+tolerance = { rtol = 0.02 }
+status = "pending"
+notes = """
+Needs the authors' data (not bundled). With the data the posterior mode is α = 0.914, inside the printed HDI (0.885, 0.957):
+the printed median 0.134 is a misprint, and the target would be discrepant."""
+
+[[target]]
+id = "gajewski2021_logistic_DLA_r"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.1" }
+quantity = "logistic growth rate r of Eq. 1 fitted to the DLA regime without a TPC (d⁻¹)"
+published = 0.409
+call = "_gajewski_reference_mode(:logistic, :DLA).estimates.r"
+tolerance = { rtol = 0.05 }
+status = "pending"
+notes = """
+Needs the authors' data (not bundled). With the data, the mode of the authors' model (jags-logistic.bug) is r = 0.695;
+for DLA and WHF the printed medians (Y0 near 0.004, K near 0.2) fit far worse than the mode (log posterior lower by
+more than 100), so the target would be discrepant. We cannot tell which data or run produced Table B.1."""
+
+[[target]]
+id = "gajewski2021_logistic_WHF_r"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.1" }
+quantity = "logistic growth rate r of Eq. 1 fitted to the WHF regime without a TPC (d⁻¹)"
+published = 0.443
+call = "_gajewski_reference_mode(:logistic, :WHF).estimates.r"
+tolerance = { rtol = 0.05 }
+status = "pending"
+notes = """
+Needs the authors' data (not bundled). With the data, the mode of the authors' model (jags-logistic.bug) is r = 0.626;
+for DLA and WHF the printed medians (Y0 near 0.004, K near 0.2) fit far worse than the mode (log posterior lower by
+more than 100), so the target would be discrepant. We cannot tell which data or run produced Table B.1."""
+
+[[target]]
+id = "gajewski2021_logistic_WLF_r"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.1" }
+quantity = "logistic growth rate r of Eq. 1 fitted to the WLF regime without a TPC (d⁻¹)"
+published = 0.337
+call = "_gajewski_reference_mode(:logistic, :WLF).estimates.r"
+tolerance = { rtol = 0.05 }
+status = "pending"
+notes = """
+Needs the authors' data (not bundled). With the data, the mode of the authors' model (jags-logistic.bug) is r = 0.317;
+for DLA and WHF the printed medians (Y0 near 0.004, K near 0.2) fit far worse than the mode (log posterior lower by
+more than 100), so the target would be discrepant. We cannot tell which data or run produced Table B.1."""
+
+# ---- sheets2021 ----
+# Sheets et al. 2021 Front Vet Sci 8:687084 (doi:10.3389/fvets.2021.687084). Logistic fits to the bundled
+# viability data (data/sheets2021, CC BY 4.0); _sheets_reference_fit fits each isolate and temperature once.
+
+[[target]]
+id = "sheets2021_r_LA_21C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "LA isolate at 21 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 1.504
+call = "_sheets_reference_fit(\"LA\", 21).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_K_LA_21C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "LA isolate at 21 degC: logistic carrying capacity K (OD) of normalised MTT viability"
+published = 1.048
+call = "_sheets_reference_fit(\"LA\", 21).estimates.K"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_r_NM_25C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "NM isolate at 25 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 1.324
+call = "_sheets_reference_fit(\"NM\", 25).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_r_TN_12C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "TN isolate at 12 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.8495
+call = "_sheets_reference_fit(\"TN\", 12).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_r_VT_12C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "VT isolate at 12 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.2312
+call = "_sheets_reference_fit(\"VT\", 12).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_r_OH_17C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "OH isolate at 17 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.9106
+call = "_sheets_reference_fit(\"OH\", 17).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_r_LA_26C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "LA isolate at 26 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.482
+call = "_sheets_reference_fit(\"LA\", 26).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+notes = """
+K is not identified here (printed 107300); r is."""
+
+[[target]]
+id = "sheets2021_r_TN_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "TN isolate at 4 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.07248
+call = "_sheets_reference_fit(\"TN\", 4).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 0.18323, rtol = 0.002 }
+notes = """
+Our fit: 0.1832, K 0.0225 (printed K 3.661). The authors' own fitlogistic() (Supplementary R Markdown, set.seed(2021)), run on the deposited
+data, gives the same values as ours (lab/papers/sheets2021/oracle/logisticfits_R.csv), so Table 2 came from other data or
+another run. 22 of the 35 fits reproduce Table 2 to its 4 significant figures (test/sheets2021.jl)."""
+
+[[target]]
+id = "sheets2021_r_OH_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "OH isolate at 4 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.1305
+call = "_sheets_reference_fit(\"OH\", 4).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 0.19258, rtol = 0.002 }
+notes = """
+Our fit: 0.1926, K 0.0649 (printed 0.0996). The authors' own fitlogistic() (Supplementary R Markdown, set.seed(2021)), run on the deposited
+data, gives the same values as ours (lab/papers/sheets2021/oracle/logisticfits_R.csv), so Table 2 came from other data or
+another run. 22 of the 35 fits reproduce Table 2 to its 4 significant figures (test/sheets2021.jl)."""
+
+[[target]]
+id = "sheets2021_K_VT_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "VT isolate at 4 degC: logistic carrying capacity K (OD) of normalised MTT viability"
+published = 2.022
+call = "_sheets_reference_fit(\"VT\", 4).estimates.K"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 0.5394, rtol = 0.005 }
+notes = """
+Our fit: 0.539 (R: 0.541), r 0.1745 (printed r 0.1644). The authors' own fitlogistic() (Supplementary R Markdown, set.seed(2021)), run on the deposited
+data, gives the same values as ours (lab/papers/sheets2021/oracle/logisticfits_R.csv), so Table 2 came from other data or
+another run. 22 of the 35 fits reproduce Table 2 to its 4 significant figures (test/sheets2021.jl)."""
+
+[[target]]
+id = "sheets2021_r_TN_26C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "TN isolate at 26 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 1.314
+call = "_sheets_reference_fit(\"TN\", 26).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 1.2372, rtol = 0.002 }
+notes = """
+Our fit: 1.237, K 0.1559 (printed 0.1533). The authors' own fitlogistic() (Supplementary R Markdown, set.seed(2021)), run on the deposited
+data, gives the same values as ours (lab/papers/sheets2021/oracle/logisticfits_R.csv), so Table 2 came from other data or
+another run. 22 of the 35 fits reproduce Table 2 to its 4 significant figures (test/sheets2021.jl)."""
+
+[[target]]
+id = "sheets2021_r_OH_25C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "OH isolate at 25 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 1.498
+call = "_sheets_reference_fit(\"OH\", 25).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 1.5215, rtol = 0.002 }
+notes = """
+Our fit: 1.521, K 0.3903 (printed 0.3906). The authors' own fitlogistic() (Supplementary R Markdown, set.seed(2021)), run on the deposited
+data, gives the same values as ours (lab/papers/sheets2021/oracle/logisticfits_R.csv), so Table 2 came from other data or
+another run. 22 of the 35 fits reproduce Table 2 to its 4 significant figures (test/sheets2021.jl)."""
+
+[[target]]
+id = "sheets2021_Topt_viability_LA"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Results, 'Differential Responses to Temperature Among the Bd Isolates'; Table 2" }
+quantity = "LA isolate: temperature of the highest mean maximum viability in Table 2 (degC)"
+published = 21.0
+call = "let (Ts, ms) = thermal_data(:sheets2021, :MTT_mean; set_prefix = \"LA_\"); Ts[argmax(ms)] end"
+status = "discrepant"
+regression = { value = 17.0 }
+notes = """
+The Results say all isolates had maximum viability at 21 degC, and so do the other four isolates' means in Table 2, but
+Table 2 gives LA 1.19 ± 0.050 at 17 degC against 1.12 ± 0.104 at 21 degC. An inconsistency within the paper."""
