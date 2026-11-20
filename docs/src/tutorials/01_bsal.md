@@ -24,7 +24,7 @@
 >
 > | Model | Source | Category | API page |
 > |----|----|----|----|
-> | S–L–I model, `SchmidtSLIProblem` | Schmidt et al. 2017 | published | `api/published.md` |
+> | S–L–I model, `SchmidtSLIProblem` | Schmidt et al. 2017 | published | `api/schmidt2017.md` |
 > | Transmission functions, `TransmissionSLIProblem`, `TomprosModel` | Malagon et al. 2020; Tompros et al. 2022 | published | `api/bsal_transmission.md` |
 > | Seasonal model and Floquet R₀, `SeasonalBsalProblem` | Bozzuto & Canessa 2019 | published | `api/bozzuto2019.md` |
 > | Stages and temperature, `BsalStageTemperatureProblem` | Chowdhury et al. 2025 | published | `api/chowdhury2025.md` |

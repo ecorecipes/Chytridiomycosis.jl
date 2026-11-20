@@ -7,7 +7,7 @@ CurrentModule = Chytridiomycosis
 This is a reference implementation of the model of Drawert, Griesemer, Petzold and Briggs
 (2017, *J R Soc Interface* 14:20170480,
 [10.1098/rsif.2017.0480](https://doi.org/10.1098/rsif.2017.0480)). It takes the
-[Briggs et al. (2010)](published.md) load model and makes it individual-based and
+[Briggs et al. (2010)](briggs2010.md) load model and makes it individual-based and
 demographically stochastic: each frog carries a whole number of sporangia, and the pond holds a
 whole number of zoospores. The paper asks which one-time intervention best helps a frog
 population survive the first Bd outbreak: treating frogs with antifungals, culling frogs, or

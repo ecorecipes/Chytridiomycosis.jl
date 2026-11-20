@@ -9,7 +9,7 @@ engine: julia
 
 | Model | Source | Category | API page |
 |---|---|---|---|
-| Mean load and zoospore pool, `BriggsLoadProblem` | Briggs et al. 2010 | published | `api/published.md` |
+| Mean load and zoospore pool, `BriggsLoadProblem` | Briggs et al. 2010 | published | `api/briggs2010.md` |
 | Load distribution, `LoucaDOIProblem` | Louca et al. 2014 | published | `api/louca2014.md` |
 | Integral projection model, `BdIPMProblem` | Wilber et al. 2016 | published | `api/wilber2016.md` |
 | Hybrid IPM with a pool and tadpoles, `HybridIPMProblem` | Wilber et al. 2017 | published | `api/wilber2017.md` |

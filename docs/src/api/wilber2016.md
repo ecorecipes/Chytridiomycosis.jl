@@ -6,7 +6,7 @@ CurrentModule = Chytridiomycosis
 
 An integral projection model (IPM) follows the distribution of a continuous trait through
 discrete time. In a host–parasite IPM the trait is pathogen load, so the model sits between an
-individual-based load model such as [Briggs et al. (2010)](published.md) or
+individual-based load model such as [Briggs et al. (2010)](briggs2010.md) or
 [Drawert et al. (2017)](drawert2017.md), which follows every host, and a compartmental model,
 which follows only how many hosts are infected. This page has two parts: generic IPM
 machinery, and the reference implementation of Wilber, Langwig, Kilpatrick, McCallum and

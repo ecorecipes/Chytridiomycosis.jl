@@ -9,7 +9,7 @@ engine: julia
 
 | Model | Source | Category | API page |
 |---|---|---|---|
-| S–L–I model and its Hopf threshold, `SchmidtSLIProblem`, `hopf_threshold` | Schmidt et al. 2017 | published | `api/published.md` |
+| S–L–I model and its Hopf threshold, `SchmidtSLIProblem`, `hopf_threshold` | Schmidt et al. 2017 | published | `api/schmidt2017.md` |
 | Load tipping and its fold, `LoadTipping`, `critical_immigration` | Briggs et al. 2010, modified | modified | `api/load.md` |
 | Resilience measures | DynamicalResilience.jl | infrastructure | `api/resilience.md` |
 
