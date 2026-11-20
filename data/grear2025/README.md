@@ -3,8 +3,8 @@
 - **Paper**: Grear DA, Adams MJ, Backlin AR, et al. (2025). Pan-amphibia distribution of the
   fungal parasite *Batrachochytrium dendrobatidis* varies with species and temperature.
   *Ecological Monographs* 95:e70001. https://doi.org/10.1002/ecm.70001 (open access,
-  CC BY-NC 4.0). The full text could not be fetched by an automated client (the publisher's
-  bot check); only the abstract (USGS Publications Warehouse, record 70263881) was read.
+  CC BY-NC 4.0). Read from the published PDF (lab/papers/grear2025/grear2025.pdf), which the
+  user downloaded on 2026-11-20 after automated clients were refused.
 - **Source of this file**: the authors' USGS software release, Grear DA (2025)
   "Pan-Amphibia Bd distribution: software release", https://doi.org/10.5066/P1MXUJZM
   (repository https://code.usgs.gov/nwhc-software/pan-amphibia-bd-distribution, commit

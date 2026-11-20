@@ -7135,7 +7135,11 @@ call = "brannelly2018_survival().uninfected"
 tolerance = { atol = 0.005 }
 status = "reproduced"
 regression = { value = 0.9280, atol = 5e-4 }
-notes = "Refit 0.9280 with Akaike weights renormalised over the three models. The tolerance (±0.005, two decimals) was set after the refit, matching the precision of the deviance agreement; the printed CIs are 0.83–1.00."
+notes = """
+Refit 0.9280 with Akaike weights renormalised over the three models. Not reproduced at the
+printed precision (four decimals): the inputs differ slightly, as the deviances show. The
+tolerance ±0.005 was chosen AFTER seeing the refit (post hoc); for scale, the printed 95% CI
+(0.826–1.000) implies an SE of about 0.05, so the refit is within 0.07 SE of the paper."""
 
 [[target]]
 id = "brannelly2018_survival_infected"
@@ -7147,7 +7151,10 @@ call = "brannelly2018_survival().infected"
 tolerance = { atol = 0.005 }
 status = "reproduced"
 regression = { value = 0.9234, atol = 5e-4 }
-notes = "Refit 0.9234."
+notes = """
+Refit 0.9234. As for brannelly2018_survival_uninfected, the ±0.005 tolerance was chosen after
+seeing the refit (post hoc); the printed 95% CI (0.645–1.000) implies an SE near 0.1, so the
+difference (0.0011) is about 0.01 SE."""
 
 [[target]]
 id = "brannelly2018_detection_infected"
@@ -7177,15 +7184,17 @@ interval). The printed MARK deviances (negative, −1028.25) are on MARK's POPAN
 are not comparable with our −2 log L."""
 
 # ---- grear2025 ----
-# Grear et al. 2025 Ecol Monogr 95:e70001 (doi:10.1002/ecm.70001). The full text could not be
-# fetched (publisher bot check); only the abstract (USGS Publications Warehouse 70263881) and
-# the authors' code release (doi:10.5066/P1MXUJZM, CC0) were read. Printed coefficients are
-# therefore pending. Data bundled in data/grear2025 (public domain).
+# Grear et al. 2025 Ecol Monogr 95:e70001 (doi:10.1002/ecm.70001), read from the published
+# full text (lab/papers/grear2025/grear2025.pdf, 2026-11-20) and the authors' code release
+# (doi:10.5066/P1MXUJZM, CC0). Data bundled in data/grear2025 (public domain). Fixed effects
+# are printed only as 95% CIs (compendium grear2025). The posterior mode used below does not
+# converge (separation; src/fitting/grear2025.jl), so only prevalence quantities, which are
+# stable, are compared numerically; the rest needs scripts/grear2025_nuts.jl.
 
 [[target]]
 id = "grear2025_swabs"
 model = "obs-grear2025-hurdle-temperature"
-source = { ref = "grear2025", location = "Abstract ('swabs from 11,183 amphibians')" }
+source = { ref = "grear2025", location = "Abstract; Results para. 1 ('We sampled 11,183 individuals')" }
 quantity = "swabs with a collection date in the survey data"
 published = 11183
 call = "grear2025_summary().swabs"
@@ -7196,7 +7205,7 @@ notes = "Also the row count the authors' scripts print after their date filter."
 [[target]]
 id = "grear2025_species"
 model = "obs-grear2025-hurdle-temperature"
-source = { ref = "grear2025", location = "Abstract ('54 species')" }
+source = { ref = "grear2025", location = "Abstract; Results para. 1 ('We sampled 54 species')" }
 quantity = "distinct species names among dated swabs"
 published = 54
 call = "grear2025_summary().species"
@@ -7207,59 +7216,159 @@ notes = "53 resolved species plus the unresolved 'Taricha sp.' (as the authors' 
 [[target]]
 id = "grear2025_sites"
 model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Results para. 1 ('11,183 individuals from 593 sites in 35 states'; '521/593 sampled once')" }
+quantity = "distinct sites (samples within 0.2 km collapsed) among dated swabs"
+published = 593
+call = "grear2025_summary().sites"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = """
+The 593 non-missing siteIDs of the data file, the authors' 200 m grouping (their
+01_siteAggregateAddPrismClimateData.R prints 593). The earlier value 594 counted the 11
+records without a site as one more site. For the abstract's 609 see grear2025_sites_abstract."""
+
+[[target]]
+id = "grear2025_sites_abstract"
+model = "obs-grear2025-hurdle-temperature"
 source = { ref = "grear2025", location = "Abstract ('at 609 sites')" }
-quantity = "distinct sites among dated swabs"
+quantity = "sites sampled, as stated in the abstract"
 published = 609
 call = "grear2025_summary().sites"
 tolerance = { digits = 0 }
 status = "discrepant"
-regression = { value = 594, atol = 0 }
+regression = { value = 593, atol = 0 }
 notes = """
-The data file has 594 siteIDs (the authors' grouping of nearby locations used as the model's
-site random effect), 603 raw SiteName values and 693 site visits. How 609 was counted is in
-the unread full text."""
+The paper is internally inconsistent: the Results give 593 sites (reproduced). 609 is not in
+the authors' code or data: 602 original site names (code comment; 603 distinct SiteName
+values here), 608 distinct coordinate pairs, 478 sites at the 4.4 km grouping, 692–694 visits."""
+
+[[target]]
+id = "grear2025_model_swabs"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Results para. 1 ('11,175 individual samples after excluding eight observations with missing site or sampling date')" }
+quantity = "swabs in the modelling analysis"
+published = 11175
+call = "grear2025_summary().model_swabs"
+tolerance = { digits = 0 }
+status = "discrepant"
+regression = { value = 11172, atol = 0 }
+notes = """
+The data file has 11,189 records: 6 undated and, of the rest, 11 without site or coordinates,
+leaving 11,172, the count the authors' code itself reports (09_Combine_ImputeFits.R: 'n = 11172')."""
+
+[[target]]
+id = "grear2025_genus_only"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Methods, 'Imputation for missing data' ('42 observations of genus-level taxonomy')" }
+quantity = "modelled swabs identified only as Taricha sp."
+published = 42
+call = "grear2025_summary().genus_only"
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "grear2025_missing_sex"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Methods, 'Imputation for missing data' ('sex (159 missing observations)')" }
+quantity = "modelled swabs with sex missing"
+published = 159
+call = "grear2025_summary().missing_sex"
+tolerance = { digits = 0 }
+status = "discrepant"
+regression = { value = 191, atol = 0 }
+notes = """
+191 swabs with sex NA among the 11,172 (86 also missing life stage). Sex and life stage both
+exceed the printed counts by exactly 32 (see grear2025_missing_age); the source of the 32 is
+not identified."""
+
+[[target]]
+id = "grear2025_missing_age"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Methods, 'Imputation for missing data' ('life stage (91 missing observations)')" }
+quantity = "modelled swabs with life stage missing"
+published = 91
+call = "grear2025_summary().missing_age"
+tolerance = { digits = 0 }
+status = "discrepant"
+regression = { value = 123, atol = 0 }
+notes = "123 swabs with Age NA among the 11,172; 32 more than printed, as for sex."
 
 [[target]]
 id = "grear2025_temperature_peak"
 model = "obs-grear2025-hurdle-temperature"
-source = { ref = "grear2025", location = "Abstract ('peak infection at intermediate temperatures and lower infection at low and high temperatures')" }
-quantity = "quadratic effects of 30-day mean maximum temperature are concave for both prevalence and intensity, with the peak inside the sampled temperature range"
+source = { ref = "grear2025", location = "Abstract; Results (α2temp2 95% CI [−0.02, −0.01], β2temp2 [−0.011, −0.003])" }
+quantity = "quadratic temperature effects are concave for both prevalence and intensity, with the peak inside the sampled temperature range"
 published = true
 call = "(o = grear2025_temperature_optimum(_grear2025_reference_fit()); r = extrema(_grear2025_reference_fit().problem.data.tmax30); o.curvature_prevalence < 0 && o.curvature_intensity < 0 && r[1] < o.prevalence < r[2] && r[1] < o.intensity < r[2])"
 status = "qualitative"
 notes = """
-From an approximate posterior mode of a reduced model (species random intercepts only,
-independent species, swabs with missing Age/Sex dropped), not the authors' full posterior:
-peaks at 14.9 °C (prevalence) and 10.9 °C (intensity), within the sampled −0.4–36.8 °C. Adding
-region effects moved them little in an exploratory run (14.7 °C, 11.6 °C)."""
+From the reference posterior mode (printed structure, one imputed data set, independent
+species, 1000 L-BFGS iterations; not converged, see the block comment). Holds after 500, 1000
+and 3000 iterations."""
+
+[[target]]
+id = "grear2025_temperature_optimum_prevalence"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Results ('a maximum at approximately 15 °C for prevalence')" }
+quantity = "30-day mean maximum temperature at which prevalence peaks (°C)"
+published = 15.0
+call = "grear2025_temperature_optimum(_grear2025_reference_fit()).prevalence"
+tolerance = { atol = 1.0 }
+status = "reproduced"
+regression = { value = 14.555, atol = 0.05 }
+notes = """
+Reference mode: 14.56 °C (14.61, 14.56 and 14.64 °C after 500, 1000 and 3000 iterations; 13.4 °C
+with incomplete swabs dropped instead of imputed). The tolerance ±1 °C reflects the printed
+'approximately 15' (an integer); it was set before computing this value."""
+
+[[target]]
+id = "grear2025_temperature_optimum_intensity"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Results ('13 °C for intensity')" }
+quantity = "30-day mean maximum temperature at which infection intensity peaks (°C)"
+published = 13.0
+status = "pending"
+notes = """
+The intensity part of the posterior mode does not settle (11.9, 14.0, 15.9 °C after 500, 1000,
+3000 iterations) because the mode does not converge. Needs the posterior mean from
+scripts/grear2025_nuts.jl."""
 
 [[target]]
 id = "grear2025_caudata_prevalence"
 model = "obs-grear2025-hurdle-temperature"
-source = { ref = "grear2025", location = "Abstract ('Caudate hosts tended to have higher prevalence than Anuran hosts')" }
+source = { ref = "grear2025", location = "Abstract ('Caudate hosts tended to have higher prevalence than Anuran hosts'); Results, Fig. 10" }
 quantity = "raw Bd prevalence of caudate swabs exceeds that of anuran swabs"
 published = true
 call = "grear2025_summary().prevalence_caudata > grear2025_summary().prevalence_anura"
 status = "qualitative"
-notes = "Raw fractions positive, 0.433 (caudates, 10,453 swabs) and 0.184 (anurans, 719); the paper's statement is model-based."
+notes = "Raw fractions positive, 0.433 (caudates, 10,453 swabs) and 0.184 (anurans, 719); the paper's statement is from posterior predictions at the temperature optimum."
 
 [[target]]
 id = "grear2025_coefficients"
 model = "obs-grear2025-hurdle-temperature"
-source = { ref = "grear2025", location = "Results, Figs 6–7 (fixed-effect posteriors α, β)" }
-quantity = "posterior summaries of the fixed effects (Age, Sex, temperature, temperature², precipitation) for prevalence and intensity"
-published = true
+source = { ref = "grear2025", location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7" }
+quantity = "the 14 fixed effects (α1–α5, β1–β5 with two levels each for sex and age) lie in their printed 95% credible intervals"
+published = 14
 status = "pending"
 notes = """
-Full text not read. Needs the paper's printed estimates and a full NUTS fit of
-Grear2025Problem with the phylogeny (scripts/grear2025_nuts.jl); the authors' fit also
-combined 30 multiply-imputed data sets."""
+Printed 95% CIs (compendium grear2025, alpha*/beta*; no point estimates printed): α5 larval
+[−2.62, −1.62], α5 juvenile [−0.70, 0.19], α4 male [−0.28, −0.12], α4 undetermined [−1.01,
+−0.38], α1 temp [0.35, 0.61], α2 temp² [−0.02, −0.01], α3 precip [0.007, 0.015]; β5 larval
+[−1.86, −0.21], β5 juvenile [−0.01, 1.04], β4 male [−0.35, −0.08], β4 undetermined [−0.72,
+0.04], β1 temp [0.04, 0.30], β2 temp² [−0.011, −0.003], β3 precip [0.002, 0.010]. A posterior
+mode is not a fair comparator: it does not converge (separation), and after 3000 iterations
+9 of 14 fall inside (grear2025_coefficient_check), with the intensity temperature terms
+drifting. Run scripts/grear2025_nuts.jl and compare posterior medians (the paper pooled 30
+imputed data sets and 30 phylogenies)."""
 
 [[target]]
 id = "grear2025_model_selection"
 model = "obs-grear2025-hurdle-temperature"
-source = { ref = "grear2025", location = "Results, temperature/precipitation model selection (LOO)" }
-quantity = "the 30-day maximum temperature with 10-day precipitation is the best temperature/precipitation metric by LOO"
+source = { ref = "grear2025", location = "Table 2; Results 'Optimal temperature function and lag selection'" }
+quantity = "PSIS-LOO: 80-day max temperature with 10-day precipitation has the highest elpd (−48,722.24); the selected 30-day max model is within 2 SE (Δelpd 1.95, SE 4.48; elpd −48,724.19)"
 published = true
 status = "pending"
-notes = "The selection is visible in the authors' code (06 onward uses m30max and t10precip) but its printed table was not read; the LOO comparison of ~60 brms fits is not implemented."
+notes = """
+Values in the compendium (elpd_loo_max80_p10, elpd_loo_max30_p10). Reproducing them needs
+NUTS fits of the 89 candidate models (site and species random effects) and PSIS-LOO; neither
+the LOO computation nor the candidate set is implemented here."""

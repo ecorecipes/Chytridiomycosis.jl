@@ -380,5 +380,6 @@ export HurdleRegressionProblem, hurdle_coefficients, posterior_mode, phylogeneti
 export grear2025_path, Grear2025Data, load_grear2025, grear2025_summary,
        grear2025_phylogeny_path, grear2025_phylogeny, Grear2025Problem, grear2025_fit,
        grear2025_temperature_optimum
+export grear2025_impute, grear2025_printed_intervals, grear2025_coefficient_check
 
 end # module Chytridiomycosis

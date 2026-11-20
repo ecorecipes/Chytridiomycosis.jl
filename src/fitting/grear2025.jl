@@ -48,14 +48,63 @@ end
 
 const _GREAR_CACHE = Dict{Any,Any}()
 
-# The fit used by the validation targets and tests: species random intercepts only
-# (independent; the phylogeny is not bundled), 1000 L-BFGS iterations. This is an
-# approximate mode: species with no positive swab push their hurdle effects and the species
-# standard deviations outwards (no finite mode is reached quickly), but the fixed temperature
-# effects settle within a few hundred iterations (optimum 14.9 °C for prevalence and 10.9 °C
-# for intensity after 1000 and after 5000 iterations). Cached per session.
+# The fit used by the validation targets and tests: the printed structure (species, site and
+# region random intercepts; independent species, as the phylogeny is not bundled), one
+# imputed data set, 1000 L-BFGS iterations. This is NOT a converged mode: sites and species
+# whose swabs are all negative (or all positive) separate, and their random effects and the
+# standard deviations keep growing (site SD of the hurdle part > 70 on the logit scale after
+# 3000 iterations). The prevalence fixed effects are stable from 500 to 3000 iterations
+# (temperature optimum 14.6 °C throughout); the intensity ones are not (optimum 11.9, 14.0 and
+# 15.9 °C after 500, 1000 and 3000 iterations), so only prevalence is compared with numbers.
+# Cached per session.
 function _grear2025_reference_fit()
     get!(_GREAR_CACHE, :reference) do
-        grear2025_fit(Grear2025Problem(; random = (:species,)); iters = 1000)
+        grear2025_fit(Grear2025Problem(); iters = 1000)
     end
+end
+
+const _GREAR2025_PRINTED = Dict("AgeJuvenile" => "5_juvenile", "AgeLarval" => "5_larval",
+                                "SexMale" => "4_male", "SexUnknown" => "4_undetermined",
+                                "m30max" => "1_temp", "m30max^2" => "2_temp2",
+                                "t10precip" => "3_precip")
+
+"""
+    grear2025_printed_intervals() -> Dict{Symbol,Tuple{Float64,Float64}}
+
+The 95% credible intervals of the fixed effects printed by Grear et al. (2025, Results and
+Figs 6–7), read from the compendium (`data/compendium/grear2025.toml`): keys `:alpha1_temp`,
+…, `:beta5_larval` (α prevalence, β log intensity; 1 temperature, 2 temperature², 3
+precipitation, 4 sex, 5 life stage). No point estimates are printed.
+"""
+function grear2025_printed_intervals()
+    t = TOML.parsefile(joinpath(COMPENDIUM_DIR, "grear2025.toml"))
+    out = Dict{Symbol,Tuple{Float64,Float64}}()
+    for r in t["parameter"]
+        startswith(r["symbol"], "alpha") || startswith(r["symbol"], "beta") || continue
+        u = r["uncertainty"]
+        out[Symbol(r["symbol"])] = (Float64(u["lo"]), Float64(u["hi"]))
+    end
+    return out
+end
+
+"""
+    grear2025_coefficient_check(fit) -> Vector{NamedTuple}
+
+Compare the fixed effects of a [`grear2025_fit`](@ref) with the printed 95% intervals
+([`grear2025_printed_intervals`](@ref)): one row per coefficient with `symbol`, `value`
+(ours, prevalence coefficients on the logit-π scale, intensity on the log scale), `lo`, `hi`
+and `inside`.
+"""
+function grear2025_coefficient_check(fit::NamedTuple)
+    c = fit.coefficients
+    ci = grear2025_printed_intervals()
+    rows = NamedTuple[]
+    for (part, v) in (("alpha", c.b_prevalence), ("beta", c.b))
+        for (j, nm) in enumerate(c.covariates)
+            s = Symbol(part, _GREAR2025_PRINTED[nm])
+            lo, hi = ci[s]
+            push!(rows, (symbol = s, value = v[j], lo = lo, hi = hi, inside = lo <= v[j] <= hi))
+        end
+    end
+    return rows
 end
