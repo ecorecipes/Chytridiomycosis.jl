@@ -1,0 +1,387 @@
+# Turner A, Heard G, Mathwin R, Bradshaw CJA, Hall A, Wassens S (2025) Cool-season
+# environmental water delivery increases extinction risk for chytrid-infected amphibians.
+# Conserv Sci Pract 7(5):e70022. https://doi.org/10.1111/csp2.70022
+# Code and data: Zenodo doi:10.5281/zenodo.10921748 (TurnerBdModel.zip, CC BY 4.0),
+# retrieved 2026-11-19 into lab/papers/turner2025/zenodo/.
+#
+# VERSION CHECKED: the published version (lab/papers/turner2025/paper.pdf), read 2026-11-20.
+# Records with verified = true were checked against its text (Methods 2.2) and their
+# `location` cites it. The rest (carrying capacities, density-dependence curves, tadpole
+# survival distribution, sex ratio) are not printed in the paper and come from the authors'
+# R code, customFunctions/PVA_functionsV2.R (function pop.func); they stay unverified.
+#
+# Species: Litoria raniformis (southern bell frog), a semi-permanent wetland ("NapNap") in
+# the regulated floodplain of south-western NSW. Female-only, age-classified (0-1, 1-2, ...,
+# 5+ yr; row 1 holds EGGS), annual time step, 52 years. Bd enters through the annual adult
+# survival and the summer survival of metamorphs, which the authors precomputed per watering
+# month from Bd load-survival relationships (the arrays referenceData/*WateringArray_*.csv);
+# the code that generated those arrays is NOT in the archive. The year-by-year means and SDs
+# that the coded model actually uses are bundled in data/turner2025/survival_series.csv.
+#
+# Density dependence: the authors fit nls curves to hand-set anchor points in the code. The
+# fitted coefficients below (provenance D) were obtained by running exactly those nls calls
+# in R 4.x (port algorithm, same start values) on 2026-11-19; the anchor points are in the
+# notes.
+
+source = { ref = "turner2025", doi = "10.1111/csp2.70022", review_ref = 41 }
+
+[[parameter]]
+symbol = "years"
+quantity = "projection horizon (2020 to 2072)"
+value = 52
+units = "yr"
+provenance = "A"
+role = "structural"
+location = "Methods 2.2 and 2.2.4 ('the 52-year projection interval')"
+verified = true
+notes = "Checked against the published paper (2026-11-20); same as pop.func."
+
+[[parameter]]
+symbol = "longevity"
+quantity = "oldest age class (ages 0..5; the 5+ class does not survive)"
+value = 5
+units = "yr"
+provenance = "A"
+role = "structural"
+location = "Methods 2.2.2 ('a maximum age class of 5-6 years and forced senescence during the fifth year')"
+verified = true
+notes = "Checked against the published paper (2026-11-20); in pop.func the 5+ class does not survive."
+
+[[parameter]]
+symbol = "sex_ratio"
+quantity = "female fraction of eggs"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func"
+verified = false
+notes = "From the authors' code."
+
+[[parameter]]
+symbol = "fecundity_mean"
+quantity = "mean clutch size (eggs per breeding female per year), ages 1-5"
+value = 3245
+units = "eggs yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Litoria raniformis", stage = "adult female" }
+location = "PVA_functionsV2.R, pop.func main loop: rnorm(stages, 3245, 897)"
+verified = false
+notes = "Value used in pop.func (rnorm(stages, 3245, 897)). The paper (Methods 2.2.2) prints 3244 (mean(clutch.size.lr) = 3244.857 truncated); see set as_printed."
+
+[[parameter]]
+symbol = "fecundity_sd"
+quantity = "SD of clutch size"
+value = 897
+units = "eggs yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Litoria raniformis", stage = "adult female" }
+location = "Methods 2.2.2 ('Normal distribution (x = 3244; sigma = 897)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20)."
+
+[[parameter]]
+symbol = "clutch_size_mean"
+quantity = "mean of the seven L. raniformis clutch sizes (sets the egg ceiling)"
+value = 3244.857142857143
+units = "eggs"
+provenance = "D"
+role = "structural"
+system = { host = "Litoria raniformis" }
+location = "PVA_functionsV2.R, pop.func: mean(clutch.size.lr)"
+verified = false
+notes = "mean(c(1885, 3893, 2448, 3090, 3191, 3644, 4563))."
+
+[[parameter]]
+symbol = "hatch_mean"
+quantity = "mean probability that an egg is fertilised and hatches"
+value = 0.92575
+units = "1"
+provenance = "M"
+role = "estimated"
+system = { host = "Litoria aurea", stage = "egg" }
+location = "Methods 2.2.2 ('probability of hatch in the closely related Litoria aurea (0.9258, sigma = 0.0645) (Christy, 2000)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20): it prints 0.9258, the code uses 0.92575 (consistent with rounding). Drawn each year from Normal(mean, sd), capped at 1."
+
+[[parameter]]
+symbol = "hatch_sd"
+quantity = "SD of the hatching probability"
+value = 0.0644825
+units = "1"
+provenance = "M"
+role = "estimated"
+system = { host = "Litoria aurea", stage = "egg" }
+location = "Methods 2.2.2 (sigma = 0.0645)"
+verified = true
+notes = "Checked against the published paper (2026-11-20): it prints 0.0645, the code 0.0644825."
+
+[[parameter]]
+symbol = "tadpole_alpha"
+quantity = "first shape of the beta distribution of survival from hatching to metamorphosis"
+value = 3.6447383835783
+units = "1"
+provenance = "D"
+role = "structural"
+system = { host = "Crinia signifera", stage = "tadpole" }
+location = "PVA_functionsV2.R, pop.func: estBetaParams(tadpole.mn, tadpole.sd/10)"
+verified = false
+notes = "Bull's C. signifera survival to metamorphosis (0.15-0.26 and 0.07-0.56): mean 0.26, sd 0.128111; the code passes sd/10 as the VARIANCE to the method-of-moments estimator (as coded)."
+
+[[parameter]]
+symbol = "tadpole_beta"
+quantity = "second shape of the beta distribution of survival from hatching to metamorphosis"
+value = 10.3734861686459
+units = "1"
+provenance = "D"
+role = "structural"
+system = { host = "Crinia signifera", stage = "tadpole" }
+location = "PVA_functionsV2.R, pop.func: estBetaParams(tadpole.mn, tadpole.sd/10)"
+verified = false
+notes = "See tadpole_alpha."
+
+[[parameter]]
+symbol = "winter_daily_survival"
+quantity = "daily survival of first-year frogs over winter"
+value = 0.996
+units = "d^-1"
+provenance = "A"
+role = "structural"
+location = "Methods 2.2.1 (base daily survival 0.996, SD 0.001, from skeletochronology)"
+verified = true
+notes = "Checked against the published paper (2026-11-20). The paper uses it (with SD 0.001) for post-metamorphic frogs when building the survival arrays; pop.func uses the fixed value for first-year winter survival."
+
+[[parameter]]
+symbol = "winter_duration"
+quantity = "length of winter (May-July inclusive)"
+value = 92
+units = "d"
+provenance = "A"
+role = "structural"
+location = "Methods 2.2.1 ('winter survival probability (0.692; ... the number of days in the winter inactive period of May-July)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20): 0.996^92 = 0.692."
+
+[[parameter]]
+symbol = "spawn_capacity"
+quantity = "number of spawning masses the site holds (egg ceiling = spawn_capacity x clutch_size_mean x sex_ratio)"
+value = 129
+units = "egg masses"
+provenance = "A"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func (spawnK)"
+verified = false
+notes = "From the authors' code."
+
+[[parameter]]
+symbol = "tadpole_capacity"
+quantity = "reference density for density dependence of first-year survival (relative to eggs)"
+value = 1417
+units = "eggs"
+provenance = "A"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func (tadpoleK)"
+verified = false
+notes = "The code divides the number of EGGS (row 1) by this value, so the ratio is almost always at its cap of 1.4."
+
+[[parameter]]
+symbol = "juvenile_capacity"
+quantity = "reference density of 1-2 yr females for density dependence"
+value = 500
+units = "females"
+provenance = "A"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func (juvenileK)"
+verified = false
+notes = "From the authors' code."
+
+[[parameter]]
+symbol = "adult_capacity"
+quantity = "reference density of all post-metamorphic females (ages 1-5) for density dependence of adult survival"
+value = 500
+units = "females"
+provenance = "A"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func (adultK)"
+verified = false
+notes = "From the authors' code."
+
+[[parameter]]
+symbol = "tadpole_ratio_cap"
+quantity = "cap on eggs/tadpole_capacity"
+value = 1.4
+units = "1"
+provenance = "A"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func"
+verified = false
+notes = "From the authors' code."
+
+[[parameter]]
+symbol = "juvenile_ratio_cap"
+quantity = "cap on the juvenile and adult density ratios"
+value = 0.65
+units = "1"
+provenance = "A"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func"
+verified = false
+notes = "Used for both the juvenile and the adult ratio."
+
+[[parameter]]
+symbol = "egg_linear_limit"
+quantity = "egg ratio up to which the integrated egg multiplier is used"
+value = 0.99
+units = "1"
+provenance = "A"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func (K.rel.egg <= 0.99)"
+verified = false
+notes = "Above it, eggs up to the ceiling get the mean multiplier over [0, 1.02] and the excess gets the multiplier at 1.02."
+
+[[parameter]]
+symbol = "egg_overshoot_point"
+quantity = "upper end of the integration of the egg multiplier"
+value = 1.02
+units = "1"
+provenance = "A"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func (integrate(eggfunc, 0, 1.02))"
+verified = false
+notes = "From the authors' code."
+
+[[parameter]]
+symbol = "egg_a"
+quantity = "egg multiplier a/(exp((b - x)/c) + 1): asymptote a"
+value = 0.999149907065389
+units = "1"
+provenance = "D"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func: nls fit.expd.egg"
+verified = false
+notes = "nls fit to x = (1, 0.98, 0.90, 0.7, 0.3, 0.01), y = (0.05, 0.2, 0.8, 0.94, 1.03, 1.03)."
+
+[[parameter]]
+symbol = "egg_b"
+quantity = "egg multiplier: midpoint b"
+value = 0.93800676486841
+units = "1"
+provenance = "D"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func: nls fit.expd.egg"
+verified = false
+notes = "See egg_a."
+
+[[parameter]]
+symbol = "egg_c"
+quantity = "egg multiplier: scale c (negative: decreasing)"
+value = -0.0267289292366642
+units = "1"
+provenance = "D"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func: nls fit.expd.egg"
+verified = false
+notes = "See egg_a."
+
+[[parameter]]
+symbol = "tadpole_a"
+quantity = "first-year survival multiplier (a + b x)^(-1/c) (Bleasdale): a"
+value = 0.822714265879432
+units = "1"
+provenance = "D"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func: nls fit.expd.tad"
+verified = false
+notes = "nls fit to x = (1, 0.83, 0.45, 0.3), y = (0.10, 0.19, 0.58, 1.0) ('Benin et al 2018, Brockelman 1969')."
+
+[[parameter]]
+symbol = "tadpole_b"
+quantity = "first-year survival multiplier: b"
+value = 0.591447099568743
+units = "1"
+provenance = "D"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func: nls fit.expd.tad"
+verified = false
+notes = "See tadpole_a."
+
+[[parameter]]
+symbol = "tadpole_c"
+quantity = "first-year survival multiplier: c"
+value = 0.157882082954165
+units = "1"
+provenance = "D"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func: nls fit.expd.tad"
+verified = false
+notes = "See tadpole_a."
+
+[[parameter]]
+symbol = "juvenile_a"
+quantity = "juvenile and adult survival multiplier a/(exp((b - x)/c) + 1): a"
+value = 1.21314148063621
+units = "1"
+provenance = "D"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func: nls fit.expd.juv (fit.expd.adult is the same fit)"
+verified = false
+notes = "nls fit to x = (1, 0.89, 0.75, 0.6, 0.3, 0.1), y = (0.10, 0.19, 0.3, 0.5, 1, 1.1) ('Berven')."
+
+[[parameter]]
+symbol = "juvenile_b"
+quantity = "juvenile and adult survival multiplier: b"
+value = 0.550860237124388
+units = "1"
+provenance = "D"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func: nls fit.expd.juv"
+verified = false
+notes = "See juvenile_a."
+
+[[parameter]]
+symbol = "juvenile_c"
+quantity = "juvenile and adult survival multiplier: c (negative: decreasing)"
+value = -0.182571811609844
+units = "1"
+provenance = "D"
+role = "structural"
+location = "PVA_functionsV2.R, pop.func: nls fit.expd.juv"
+verified = false
+notes = "See juvenile_a."
+
+[[parameter]]
+symbol = "p_wet"
+quantity = "probability that a year receives environmental water"
+value = 0.7
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+location = "Methods 2.2.1 ('water delivered 7 out of 10 years on average')"
+verified = true
+notes = "Checked against the published paper (2026-11-20). The three regimes (independent; at most two; at most one consecutive dry year) are as in the paper."
+
+[[parameter]]
+symbol = "quasi_extinction_threshold"
+quantity = "minimum adult female population below which a run counts as quasi-extinct"
+value = 20
+units = "females"
+provenance = "A"
+role = "structural"
+location = "Results ('the probability that the number of females dropped below 20'); Fig. 3"
+verified = true
+notes = "Checked against the published paper (2026-11-20). The Discussion writes 'n <= 20'; the Results write '<20', used here."
+
+[[parameter]]
+set = "as_printed"
+symbol = "fecundity_mean"
+quantity = "mean clutch size (eggs per breeding female per year), ages 1-5, as printed"
+value = 3244
+units = "eggs yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Litoria raniformis", stage = "adult female" }
+location = "Methods 2.2.2 ('Normal distribution (x = 3244; sigma = 897) (Germano et al., 2009; Humphries, 1979)')"
+verified = true
+notes = "Checked against the published paper (2026-11-20). The code uses 3245."

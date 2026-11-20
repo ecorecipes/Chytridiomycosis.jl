@@ -1,0 +1,775 @@
+# Doddington BJ, Bosch J, Oliver JA, Grassly NC, Garcia G, Schmidt BR, Garner TWJ, Fisher MC
+# (2013) Context-dependent amphibian host population response to an invading pathogen.
+# Ecology 94:1795-1804. https://doi.org/10.1890/12-1270.1
+# Supplements (Ecological Archives E094-163, figshare collection doi:10.6084/m9.figshare.c.3306075,
+# CC0): Appendix A (state-space trends), Appendix B (model equations B.1-B.8, Table B1, outputs)
+# and Supplement 1 (the authors' Berkeley Madonna code, model_code.txt).
+#
+# VERSION CHECKED: every record was read on 2026-11-19 from the PUBLISHED version (PDF of
+# record from ZORA, lab/papers/doddington2013/doddington2013_zora.pdf), Appendix B
+# (lab/papers/doddington2013/appendix-B.pdf) and Supplement 1 (model_code.txt).
+#
+# System: Alytes muletensis (Mallorcan midwife toad), Bd (BdCAPE TF5a1 on Mallorca; BdGPL
+# UKTvB in the exposure trial). Time unit: YEAR (all rates in Table B1 are yr^-1; the code's
+# TIME is in years). Zoospores are numbers in one pond (ν "scaled to a pond of volume 1200
+# litres" from Mitchell et al. 2008).
+#
+# Base set = Table B1 (Appendix B). The timing parameters of Table B1 are days of the year;
+# the code (set "code") uses fractions of a year (0.249 = day 90.9, etc.), which round to the
+# Table B1 days. Set "code" also holds the code-only settings: the starting adult population,
+# the zoospore introduction, the time step and the run length.
+#
+# α: Table B1 prints 2.97 yr^-1 (BdGPL); Table 1 of the paper prints 2.98 for the same
+# quantity. 4.54 (the upper 95% limit of the BdGPL rate) is the "high virulence" value of
+# Fig. 3a and Appendix B; 0.61 (BdCAPE) is the "weak virulence" value of Fig. 3b.
+
+source = { ref = "doddington2013", doi = "10.1890/12-1270.1", review_ref = 25 }
+
+# ---- Timing (Table B1) ----
+
+[[parameter]]
+symbol = "tB1"
+quantity = "start of the breeding season (day of the year)"
+value = 91
+units = "day"
+provenance = "M"
+role = "structural"
+system = { host = "Alytes muletensis", stage = "tadpole", setting = "Mallorca" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B (Ecological Archives). Code: TadHatchStart = 0.249 yr."
+
+[[parameter]]
+symbol = "tB2"
+quantity = "end of the breeding season (day of the year)"
+value = 244
+units = "day"
+provenance = "M"
+role = "structural"
+system = { host = "Alytes muletensis", stage = "tadpole", setting = "Mallorca" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B. Code: TadHatchEnd = 0.668 yr."
+
+[[parameter]]
+symbol = "tM1"
+quantity = "start of tadpole metamorphosis (day of the year)"
+value = 182
+units = "day"
+provenance = "M"
+role = "structural"
+system = { host = "Alytes muletensis", stage = "tadpole", setting = "Mallorca" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B. Code: TadMetaStart = 0.499 yr."
+
+[[parameter]]
+symbol = "tM2"
+quantity = "end of tadpole metamorphosis; remaining tadpoles become overwintering tadpoles (day of the year)"
+value = 248
+units = "day"
+provenance = "M"
+role = "structural"
+system = { host = "Alytes muletensis", stage = "tadpole", setting = "Mallorca" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B. Code: TadMetaEnd = OwTadMetaEnd = 0.679 yr."
+
+[[parameter]]
+symbol = "tOM"
+quantity = "time after which overwintering tadpoles begin to metamorphose (day of the year)"
+value = 152
+units = "day"
+provenance = "M"
+role = "structural"
+system = { host = "Alytes muletensis", stage = "overwintering tadpole", setting = "Mallorca" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B. Code: OwTadMetaStart = 0.416 yr."
+
+# ---- Amphibian (Table B1) ----
+
+[[parameter]]
+symbol = "ψ"
+quantity = "tadpole birth rate per adult during the breeding season"
+value = 28.6
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Alytes muletensis", stage = "adult", setting = "Mallorca, field" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B and code (TadHatchingRate = 28.6). 'This work' (field observations)."
+
+[[parameter]]
+symbol = "εL"
+quantity = "tadpole per capita metamorphosis rate into juveniles (during tM1-tM2)"
+value = 12.3
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Alytes muletensis", stage = "tadpole", setting = "Mallorca, field" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B and code (TMR = 12.3 inside the window)."
+
+[[parameter]]
+symbol = "εO"
+quantity = "overwintering tadpole per capita metamorphosis rate into juveniles (during tOM-tM2)"
+value = 16.3
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Alytes muletensis", stage = "overwintering tadpole", setting = "Mallorca, field" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B and code (OWTMR = 16.3 inside the window)."
+
+[[parameter]]
+symbol = "εJ"
+quantity = "juvenile per capita maturation rate into adults (after one year)"
+value = 12.3
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Alytes muletensis", stage = "juvenile", setting = "Mallorca, field" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B. The code sets JMR = TMR (12.3, only inside the tadpole metamorphosis window) and OWJMR = OWTMR (16.3, inside the overwintering window) instead of a constant εJ."
+
+[[parameter]]
+symbol = "μL"
+quantity = "tadpole per capita natural death rate"
+value = 0.05
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Alytes muletensis", stage = "tadpole", setting = "Mallorca, field" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B and code (TadDeath = 0.05)."
+
+[[parameter]]
+symbol = "μO"
+quantity = "overwintering tadpole per capita natural death rate"
+value = 0.05
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Alytes muletensis", stage = "overwintering tadpole", setting = "Mallorca, field" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B. The code defines OWTadDeath = TadDeath but uses TadDeath in the overwintering equations; the values are equal."
+
+[[parameter]]
+symbol = "μJ"
+quantity = "juvenile per capita natural death rate"
+value = 2.4
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Alytes muletensis", stage = "juvenile", setting = "Mallorca, field" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B and code (JuvDeath = 2.4)."
+
+[[parameter]]
+symbol = "μA"
+quantity = "adult per capita natural death rate"
+value = 0.69
+units = "yr^-1"
+provenance = "M"
+role = "estimated"
+system = { host = "Alytes muletensis", stage = "adult", setting = "Mallorca, field" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B and code (AdultDeath = 0.69)."
+
+[[parameter]]
+symbol = "K"
+quantity = "constant limiting maximum adult population size (density dependence 1 - A/K)"
+value = 300
+units = "adults"
+provenance = "A"
+role = "structural"
+system = { host = "Alytes muletensis", stage = "adult" }
+location = "Appendix B, Table B1"
+verified = true
+notes = "Checked against: Appendix B and code (AdultMax = 300). 'Set to keep population stable in absence of disease'."
+
+# ---- Pathogen (Table B1) ----
+
+[[parameter]]
+symbol = "ρ"
+quantity = "per capita zoospore release rate from infected tadpoles and overwintering tadpoles"
+value = 1e5
+units = "zoospores yr^-1"
+provenance = "D"
+role = "uncertain"
+uncertainty = { kind = "range", lo = 1e4, hi = 6.6e6, as_printed = "1 x 10^4 - 6.6 x 10^6 yr^-1" }
+system = { pathogen = "Bd", host = "Bufo bufo (source)", stage = "tadpole" }
+location = "Appendix B, Table B1 (from Mitchell et al. 2008)"
+verified = true
+notes = "Checked against: Appendix B and code (OWTadRelease = TadRelease = 1e5). Range = axis of Fig. 3."
+
+[[parameter]]
+symbol = "ν"
+quantity = "transmission parameter: per capita rate of infection of tadpoles per zoospore in the pond"
+value = 8.17e-6
+units = "zoospore^-1 yr^-1"
+provenance = "D"
+role = "uncertain"
+uncertainty = { kind = "range", lo = 2.57e-6, hi = 7.27e-5, as_printed = "2.57 x 10^-6 - 7.27 x 10^-5 yr^-1" }
+system = { pathogen = "Bd", host = "Bufo bufo (source)", stage = "tadpole", setting = "scaled to a 1200 L pond" }
+location = "Appendix B, Table B1 (from Mitchell et al. 2008)"
+verified = true
+notes = "Checked against: Appendix B and code (Infectivity = 8.17e-6). Table B1 prints the unit as yr^-1; it multiplies the number of zoospores. Range = axis of Fig. 3."
+
+[[parameter]]
+symbol = "μZ"
+quantity = "zoospore per capita natural death rate"
+value = 52
+units = "yr^-1"
+provenance = "A"
+role = "uncertain"
+uncertainty = { kind = "range", lo = 1, hi = 365, as_printed = "1-365 yr^-1" }
+system = { pathogen = "Bd" }
+location = "Appendix B, Table B1 (Johnson & Speare 2005; Piotrowski et al. 2004)"
+verified = true
+notes = "Checked against: Appendix B and code (ZspDeath = 52). A mean zoospore life of one week."
+
+[[parameter]]
+symbol = "α"
+quantity = "per capita infection-specific death rate of juveniles"
+value = 2.97
+units = "yr^-1"
+provenance = "D"
+role = "estimated"
+uncertainty = { kind = "range", lo = 0.0, hi = 4.54, as_printed = "0-4.54 yr^-1" }
+system = { pathogen = "Bd GPL (UKTvB)", host = "Alytes muletensis", stage = "tadpole/metamorph", temperature_C = 21.0, setting = "lab exposure trial" }
+location = "Appendix B, Table B1; Table 1 prints 2.98 (1.41-4.54)"
+verified = true
+notes = "Checked against: Appendix B, Table 1 and code (JInfectDeath = 2.97). Excess death rate of the BdGPL group over the control group."
+
+# ---- Code-only settings (Supplement 1, model_code.txt) ----
+
+[[parameter]]
+set = "code"
+symbol = "tB1"
+quantity = "start of the breeding season (fraction of the year), as coded"
+value = 0.249
+units = "yr"
+provenance = "M"
+role = "structural"
+location = "Supplement 1, TadHatchStart"
+verified = true
+notes = "Checked against: Supplement 1 (Berkeley Madonna code)."
+
+[[parameter]]
+set = "code"
+symbol = "tB2"
+quantity = "end of the breeding season (fraction of the year), as coded"
+value = 0.668
+units = "yr"
+provenance = "M"
+role = "structural"
+location = "Supplement 1, TadHatchEnd"
+verified = true
+notes = "Checked against: Supplement 1."
+
+[[parameter]]
+set = "code"
+symbol = "tM1"
+quantity = "start of tadpole metamorphosis (fraction of the year), as coded"
+value = 0.499
+units = "yr"
+provenance = "M"
+role = "structural"
+location = "Supplement 1, TadMetaStart"
+verified = true
+notes = "Checked against: Supplement 1."
+
+[[parameter]]
+set = "code"
+symbol = "tM2"
+quantity = "end of tadpole metamorphosis (fraction of the year), as coded"
+value = 0.679
+units = "yr"
+provenance = "M"
+role = "structural"
+location = "Supplement 1, TadMetaEnd and OwTadMetaEnd"
+verified = true
+notes = "Checked against: Supplement 1."
+
+[[parameter]]
+set = "code"
+symbol = "tOM"
+quantity = "start of overwintering tadpole metamorphosis (fraction of the year), as coded"
+value = 0.416
+units = "yr"
+provenance = "M"
+role = "structural"
+location = "Supplement 1, OwTadMetaStart"
+verified = true
+notes = "Checked against: Supplement 1."
+
+[[parameter]]
+set = "code"
+symbol = "tAge"
+quantity = "time of the year at which this year's juveniles join the class that can mature, as coded"
+value = 0.001
+units = "yr"
+provenance = "A"
+role = "structural"
+location = "Supplement 1, MatSwitch"
+verified = true
+notes = "Checked against: Supplement 1. Implements 'juveniles only leave due to εJ after a year has passed'."
+
+[[parameter]]
+symbol = "A0"
+quantity = "starting adult population"
+value = 150
+units = "adults"
+provenance = "A"
+role = "scenario"
+location = "Supplement 1, AdultPop"
+verified = true
+notes = "Checked against: Supplement 1 (code only; not in Table B1)."
+
+[[parameter]]
+symbol = "Z_intro"
+quantity = "zoospores introduced into the pond (the pond's count is set to this value)"
+value = 20000
+units = "zoospores"
+provenance = "A"
+role = "scenario"
+location = "Supplement 1, ZspInt; Results ('the initial 20 000 zoospores')"
+verified = true
+notes = "Checked against: Supplement 1 and the paper's Results."
+
+[[parameter]]
+symbol = "t_intro"
+quantity = "time of Bd introduction"
+value = 15.42
+units = "yr"
+provenance = "A"
+role = "scenario"
+location = "Supplement 1, ZspIn"
+verified = true
+notes = "Checked against: Supplement 1. With STOPTIME = 50 this leaves 34.58 years, the paper's '35 years after the introduction'."
+
+[[parameter]]
+symbol = "t_end"
+quantity = "end of a run"
+value = 50
+units = "yr"
+provenance = "A"
+role = "numerical"
+location = "Supplement 1, STOPTIME"
+verified = true
+notes = "Checked against: Supplement 1."
+
+[[parameter]]
+symbol = "dt"
+quantity = "time step of the stochastic model"
+value = 0.0005
+units = "yr"
+provenance = "A"
+role = "numerical"
+location = "Supplement 1, DT (METHOD RK4)"
+verified = true
+notes = "Checked against: Supplement 1."
+
+[[parameter]]
+symbol = "n_runs"
+quantity = "stochastic runs per parameter combination"
+value = 500
+units = "1"
+provenance = "A"
+role = "numerical"
+location = "Appendix B, p. 4"
+verified = true
+notes = "Checked against: Appendix B ('The model was run 500 times for each parameter combination')."
+
+# ---- Exposure trial (Table 1) ----
+
+[[parameter]]
+symbol = "n_group"
+quantity = "tadpoles per treatment group at time 0"
+value = 26
+units = "tadpoles"
+provenance = "M"
+role = "estimated"
+system = { host = "Alytes muletensis", stage = "tadpole", temperature_C = 21.0, setting = "lab exposure trial" }
+location = "Fig. 1 caption; Table 1"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+symbol = "deaths_control"
+quantity = "deaths, sham-exposed group"
+value = 4
+units = "deaths"
+provenance = "M"
+role = "estimated"
+system = { host = "Alytes muletensis", temperature_C = 21.0, setting = "lab exposure trial" }
+location = "Table 1"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+symbol = "deaths_CAPE"
+quantity = "deaths, Mallorcan BdCAPE (TF5a1) group"
+value = 9
+units = "deaths"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd CAPE (TF5a1)", host = "Alytes muletensis", temperature_C = 21.0, setting = "lab exposure trial" }
+location = "Table 1"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+symbol = "deaths_GPL"
+quantity = "deaths, BdGPL (UKTvB) group"
+value = 19
+units = "deaths"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd GPL (UKTvB)", host = "Alytes muletensis", temperature_C = 21.0, setting = "lab exposure trial" }
+location = "Table 1"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+symbol = "time_control"
+quantity = "cumulative time spent in the experiment, sham-exposed group"
+value = 9.96
+units = "yr"
+provenance = "M"
+role = "estimated"
+system = { host = "Alytes muletensis", temperature_C = 21.0, setting = "lab exposure trial" }
+location = "Table 1"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+symbol = "time_CAPE"
+quantity = "cumulative time spent in the experiment, BdCAPE group"
+value = 8.93
+units = "yr"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd CAPE (TF5a1)", host = "Alytes muletensis", temperature_C = 21.0, setting = "lab exposure trial" }
+location = "Table 1"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+symbol = "time_GPL"
+quantity = "cumulative time spent in the experiment, BdGPL group"
+value = 5.63
+units = "yr"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd GPL (UKTvB)", host = "Alytes muletensis", temperature_C = 21.0, setting = "lab exposure trial" }
+location = "Table 1"
+verified = true
+notes = "Checked against: published version."
+
+# ---- Scenario sets (figures) ----
+
+[[parameter]]
+set = "fig3a"
+symbol = "α"
+quantity = "infection-specific juvenile death rate, high virulence (upper 95% limit of BdGPL)"
+value = 4.54
+units = "yr^-1"
+provenance = "D"
+role = "scenario"
+location = "Fig. 3a caption; Results"
+verified = true
+notes = "Checked against: published version. μZ = 52 as in the base set."
+
+[[parameter]]
+set = "fig3b"
+symbol = "α"
+quantity = "infection-specific juvenile death rate, weak virulence (BdCAPE)"
+value = 0.61
+units = "yr^-1"
+provenance = "D"
+role = "scenario"
+location = "Fig. 3b caption; Table 1"
+verified = true
+notes = "Checked against: published version. μZ = 52 as in the base set."
+
+[[parameter]]
+set = "appB_a"
+symbol = "ν"
+quantity = "transmission parameter, Appendix B example a (Bd extinction)"
+value = 1e-5
+units = "zoospore^-1 yr^-1"
+provenance = "A"
+role = "scenario"
+location = "Appendix B, Model Output (a)"
+verified = true
+notes = "Checked against: Appendix B. ρ = 1e5, μZ = 52 as in the base set."
+
+[[parameter]]
+set = "appB_a"
+symbol = "α"
+quantity = "infection-specific juvenile death rate, Appendix B example a"
+value = 4.54
+units = "yr^-1"
+provenance = "D"
+role = "scenario"
+location = "Appendix B, Model Output (a)"
+verified = true
+notes = "Checked against: Appendix B."
+
+[[parameter]]
+set = "appB_b"
+symbol = "ν"
+quantity = "transmission parameter, Appendix B example b (Bd and host extinction)"
+value = 5e-5
+units = "zoospore^-1 yr^-1"
+provenance = "A"
+role = "scenario"
+location = "Appendix B, Model Output (b)"
+verified = true
+notes = "Checked against: Appendix B."
+
+[[parameter]]
+set = "appB_b"
+symbol = "ρ"
+quantity = "zoospore release rate, Appendix B example b"
+value = 1e6
+units = "zoospores yr^-1"
+provenance = "A"
+role = "scenario"
+location = "Appendix B, Model Output (b)"
+verified = true
+notes = "Checked against: Appendix B."
+
+[[parameter]]
+set = "appB_b"
+symbol = "α"
+quantity = "infection-specific juvenile death rate, Appendix B example b"
+value = 4.54
+units = "yr^-1"
+provenance = "D"
+role = "scenario"
+location = "Appendix B, Model Output (b)"
+verified = true
+notes = "Checked against: Appendix B."
+
+[[parameter]]
+set = "appB_c"
+symbol = "ν"
+quantity = "transmission parameter, Appendix B example c (coexistence)"
+value = 1e-5
+units = "zoospore^-1 yr^-1"
+provenance = "A"
+role = "scenario"
+location = "Appendix B, Model Output (c)"
+verified = true
+notes = "Checked against: Appendix B. ρ = 1e5, μZ = 52 as in the base set."
+
+[[parameter]]
+set = "appB_c"
+symbol = "α"
+quantity = "infection-specific juvenile death rate, Appendix B example c"
+value = 0.61
+units = "yr^-1"
+provenance = "D"
+role = "scenario"
+location = "Appendix B, Model Output (c)"
+verified = true
+notes = "Checked against: Appendix B."
+
+# Fig. 4: deterministic SIR model with temperature-dependent recovery, fitted to the tadpole
+# counts of two sites. Not implemented (the recovery rate's link to the datalogger series is
+# not given, and the series are not deposited); recorded for completeness.
+
+[[parameter]]
+set = "fig4"
+symbol = "ν"
+quantity = "transmission parameter of the fitted SIR model (both sites)"
+value = 3.1546e-5
+units = "zoospore^-1 yr^-1"
+provenance = "F"
+role = "estimated"
+location = "Fig. 4 caption"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+set = "fig4"
+symbol = "ρ"
+quantity = "zoospore release rate of the fitted SIR model (both sites)"
+value = 28730
+units = "zoospores yr^-1"
+provenance = "F"
+role = "estimated"
+location = "Fig. 4 caption"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+set = "fig4"
+symbol = "α"
+quantity = "infection-specific juvenile death rate of the fitted SIR model"
+value = 4.54
+units = "yr^-1"
+provenance = "D"
+role = "scenario"
+location = "Fig. 4 caption"
+verified = true
+notes = "Checked against: published version. μZ = 52 as in the base set."
+
+[[parameter]]
+set = "fig4"
+symbol = "A0_CocoDeSaBova"
+quantity = "fitted initial adult population, Coco de sa Bova"
+value = 56
+units = "adults"
+provenance = "F"
+role = "estimated"
+location = "Fig. 4 caption"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+set = "fig4"
+symbol = "K_CocoDeSaBova"
+quantity = "fitted strength of population regulation K, Coco de sa Bova"
+value = 3606
+units = "adults"
+provenance = "F"
+role = "estimated"
+location = "Fig. 4 caption"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+set = "fig4"
+symbol = "A0_TorrentDesFerrerets"
+quantity = "fitted initial adult population, Torrent des Ferrerets"
+value = 820
+units = "adults"
+provenance = "F"
+role = "estimated"
+location = "Fig. 4 caption"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+set = "fig4"
+symbol = "K_TorrentDesFerrerets"
+quantity = "fitted strength of population regulation K, Torrent des Ferrerets"
+value = 1581.5
+units = "adults"
+provenance = "F"
+role = "estimated"
+location = "Fig. 4 caption"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+set = "fig4"
+symbol = "logit_a"
+quantity = "intercept of logit(probability of remaining infected) against mean temperature (Geiger et al. 2011, A. obstetricans)"
+value = 12.356
+units = "logit"
+provenance = "D"
+role = "structural"
+location = "Eq. 1"
+verified = true
+notes = "Checked against: published version."
+
+[[parameter]]
+set = "fig4"
+symbol = "logit_b"
+quantity = "slope of logit(probability of remaining infected) against mean temperature"
+value = -0.507
+units = "logit degC^-1"
+provenance = "D"
+role = "structural"
+location = "Eq. 1"
+verified = true
+notes = "Checked against: published version."
+
+# Fungal-load individual-based model (Appendix B, Fig. B3). Not implemented: no code was
+# deposited for it and its update rules are described only in words. Units are not printed.
+
+[[parameter]]
+set = "load_model"
+symbol = "β"
+quantity = "successful transmission rate, zoospore to sporangium (Fig. B3a,b)"
+value = 1.825e-3
+units = "unstated"
+provenance = "A"
+role = "scenario"
+location = "Appendix B, Fig. B3 caption"
+verified = true
+notes = "Checked against: Appendix B. Fig. B3c uses β = 0.044 with μZ = 365."
+
+[[parameter]]
+set = "load_model"
+symbol = "F"
+quantity = "fraction of released zoospores that re-infect the same host"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "scenario"
+location = "Appendix B, Fig. B3 caption"
+verified = true
+notes = "Checked against: Appendix B."
+
+[[parameter]]
+set = "load_model"
+symbol = "η"
+quantity = "zoospore release rate per sporangium"
+value = 6387.5
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+location = "Appendix B, Fig. B3 caption"
+verified = true
+notes = "Checked against: Appendix B. Units not printed; 6387.5 = 17.5 x 365, so per year is assumed."
+
+[[parameter]]
+set = "load_model"
+symbol = "σ"
+quantity = "sporangium removal rate"
+value = 73
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+location = "Appendix B, Fig. B3 caption"
+verified = true
+notes = "Checked against: Appendix B. Units not printed; 73 = 0.2 x 365."
+
+[[parameter]]
+set = "load_model"
+symbol = "K"
+quantity = "strength of population regulation in the fungal-load model"
+value = 240
+units = "adults"
+provenance = "A"
+role = "scenario"
+location = "Appendix B, Fig. B3 caption"
+verified = true
+notes = "Checked against: Appendix B."
+
+[[parameter]]
+set = "load_model"
+symbol = "μZ"
+quantity = "zoospore death rate in the fungal-load model (Fig. B3a,b)"
+value = 12
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+location = "Appendix B, Fig. B3 caption"
+verified = true
+notes = "Checked against: Appendix B. Fig. B3c uses μZ = 365."

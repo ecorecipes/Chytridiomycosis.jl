@@ -369,3 +369,84 @@ Compose a rate function of temperature (a [`ThermalPerformanceCurve`](@ref), an
 time-varying rate to use inside an ODE, SDE or jump right-hand side.
 """
 temperature_dependent(rate, T) = t -> rate(T(t))
+
+# ---- Thermal performance curves of Gajewski et al. (2021) ----------------------------------
+# Three families from the five that Gajewski et al. (2021, doi:10.1002/ece3.8379) fitted to Bd
+# optical density; the other two are Briere (Brière-2) and Ratkowsky above. The forms are those
+# of the authors' code (Zenodo doi:10.5281/zenodo.4525954, TPCurves.R and the JAGS models).
+
+"""
+    Stinner(; C, k1, k2, Topt)
+
+The Stinner et al. (1974) curve, as coded by Gajewski et al. (2021):
+`C / (1 + exp(k1 + k2 T))` for `T < Topt` and `C / (1 + exp(k1 + k2 (2Topt − T)))` from
+`Topt` up. With `k2 < 0` it rises to a plateau near `C` and is symmetric about `Topt`. It never
+reaches zero.
+"""
+struct Stinner{R<:Real} <: ThermalPerformanceCurve
+    C::R
+    k1::R
+    k2::R
+    Topt::R
+end
+
+Stinner(; C, k1, k2, Topt) = Stinner(promote(C, k1, k2, Topt)...)
+
+(c::Stinner)(T) = T < c.Topt ? c.C / (1 + exp(c.k1 + c.k2 * T)) :
+                  c.C / (1 + exp(c.k1 + c.k2 * (2c.Topt - T)))
+
+"""
+    Logan10(; α, c, b, Tmax, ΔT)
+
+The Logan-10 curve (Logan et al. 1976), as coded by Gajewski et al. (2021):
+`α (1/(1 + c exp(−b T)) − exp(−(Tmax − T)/ΔT))` for `T < Tmax`, and zero from `Tmax` up. Just
+below `Tmax` it is negative; the code does not clip it, and neither does this curve.
+"""
+struct Logan10{R<:Real} <: ThermalPerformanceCurve
+    α::R
+    c::R
+    b::R
+    Tmax::R
+    ΔT::R
+end
+
+Logan10(; α, c, b, Tmax, ΔT) = Logan10(promote(α, c, b, Tmax, ΔT)...)
+
+(c::Logan10)(T) = T < c.Tmax ?
+    c.α * (1 / (1 + c.c * exp(-c.b * T)) - exp(-(c.Tmax - T) / c.ΔT)) : zero(c.α * T)
+
+"""
+    SharpeSchoolfieldIkemoto(; ρ, TΦ, ΔHA, ΔHL, TL, ΔHH, TH, R = 1.987,
+                             kelvin_offset = 273.15)
+
+The Sharpe–Schoolfield–Ikemoto curve (Ikemoto 2005), as coded by Gajewski et al. (2021):
+
+    r(T) = ρ (T/TΦ) exp(ΔHA/R (1/TΦ − 1/T)) /
+           (1 + exp(ΔHL/R (1/TL − 1/T)) + exp(ΔHH/R (1/TH − 1/T)))
+
+with `T` in kelvin, the enthalpies `ΔHA`, `ΔHL < 0`, `ΔHH` in cal mol⁻¹, `R` in
+cal K⁻¹ mol⁻¹, and `TΦ` the intrinsic optimum temperature (K). It is called with `T` in °C,
+converted by adding `kelvin_offset`. Unlike [`SharpeSchoolfield`](@ref) it has the factor
+`T/TΦ`, from Eyring's rate theory.
+"""
+struct SharpeSchoolfieldIkemoto{R<:Real} <: ThermalPerformanceCurve
+    ρ::R
+    TΦ::R
+    ΔHA::R
+    ΔHL::R
+    TL::R
+    ΔHH::R
+    TH::R
+    R::R
+    kelvin_offset::R
+end
+
+SharpeSchoolfieldIkemoto(; ρ, TΦ, ΔHA, ΔHL, TL, ΔHH, TH, R = 1.987, kelvin_offset = KELVIN_OFFSET) =
+    SharpeSchoolfieldIkemoto(promote(ρ, TΦ, ΔHA, ΔHL, TL, ΔHH, TH, R, kelvin_offset)...)
+
+function (c::SharpeSchoolfieldIkemoto)(T)
+    x = T + c.kelvin_offset
+    num = c.ρ * (x / c.TΦ) * exp(c.ΔHA / c.R * (1 / c.TΦ - 1 / x))
+    den = 1 + exp(c.ΔHL / c.R * (1 / c.TL - 1 / x)) + exp(c.ΔHH / c.R * (1 / c.TH - 1 / x))
+    return num / den
+end

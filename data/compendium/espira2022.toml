@@ -1,0 +1,171 @@
+# Espira LM, Brouwer AF, Han BA, Foufopoulos J, Eisenberg JNS (2022) Dilution of epidemic
+# potential of environmentally transmitted infectious diseases for species with partially
+# overlapping habitats. Am Nat 199(2):E43-E56. https://doi.org/10.1086/717413
+# Author manuscript: PMC9136953. Online supplement: published version (lab/papers/espira2022/
+# espira2022_si.pdf), identical in text to the manuscript supplement (NIHMS1800855).
+#
+# VERSION CHECKED: every record was read from the PUBLISHED supplement on 2026-11-20.
+#
+# The paper is analytical and prints no parameter values for its figures. The only numbers are
+# the illustrative worked example of the supplement (Table S1, eqs S1-S4), used to explain how
+# the force of infection and the loss terms of eq. 1 are built. They are illustrative, not
+# estimates for any host or pathogen. Units: acres, days, PU (pathogen units). Note that
+# θ1 ε1 = θ2 ε2 = 1 acre, the overlap area, as the definition of θ requires.
+
+source = { ref = "espira2022", doi = "10.1086/717413", review_ref = 28 }
+
+[[parameter]]
+symbol = "E1"
+quantity = "concentration of pathogens shed by species 1 into its habitat (worked example)"
+value = 100
+units = "PU acre^-1"
+provenance = "A"
+role = "state"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1."
+
+[[parameter]]
+symbol = "E2"
+quantity = "concentration of pathogens shed by species 2 into its habitat (worked example)"
+value = 40
+units = "PU acre^-1"
+provenance = "A"
+role = "state"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1 (whose definition column says 'Concentration of pathogens in habitat of species i')."
+
+[[parameter]]
+symbol = "N1"
+quantity = "number of individuals of species 1 (worked example)"
+value = 100
+units = "individuals"
+provenance = "A"
+role = "scenario"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1."
+
+[[parameter]]
+symbol = "N2"
+quantity = "number of individuals of species 2 (worked example)"
+value = 500
+units = "individuals"
+provenance = "A"
+role = "scenario"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1."
+
+[[parameter]]
+symbol = "κρ1"
+quantity = "pick-up rate κ1ρ1 of species 1 (area foraged per day) (worked example)"
+value = 0.0001
+units = "acre day^-1 individual^-1"
+provenance = "A"
+role = "scenario"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1."
+
+[[parameter]]
+symbol = "κρ2"
+quantity = "pick-up rate κ2ρ2 of species 2 (worked example)"
+value = 0.0001
+units = "acre day^-1 individual^-1"
+provenance = "A"
+role = "scenario"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1 (0.0001). The worked example in the text on p. 3 uses 0.0002 for the same quantity (target espira2022_S3_species2_removal)."
+
+[[parameter]]
+symbol = "π1"
+quantity = "infectivity of the pathogen for species 1 (worked example)"
+value = 0.01
+units = "individuals PU^-1"
+provenance = "A"
+role = "scenario"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1."
+
+[[parameter]]
+symbol = "π2"
+quantity = "infectivity of the pathogen for species 2 (worked example)"
+value = 0.05
+units = "individuals PU^-1"
+provenance = "A"
+role = "scenario"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1."
+
+[[parameter]]
+symbol = "μ"
+quantity = "pathogen decay rate (worked example)"
+value = 2
+units = "day^-1"
+provenance = "A"
+role = "scenario"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1, which prints the units as 'PU/acre/day'; it multiplies a concentration in eq. S3, so it is a rate (day^-1)."
+
+[[parameter]]
+symbol = "ε1"
+quantity = "area of habitat 1 (worked example)"
+value = 4
+units = "acre"
+provenance = "A"
+role = "scenario"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1."
+
+[[parameter]]
+symbol = "ε2"
+quantity = "area of habitat 2 (worked example)"
+value = 5
+units = "acre"
+provenance = "A"
+role = "scenario"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1 (whose definition column says 'Area of habitat of species 1', a typo for species 2)."
+
+[[parameter]]
+symbol = "θ1"
+quantity = "fraction of habitat 1 that overlaps habitat 2 (worked example)"
+value = 0.25
+units = "1"
+provenance = "A"
+role = "scenario"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1."
+
+[[parameter]]
+symbol = "θ2"
+quantity = "fraction of habitat 2 that overlaps habitat 1 (worked example)"
+value = 0.2
+units = "1"
+provenance = "A"
+role = "scenario"
+system = { setting = "illustrative worked example" }
+location = "Online supplement, Table S1"
+verified = true
+notes = "Checked against: published supplement Table S1."

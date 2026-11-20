@@ -1,0 +1,552 @@
+# Mosher BA, Bailey LL, Muths E, Huyvaert KP (2018) Host-pathogen metapopulation dynamics
+# suggest high elevation refugia for boreal toads. Ecol Appl 28:926-937.
+# https://doi.org/10.1002/eap.1699
+# Data: Dryad doi:10.5061/dryad.1c990 (CC0), bundled in data/mosher2018.
+#
+# VERSION CHECKED (2026-11-20): the published records below (verified = true) were read from
+# the ACCEPTED MANUSCRIPT of the article (Wiley "Accepted Article", not copyedited;
+# lab/papers/mosher2018/mosher2018.pdf). Its methods, Table 3 and estimates are identical to
+# Chapter 2 of the first author's PhD dissertation (Mosher 2017, Colorado State University),
+# which was used for the first version of this file. Both state 82 sites; the Dryad deposit
+# has 83 (Site 33 has no covariates and is dropped).
+#
+# The base set and set "rare_susceptible" are NOT from the Ecol Appl paper: they are the
+# "true" values of dissertation Ch. 1 Table 1.3 (published as Mosher et al. 2018, Ecography
+# 41:32, not checked), used there to generate expected-value data; the SRM scenario mimics
+# the boreal toad-Bd system. They are scenarios (role "scenario", provenance A,
+# verified = false). Probabilities are per year (ψ, γ, ε) or per survey (p, r). States: A toad
+# only, B Bd only, U neither, AB both.
+
+source = { ref = "mosher2018", doi = "10.1002/eap.1699", review_ref = 43 }
+
+[[parameter]]
+symbol = "ψA"
+quantity = "initial occupancy probability of the host (boreal toad)"
+value = 0.9
+units = "probability"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "ψBA"
+quantity = "initial occupancy probability of Bd given the host present"
+value = 0.2
+units = "probability"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "ψBa"
+quantity = "initial occupancy probability of Bd given the host absent"
+value = 0.05
+units = "probability"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "γAB"
+quantity = "host colonisation probability given Bd present"
+value = 0.05
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "γA"
+quantity = "host colonisation probability given Bd absent"
+value = 0.7
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "γBA"
+quantity = "Bd colonisation probability given the host present"
+value = 0.2
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "γB"
+quantity = "Bd colonisation probability given the host absent"
+value = 0.1
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "εAB"
+quantity = "host extinction probability given Bd present"
+value = 0.4
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "εA"
+quantity = "host extinction probability given Bd absent"
+value = 0.05
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "εBA"
+quantity = "Bd extinction probability given the host present"
+value = 0.1
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "εB"
+quantity = "Bd extinction probability given the host absent"
+value = 0.3
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "pA"
+quantity = "host detection probability per survey given Bd absent"
+value = 0.9
+units = "per survey"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "pB"
+quantity = "Bd detection probability per survey given the host absent"
+value = 0.0
+units = "per survey"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper. Fixed at 0: Bd is detected only on swabs of detected toads."
+
+[[parameter]]
+symbol = "rA"
+quantity = "host detection probability per survey given Bd present"
+value = 0.8
+units = "per survey"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "rBA"
+quantity = "Bd detection probability per survey given the host present and detected"
+value = 0.6
+units = "per survey"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper."
+
+[[parameter]]
+symbol = "rBa"
+quantity = "Bd detection probability per survey given the host present and not detected"
+value = 0.0
+units = "per survey"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (SRM boreal toad-Bd)"
+verified = false
+notes = "Scenario value from the dissertation, not from the Ecol Appl paper. Fixed at 0: Bd is detected only on swabs of detected toads."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "ψA"
+quantity = "initial occupancy probability of the host (boreal toad)"
+value = 0.2
+units = "probability"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "ψBA"
+quantity = "initial occupancy probability of Bd given the host present"
+value = 0.8
+units = "probability"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "ψBa"
+quantity = "initial occupancy probability of Bd given the host absent"
+value = 0.4
+units = "probability"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "γAB"
+quantity = "host colonisation probability given Bd present"
+value = 0.05
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "γA"
+quantity = "host colonisation probability given Bd absent"
+value = 0.1
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "γBA"
+quantity = "Bd colonisation probability given the host present"
+value = 0.8
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "γB"
+quantity = "Bd colonisation probability given the host absent"
+value = 0.4
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "εAB"
+quantity = "host extinction probability given Bd present"
+value = 0.9
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "εA"
+quantity = "host extinction probability given Bd absent"
+value = 0.6
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "εBA"
+quantity = "Bd extinction probability given the host present"
+value = 0.05
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "εB"
+quantity = "Bd extinction probability given the host absent"
+value = 0.1
+units = "yr^-1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "pA"
+quantity = "host detection probability per survey given Bd absent"
+value = 0.7
+units = "per survey"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "pB"
+quantity = "Bd detection probability per survey given the host absent"
+value = 0.0
+units = "per survey"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "rA"
+quantity = "host detection probability per survey given Bd present"
+value = 0.4
+units = "per survey"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "rBA"
+quantity = "Bd detection probability per survey given the host present and detected"
+value = 0.7
+units = "per survey"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+set = "rare_susceptible"
+symbol = "rBa"
+quantity = "Bd detection probability per survey given the host present and not detected"
+value = 0.0
+units = "per survey"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", setting = "hypothetical" }
+location = "Mosher (2017) dissertation, Ch. 1, Table 1.3 (rare and susceptible)"
+verified = false
+notes = "Hypothetical rare, susceptible host; scenario value from the dissertation."
+
+[[parameter]]
+symbol = "εA_initial"
+quantity = "toad extinction probability given Bd absent, model with all parameters constant (K = 14)"
+value = 0.0
+units = "yr^-1"
+uncertainty = { kind = "ci95", lo = 0.0, hi = 0.02, as_printed = "0.00 95% CIs: [0.00, 0.02]" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Methods, Modeling Approach"
+verified = true
+
+[[parameter]]
+symbol = "εB_initial"
+quantity = "Bd extinction probability given toads absent, model with all parameters constant (K = 14)"
+value = 0.0
+units = "yr^-1"
+uncertainty = { kind = "ci95", lo = 0.0, hi = 0.35, as_printed = "0.00 95% CIs: [0.00, 0.35]" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Methods, Modeling Approach"
+verified = true
+
+[[parameter]]
+symbol = "εA_best"
+quantity = "toad extinction probability given Bd absent, best model"
+value = 0.0
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Results, para. 4"
+verified = true
+
+[[parameter]]
+symbol = "εB_best"
+quantity = "Bd extinction probability given toads absent, best model"
+value = 0.02
+units = "yr^-1"
+uncertainty = { kind = "ci95", lo = 0.0, hi = 0.15, as_printed = "0.02, 95% profile likelihood confidence interval from 0.00 to 0.15" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Results, para. 4"
+verified = true
+notes = "Imprecise: Bd cannot be detected without toads."
+
+[[parameter]]
+symbol = "γA_best"
+quantity = "toad colonisation probability given Bd absent, best model"
+value = 1.0
+units = "yr^-1"
+uncertainty = { kind = "ci95", lo = 0.21, hi = 1.0, as_printed = "1.00, 95% profile likelihood confidence interval from 0.21 to 1.00" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Results, para. 5"
+verified = true
+
+[[parameter]]
+symbol = "εAB_peak"
+quantity = "approximate maximum (at intermediate elevations) of toad extinction probability given Bd present, best model"
+value = 0.30
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Results, para. 4 ('~ 0.30'); Fig. 5A"
+verified = true
+notes = "Printed as approximate."
+
+[[parameter]]
+symbol = "εBA_peak"
+quantity = "approximate maximum (at intermediate elevations) of Bd extinction probability given toads present, best model"
+value = 0.30
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Results, para. 4 ('~0.30'); Fig. 5B"
+verified = true
+notes = "Printed as approximate."
+
+[[parameter]]
+symbol = "nsites"
+quantity = "historic boreal toad breeding sites analysed"
+value = 82
+units = "sites"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Methods, Data Collection; Fig. 1"
+verified = true
+notes = "The Dryad deposit has 83 sites; Site 33 (no permanence or other-amphibian value, toads never detected) is the one dropped."
+
+[[parameter]]
+symbol = "elevation_min"
+quantity = "lowest site elevation"
+value = 2470
+units = "m"
+provenance = "M"
+role = "range"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Methods, Data Collection"
+verified = true
+notes = "The Dryad covariates give 2468 m."
+
+[[parameter]]
+symbol = "elevation_max"
+quantity = "highest site elevation"
+value = 3680
+units = "m"
+provenance = "M"
+role = "range"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Methods, Data Collection"
+verified = true
+notes = "The Dryad covariates give 3679 m."
+
+[[parameter]]
+symbol = "swabs_per_survey"
+quantity = "mean number of toad skin swabs per survey, 2003-2010"
+value = 3.5
+units = "swabs"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", setting = "field, southern Rocky Mountains" }
+location = "Methods, Data Collection"
+verified = true
+notes = "The deposit has one Bd record per survey."

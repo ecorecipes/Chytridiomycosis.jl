@@ -1,0 +1,442 @@
+# Hardy BM, Muths E, Lambert BA, Schneider SC, Funk WC, Bailey LL (2023) Compensatory recruitment
+# unlikely in high-elevation amphibian populations challenged with disease. J Appl Ecol
+# 60:121-131. https://doi.org/10.1111/1365-2664.14310
+# Data: Dryad doi:10.5061/dryad.fttdz08wv (CC0), bundled in data/hardy2023/.
+#
+# VERSION CHECKED: every record was checked on 2026-11-20 against the version of record (J Appl
+# Ecol 60:121-131, lab/papers/hardy2023/hardy2023.pdf) and its Supporting Information
+# (lab/papers/hardy2023/hardy2023_si.pdf, Appendices 1-6, cited in the paper as Appendix
+# S1.1-S1.6). Locations are those of the journal. The records were first read on 2026-11-19
+# from Chapter 1 of B. M. Hardy's PhD dissertation (Colorado State University, 2023), which
+# reprints the paper; every number below is identical in both versions (the dissertation
+# numbers the tables 1.1-1.3 and the figures 1.1-1.3).
+#
+# System: Bd and adult male boreal toads (Anaxyrus boreas boreas), five breeding sites in
+# Chaffee County, Colorado, 1998-2020. Time unit: one year (primary periods are breeding
+# seasons). Robust-design Pradel model in Program MARK: apparent survival φ (logit link),
+# per-capita recruitment f (log link), capture probability p (logit), λ = φ + f.
+# "±" values are standard errors (the paper writes "(SE=…)"), stored in separate `_se`
+# records. ELEV coefficients are per 100 m of elevation (elevation was divided by 100).
+
+source = { ref = "hardy2023", doi = "10.1111/1365-2664.14310", review_ref = 45 }
+
+[[parameter]]
+symbol = "elevation_delilah"
+quantity = "elevation of the Delilah Pond breeding site"
+value = 2755
+units = "m"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "bd_year_delilah"
+quantity = "first year with Bd detected at Delilah Pond"
+value = 2015
+units = "yr"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1 (time periods)"
+verified = true
+notes = "Bd arrival is the first year of the post-Bd period; the same year is the first with Bd = 1 in the Dryad ENV file."
+
+[[parameter]]
+symbol = "captures_pre_delilah"
+quantity = "captures of adult males at Delilah Pond before Bd arrival"
+value = 232
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "captures_post_delilah"
+quantity = "captures of adult males at Delilah Pond after Bd arrival"
+value = 42
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "elevation_collegiate"
+quantity = "elevation of the Collegiate Camp breeding site"
+value = 2951
+units = "m"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "bd_year_collegiate"
+quantity = "first year with Bd detected at Collegiate Camp"
+value = 2015
+units = "yr"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1 (time periods)"
+verified = true
+notes = "Bd arrival is the first year of the post-Bd period; the same year is the first with Bd = 1 in the Dryad ENV file."
+
+[[parameter]]
+symbol = "captures_pre_collegiate"
+quantity = "captures of adult males at Collegiate Camp before Bd arrival"
+value = 1014
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "captures_post_collegiate"
+quantity = "captures of adult males at Collegiate Camp after Bd arrival"
+value = 10
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "elevation_denny"
+quantity = "elevation of the Denny Creek breeding site"
+value = 3238
+units = "m"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "bd_year_denny"
+quantity = "first year with Bd detected at Denny Creek"
+value = 2016
+units = "yr"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1 (time periods)"
+verified = true
+notes = "Bd arrival is the first year of the post-Bd period; the same year is the first with Bd = 1 in the Dryad ENV file."
+
+[[parameter]]
+symbol = "captures_pre_denny"
+quantity = "captures of adult males at Denny Creek before Bd arrival"
+value = 934
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "captures_post_denny"
+quantity = "captures of adult males at Denny Creek after Bd arrival"
+value = 21
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "elevation_cottonwood"
+quantity = "elevation of the South Cottonwood breeding site"
+value = 3183
+units = "m"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "bd_year_cottonwood"
+quantity = "first year with Bd detected at South Cottonwood"
+value = 2014
+units = "yr"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1 (time periods)"
+verified = true
+notes = "Bd arrival is the first year of the post-Bd period; the same year is the first with Bd = 1 in the Dryad ENV file."
+
+[[parameter]]
+symbol = "captures_pre_cottonwood"
+quantity = "captures of adult males at South Cottonwood before Bd arrival"
+value = 2073
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "captures_post_cottonwood"
+quantity = "captures of adult males at South Cottonwood after Bd arrival"
+value = 253
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "elevation_morgans"
+quantity = "elevation of the Morgan's Gulch breeding site"
+value = 3366
+units = "m"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "bd_year_morgans"
+quantity = "first year with Bd detected at Morgan's Gulch"
+value = 2014
+units = "yr"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1 (time periods)"
+verified = true
+notes = "Bd arrival is the first year of the post-Bd period; the same year is the first with Bd = 1 in the Dryad ENV file."
+
+[[parameter]]
+symbol = "captures_pre_morgans"
+quantity = "captures of adult males at Morgan's Gulch before Bd arrival"
+value = 370
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "captures_post_morgans"
+quantity = "captures of adult males at Morgan's Gulch after Bd arrival"
+value = 37
+units = "captures"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Table 1"
+verified = true
+
+[[parameter]]
+symbol = "toads_marked"
+quantity = "individual adult male toads captured, all sites, 1998-2020"
+value = 1594
+units = "individuals"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3"
+verified = true
+
+[[parameter]]
+symbol = "phi_post"
+quantity = "annual apparent survival of adult males after Bd arrival (all sites)"
+value = 0.0
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.1 ('Adult apparent survival was reduced to 0')"
+verified = true
+notes = "Top model p(sBd × tBd) φ(ELEV + tBd) f(ELEV + tBd); a boundary estimate."
+
+[[parameter]]
+symbol = "f_post"
+quantity = "per-capita recruitment after Bd arrival (all sites)"
+value = 0.25
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.1 ('recruitment reduced to 0.25 (SE = 0.02)')"
+verified = true
+notes = "Top model."
+
+[[parameter]]
+symbol = "f_post_se"
+quantity = "standard error of f_post"
+value = 0.02
+units = "yr^-1"
+provenance = "F"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.1"
+verified = true
+
+[[parameter]]
+symbol = "lambda_post"
+quantity = "realized population growth rate after Bd arrival (all sites)"
+value = 0.25
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.1 ('λ at all sites dramatically decreased to 0.25 (95% confidence interval [CI] 0.21–0.30)')"
+verified = true
+notes = "Derived: λ = φ + f. 95% CI 0.21-0.30."
+
+[[parameter]]
+symbol = "lambda_post_lo"
+quantity = "lower 95% confidence limit of lambda_post"
+value = 0.21
+units = "1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.1"
+verified = true
+
+[[parameter]]
+symbol = "lambda_post_hi"
+quantity = "upper 95% confidence limit of lambda_post"
+value = 0.3
+units = "1"
+provenance = "D"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.1"
+verified = true
+
+[[parameter]]
+symbol = "lambda_pre_min"
+quantity = "smallest annual realized growth rate before Bd (any site)"
+value = 0.65
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.1 ('ranging between 0.65 (SE = 0.08) and 1.46 (SE = 0.24)'); Fig. 3"
+verified = true
+notes = "SE 0.08. Top model."
+
+[[parameter]]
+symbol = "lambda_pre_max"
+quantity = "largest annual realized growth rate before Bd (any site)"
+value = 1.46
+units = "1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.1; Fig. 3"
+verified = true
+notes = "SE 0.24. Top model."
+
+[[parameter]]
+symbol = "beta_elev_phi"
+quantity = "elevation coefficient of pre-Bd apparent survival (logit scale, per 100 m)"
+value = 0.28
+units = "per 100 m"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.2 ('βELEV = 0.28 [SE=0.03]')"
+verified = true
+notes = "SE 0.03. Model not named in the text; Fig. 1a uses p(sBd × tBd) φ(ELEV + Bd) f(ELEV + Bd)."
+
+[[parameter]]
+symbol = "beta_elev_f"
+quantity = "elevation coefficient of pre-Bd per-capita recruitment (log scale, per 100 m)"
+value = -0.12
+units = "per 100 m"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.2 ('βELEV = -0.12 [SE=0.02]')"
+verified = true
+notes = "SE 0.02. Model as for beta_elev_phi."
+
+[[parameter]]
+symbol = "phi_pre_delilah"
+quantity = "mean annual apparent survival before Bd at Delilah Pond (2755 m, lowest)"
+value = 0.47
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.2 ('0.47 (SE = 0.03)'); Fig. 1a"
+verified = true
+notes = "Fig. 1a model p(sBd × tBd) φ(ELEV + Bd) f(ELEV + Bd)."
+
+[[parameter]]
+symbol = "phi_pre_delilah_se"
+quantity = "standard error of phi_pre_delilah"
+value = 0.03
+units = "yr^-1"
+provenance = "F"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.2"
+verified = true
+
+[[parameter]]
+symbol = "phi_pre_morgans"
+quantity = "mean annual apparent survival before Bd at Morgan's Gulch (3366 m, highest)"
+value = 0.83
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.2 ('0.83 (SE = 0.01)'); Fig. 1a"
+verified = true
+notes = "Fig. 1a model."
+
+[[parameter]]
+symbol = "phi_pre_morgans_se"
+quantity = "standard error of phi_pre_morgans"
+value = 0.01
+units = "yr^-1"
+provenance = "F"
+role = "uncertain"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3.2"
+verified = true
+
+[[parameter]]
+symbol = "p_min"
+quantity = "smallest estimated capture probability (per visit)"
+value = 0.03
+units = "1"
+provenance = "F"
+role = "range"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3 ('p̂ range: 0.03–0.81')"
+verified = true
+
+[[parameter]]
+symbol = "p_max"
+quantity = "largest estimated capture probability (per visit)"
+value = 0.81
+units = "1"
+provenance = "F"
+role = "range"
+system = { pathogen = "Bd", host = "Anaxyrus boreas boreas", stage = "adult male", setting = "field, Chaffee County, Colorado, USA" }
+location = "Results 3"
+verified = true

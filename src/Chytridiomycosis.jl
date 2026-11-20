@@ -33,7 +33,9 @@ single ODE: [`SchmidtSLIProblem`](@ref), [`BriggsLoadProblem`](@ref),
 [`SeasonalBsalProblem`](@ref) (with its inflow switch times as `tstops`),
 [`TransmissionSLIProblem`](@ref), [`SusceptibleChainProblem`](@ref),
 [`CohabitationProblem`](@ref), [`DrawertODEProblem`](@ref),
-[`BsalStageTemperatureProblem`](@ref) and [`LoucaDOIProblem`](@ref) (method of lines over
+[`BsalStageTemperatureProblem`](@ref), [`DoddingtonODEProblem`](@ref) (with its overwintering,
+ageing and introduction callbacks), [`OverlappingHabitatProblem`](@ref) and
+[`LoucaDOIProblem`](@ref) (method of lines over
 DOI bins, with exposure, disturbance and end-of-run callbacks). Use it to solve with
 other options or to pass the model to other SciML tools.
 """
@@ -71,6 +73,16 @@ include("models/daversa2022.jl")
 include("models/zoospore_pool.jl")
 include("models/rumschlag2022.jl")
 include("fitting/rumschlag2022.jl")
+# Doddington et al. 2013 midwife toads and a zoospore pool; Espira et al. 2022 two hosts with
+# overlapping habitats and environmental transmission
+include("models/doddington2013.jl")
+include("models/espira2022.jl")
+# Gajewski et al. 2021 and Sheets et al. 2021: Bd growth in culture against temperature
+using Distributions: logccdf
+include("models/gajewski2021.jl")
+include("fitting/gajewski2021.jl")
+include("models/sheets2021.jl")
+include("fitting/sheets2021.jl")
 
 # N5
 using LinearAlgebra: svd, eigen, Symmetric, Diagonal
@@ -90,6 +102,8 @@ include("fitting/malagon2020.jl")
 include("fitting/tompros2022.jl")
 # Drawert et al. 2017 stochastic individual-based Bd model with one-time interventions
 include("models/drawert2017.jl")
+# Barnett et al. 2026 (bioRxiv preprint) agent-based model of imperfect Bd prophylaxis
+include("models/barnett2026.jl")
 # Chowdhury et al. 2025 stage- and temperature-structured Bsal model of the eastern newt
 include("models/chowdhury2025.jl")
 # Integral projection models: generic machinery, and Wilber et al. 2016 Bd–R. muscosa IPM
@@ -125,6 +139,38 @@ include("models/hollanders2023.jl")
 include("fitting/hollanders2023.jl")
 include("models/palomar2023.jl")
 include("fitting/palomar2023.jl")
+# Woodhams et al. 2011: Briggs load model with adaptive immunity, treatments and culling
+using SciMLBase: ContinuousCallback, CallbackSet
+include("models/woodhams2011.jl")
+# DiRenzo et al. 2014: log-linear mixed models of Bd intensity and zoospore output
+using Distributions: std, Chisq
+include("models/direnzo2014.jl")
+include("fitting/direnzo2014.jl")
+# Occupancy layer: single-season and dynamic multistate occupancy, two-species host-pathogen
+# parameterisation; Mosher et al. 2018 (boreal toad-Bd) and Adams et al. 2010 (Bd occurrence)
+include("observation/occupancy.jl")
+include("models/mosher2018.jl")
+include("fitting/mosher2018.jl")
+include("models/adams2010.jl")
+# Pradel (1996) temporal-symmetry model (robust design) and Hardy et al. 2023 boreal toads
+include("observation/pradel.jl")
+include("fitting/hardy2023.jl")
+# Cook et al. 2022 stage-structured projection with itraconazole treatment of metamorphs
+include("models/cook2022.jl")
+# Disease-linked demography of Australian Litoria: Heard et al. 2024 (catch-curve survival,
+# spatial metapopulation) and Turner et al. 2025 (age-classified PVA with watering scenarios)
+include("models/heard2024.jl")
+include("fitting/heard2024.jl")
+include("models/turner2025.jl")
+# Open-population capture–recapture (conditional Arnason–Schwarz, POPAN) and
+# Brannelly et al. 2018 (Acris crepitans); covariate hurdle regression and Grear et al. 2025
+using Dates: Dates
+include("observation/cmr_open.jl")
+include("models/brannelly2018.jl")
+include("fitting/brannelly2018.jl")
+include("observation/hurdle_regression.jl")
+include("models/grear2025.jl")
+include("fitting/grear2025.jl")
 include("resilience.jl")
 
 export solve
@@ -143,6 +189,14 @@ export RumschlagParameters, ZoosporePersistenceProblem, zoospore_lifespan, persi
        infection_probability, RumschlagCount, RumschlagTadpole, rumschlag2022_path,
        load_rumschlag2022, RumschlagModel, rumschlag_parameters, rumschlag_model_selection,
        rumschlag_covariance, rumschlag_summary
+export Stinner, Logan10, SharpeSchoolfieldIkemoto, delayed_logistic, gajewski_curve,
+       GajewskiParameters, optical_density, GajewskiRegime, GajewskiGrowthProblem,
+       gajewski_prediction, regime_growth_rate, adjusted_limits, gajewski_summary
+export gajewski2021_path, load_gajewski2021, GajewskiModel, GajewskiLogisticModel,
+       gajewski_start, posterior_mode
+export SheetsReading, sheets2021_path, load_sheets2021, SheetsGrowthModel, sheets_fits,
+       sheets_tpc
+export sheets_profile_interval
 export LoadBDI, aggregation, load_distribution, mean_load, prevalence, infection_gain_rate,
        infection_loss_rate, swab, enzootic_pool, enzootic_load_distribution
 export LoadTipping, LoadTippingProblem, pool_feedback, net_growth_rate, critical_immigration,
@@ -173,6 +227,12 @@ export DaversaParameters, MultiHostPoolProblem, daversa_doses, species_reproduct
        next_generation_matrix, daversa2022_path, MesocosmTank, load_daversa2022,
        observed_infected, predicted_infected, daversa_loglikelihood, tank_reproduction_numbers
 export ValidationTarget, validation_targets, validation_target, reproduce, check_target
+export DoddingtonParameters, DoddingtonODEProblem, DoddingtonStochasticProblem,
+       doddington_outcome, doddington_outcomes, doddington_grid, excess_death_rate,
+       doddington_exposure_trial
+export EspiraParameters, OverlappingHabitatProblem, pickup_efficiency,
+       community_reproduction_number, dilution_threshold, dilution_effect,
+       espira_parameters_from_efficiencies
 
 # N5
 export BriggsMomentProblem, SurveyPond, SurveySample, SurveyObservation, SurveyModel,
@@ -213,6 +273,9 @@ export DrawertParameters, DrawertIBMProblem, DrawertODEProblem, DrawertIntervent
        sporangium_loss_rate, nondimensional_parameters, nondimensional_ranges,
        nondimensional_distance, equilibrium_load_ratio, drawert2017_path, load_drawert2017, load_drawert2017_reproduction,
        drawert_summary, outcome_class, survival_group, intervention_effect
+# Barnett et al. 2026 (bioRxiv preprint) agent-based model of imperfect Bd prophylaxis
+export BarnettParameters, BarnettVaccine, barnett_vaccine, BarnettABMProblem, barnett_summary,
+       barnett_relative_change
 # Chowdhury et al. 2025 stage- and temperature-structured Bsal model
 export ChowdhuryParameters, BsalStageTemperatureProblem, chowdhury_scenarios,
        stage_transmission_rates, stage_totals, stage_decline_time, stage_disease_free_state,
@@ -277,5 +340,58 @@ export hollanders2023_path, Hollanders2023Data, load_hollanders2023,
 export palomar2023_structure, palomar2023_models, palomar2023_parameters,
        palomar2023_implied_prevalence, palomar2023_model_selection,
        palomar2023_swabbing_experiment
+# Occupancy models (generic layer, Mosher 2018, Adams 2010)
+export occupancy_loglikelihood, occupancy_mle, dynamic_occupancy_loglikelihood,
+       simulate_dynamic_occupancy, two_species_initial, two_species_transition,
+       two_species_detection, two_species_code, two_species_records
+export Mosher2018Parameters, Mosher2018Problem, initial_state, transition_matrix,
+       detection_matrix, simulate_mosher2018, Mosher2018Data, mosher2018_path,
+       Mosher2018Model, mosher2018_site_parameters, mosher2018_loglikelihood
+export load_mosher2018, mosher2018_models, mosher2018_model, mosher2018_model_selection,
+       mosher2018_parameters_at
+export finite_population_occurrence
+export SingleSeasonOccupancyModel, adams2010_coefficients, adams2010_odds_ratio,
+       adams2010_occupancy
+
+# Woodhams et al. 2011 adaptive immunity and treatments
+export ImmuneFrogParameters, FrogTreatment, ConstantPoolFrogProblem, infection_fraction,
+       constant_pool_load, time_to_lethal_load, constant_pool_equilibria,
+       ImmunePopulationParameters, DensityReduction, ImmunePopulationProblem
+# DiRenzo et al. 2014 log-linear load and zoospore output trajectories
+export DiRenzoParameters, direnzo_trajectory, daily_percent_increase, direnzo_t_statistic,
+       DiRenzoSeries, DiRenzoLoadModel, direnzo_covariance, DiRenzoFrog, direnzo2014_path,
+       load_direnzo2014, direnzo_summary, direnzo_logrank
+# Pradel temporal-symmetry model and Hardy et al. 2023
+export PradelGroup, pradel_capture_probability, pradel_loglikelihood, pradel_abundance,
+       PradelProblem, PradelFit, pradel_se, pradel_derived, pradel_coefficient, simulate_pradel
+export hardy2023_path, Hardy2023Site, load_hardy2023, hardy2023_captures, hardy2023_problem,
+       hardy2023_fit, hardy2023_model_set, hardy2023_summary
+export CookParameters, CookProjectionProblem, CookProjectionSolution, cook_growth_rate,
+       cook_treatment_grid, cook_projection_matrix
+export HeardParameters, heard_scenario_grid, heard_projection_matrix, heard_survival_sd,
+       heard_lambda, HeardMetapopulationProblem, HeardMetapopulationSolution, heard_persistence,
+       heard_persistence_grid, heard2024_path, heard2024_landscapes
+export HeardAgeRecord, load_heard2024, HeardCatchCurve, heard_loglikelihood, heard_survival,
+       HeardCatchCurveFit, heard_survival_summary
+export TurnerParameters, turner_egg_multiplier, turner_juvenile_multiplier,
+       turner_tadpole_multiplier, turner_egg_ceiling, turner_watering_sequence, turner2025_path,
+       load_turner2025, load_turner2025_survival_array, turner2025_archive_path,
+       TurnerPVAProblem, TurnerPVASolution, turner_extinction_probability,
+       turner_minimum_population
+export turner_quasi_extinction_probability
+# Open-population capture–recapture layer (conditional Arnason–Schwarz, POPAN)
+export ArnasonSchwarzProblem, ArnasonSchwarzFit, arnason_schwarz_parameters, PopanProblem,
+       PopanFit, popan_parameters, akaike_weights
+# Brannelly et al. 2018 multistate CMR and POPAN (Acris crepitans)
+export brannelly2018_path, Brannelly2018Data, load_brannelly2018, brannelly2018_summary,
+       brannelly2018_structure, brannelly2018_models, brannelly2018_popan_models,
+       brannelly2018_parameters, brannelly2018_fit, brannelly2018_model_selection,
+       brannelly2018_survival, brannelly2018_popan
+# Hurdle regression layer and Grear et al. 2025 pan-amphibian hurdle model
+export HurdleRegressionProblem, hurdle_coefficients, posterior_mode, phylogenetic_correlation
+export grear2025_path, Grear2025Data, load_grear2025, grear2025_summary,
+       grear2025_phylogeny_path, grear2025_phylogeny, Grear2025Problem, grear2025_fit,
+       grear2025_temperature_optimum
+export grear2025_impute, grear2025_printed_intervals, grear2025_coefficient_check
 
 end # module Chytridiomycosis

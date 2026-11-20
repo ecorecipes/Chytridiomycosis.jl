@@ -1,0 +1,529 @@
+# Adams MJ, Chelgren ND, Reinitz D, Cole RA, Rachowicz LJ, Galvan S, McCreary B, Pearl CA,
+# Bailey LL, Bettaso J, Bull EL, Leu M (2010) Using occupancy models to understand the
+# distribution of an amphibian pathogen, Batrachochytrium dendrobatidis. Ecol Appl
+# 20:289-302. https://doi.org/10.1890/08-2319.1
+# VERSION CHECKED: the published PDF (lab/papers/adams2010/adams2010.pdf), 2026-11-20.
+# Bd in anuran populations of Oregon and northern California, 2005-2006; a "survey" is one
+# animal swabbed once. Logit-scale coefficients of the best a priori models (Tables 4 and 6)
+# are for covariates standardised to mean 0, SD 1; "scale" is the SD of the original
+# covariate as printed (divide β by it for the original units). Minus signs were checked in
+# the PDF text layer (they are lost by some text extractions).
+
+source = { ref = "adams2010", doi = "10.1890/08-2319.1", review_ref = 49 }
+
+[[parameter]]
+symbol = "finite_p_threshold"
+quantity = "per-animal probability above which the finite-population factor is near 1"
+value = 0.05
+units = "probability"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "theory" }
+location = "Introduction, 'The use of occupancy models...' ('For p′ > 0.05 and Ni > 50')"
+verified = true
+
+[[parameter]]
+symbol = "finite_N_threshold"
+quantity = "population size above which the finite-population factor is near 1"
+value = 50
+units = "animals"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "theory" }
+location = "Introduction ('Ni > 50 for all i')"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "ψ"
+quantity = "estimated probability that Bd occurs in a native-anuran population, top-ranked model"
+value = 0.534
+units = "probability"
+uncertainty = { kind = "ci95", lo = 0.366, hi = 0.694, as_printed = "53.4% (95% CI = 36.6–69.4%)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Abstract; Results, Native anurans"
+verified = true
+notes = "Does not follow from the Table 4 intercept (expit(1.053) = 0.741); see target adams2010_psi_native."
+
+[[parameter]]
+set = "native"
+symbol = "npop"
+quantity = "native-anuran populations sampled"
+value = 78
+units = "populations"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Abstract; Results"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "npop_analysed"
+quantity = "native-anuran populations analysed (species with more than five populations)"
+value = 72
+units = "populations"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Results, Native anurans"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "npop_detected"
+quantity = "analysed native populations with at least one Bd-positive swab"
+value = 23
+units = "populations"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Results, Native anurans"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "β_p_intercept"
+quantity = "logit coefficient p_intercept of the best native-anuran model"
+value = -3.107
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "se_p_intercept"
+quantity = "standard error of logit coefficient p_intercept, best native-anuran model"
+value = 0.402
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "β_p_larv"
+quantity = "logit coefficient p_larv of the best native-anuran model"
+value = -2.432
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "se_p_larv"
+quantity = "standard error of logit coefficient p_larv, best native-anuran model"
+value = 0.388
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "β_p_date"
+quantity = "logit coefficient p_date of the best native-anuran model"
+value = -0.663
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "se_p_date"
+quantity = "standard error of logit coefficient p_date, best native-anuran model"
+value = 0.257
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "scale_p_date"
+quantity = "standard deviation of the original covariate of p_date (Table 4 'Scale')"
+value = 29.838
+units = "covariate units"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "β_p_elev"
+quantity = "logit coefficient p_elev of the best native-anuran model"
+value = -1.23
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "se_p_elev"
+quantity = "standard error of logit coefficient p_elev, best native-anuran model"
+value = 0.773
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "scale_p_elev"
+quantity = "standard deviation of the original covariate of p_elev (Table 4 'Scale')"
+value = 710.102
+units = "covariate units"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "β_p_date_elev"
+quantity = "logit coefficient p_date_elev of the best native-anuran model"
+value = 2.366
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "se_p_date_elev"
+quantity = "standard error of logit coefficient p_date_elev, best native-anuran model"
+value = 0.853
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "scale_p_date_elev"
+quantity = "standard deviation of the original covariate of p_date_elev (Table 4 'Scale')"
+value = 145125.449
+units = "covariate units"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "β_p_hf"
+quantity = "logit coefficient p_hf of the best native-anuran model"
+value = 0.872
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "se_p_hf"
+quantity = "standard error of logit coefficient p_hf, best native-anuran model"
+value = 0.189
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "scale_p_hf"
+quantity = "standard deviation of the original covariate of p_hf (Table 4 'Scale')"
+value = 2.023
+units = "covariate units"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "β_ψ_intercept"
+quantity = "logit coefficient ψ_intercept of the best native-anuran model"
+value = 1.053
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "se_ψ_intercept"
+quantity = "standard error of logit coefficient ψ_intercept, best native-anuran model"
+value = 0.555
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "β_ψ_ralu"
+quantity = "logit coefficient ψ_ralu of the best native-anuran model"
+value = 1.43
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "native"
+symbol = "se_ψ_ralu"
+quantity = "standard error of logit coefficient ψ_ralu, best native-anuran model"
+value = 0.554
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native anurans", setting = "field, Oregon and northern California" }
+location = "Table 4"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "ψ"
+quantity = "estimated probability that Bd occurs in a bullfrog population, top-ranked model"
+value = 0.664
+units = "probability"
+uncertainty = { kind = "ci95", lo = 0.429, hi = 0.838, as_printed = "66.4% (95% CI = 42.9–83.8%)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Abstract; Results, Bullfrogs"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "npop"
+quantity = "bullfrog populations sampled and analysed"
+value = 40
+units = "populations"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Abstract; Statistical analysis"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "npop_detected"
+quantity = "bullfrog populations with at least one Bd-positive swab"
+value = 21
+units = "populations"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Results, Bullfrogs"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "β_p_intercept"
+quantity = "logit coefficient p_intercept of the best bullfrog model"
+value = -1.788
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "se_p_intercept"
+quantity = "standard error of logit coefficient p_intercept, best bullfrog model"
+value = 0.224
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "β_p_larv"
+quantity = "logit coefficient p_larv of the best bullfrog model"
+value = 0.085
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "se_p_larv"
+quantity = "standard error of logit coefficient p_larv, best bullfrog model"
+value = 0.173
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "β_p_date"
+quantity = "logit coefficient p_date of the best bullfrog model"
+value = -0.381
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "se_p_date"
+quantity = "standard error of logit coefficient p_date, best bullfrog model"
+value = 0.142
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "scale_p_date"
+quantity = "standard deviation of the original covariate of p_date (Table 6 'Scale')"
+value = 39.572
+units = "covariate units"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "β_p_stag"
+quantity = "logit coefficient p_stag of the best bullfrog model"
+value = -0.522
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "se_p_stag"
+quantity = "standard error of logit coefficient p_stag, best bullfrog model"
+value = 0.186
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "β_ψ_intercept"
+quantity = "logit coefficient ψ_intercept of the best bullfrog model"
+value = 0.68
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "se_ψ_intercept"
+quantity = "standard error of logit coefficient ψ_intercept, best bullfrog model"
+value = 0.493
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "β_ψ_lat"
+quantity = "logit coefficient ψ_lat of the best bullfrog model"
+value = 1.007
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "se_ψ_lat"
+quantity = "standard error of logit coefficient ψ_lat, best bullfrog model"
+value = 0.585
+units = "logit"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "scale_ψ_lat"
+quantity = "standard deviation of the original covariate of ψ_lat (Table 6 'Scale')"
+value = 2.107
+units = "covariate units"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field, Oregon and northern California" }
+location = "Table 6"
+verified = true

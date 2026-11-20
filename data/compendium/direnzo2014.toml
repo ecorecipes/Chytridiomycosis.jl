@@ -1,0 +1,68 @@
+# DiRenzo GV, Langhammer PF, Zamudio KR, Lips KR (2014) Fungal infection intensity and
+# zoospore output of Atelopus zeteki, a potential acute chytrid supershedder. PLOS ONE
+# 9(3):e93356. https://doi.org/10.1371/journal.pone.0093356 (open access, CC BY 4.0).
+#
+# VERSION CHECKED: the published PLOS ONE PDF (printable version) and the article XML, read
+# on 2026-11-19. The article has no supporting-information (S) files; the only individual
+# values are the terminal values of Table 1 (bundled in data/direnzo2014/table1.csv).
+#
+# System: Atelopus zeteki (captive bred, 15 months after metamorphosis), Bd strain JEL 423
+# (BdGPL), 30,000 zoospores for 10 h, 21-22 °C. Eight infected frogs (5 naive, 3 previously
+# exposed to the attenuated strain JEL 427-P39). Swab (qPCR, zoospore genomic equivalents)
+# and 15-min soak (zoospores per minute) from day 7, then every 3-4 days, and at death.
+#
+# The model: linear mixed models of ln(response) on time with a first-order autoregressive
+# correlation (nlme). The paper prints only the slopes, as a "daily percent increase" with an
+# SE. 35.4 and 13.1 are 100 x the ln-scale slope r, not 100(e^r - 1): with the printed SEs,
+# r/SE = 7.08 and 3.28 match the printed t50 = 7.018 and t46 = 3.164 (see the validation
+# targets). The intercepts, random-effect and residual SDs and the AR(1) coefficient are NOT
+# printed. Time in days.
+
+source = { ref = "direnzo2014", doi = "10.1371/journal.pone.0093356", review_ref = 29 }
+
+[[parameter]]
+symbol = "r_intensity"
+quantity = "daily rate of increase of ln Bd infection intensity (slope of the log-linear mixed model)"
+value = 0.354
+units = "day^-1"
+uncertainty = { kind = "se", se = 0.05, as_printed = "35.4% (SE: 0.05)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL 423", host = "Atelopus zeteki", stage = "adult", temperature_C = 21.5, setting = "lab, skin swabs (zoospore genomic equivalents)" }
+location = "Abstract; Results para. 3 ('35.4% (SE: 0.05)'); Methods, statistical analyses"
+verified = true
+notes = "Printed as a 'daily percent increase' of 35.4%. Read as 100 x r (r on the ln scale): r/SE = 0.354/0.05 = 7.08 agrees with the printed t50 = 7.018, whereas r = ln(1.354) = 0.303 would give 6.06. The implied percent increase per day is 100(e^0.354 - 1) = 42.5%."
+
+[[parameter]]
+symbol = "r_output"
+quantity = "daily rate of increase of ln zoospore output (slope of the log-linear mixed model)"
+value = 0.131
+units = "day^-1"
+uncertainty = { kind = "se", se = 0.04, as_printed = "13.1% (SE: 0.04)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "JEL 423", host = "Atelopus zeteki", stage = "adult", temperature_C = 21.5, setting = "lab, 15-min water soaks (zoospores per minute)" }
+location = "Abstract; Results para. 3 ('13.1% (SE: 0.04)')"
+verified = true
+notes = "As for r_intensity: r/SE = 3.28 against the printed t46 = 3.164."
+
+[[parameter]]
+symbol = "dose"
+quantity = "inoculation dose per frog (10 h exposure)"
+value = 30000.0
+units = "zoospores"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", isolate = "JEL 423", host = "Atelopus zeteki" }
+location = "Methods, Experimental procedures"
+verified = true
+
+[[parameter]]
+symbol = "first_sample"
+quantity = "day post-inoculation of the first swab and soak"
+value = 7.0
+units = "day"
+provenance = "M"
+role = "structural"
+location = "Methods ('starting on day seven post-inoculation, thereafter every three to four days')"
+verified = true

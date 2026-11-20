@@ -1,0 +1,9 @@
+prior_exposure,days_survived,intensity_at_death,output_at_death
+Naive,21,520436,3.5
+Naive,28,1697306,0.0
+Naive,18,4454759,4.9
+Naive,31,8781016,0.2
+Naive,25,9584158,170.6
+Previous,18,2291631,7.1
+Previous,33,2960916,0.0
+Previous,31,4385154,0.0

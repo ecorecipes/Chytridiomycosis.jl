@@ -28,10 +28,15 @@ Every model belongs to one of three categories. They differ in what a result fro
 | Bd growth in culture | Woodhams et al. 2008, doi:10.1890/06-1842.1 | `intrinsic_growth_rate` |
 | Several host species sharing one zoospore pool | Daversa et al. 2022, doi:10.1086/720638 | `MultiHostPoolProblem` |
 | Live and dead zoospores in pond water | Rumschlag et al. 2022, doi:10.1111/1365-2656.13612 | `ZoosporePersistenceProblem`, `RumschlagModel` |
+| Midwife toad stages and a zoospore pool (stochastic, as coded) | Doddington et al. 2013, doi:10.1890/12-1270.1 | `DoddingtonStochasticProblem`, `DoddingtonODEProblem`, `doddington_outcomes` |
+| Two hosts with overlapping habitats: environmental transmission and dilution | Espira et al. 2022, doi:10.1086/717413 | `EspiraParameters`, `OverlappingHabitatProblem`, `community_reproduction_number` |
+| Bd culture growth with five thermal performance curves, under varying temperatures | Gajewski et al. 2021, doi:10.1002/ece3.8379 | `GajewskiParameters`, `GajewskiGrowthProblem`, `GajewskiModel` |
+| Logistic growth and thermal responses of five Bd isolates | Sheets et al. 2021, doi:10.3389/fvets.2021.687084 | `SheetsGrowthModel`, `sheets_fits`, `sheets_tpc` |
 | Sunlight-heated refugia (CTMC, ABC) | Miller et al. 2025, arXiv:2503.06846 | `RefugiaCTMCProblem`, `RefugiaODEProblem`, `refugia_abc` |
 | Seasonal Bsal and a Floquet R0 | Bozzuto & Canessa 2019, doi:10.1016/j.gecco.2019.e00551 | `SeasonalBsalProblem` |
 | Bsal transmission functions in eastern newts | Malagon et al. 2020, doi:10.1038/s41598-020-62351-x; Tompros et al. 2022, doi:10.1111/tbed.14043 | `TransmissionSLIProblem`, `SusceptibleChainProblem`, `CohabitationProblem` |
 | Stochastic individual-based Bd model with interventions | Drawert et al. 2017, doi:10.1098/rsif.2017.0480 | `DrawertIBMProblem`, `DrawertODEProblem` |
+| Agent-based model of imperfect Bd prophylaxis (resistance vs tolerance); preprint | Barnett et al. 2026, bioRxiv doi:10.64898/2026.05.15.725113 | `BarnettABMProblem`, `barnett_vaccine`, `barnett_relative_change` |
 | Bsal with life stages and temperature in eastern newts | Chowdhury et al. 2025, doi:10.1016/j.ecolmodel.2025.111028 | `BsalStageTemperatureProblem` |
 | Integral projection model of Bd load | Wilber et al. 2016, doi:10.1111/2041-210X.12561 | `BdIPMProblem` |
 | Hybrid IPM with a zoospore pool and tadpoles | Wilber et al. 2017, doi:10.1111/ele.12814 | `HybridIPMProblem` |
@@ -39,7 +44,17 @@ Every model belongs to one of three categories. They differ in what a result fro
 | Load distributions and extinction risk | Louca et al. 2014, doi:10.1098/rspb.2013.2783 | `LoucaDOIProblem`, `louca_monte_carlo` |
 | Outbreak-state hidden Markov model | Wilber et al. 2022, doi:10.1111/1365-2656.13823 | `OutbreakHMMProblem`, `Wilber2022DeclineProblem` |
 | Multistate capture–recapture survival | Hollanders et al. 2023, doi:10.1002/eap.2724; Palomar et al. 2023, doi:10.1007/s10531-022-02525-3 | `CTMultistateProblem`, `MultiEventProblem` |
+| Multistate CMR (Arnason–Schwarz) and POPAN abundance | Brannelly et al. 2018, doi:10.1186/s12898-018-0189-5 | `ArnasonSchwarzProblem`, `PopanProblem` |
+| Hurdle model of prevalence and load across species and temperature | Grear et al. 2025, doi:10.1002/ecm.70001 | `Grear2025Problem`, `HurdleRegressionProblem` |
 | Aggregation of swab loads (Taylor's power law) | Schrock et al. 2025, doi:10.1098/rspb.2024.2013 | `TaylorPowerLawProblem` |
+| Bd load with adaptive immunity; antifungal, probiotic and density-reduction treatments | Woodhams et al. 2011, doi:10.1186/1742-9994-8-8 | `ConstantPoolFrogProblem`, `ImmunePopulationProblem` |
+| Log-linear mixed models of Bd intensity and zoospore output in *Atelopus zeteki* | DiRenzo et al. 2014, doi:10.1371/journal.pone.0093356 | `DiRenzoLoadModel`, `load_direnzo2014` |
+| Host–pathogen dynamic occupancy of boreal toads and Bd, refitted to the Dryad data | Mosher et al. 2018, doi:10.1002/eap.1699 | `Mosher2018Problem`, `Mosher2018Model`, `load_mosher2018` |
+| Bd occurrence in host populations by single-season occupancy with covariates (no data deposited) | Adams et al. 2010, doi:10.1890/08-2319.1 | `SingleSeasonOccupancyModel`, `adams2010_coefficients` |
+| Survival, recruitment and growth of boreal toads before and after Bd (robust-design Pradel) | Hardy et al. 2023, doi:10.1111/1365-2664.14310 | `hardy2023_problem`, `PradelProblem` |
+| Itraconazole treatment of Cascades frog metamorphs: stochastic stage-structured projection | Cook et al. 2022, doi:10.1111/csp2.12762 | `CookProjectionProblem`, `cook_treatment_grid` |
+| Adult survival before and after Bd from age structure; spatial metapopulation viability of *Litoria* (Bd only lowers survival) | Heard et al. 2024, doi:10.1111/1365-2656.14177 | `HeardCatchCurve`, `HeardMetapopulationProblem` |
+| Environmental-water timing and extinction risk of *Litoria raniformis* (age-classified PVA) | Turner et al. 2025, doi:10.1111/csp2.70022 | `TurnerPVAProblem` |
 
 ### 2. Modified published models
 

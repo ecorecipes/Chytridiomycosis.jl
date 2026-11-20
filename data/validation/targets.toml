@@ -4968,4 +4968,3401 @@ source = { ref = "palomar2023", location = "Results, 'Pradel model'" }
 quantity = "geometric mean annual population growth rate λ (Pradel model, MARK)"
 published = 0.92
 status = "pending"
-notes = "The Pradel (1996) temporal-symmetry model is not implemented, and the data are not deposited."
+notes = "Needs the capture histories, which are not deposited. The Pradel (1996) temporal-symmetry likelihood itself is now available (`pradel_loglikelihood`, used for Hardy et al. 2023)."
+
+# ---- barnett2026 ----
+# Barnett et al. 2026, bioRxiv PREPRINT doi:10.64898/2026.05.15.725113 (v2). No model code was
+# released, so the ABM targets are the preprint's qualitative statements about its contour
+# plots (signs of percent changes against the unvaccinated control), checked with the
+# package's documented choices (src/models/barnett2026.jl), 25 scenario runs and 250 control
+# runs (compendium n_reps, n_control) and fixed seeds. Infection intensity is the default
+# `metric = :metamorph` of barnett_relative_change (season mean load of infected metamorphs;
+# the preprint does not define its intensity statistic). Efficacy and coverage levels in the
+# calls are points of the preprint's scenario grid (10–100% in steps of 10).
+
+[[target]]
+id = "barnett2026_antiinfection_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. 1a" }
+quantity = "percent change in infection intensity, anti-infection resistance (80% efficacy, 80% coverage)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    barnett_relative_change(p, barnett_vaccine(:infection, 0.8; coverage = 0.8);
+                            rng = Random.Xoshiro(2026)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_antiinfection_population"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. 1b" }
+quantity = "percent change in final frog population, anti-infection resistance (80% efficacy, 80% coverage)"
+published = "increase"
+call = """
+let p = BarnettParameters(:barnett2026)
+    barnett_relative_change(p, barnett_vaccine(:infection, 0.8; coverage = 0.8);
+                            rng = Random.Xoshiro(2026)).survivors
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0e6 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_antitransmission_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. S1a" }
+quantity = "percent change in infection intensity, anti-transmission resistance (80% efficacy, 80% coverage)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    barnett_relative_change(p, barnett_vaccine(:transmission, 0.8; coverage = 0.8);
+                            rng = Random.Xoshiro(2027)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_antigrowth_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. S1b" }
+quantity = "percent change in infection intensity, anti-growth resistance (80% efficacy, 80% coverage)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    barnett_relative_change(p, barnett_vaccine(:growth, 0.8; coverage = 0.8);
+                            rng = Random.Xoshiro(2028)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "discrepant"
+regression = { value = 7.18, atol = 5.0 }
+notes = """
+Not reproduced with the package's choices: +7.2% (metamorph metric). With doubled-at-most
+clearance (0.2 to 0.36) self-reinfection (17.8 × 0.1 × 0.25 = 0.445 per sporangium per day) still
+outgrows clearance, so infected metamorphs still reach the lethal load and the mean load of the
+living ones barely moves. With the season-mean metric (metric = :season) the change is −45%.
+The preprint does not define its intensity statistic, and no code was released."""
+
+[[target]]
+id = "barnett2026_tolerance_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Abstract; Results, 'Modes of protection'; Fig. 1c" }
+quantity = "percent change in infection intensity, tolerance (100% efficacy, 100% coverage): imperfect prophylaxis amplifies infection"
+published = "increase"
+call = """
+let p = BarnettParameters(:barnett2026)
+    barnett_relative_change(p, barnett_vaccine(:tolerance, 1.0; coverage = 1.0);
+                            rng = Random.Xoshiro(2029)).intensity
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0e6 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_tolerance_weak_resistance_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Two-way interactions with tolerance'; Fig. S7a; Discussion" }
+quantity = "percent change in infection intensity, tolerance 100% with weak anti-infection resistance 10%, coverage 75%"
+published = "increase"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:tolerance => 1.0, :infection => 0.1;
+                        coverage = parameter_set(:barnett2026).coverage_two_way)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2030)).intensity
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0e6 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_tolerance_strong_resistance_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Two-way interactions with tolerance'; Fig. S7a" }
+quantity = "percent change in infection intensity, tolerance 100% with strong anti-infection resistance 100%, coverage 75%"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:tolerance => 1.0, :infection => 1.0;
+                        coverage = parameter_set(:barnett2026).coverage_two_way)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2031)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "discrepant"
+regression = { value = 48.82, atol = 5.0 }
+notes = """
+Not reproduced: +48.8%. In the package's reading, hosts made fully resistant are never infected,
+so the intensity of infected metamorphs comes from the unvaccinated 25% and from vaccinated hosts
+with higher lethal loads, and tolerance still raises it. The preprint reports that resistance
+counteracts tolerance. With metric = :season the change is −41%. No code to check against."""
+
+[[target]]
+id = "barnett2026_tolerance_growth_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Two-way interactions with tolerance'; Fig. 4a" }
+quantity = "percent change in infection intensity, tolerance 100% with anti-growth resistance 100%, coverage 75%"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:tolerance => 1.0, :growth => 1.0;
+                        coverage = parameter_set(:barnett2026).coverage_two_way)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2032)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "discrepant"
+regression = { value = 63.42, atol = 5.0 }
+notes = """
+Not reproduced: +63.4% (Fig. 4a reports a decrease once anti-growth resistance is at least
+small). As for barnett2026_antigrowth_intensity, increased clearance does not stop runaway
+self-reinfection here. With metric = :season the change is −43%. No code to check against."""
+
+[[target]]
+id = "barnett2026_adverse_infection_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Abstract; Results, 'Hypothetical adverse reactions'; Fig. 5a" }
+quantity = "percent change in infection intensity, vaccination increases susceptibility (establishment +100%, coverage 50%)"
+published = "increase"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:infection, 1.0; coverage = 0.5, adverse = true)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2033)).intensity
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0e6 }
+status = "qualitative"
+notes = "Reproduced only weakly (+3.9% with this seed; the season-mean metric gives +89%)."
+
+[[target]]
+id = "barnett2026_adverse_infection_population"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Hypothetical adverse reactions'; Fig. 5b" }
+quantity = "percent change in final frog population, vaccination increases susceptibility (establishment +100%, coverage 50%)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:infection, 1.0; coverage = 0.5, adverse = true)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2033)).survivors
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_adverse_tolerance_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Hypothetical adverse reactions'; Fig. S11c" }
+quantity = "percent change in infection intensity, vaccination reduces tolerance (smax −50%, coverage 100%)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:tolerance, 0.5; coverage = 1.0, adverse = true)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2034)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_control_prevalence"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection' ('Median infection prevalence in unvaccinated scenarios was already 100%')" }
+quantity = "median infection prevalence of the unvaccinated control"
+published = 1.0
+call = """
+barnett_summary(BarnettParameters(:barnett2026); rng = Random.Xoshiro(2035),
+                nreps = round(Int, parameter_set(:barnett2026).n_control)).median_final_prevalence
+"""
+tolerance = { atol = 0.05 }
+status = "discrepant"
+regression = { value = 0.0, atol = 5.0 }
+notes = """
+Not reproduced: in the package's runs most infected hosts die when they metamorphose with
+loads above smax, so the survivors at day 90 are mostly uninfected (median 0). The preprint
+does not give the number of tadpoles, the pond geometry or its prevalence statistic; with
+denser ponds (n_tadpoles = 5000, n_perimeter = 120) the median is 1. Not tuned."""
+
+[[target]]
+id = "barnett2026_field_intensity_ratio"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
+quantity = "post-intervention Bd intensity in treated ponds relative to the expectation had they declined like controls (ZINB BACI interaction)"
+published = 6.42
+status = "pending"
+notes = "Field swab data (Santa Clara County ponds, 2011–2022) are not deposited with the preprint; the BACI zero-inflated negative binomial GLMM (glmmTMB) is not implemented."
+
+[[target]]
+id = "barnett2026_field_interaction_p"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. 3" }
+quantity = "P value of the time-by-treatment interaction on infection intensity"
+published = 0.001
+status = "pending"
+notes = "Field data not deposited."
+
+[[target]]
+id = "barnett2026_field_control_decline"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
+quantity = "percent decrease in estimated marginal mean infection intensity, control ponds, pre to post (1,625 to 194 Bd GE)"
+published = 88.0
+status = "pending"
+notes = "Field data not deposited. Treated ponds: 23% decrease (866 to 667)."
+# ---- woodhams2011 ----
+# Woodhams et al. 2011 Front Zool 8:8, Appendix and extended Figure 6 legend. Fig. 6B runs on
+# the compendium set "fig6b". Fig. 6C and 6D need the antibody rates r and c (and μ for 6D),
+# which the paper does not print, so their targets are pending.
+
+[[target]]
+id = "woodhams2011_fig6b_untreated_death"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (B)(a)" }
+quantity = "day on which the untreated frog in a constant pool reaches Smax = 10000 sporangia"
+published = 33
+call = """
+let q = parameter_set(:woodhams2011; set = "fig6b")
+    time_to_lethal_load(ImmuneFrogParameters(:woodhams2011; set = "fig6b"); S0 = q.S0)
+end
+"""
+tolerance = { atol = 1.0 }
+status = "reproduced"
+notes = "Closed form: 32.18 days, that is during day 33 ('will hit S max = 10000 sporangia in 33 days'). The ODE with a lethal-load callback gives the same."
+
+[[target]]
+id = "woodhams2011_fig6b_pool_removed"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (B)(b)" }
+quantity = "eliminating the zoospore pool on day 20 delays, but does not prevent, death (self-reinfection)"
+published = true
+call = """
+let q = parameter_set(:woodhams2011; set = "fig6b"), p = ImmuneFrogParameters(:woodhams2011; set = "fig6b")
+    r = solve(ConstantPoolFrogProblem(p; S0 = q.S0, tspan = (0.0, 60.0),
+        treatments = [FrogTreatment(q.t_treat; γZ = 0)]))
+    isfinite(r.death_time) && r.death_time > time_to_lethal_load(p; S0 = q.S0)
+end
+"""
+status = "qualitative"
+notes = "Death on day 36.9 instead of 32.2; the figure's curve (b) crosses 10,000 near day 37."
+
+[[target]]
+id = "woodhams2011_fig6b_probiotic_clears"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (B)(c)" }
+quantity = "load left on the frog after ν is lowered to 0.15 on day 20 ('sufficient to allow the frog to eventually clear the infection')"
+published = 0.0
+call = """
+let q = parameter_set(:woodhams2011; set = "fig6b"), p = ImmuneFrogParameters(:woodhams2011; set = "fig6b")
+    only(constant_pool_equilibria(ImmuneFrogParameters(; p = q.ν_treated, γZ = p.γZ, ηf = p.ηf,
+        σ = p.σ, Smax = p.Smax)))
+end
+"""
+tolerance = { atol = 1.0 }
+status = "discrepant"
+regression = { value = 1500.0, rtol = 1e-6 }
+notes = """
+With ν = 0.15 the per-sporangium rate a = νηf − σ = −0.05 < 0, so self-reinfection no longer
+sustains growth, but the frog stays in the constant pool and the load settles at
+−b/a = 0.15·500/0.05 = 1500 sporangia, not zero. The paper's own Fig. 6B curve (c) levels off
+near 1,500-2,000, as ours does (1,879 on day 60); only the legend's wording ('clear') disagrees.
+Clearance needs the pool removed as well (panel d, next target)."""
+
+[[target]]
+id = "woodhams2011_fig6b_both_clear"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (B)(d)" }
+quantity = "with the pool removed and ν lowered to 0.15 on day 20, the load decays to zero faster than with ν lowered alone"
+published = true
+call = """
+let q = parameter_set(:woodhams2011; set = "fig6b"), p = ImmuneFrogParameters(:woodhams2011; set = "fig6b")
+    run(tr) = solve(ConstantPoolFrogProblem(p; S0 = q.S0, tspan = (0.0, 200.0), treatments = tr)).sol.u[end][1]
+    both = run([FrogTreatment(q.t_treat; γZ = 0, p = q.ν_treated)])
+    both < 1.0 && both < run([FrogTreatment(q.t_treat; p = q.ν_treated)])
+end
+"""
+status = "qualitative"
+notes = "Load 582 on day 60 (figure: about 600), decaying at rate 0.05 per day to zero."
+
+[[target]]
+id = "woodhams2011_fig6c_stable_load"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (C)" }
+quantity = "stable load after the day-30 antifungal treatment of a frog with adaptive immunity (sporangia)"
+published = 916
+status = "pending"
+notes = """
+Needs the antibody production r and decay c, which the paper does not print. The equilibrium
+depends only on r/c: constant_pool_equilibria gives 917.4 with r/c = 0.01 (A* = 9.17, in the
+range of the figure's antibody axis). The values r = 1e-4, c = 0.01 (our inference, not
+published) reproduce the figure closely: untreated death on day 32.0, and after treatment a
+peak of 6,849 sporangia on day 82.6, as drawn."""
+
+[[target]]
+id = "woodhams2011_fig6c_untreated_death"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (C)" }
+quantity = "day on which an untreated frog with adaptive immunity reaches the lethal threshold"
+published = 33
+status = "pending"
+notes = "Needs r and c individually (not printed). See woodhams2011_fig6c_stable_load."
+
+[[target]]
+id = "woodhams2011_fig6d_density_reduction"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Figure 6 legend (D)" }
+quantity = "100 untreated frogs reach Smax and the population dies out; reduced to 10 on day 30, the frogs' antibodies suppress the infection before Smax"
+published = true
+status = "pending"
+notes = "ImmunePopulationProblem with DensityReduction implements the scenario, but the zoospore death rate μ and the antibody rates r and c are not printed."
+
+# ---- direnzo2014 ----
+# DiRenzo et al. 2014 PLOS ONE 9:e93356. Only the slopes of the mixed models are printed;
+# Table 1 (data/direnzo2014/table1.csv) holds the only individual values.
+
+[[target]]
+id = "direnzo2014_intensity_t"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract; Results para. 3" }
+quantity = "t statistic of the infection-intensity slope, r/SE with r = 0.354 (the printed '35.4%') and SE = 0.05"
+published = 7.018
+call = "direnzo_t_statistic(DiRenzoParameters(:direnzo2014))"
+tolerance = { lower = 6.44, upper = 7.87 }
+status = "reproduced"
+notes = """
+0.354/0.05 = 7.08. The interval is the range of r/SE allowed by the SE's rounding (0.045-0.055).
+This confirms that the 'daily percent increase' is 100 × the ln-scale slope: reading it as
+100(e^r − 1) gives r = 0.303 and t = 6.06, outside the interval. The actual increase per day
+is therefore 42.5% (daily_percent_increase(...; as_printed = false))."""
+
+[[target]]
+id = "direnzo2014_output_t"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract; Results para. 3" }
+quantity = "t statistic of the zoospore-output slope, r/SE with r = 0.131 and SE = 0.04"
+published = 3.164
+call = "direnzo_t_statistic(DiRenzoParameters(:direnzo2014); response = :output)"
+tolerance = { lower = 2.91, upper = 3.74 }
+status = "reproduced"
+notes = "0.131/0.04 = 3.28; the interval is the range allowed by the SE's rounding (0.035-0.045)."
+
+[[target]]
+id = "direnzo2014_intensity_at_death"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract; Results para. 2; Table 1" }
+quantity = "mean Bd infection intensity at death (zoospore genomic equivalents)"
+published = 4334422
+call = "direnzo_summary().intensity.mean"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = "Exactly the mean of the eight Table 1 values."
+
+[[target]]
+id = "direnzo2014_intensity_at_death_se"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Results para. 2" }
+quantity = "SE of the intensity at death"
+published = 1156576
+call = "direnzo_summary().intensity.se"
+tolerance = { atol = 1.0 }
+status = "reproduced"
+notes = "SD/√8 of Table 1 = 1,156,575.6. The abstract prints a different SE, 1,236,431 (next target)."
+
+[[target]]
+id = "direnzo2014_intensity_at_death_se_abstract"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract" }
+quantity = "SE of the intensity at death, as printed in the abstract"
+published = 1236431
+call = "direnzo_summary().intensity.se"
+tolerance = { atol = 1.0 }
+status = "discrepant"
+regression = { value = 1156575.6, atol = 1.0 }
+notes = "The Results print 1,156,576, which Table 1 reproduces; the abstract's value is not reproduced by any simple variant (population SD/√8 gives 1,081,877)."
+
+[[target]]
+id = "direnzo2014_survival_mean"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract; Results para. 1" }
+quantity = "mean days from inoculation to death (euthanasia)"
+published = 28.88
+call = "direnzo_summary().days.mean"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 25.625, atol = 1e-9 }
+notes = """
+Table 1's 'Total days survived post-inoculation' (21, 28, 18, 31, 25, 18, 33, 31) give mean
+25.625 (SE 2.14), not 28.88 (SE 1.58). Figure 1 shows deaths at about 22, 25, 31, 32 and 33
+days, consistent with neither. The source of the difference cannot be resolved without the raw
+data, which are not published."""
+
+[[target]]
+id = "direnzo2014_survival_min"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract ('All animals died between 22 and 33 days post-inoculation')" }
+quantity = "earliest day of death"
+published = 22
+call = "direnzo_summary().days.min"
+status = "discrepant"
+regression = { value = 18.0 }
+notes = "Two frogs in Table 1 (one naive, one previously exposed) survived 18 days, and another 21. The maximum, 33, agrees. This is the abstract-versus-table inconsistency noted in the literature review."
+
+[[target]]
+id = "direnzo2014_output_at_death"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract; Results para. 2" }
+quantity = "mean zoospore output at death (zoospores per minute)"
+published = 23.55
+call = "direnzo_summary().output.mean"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 23.2875, atol = 1e-9 }
+notes = "Table 1 gives 23.29 (SE 21.07, maximum 170.6); the text prints 23.55 (SE 22.78) and a range up to 172.61. Table 1 is rounded to one decimal, but rounding cannot move the sum by 2.1 (8 × 0.26)."
+
+[[target]]
+id = "direnzo2014_logrank"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Figure 1 legend" }
+quantity = "log-rank χ² comparing survival of naive and previously exposed frogs"
+published = 0.7
+call = "direnzo_logrank().chisq"
+tolerance = { digits = 1 }
+status = "discrepant"
+regression = { value = 1.2974, atol = 1e-4 }
+notes = "From the Table 1 survival times, uncensored: χ² = 1.30 (p = 0.25). The conclusion (no difference, p > 0.05) holds. Figure 1's curves carry censoring marks at sampling days and different death times, so the paper's test was not run on the Table 1 times."
+# ---- mosher2018 ----
+# Refits to the bundled Dryad data (data/mosher2018), Site 33 dropped (82 sites). Each model
+# is fitted once per session (_mosher2018_reference_fit, a few seconds each). Checked against
+# the accepted manuscript of the article. AICc uses n = 494 site-years surveyed, the sample
+# size implied by Table 3 (our inference). scripts/mosher2018_refit.jl prints the full set.
+
+[[target]]
+id = "mosher2018_aicc_model1"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 1" }
+quantity = "AICc of the model with γAB, γB, γBA, εAB, εBA quadratic in elevation (best)"
+published = 2228.07
+call = "_mosher2018_reference_fit(1).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model2"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 2" }
+quantity = "AICc of the model with γAB, γB, γBA, εAB, εBA linear in elevation"
+published = 2229.27
+call = "_mosher2018_reference_fit(2).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model3"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 3" }
+quantity = "AICc of the model with γB, γBA, εBA quadratic in elevation"
+published = 2231.05
+call = "_mosher2018_reference_fit(3).aicc"
+tolerance = { atol = 0.015 }
+regression = { value = 2230.83, atol = 0.02 }
+status = "discrepant"
+notes = "Our maximum is 0.22 higher in log-likelihood terms (deviance 2186.87 against the printed 2187.09, K = 21 as printed), so the printed fit appears to fall short of the maximum. Every other model of Table 3 except the null is reproduced to 0.01."
+
+[[target]]
+id = "mosher2018_aicc_model4"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 4" }
+quantity = "AICc of the model with γB, γBA, εBA linear in elevation"
+published = 2231.42
+call = "_mosher2018_reference_fit(4).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model5"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 5" }
+quantity = "AICc of the model with γB, γBA linear in elevation"
+published = 2231.61
+call = "_mosher2018_reference_fit(5).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model6"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 6" }
+quantity = "AICc of the model with εBA linear in elevation"
+published = 2232.02
+call = "_mosher2018_reference_fit(6).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model7"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 7" }
+quantity = "AICc of the model with γB, γBA, εBA by permanence"
+published = 2232.2
+call = "_mosher2018_reference_fit(7).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model8"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 8" }
+quantity = "AICc of the model with εBA by permanence"
+published = 2232.55
+call = "_mosher2018_reference_fit(8).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model9"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 9" }
+quantity = "AICc of the model with γAB by other amphibians"
+published = 2232.65
+call = "_mosher2018_reference_fit(9).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model10"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 10" }
+quantity = "AICc of the model with εBA quadratic in elevation"
+published = 2233.0
+call = "_mosher2018_reference_fit(10).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_aicc_model11"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 11" }
+quantity = "AICc of the model with all rates constant, state-dependent"
+published = 2235.26
+call = "_mosher2018_reference_fit(11).aicc"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_deviance_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 1" }
+quantity = "deviance (−2 log L) of the best model"
+published = 2175.3
+call = "_mosher2018_reference_fit(1).deviance"
+tolerance = { digits = 1 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_k_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, row 1" }
+quantity = "number of parameters K of the best model"
+published = 25
+call = "_mosher2018_reference_fit(1).k"
+tolerance = {}
+status = "reproduced"
+notes = "Pairs with the same covariate share slopes (the 'additive relationships between parameter pairs' of the Table 3 caption)."
+
+[[target]]
+id = "mosher2018_aicc_null"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Table 3, null model" }
+quantity = "AICc of the null model (each rate independent of the other species)"
+published = 2261.03
+call = "_mosher2018_reference_fit(12).aicc"
+tolerance = { atol = 0.015 }
+regression = { value = 2257.69, atol = 0.02 }
+status = "discrepant"
+notes = "Printed K = 14, deviance 2232.15. Our null model (one constant per rate pair, 3 + 4 + 6 = 13 parameters) has deviance 2230.93, lower with fewer parameters, so the printed model is not this one or was not at its maximum. The paper does not say which."
+
+[[target]]
+id = "mosher2018_elevation_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Abstract; Results, para. 2" }
+quantity = "the six best-supported models all have elevation effects on vital rates (models 1-6 of Table 3 rank first among the 12 models refitted)"
+published = true
+call = "sort(sortperm([_mosher2018_reference_fit(i).aicc for i in 1:12])[1:6]) == 1:6"
+tolerance = {}
+status = "qualitative"
+notes = "Akaike weights cannot be compared: the paper's weights are over 33 models, of which only the 12 printed are refitted. Printed ΔAICc of rows 10 and 11 (4.77, 7.03) do not equal their AICc minus the best (4.93, 7.19); the AICc values are reproduced."
+
+[[target]]
+id = "mosher2018_epsA_initial"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Methods, Modeling Approach" }
+quantity = "toad extinction probability without Bd, εA, in the all-constant model (K = 14)"
+published = 0.0
+call = "(f = _mosher2018_constant_fit(); mosher2018_site_parameters(f.model, f.fit.θ, 1).εA)"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_epsB_initial"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Methods, Modeling Approach" }
+quantity = "Bd extinction probability without toads, εB, in the all-constant model (K = 14)"
+published = 0.0
+call = "(f = _mosher2018_constant_fit(); mosher2018_site_parameters(f.model, f.fit.θ, 1).εB)"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_epsB_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 4" }
+quantity = "Bd extinction probability without toads, εB, best model"
+published = 0.02
+call = "_mosher2018_best_at(3000.0).εB"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "The profile-likelihood interval (0.00-0.15) is not computed."
+
+[[target]]
+id = "mosher2018_gammaA_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 5" }
+quantity = "toad colonisation probability without Bd, γA, best model"
+published = 1.0
+call = "_mosher2018_best_at(3000.0).γA"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "The profile-likelihood interval (0.21-1.00) is not computed."
+
+[[target]]
+id = "mosher2018_epsA_best"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 4" }
+quantity = "toad extinction probability without Bd, εA, best model"
+published = 0.0
+call = "_mosher2018_best_at(3000.0).εA"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "mosher2018_toad_extinction_peak"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 4; Fig. 5A" }
+quantity = "toad extinction with Bd present, εAB, peaks at intermediate elevations at about 0.30"
+published = "~0.30 at intermediate elevations"
+call = """
+let c = _mosher2018_best_curve(:εAB)
+    k = argmax(c.value)
+    (2900 < c.elevation[k] < 3400) ? c.value[k] : -1.0
+end
+"""
+tolerance = { lower = 0.25, upper = 0.35 }
+status = "qualitative"
+notes = "Our peak is 0.283 at about 3170 m. Accepted between 0.25 and 0.35, with the peak between 2900 and 3400 m (choices made here)."
+
+[[target]]
+id = "mosher2018_bd_extinction_peak"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 4; Fig. 5B" }
+quantity = "Bd extinction with toads present, εBA, peaks at intermediate elevations at about 0.30 and is near zero at the extremes"
+published = "~0.30 at intermediate elevations"
+call = """
+let c = _mosher2018_best_curve(:εBA)
+    k = argmax(c.value)
+    (2900 < c.elevation[k] < 3400 && c.value[1] < 0.01 && c.value[end] < 0.01) ? c.value[k] : -1.0
+end
+"""
+tolerance = { lower = 0.25, upper = 0.35 }
+status = "qualitative"
+notes = "Our peak is 0.32 at about 3080 m."
+
+[[target]]
+id = "mosher2018_toad_extinction_elevation"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Abstract; Results, para. 6" }
+quantity = "at high elevations boreal toads with Bd were unlikely to go locally extinct (εAB at the highest site)"
+published = "unlikely"
+call = "_mosher2018_best_curve(:εAB).value[end]"
+tolerance = { lower = 0.0, upper = 0.1 }
+status = "qualitative"
+notes = "Our εAB is 0.044 at 3679 m. The abstract says toad extinction risk is 'lowest at high elevations'; in the refitted best model εAB is lower still at the lowest sites (0.005 at 2468 m), as the Results' quadratic curve implies, so the target follows the Results wording."
+
+[[target]]
+id = "mosher2018_toad_recolonisation_elevation"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Abstract; Results, para. 5; Fig. 5C" }
+quantity = "with Bd present, toads were more likely to recolonise high-elevation sites: γAB at the highest site minus its maximum below 3000 m"
+published = "higher at high elevations"
+call = """
+let c = _mosher2018_best_curve(:γAB)
+    c.value[end] - maximum(c.value[c.elevation .< 3000])
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0 }
+status = "qualitative"
+notes = "Our γAB rises from 0.002 at 2468 m to 0.27 at 3679 m."
+
+[[target]]
+id = "mosher2018_bd_colonisation_elevation"
+model = "obs-mosher2018-host-pathogen-occupancy"
+source = { ref = "mosher2018", location = "Results, para. 5; Fig. 5D" }
+quantity = "Bd was more likely to colonise low and mid-elevation sites: γBA at the highest site is below its maximum"
+published = "lower at high elevations"
+call = """
+let c = _mosher2018_best_curve(:γBA)
+    c.value[end] / maximum(c.value)
+end
+"""
+tolerance = { lower = 0.0, upper = 0.5 }
+status = "qualitative"
+notes = "Our γBA peaks at 0.20 near 2800 m and is 0.011 at 3679 m."
+
+# ---- adams2010 ----
+# Checked against the published PDF. No detection histories are deposited, so nothing is
+# refitted: the targets below are derived from the printed coefficients (Tables 4 and 6, in
+# the compendium), which checks the paper's internal consistency, not a refit.
+
+[[target]]
+id = "adams2010_psi_native"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Abstract; Results, Native anurans" }
+quantity = "estimated probability that Bd occurs in a native-anuran population, top-ranked model"
+published = 0.534
+call = "adams2010_occupancy(:native)"
+tolerance = { digits = 3 }
+regression = { value = 0.741, atol = 0.001 }
+status = "discrepant"
+notes = "From the Table 4 intercept (1.053, CI −0.035 to 2.141) ψ = 0.741 (0.491-0.895) for populations other than R. luteiventris (0.923 for R. luteiventris). The printed 53.4% (36.6-69.4%) matches neither; it may be another summary of the model, which the paper does not define. Needs the detection histories to resolve."
+
+[[target]]
+id = "adams2010_psi_bullfrog"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Abstract; Results, Bullfrogs" }
+quantity = "estimated probability that Bd occurs in a bullfrog population, top-ranked model (at mean latitude)"
+published = 0.664
+call = "adams2010_occupancy(:bullfrog)"
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = "expit of the Table 6 ψ intercept; not a refit (no data)."
+
+[[target]]
+id = "adams2010_psi_bullfrog_ci"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Bullfrogs" }
+quantity = "95% CI of bullfrog ψ, lower and upper bounds summed (0.429 + 0.838)"
+published = 1.267
+call = "sum(round.(adams2010_occupancy(:bullfrog; level = 0.95); digits = 3))"
+tolerance = { atol = 1e-9 }
+status = "reproduced"
+notes = "Each bound is matched to three decimals (0.429, 0.838)."
+
+[[target]]
+id = "adams2010_or_ralu"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Native anurans" }
+quantity = "odds ratio of Bd occurrence for R. luteiventris versus other native populations"
+published = 4.2
+call = "adams2010_odds_ratio(:native, :ψ_ralu)"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "95% CI 1.4-12.4 also matches (1.41-12.38)."
+
+[[target]]
+id = "adams2010_or_larvae_native"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Native anurans" }
+quantity = "odds ratio of a positive swab, larvae versus post-metamorphic native anurans"
+published = 0.10
+call = "adams2010_odds_ratio(:native, :p_larv)"
+tolerance = { digits = 2 }
+regression = { value = 0.0879, atol = 0.0001 }
+status = "discrepant"
+notes = "Table 4 gives exp(−2.432) = 0.088 (CI 0.041-0.188) against the printed 0.10 (0.04-0.20)."
+
+[[target]]
+id = "adams2010_or_hf"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Native anurans" }
+quantity = "odds ratio of a positive swab per additional point of the human footprint index"
+published = 2.37
+call = "adams2010_odds_ratio(:native, :p_hf)"
+tolerance = { digits = 2 }
+regression = { value = 1.539, atol = 0.001 }
+status = "discrepant"
+notes = "Per point (β/scale = 0.872/2.023) the odds ratio is 1.54. The printed 2.37 (1.63-3.43) is close to exp(β) = 2.39 (1.65-3.47), the odds ratio per standard deviation of the index."
+
+[[target]]
+id = "adams2010_or_date_bullfrog"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Bullfrogs" }
+quantity = "odds ratio of a positive bullfrog swab per 30 days"
+published = 0.75
+call = "adams2010_odds_ratio(:bullfrog, :p_date; per = 30)"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "95% CI 0.61-0.93 also matches."
+
+[[target]]
+id = "adams2010_or_stag"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Bullfrogs" }
+quantity = "odds ratio of a positive bullfrog swab, stagnant versus flowing water"
+published = 0.59
+call = "adams2010_odds_ratio(:bullfrog, :p_stag)"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "95% CI 0.41-0.85 also matches."
+
+[[target]]
+id = "adams2010_or_larvae_bullfrog"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Bullfrogs" }
+quantity = "odds ratio of a positive bullfrog swab, larvae versus post-metamorphic"
+published = 1.09
+call = "adams2010_odds_ratio(:bullfrog, :p_larv)"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "95% CI 0.77-1.53 also matches."
+
+[[target]]
+id = "adams2010_or_lat"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Results, Bullfrogs" }
+quantity = "odds ratio of Bd occurrence in bullfrog populations per degree of north latitude"
+published = 1.61
+call = "adams2010_odds_ratio(:bullfrog, :ψ_lat)"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "95% CI 0.94-2.78 also matches."
+
+[[target]]
+id = "adams2010_finite_ratio"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Introduction; Appendix A" }
+quantity = "for p′ > 0.05 and N > 50 the factor 1 − (1 − p′)^N is near 1"
+published = "near 1.0"
+call = "(q = parameter_set(:adams2010); finite_population_occurrence(1.0, q.finite_p_threshold, q.finite_N_threshold))"
+tolerance = { lower = 0.9, upper = 1.0 }
+status = "qualitative"
+notes = "At the thresholds the factor is 0.923 and it increases with p′ and N. 'Near' is accepted above 0.9 (our choice)."
+
+[[target]]
+id = "adams2010_aicc_native"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Table 3" }
+quantity = "AICc of the best native-anuran model p(larv, date, elev, date×elev, hf), w(ralu)"
+published = 487.328
+status = "pending"
+notes = "Needs the detection histories, which are not deposited. SingleSeasonOccupancyModel fits the model once they are available."
+
+[[target]]
+id = "adams2010_aicc_bullfrog"
+model = "obs-adams2010-bd-occupancy"
+source = { ref = "adams2010", location = "Table 5" }
+quantity = "AICc of the best bullfrog model p(larv, date, stag), w(lat)"
+published = 493.576
+status = "pending"
+notes = "Needs the detection histories, which are not deposited."
+# ---- doddington2013 ----
+# Doddington et al. 2013 Ecology 94:1795 (doi:10.1890/12-1270.1): exposure trial (Table 1) and
+# the stochastic midwife toad-zoospore model of the authors' Berkeley Madonna code (Appendix B,
+# Supplement 1). Stochastic targets use 100 runs with a fixed seed (the paper used 500).
+
+[[target]]
+id = "doddington2013_control_death_rate"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "group death rate of sham-exposed tadpoles (yr⁻¹)"
+published = 0.40
+call = "doddington_exposure_trial().control"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "4 deaths / 9.96 yr = 0.4016."
+
+[[target]]
+id = "doddington2013_CAPE_death_rate"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "group death rate, Mallorcan BdCAPE (TF5a1) (yr⁻¹)"
+published = 1.01
+call = "doddington_exposure_trial().CAPE"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "9 deaths / 8.93 yr = 1.0078."
+
+[[target]]
+id = "doddington2013_GPL_death_rate"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "group death rate, BdGPL (UKTvB) (yr⁻¹)"
+published = 3.38
+call = "doddington_exposure_trial().GPL"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 3.3748, atol = 1e-4 }
+notes = """
+19 deaths / 5.63 yr = 3.3748, which rounds to 3.37. A cumulative time of about 5.625 yr gives
+3.378 and the published 3.38 (and the published excess rate 2.98, next-but-one target), so the
+printed 5.63 is probably itself rounded. Not tuned."""
+
+[[target]]
+id = "doddington2013_CAPE_excess"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "isolate-specific death rate of BdCAPE, excess over control (yr⁻¹); α of Fig. 3b"
+published = 0.61
+call = "doddington_exposure_trial().CAPE_excess.rate"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "1.0078 - 0.4016 = 0.6062."
+
+[[target]]
+id = "doddington2013_CAPE_excess_ci"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "95% CI of the BdCAPE excess death rate, lower and upper (yr⁻¹)"
+published = [-0.16, 1.37]
+call = "(e = doddington_exposure_trial().CAPE_excess; round.([e.lo, e.hi]; digits = 2))"
+status = "reproduced"
+notes = "Standard error of a difference of rates, sqrt(d₁/T₁² + d₀/T₀²), with z = 1.96: (-0.161, 1.373)."
+
+[[target]]
+id = "doddington2013_GPL_excess"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1 (2.98); Table B1 prints α = 2.97" }
+quantity = "isolate-specific death rate of BdGPL, excess over control (yr⁻¹)"
+published = 2.98
+call = "doddington_exposure_trial().GPL_excess.rate"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 2.9732, atol = 1e-4 }
+notes = """
+3.3748 - 0.4016 = 2.9732, which rounds to 2.97, the value of Table B1 and of the code
+(JInfectDeath = 2.97). Table 1 prints 2.98; see doddington2013_GPL_death_rate."""
+
+[[target]]
+id = "doddington2013_GPL_excess_ci"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "95% CI of the BdGPL excess death rate, lower and upper (yr⁻¹); the upper limit is α of Fig. 3a"
+published = [1.41, 4.54]
+call = "(e = doddington_exposure_trial().GPL_excess; round.([e.lo, e.hi]; digits = 2))"
+status = "reproduced"
+notes = "(1.405, 4.541)."
+
+[[target]]
+id = "doddington2013_fig3a_top_right"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Fig. 3a" }
+quantity = "host survival probability over 35 yr at ν = 7.27e-5, ρ = 6.6e6, α = 4.54 (the darkest cell, near 0)"
+published = 0.0
+call = "(g = doddington_grid(); doddington_outcomes(DoddingtonParameters(:doddington2013; set = \"fig3a\", ν = g.ν[end], ρ = g.ρ[end]); runs = 100, rng = Random.Xoshiro(1)).host_survival)"
+tolerance = { lower = -1e-9, upper = 0.2 }
+status = "qualitative"
+notes = """
+0.09 with 100 runs. The full grid (scripts/doddington2013_fig3.jl) has the paper's pattern:
+survival falls with ν and ρ, and is 1 for ρ ≤ 8.7e4. Our half-survival contour lies at about
+2-3 times larger ν than the shading of the printed figure suggests (top row: 0.5 near
+ν = 1e-5); the figure gives no numbers to check this against."""
+
+[[target]]
+id = "doddington2013_fig3a_bottom_left"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Fig. 3a" }
+quantity = "host survival probability at ν = 2.57e-6, ρ = 1e4, α = 4.54 (white, 1)"
+published = 1.0
+call = "(g = doddington_grid(); doddington_outcomes(DoddingtonParameters(:doddington2013; set = \"fig3a\", ν = g.ν[1], ρ = g.ρ[1]); runs = 100, rng = Random.Xoshiro(1)).host_survival)"
+status = "qualitative"
+
+[[target]]
+id = "doddington2013_fig3b_top_right"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Fig. 3b; Results ('Host extinction was rare even at the highest rates')" }
+quantity = "host survival probability at ν = 7.27e-5, ρ = 6.6e6, α = 0.61 (light grey, above 0.5)"
+published = true
+call = "(g = doddington_grid(); doddington_outcomes(DoddingtonParameters(:doddington2013; set = \"fig3b\", ν = g.ν[end], ρ = g.ρ[end]); runs = 100, rng = Random.Xoshiro(1)).host_survival > 0.5)"
+status = "qualitative"
+notes = "0.78 with 100 runs; the minimum over the full grid is about 0.75."
+
+[[target]]
+id = "doddington2013_high_virulence_mode"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Results ('when α = 4.54, the most likely outcome was the extinction of Bd')" }
+quantity = "most frequent outcome with α = 4.54 and the Table B1 ν, ρ, μZ"
+published = "Bd_extinction"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; set = \"fig3a\"))"
+status = "qualitative"
+notes = "Bd goes extinct in 99-100% of runs; it is also the modal outcome in 90 of the 100 cells of Fig. 3a."
+
+[[target]]
+id = "doddington2013_weak_virulence_mode"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Results ('If α was set to ... 0.61, the most likely outcome was coexistence'; Fig. 3b)" }
+quantity = "most frequent outcome with α = 0.61 and the Table B1 ν, ρ, μZ"
+published = "coexistence"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; set = \"fig3b\"))"
+status = "discrepant"
+regression = { value = "Bd_extinction" }
+notes = """
+Bd goes extinct in about 85% of runs at the Table B1 values (ν = 8.17e-6, ρ = 1e5).
+Coexistence is the modal outcome in only 48 of the 100 cells of Fig. 3b (those with larger ν
+and ρ; scripts/doddington2013_fig3.jl). With maturation = :as_printed (constant εJ)
+coexistence is modal (97%), but then it is also modal with α = 4.54, against the previous
+target. The paper does not say at which ν and ρ the statement holds."""
+
+[[target]]
+id = "doddington2013_no_virulence_mode"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Results ('If pathogen-induced mortality was zero (α = 0), the most likely outcome was host-Bd coexistence')" }
+quantity = "most frequent outcome with α = 0 and the Table B1 ν, ρ, μZ"
+published = "coexistence"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; α = 0.0))"
+status = "discrepant"
+regression = { value = "Bd_extinction" }
+notes = "Bd extinction in about 70% of runs, coexistence in about 30%. As for the previous target, maturation = :as_printed gives coexistence."
+
+[[target]]
+id = "doddington2013_appB_a"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Appendix B, Model Output (a)" }
+quantity = "outcome with ν = 1e-5, ρ = 1e5, μZ = 52, α = 4.54 (example of Bd extinction)"
+published = "Bd_extinction"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; set = \"appB_a\"))"
+status = "qualitative"
+notes = "The appendix shows one run; here the most frequent of 100 runs (98% Bd extinction)."
+
+[[target]]
+id = "doddington2013_appB_b"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Appendix B, Model Output (b)" }
+quantity = "outcome with ν = 5e-5, ρ = 1e6, μZ = 52, α = 4.54 (example of Bd and host extinction)"
+published = "host_extinction"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; set = \"appB_b\"))"
+status = "qualitative"
+notes = "About 64% host extinction (Bd is then extinct too), 36% Bd extinction."
+
+[[target]]
+id = "doddington2013_appB_c"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Appendix B, Model Output (c)" }
+quantity = "outcome with ν = 1e-5, ρ = 1e5, μZ = 52, α = 0.61 (example of coexistence with a depressed host population)"
+published = "coexistence"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; set = \"appB_c\"))"
+status = "discrepant"
+regression = { value = "Bd_extinction" }
+notes = """
+The appendix shows a single run, which may not be the typical one: here coexistence occurs in
+about 24% of runs and Bd extinction in 76%."""
+
+[[target]]
+id = "doddington2013_fig4_fit"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Fig. 4a" }
+quantity = "SIR model with temperature-dependent recovery fitted to Coco de sa Bova and Torrent des Ferrerets tadpole counts (ν = 3.1546e-5, ρ = 28 730)"
+published = 3.1546e-5
+status = "pending"
+notes = """
+Needs the datalogger temperature series (Fig. 4c; not deposited), the tadpole counts (Fig. 4a;
+not deposited) and the mapping from Eq. 1 (probability of remaining infected) to a recovery
+rate, which is not printed. The fitted values are in the compendium (set fig4)."""
+
+[[target]]
+id = "doddington2013_load_model"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Appendix B, Fig. B3; Results ('The effect of host density incorporating fungal load')" }
+quantity = "fungal-load IBM: a small expanding population coexists with Bd for years, then crashes, when zoospores live longer than a month"
+published = true
+status = "pending"
+notes = "The individual-based fungal-load model is described only in words and its code was not deposited; not implemented. Its Fig. B3 values are in the compendium (set load_model)."
+
+# ---- espira2022 ----
+# Espira et al. 2022 Am Nat 199:E43 (doi:10.1086/717413; author manuscript PMC9136953). The
+# paper is analytical and prints no parameter values; its results are statements about the
+# reproduction numbers, checked here on random parameter sets (2000 draws, fixed seed) or on
+# the axes of Figs 3-4.
+
+[[target]]
+id = "espira2022_ngm"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 6 and supplement Eqs S5-S16" }
+quantity = "closed form of R0,C equals the spectral radius of F V⁻¹ of eq. 1 (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> isapprox(community_reproduction_number(p), maximum(abs, LinearAlgebra.eigvals(next_generation_matrix(p; reduced = false))); rtol = 1e-8); geometric = false)"
+status = "reproduced"
+notes = "Checks the package's closed form (with ε) against a numerical next-generation matrix built from eq. 1; holds with or without θ₁ε₁ = θ₂ε₂."
+
+[[target]]
+id = "espira2022_eq6_as_printed"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 6" }
+quantity = "eq. 6 as printed equals R0,C of eq. 1 when ε₁ = ε₂ = 1 (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> (q = EspiraParameters(; N = p.N, γ = p.γ, κ = p.κ, ρ = p.ρ, π = p.π, α = p.α, ε = (1.0, 1.0), θ = (p.θ[1], p.θ[1]), μ = p.μ); isapprox(community_reproduction_number(q; as_printed = true), community_reproduction_number(q); rtol = 1e-10)))"
+status = "reproduced"
+notes = """
+Eq. 6 as printed (published version and manuscript; eq. 7 likewise) has no habitat areas, and
+θ₁ where eq. 1 implies θ₂ in the first denominator (θ₂ in the second). The supplement's S12,
+S15 and S16 have μ ε_i and θ_j, i.e. the next-generation matrix of eq. 1, so eq. 6 is a
+misprint (espira2022_eq6_misprint). It equals S15 when ε₁ = ε₂ = 1, which forces θ₁ = θ₂;
+community_reproduction_number(p; as_printed = true) evaluates it."""
+
+[[target]]
+id = "espira2022_lower_bound"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Results, 'Community reproduction number' (Eqs S17-S19)" }
+quantity = "R0,C ≥ min(R0,1, R0,2) (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> community_reproduction_number(p) >= minimum(species_reproduction_numbers(p)) * (1 - 1e-12); geometric = false)"
+status = "reproduced"
+
+[[target]]
+id = "espira2022_eq8"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 8" }
+quantity = "dilution (R0,C < R0,1) if and only if η₂ exceeds the eq. 8 threshold (fraction of random parameter sets with θ₁ε₁ = θ₂ε₂)"
+published = 1.0
+call = "_espira_fraction(p -> dilution_effect(p) == dilution_effect(p; criterion = :eq8))"
+status = "reproduced"
+notes = """
+Exact when the overlaps come from one overlap area (θ_i = area(E₁ ∩ E₂)/ε_i, the paper's
+definition). With independent θ₁, θ₂ the criterion fails on about 4% of draws, so eq. 8 relies
+on θ₁ε₁ = θ₂ε₂."""
+
+[[target]]
+id = "espira2022_eq9"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 9" }
+quantity = "with habitat 2 inside habitat 1 (θ₂ = 1), dilution iff η₂ > R0,2/R0,1 (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> (ε = (p.ε[1] + p.ε[2], p.ε[2]); q = EspiraParameters(; N = p.N, γ = p.γ, κ = p.κ, ρ = p.ρ, π = p.π, α = p.α, ε, θ = (ε[2] / ε[1], 1.0), μ = p.μ); R = species_reproduction_numbers(q); dilution_effect(q) == (pickup_efficiency(q)[2] > R[2] / R[1])))"
+status = "reproduced"
+
+[[target]]
+id = "espira2022_no_overlap"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 10 (no overlap)" }
+quantity = "with θ₁ = θ₂ = 0, R0,C = max(R0,1, R0,2) (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> (q = EspiraParameters(; N = p.N, γ = p.γ, κ = p.κ, ρ = p.ρ, π = p.π, α = p.α, ε = p.ε, θ = (0.0, 0.0), μ = p.μ); isapprox(community_reproduction_number(q), maximum(species_reproduction_numbers(q)); rtol = 1e-12)))"
+status = "reproduced"
+
+[[target]]
+id = "espira2022_complete_overlap"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 11 (complete overlap)" }
+quantity = "with θ₁ = θ₂ = 1 (ε₁ = ε₂), R0,C = R0,1 (a₁+μ)/(a₁+a₂+μ) + R0,2 (a₂+μ)/(a₁+a₂+μ) (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> (q = EspiraParameters(; N = p.N, γ = p.γ, κ = p.κ, ρ = p.ρ, π = p.π, α = p.α, ε = (p.ε[1], p.ε[1]), θ = (1.0, 1.0), μ = p.μ); R = species_reproduction_numbers(q); a = [q.κ[i] * q.ρ[i] * q.N[i] / q.ε[i] for i in 1:2]; isapprox(community_reproduction_number(q), (R[1] * (a[1] + q.μ) + R[2] * (a[2] + q.μ)) / (a[1] + a[2] + q.μ); rtol = 1e-10)))"
+status = "reproduced"
+notes = "The second line of the printed complete-overlap equation; its first line (in terms of the rates) is the same expression."
+
+[[target]]
+id = "espira2022_fig3_attenuation"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Fig. 3; Results ('both dilution and amplification effects have stronger magnitudes when species 1 is less efficient at picking up pathogens')" }
+quantity = "with complete overlap, |R0,C/R0,1 - 1| falls as η₁ rises (η₂ = 0.5; r = 0.2 dilution and r = 0.9 amplification; η₁ = 0.1, 0.5, 0.9)"
+published = true
+call = "all(r -> (v = [abs(_espira_ratio(η1, 0.5, r) - 1) for η1 in (0.1, 0.5, 0.9)]; issorted(v; rev = true)), (0.2, 0.9))"
+status = "qualitative"
+notes = "R0,C/R0,1 - 1 = (r - η₂)/(1 - η₂) · μ/(a₁ + a₂ + μ) with complete overlap, which shrinks as a₁ (η₁) grows."
+
+# ---- hardy2023 ----
+# Hardy et al. 2023 J Appl Ecol 60:121-131 (doi:10.1111/1365-2664.14310), checked against the
+# version of record and its Supporting Information (identical numbers in the reprint in B. M.
+# Hardy's 2023 dissertation, from which they were first read). Refits use
+# the bundled Dryad data (CC0, data/hardy2023). _hardy2023_reference_fit(; φ, f, p) fits one
+# robust-design Pradel model once per session (default: the top model of Table 3).
+
+[[target]]
+id = "hardy2023_toads"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3" }
+quantity = "individual adult male boreal toads captured at the five sites, 1998-2020"
+published = 1594
+call = "sum(c.toads for c in hardy2023_captures())"
+status = "reproduced"
+notes = "Rows of the five Dryad capture-history files."
+
+[[target]]
+id = "hardy2023_captures_cottonwood_pre"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Table 1" }
+quantity = "captures at South Cottonwood before Bd arrival (1998-2013)"
+published = 2073
+call = "hardy2023_captures()[4].before"
+status = "reproduced"
+notes = "All ten counts of Table 1 are reproduced (test/hardy2023.jl)."
+
+[[target]]
+id = "hardy2023_captures_cottonwood_post"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Table 1" }
+quantity = "captures at South Cottonwood after Bd arrival (2014-2020)"
+published = 253
+call = "hardy2023_captures()[4].after"
+status = "reproduced"
+
+[[target]]
+id = "hardy2023_null_deviance"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Appendices S1.3-S1.5 (model p(.) φ(.) f(.))" }
+quantity = "−2 log L of the constant robust-design Pradel model (Program MARK)"
+published = 29334.27
+call = "_hardy2023_reference_fit(; φ = :constant, f = :constant, p = :constant).deviance"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "29334.2711; checks the Pradel likelihood against MARK's."
+
+[[target]]
+id = "hardy2023_null_aicc"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Appendix S1.5 (f(.))" }
+quantity = "AICc of the constant model (K = 3)"
+published = 29340.2758
+call = "_hardy2023_reference_fit(; φ = :constant, f = :constant, p = :constant).aicc"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "With n = total captures (4986) as the AICc sample size."
+
+[[target]]
+id = "hardy2023_p_top_deviance"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Appendix S1.3" }
+quantity = "−2 log L of p(sBd × tBd) φ(.) f(.), the top capture-probability structure (K = 77)"
+published = 27669.30
+call = "_hardy2023_reference_fit(; φ = :constant, f = :constant, p = :s_bd_t_bd).deviance"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "hardy2023_phi_top_deviance"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Appendix S1.4" }
+quantity = "−2 log L of φ(ELEV + tBd) with p(.) f(.), the top survival structure (K = 22)"
+published = 28046.40
+call = "_hardy2023_reference_fit(; φ = :elev_t_bd, f = :constant, p = :constant).deviance"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "Confirms the choice that an interval takes the Bd status of its first year (the other choice gives 28195.13)."
+
+[[target]]
+id = "hardy2023_phi_tbd_deviance"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Appendix S1.4" }
+quantity = "−2 log L of φ(tBd) with p(.) f(.) (K = 21)"
+published = 28085.86
+call = "_hardy2023_reference_fit(; φ = :t_bd, f = :constant, p = :constant).deviance"
+tolerance = { atol = 0.01 }
+status = "discrepant"
+regression = { value = 28076.58, atol = 0.05 }
+notes = """
+Our maximum is 9.28 units lower (a better fit) with the same K. φ(ELEV + tBd), which nests
+φ(tBd), is reproduced exactly, as are the other 25 models of Appendices S1.3-S1.5, so MARK's fit of
+this model probably stopped short of the maximum. Its rank (second of seven) is unchanged."""
+
+[[target]]
+id = "hardy2023_f_winstart_deviance"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Appendix S1.5" }
+quantity = "−2 log L of f(WINSTART) with p(.) φ(.) (K = 4)"
+published = 29278.102
+call = "_hardy2023_reference_fit(; φ = :constant, f = :winstart, p = :constant).deviance"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "Checks the climate covariates: winter onset three years before the recruits are counted, with the header swap of Site_1/2_ENV.csv undone."
+
+[[target]]
+id = "hardy2023_f_elev_tbd_weight"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Appendix S1.5" }
+quantity = "Akaike weight of f(ELEV + tBd), second of the 15 recruitment structures (f(tBd) has 0.72)"
+published = 0.28
+call = "hardy2023_model_set(:f)[2].weight"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "hardy2023_top_aicc"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Table 3" }
+quantity = "AICc of the top model p(sBd × tBd) φ(ELEV + tBd) f(ELEV + tBd) (K = 115)"
+published = 26649.10
+call = "_hardy2023_reference_fit().aicc"
+tolerance = { digits = 1 }
+status = "discrepant"
+regression = { value = 26649.35, atol = 0.05 }
+notes = """
+Ours is 0.25 higher (−2 log L 26413.87). The post-Bd survival is on the boundary (0), which
+makes the optimum flat in that direction; the remaining difference is unexplained."""
+
+[[target]]
+id = "hardy2023_top_deviance"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Table 3" }
+quantity = "−2 log L of the top model, as printed"
+published = 10503.97
+call = "_hardy2023_reference_fit().deviance"
+tolerance = { atol = 0.01 }
+status = "discrepant"
+regression = { value = 26413.87, atol = 0.05 }
+notes = """
+The printed −2Log(L) cannot go with the printed AICc 26649.10 and K = 115, which imply
+−2 log L ≈ 26413.6 with the sample size that reproduces every AICc of Appendices S1.3-S1.5. The
+printed value appears to be a different quantity or a typo; ours is 26413.87."""
+
+[[target]]
+id = "hardy2023_top_delta_aicc"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Table 3" }
+quantity = "ΔAICc of the second model p(sBd × tBd) φ(ELEV + tBd) f(tBd)"
+published = 56.81
+call = "_hardy2023_reference_fit(; f = :t_bd).aicc - _hardy2023_reference_fit().aicc"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 48.45, atol = 0.05 }
+notes = "Our second model has AICc 26697.80 against the printed 26705.91. The top model is still clearly supported (ΔAICc > 10)."
+
+[[target]]
+id = "hardy2023_phi_post"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.1" }
+quantity = "annual apparent survival after Bd arrival (all sites; 'reduced to 0')"
+published = 0.0
+call = "hardy2023_summary(_hardy2023_reference_fit()).φ_post.value"
+tolerance = { atol = 1e-6 }
+status = "reproduced"
+notes = "A boundary estimate (logit → −∞)."
+
+[[target]]
+id = "hardy2023_f_post"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.1" }
+quantity = "per-capita recruitment after Bd arrival (all sites)"
+published = 0.25
+call = "hardy2023_summary(_hardy2023_reference_fit()).f_post.value"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "0.2506."
+
+[[target]]
+id = "hardy2023_f_post_se"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.1" }
+quantity = "standard error of the post-Bd per-capita recruitment"
+published = 0.02
+call = "hardy2023_summary(_hardy2023_reference_fit()).f_post.se"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "0.0226 (delta method, boundary coefficients left out of the information matrix)."
+
+[[target]]
+id = "hardy2023_lambda_post"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.1" }
+quantity = "realized population growth rate after Bd arrival (all sites)"
+published = 0.25
+call = "hardy2023_summary(_hardy2023_reference_fit()).λ_post.value"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "hardy2023_lambda_post_lo"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.1" }
+quantity = "lower 95% confidence limit of the post-Bd λ"
+published = 0.21
+call = "hardy2023_summary(_hardy2023_reference_fit()).λ_post.ci[1]"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "Log-scale interval λ exp(±1.96 se/λ): 0.210-0.299."
+
+[[target]]
+id = "hardy2023_lambda_post_hi"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.1" }
+quantity = "upper 95% confidence limit of the post-Bd λ"
+published = 0.30
+call = "hardy2023_summary(_hardy2023_reference_fit()).λ_post.ci[2]"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "hardy2023_lambda_pre_min"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.1; Fig. 3" }
+quantity = "smallest annual realized growth rate before Bd arrival (SE 0.08)"
+published = 0.65
+call = "hardy2023_summary(_hardy2023_reference_fit()).λ_pre_range[1].value"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.6868, atol = 0.001 }
+notes = """
+Ours 0.69 (SE 0.10, Delilah Pond 2011-2012), over intervals that end before Bd arrival and join
+sampled years. Within one SE of the printed value; which intervals the paper included is not
+stated."""
+
+[[target]]
+id = "hardy2023_lambda_pre_max"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.1; Fig. 3" }
+quantity = "largest annual realized growth rate before Bd arrival (SE 0.24)"
+published = 1.46
+call = "hardy2023_summary(_hardy2023_reference_fit()).λ_pre_range[2].value"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 1.4033, atol = 0.001 }
+notes = "Ours 1.40 (SE 0.19, Collegiate Camp 1999-2000). Within one SE of the printed value."
+
+[[target]]
+id = "hardy2023_p_min"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3" }
+quantity = "smallest capture probability per visit in the top model"
+published = 0.03
+call = "hardy2023_summary(_hardy2023_reference_fit()).p_range[1]"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "0.026."
+
+[[target]]
+id = "hardy2023_p_max"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3" }
+quantity = "largest capture probability per visit in the top model"
+published = 0.81
+call = "hardy2023_summary(_hardy2023_reference_fit()).p_range[2]"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "0.809."
+
+[[target]]
+id = "hardy2023_phi_pre_morgans"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.2; Fig. 1a" }
+quantity = "pre-Bd apparent survival at Morgan's Gulch (3366 m), model p(sBd × tBd) φ(ELEV + Bd) f(ELEV + Bd)"
+published = 0.83
+call = "let r = _hardy2023_reference_fit(; φ = :elev_bd, f = :elev_bd); r.groups[5].φ[1] end"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "0.831 (SE 0.010; printed SE 0.01)."
+
+[[target]]
+id = "hardy2023_phi_pre_delilah"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.2; Fig. 1a" }
+quantity = "pre-Bd apparent survival at Delilah Pond (2755 m), model of Fig. 1a (SE 0.03)"
+published = 0.47
+call = "let r = _hardy2023_reference_fit(; φ = :elev_bd, f = :elev_bd); r.groups[1].φ[1] end"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.4816, atol = 0.001 }
+notes = "Ours 0.48 (SE 0.026); within half an SE. Morgan's Gulch is reproduced with the same fit."
+
+[[target]]
+id = "hardy2023_beta_elev_phi"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.2" }
+quantity = "elevation coefficient of pre-Bd survival, logit scale per 100 m (SE 0.03)"
+published = 0.28
+call = "pradel_coefficient(_hardy2023_reference_fit(; φ = :elev_bd, f = :elev_bd), :φ_elev).value"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.2722, atol = 0.001 }
+notes = """
+Ours 0.27 (SE 0.025) in the Fig. 1a model; the top model gives 0.31 (SE 0.027). The text
+does not say which model the coefficient comes from."""
+
+[[target]]
+id = "hardy2023_beta_elev_f"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.2" }
+quantity = "elevation coefficient of pre-Bd per-capita recruitment, log scale per 100 m (SE 0.02)"
+published = -0.12
+call = "pradel_coefficient(_hardy2023_reference_fit(; φ = :elev_bd, f = :elev_bd), :f_elev).value"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = -0.1119, atol = 0.001 }
+notes = "Ours −0.11 (SE 0.013) in the Fig. 1a model; the top model gives −0.13 (SE 0.013)."
+
+[[target]]
+id = "hardy2023_no_compensatory_recruitment"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.1; Fig. 1b-c" }
+quantity = "per-capita recruitment is lower after Bd arrival than before (no compensatory recruitment)"
+published = true
+call = "let r = _hardy2023_reference_fit(; φ = :bd, f = :bd); r.groups[1].f[end] < r.groups[1].f[1] end"
+status = "qualitative"
+notes = "Model p(sBd × tBd) φ(Bd) f(Bd) of Fig. 1.1B: f 0.33 before and 0.23 after Bd arrival."
+
+[[target]]
+id = "hardy2023_elevation_tradeoff"
+model = "obs-hardy2023-pradel-recruitment"
+source = { ref = "hardy2023", location = "Results 3.2" }
+quantity = "before Bd, survival increases and recruitment decreases with elevation"
+published = true
+call = "let r = _hardy2023_reference_fit(; φ = :elev_bd, f = :elev_bd); pradel_coefficient(r, :φ_elev).value > 0 > pradel_coefficient(r, :f_elev).value end"
+status = "qualitative"
+
+# ---- cook2022 ----
+# Cook et al. 2022 Conserv Sci Pract 4:e12762 (doi:10.1111/csp2.12762), with the projection
+# model of its Supporting Information (Figure S3, Table S2). The authors' simulation code was
+# not found, so the choices in src/models/cook2022.jl (breeding after survival, paired SA and F,
+# posterior means for SU and ST) are ours. Simulations: 1000 runs with Xoshiro(1), as in the paper's
+# 1000 runs per scenario.
+
+[[target]]
+id = "cook2022_survival_ratio_treated"
+model = "obs-cook2022-treatment-projection"
+source = { ref = "cook2022", location = "Results 3.2" }
+quantity = "ratio of apparent overwinter survival, itraconazole-treated to field controls ('4.4 times greater')"
+published = 4.4
+call = "let p = parameter_set(:cook2022); p.phi_overwinter_treated / p.phi_overwinter_field_control end"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "Ratio of the printed posterior means (0.48/0.11 = 4.36): an internal consistency check, not a refit."
+
+[[target]]
+id = "cook2022_survival_ratio_field"
+model = "obs-cook2022-treatment-projection"
+source = { ref = "cook2022", location = "Results 3.2" }
+quantity = "ratio of apparent overwinter survival, field controls to experimental controls ('5.5 times greater')"
+published = 5.5
+call = "let p = parameter_set(:cook2022); p.phi_overwinter_field_control / p.phi_overwinter_experimental_control end"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "Ratio of the printed posterior means (0.11/0.02)."
+
+[[target]]
+id = "cook2022_lambda_untreated"
+model = "obs-cook2022-treatment-projection"
+source = { ref = "cook2022", location = "Results 3.4; Fig. 4a" }
+quantity = "mean adult population growth rate λ with untreated metamorph overwinter survival"
+published = 0.9
+call = "cook_growth_rate(solve(CookProjectionProblem(CookParameters(:cook2022)); nsims = 1000, rng = Random.Xoshiro(1))).mean"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "0.939 (22% of runs with λ > 1). With breeding by the adults before survival (breeding = :before_survival) it is 0.968."
+
+[[target]]
+id = "cook2022_lambda_treated"
+model = "obs-cook2022-treatment-projection"
+source = { ref = "cook2022", location = "Results 3.4; Fig. 4a" }
+quantity = "mean adult population growth rate λ when all metamorphs are treated every year"
+published = 1.2
+call = "cook_growth_rate(solve(CookProjectionProblem(CookParameters(:cook2022); treated_fraction = 1, treated_years = 1); nsims = 1000, rng = Random.Xoshiro(1))).mean"
+tolerance = { digits = 1 }
+status = "discrepant"
+regression = { value = 1.301, atol = 0.01 }
+notes = """
+Ours 1.30, against 1.2. Breeding before survival gives 1.25, which is still not 1.2. Sampling
+SU and ST from their CJS posteriors (not published) instead of fixing their means would change
+the value. The untreated value (0.9) and the 40%/40% threshold are reproduced."""
+
+[[target]]
+id = "cook2022_treatment_threshold"
+model = "obs-cook2022-treatment-projection"
+source = { ref = "cook2022", location = "Results 3.4; Fig. 4b" }
+quantity = "mean λ > 1 when 40% of metamorphs are treated in 40% of years"
+published = true
+call = "let c = parameter_set(:cook2022); cook_growth_rate(solve(CookProjectionProblem(CookParameters(:cook2022); treated_fraction = c.threshold_treated_fraction, treated_years = c.threshold_treated_years); nsims = 1000, rng = Random.Xoshiro(1))).mean > 1 end"
+status = "qualitative"
+notes = "Mean λ 1.018, with 57% of runs above 1."
+
+[[target]]
+id = "cook2022_treatment_compensation"
+model = "obs-cook2022-treatment-projection"
+source = { ref = "cook2022", location = "Results 3.4; Fig. 4b" }
+quantity = "lowering either the treated fraction or the treatment frequency below 40% (with the other at 40%) gives mean λ < 1"
+published = true
+call = "let p = CookParameters(:cook2022); g(q, r) = cook_growth_rate(solve(CookProjectionProblem(p; treated_fraction = q, treated_years = r); nsims = 1000, rng = Random.Xoshiro(1))).mean; g(0.2, 0.4) < 1 && g(0.4, 0.2) < 1 end"
+status = "qualitative"
+notes = "λ 0.985 at 20%/40% and 0.980 at 40%/20%. The paper says such decreases need 'compensatory increases in the other' to keep λ > 1."
+# ---- heard2024 ----
+# Heard, Scroggie, Hollanders & Scheele 2024, J Anim Ecol 93:1670 (doi:10.1111/1365-2656.14177).
+# Checked against the published paper (read 2026-11-20). The survival targets are the
+# posterior means printed in Results 3.1 (the simulation script enters slightly different
+# pre-Bd values, 0.641 and 0.673); the persistence fractions are
+# computed from the authors' archived simulation outputs (sim_results_*_metapop_compiled.csv,
+# 20,000 scenarios each: column `extinct`). _heard2024_reference_fit() samples the catch-curve
+# posterior once per session (seeded); _heard2024_reference_grid() runs the full scenario grid
+# once per species and epoch (about 60 s for all four).
+
+[[target]]
+id = "heard2024_survival_Lran_contemporary"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Results 3.1, para. 3" }
+quantity = "annual adult survival of L. raniformis after Bd (posterior mean)"
+published = 0.318
+call = "heard_survival_summary(_heard2024_reference_fit()).S_c_Lr.mean"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "Ours 0.320 (95% interval 0.227-0.422); a long chain gives 0.318. The paper prints 0.318 (95% CI 0.222, 0.424); the simulation script uses 0.319."
+
+[[target]]
+id = "heard2024_survival_Lran_historical"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Results 3.1, para. 3" }
+quantity = "annual adult survival of L. raniformis before Bd (posterior mean)"
+published = 0.655
+call = "heard_survival_summary(_heard2024_reference_fit()).S_h_Lr.mean"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "Ours 0.650 (long chain 0.653). The paper prints 0.655 (95% CI 0.533, 0.768); the simulation script uses 0.641."
+
+[[target]]
+id = "heard2024_survival_Laur_contemporary"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Results 3.1, para. 3" }
+quantity = "annual adult survival of L. aurea after Bd (posterior mean)"
+published = 0.352
+call = "heard_survival_summary(_heard2024_reference_fit()).S_c_La.mean"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "Ours 0.359 (long chain 0.355). The paper prints 0.352 (95% CI 0.217, 0.500), as does the simulation script."
+
+[[target]]
+id = "heard2024_survival_Laur_historical"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Results 3.1, para. 3" }
+quantity = "annual adult survival of L. aurea before Bd (posterior mean)"
+published = 0.688
+call = "heard_survival_summary(_heard2024_reference_fit()).S_h_La.mean"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "Ours 0.687 (long chain 0.688). The paper prints 0.688 (95% CI 0.578, 0.784); the simulation script uses 0.673."
+
+[[target]]
+id = "heard2024_survival_halving"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Abstract ('a halving of annual adult survival probabilities')" }
+quantity = "ratio of post-Bd to pre-Bd adult survival, largest deviation from 1/2 over the two species"
+published = "about one half"
+call = """
+let s = heard_survival_summary(_heard2024_reference_fit())
+    max(abs(s.S_c_Lr.mean / s.S_h_Lr.mean - 0.5), abs(s.S_c_La.mean / s.S_h_La.mean - 0.5))
+end
+"""
+tolerance = { lower = -0.001, upper = 0.1 }
+status = "qualitative"
+notes = "Ratios 0.49 (L. raniformis) and 0.52 (L. aurea). The paper: 'around 50% lower post-Bd' (Results 3.1), 'a halving' (Discussion)."
+
+[[target]]
+id = "heard2024_persistence_Lran_contemporary"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Zenodo sim_results_Lran_contemporary_metapop_compiled.csv" }
+quantity = "fraction of the 20,000 scenarios in which the L. raniformis metapopulation persists 50 years, post-Bd survival"
+published = 0.1821
+call = "_heard2024_reference_grid(:raniformis, :contemporary).overall"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+notes = "Ours 0.187 (one simulation per scenario, as the authors; binomial SE about 0.003)."
+
+[[target]]
+id = "heard2024_persistence_Lran_historical"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Zenodo sim_results_Lran_historical_metapop_compiled.csv" }
+quantity = "fraction of the 20,000 scenarios in which the L. raniformis metapopulation persists 50 years, pre-Bd survival"
+published = 0.82235
+call = "_heard2024_reference_grid(:raniformis, :historical).overall"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+notes = "Ours 0.821."
+
+[[target]]
+id = "heard2024_persistence_Laur_contemporary"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Zenodo sim_results_Laur_contemporary_metapop_compiled.csv" }
+quantity = "fraction of the 20,000 scenarios in which the L. aurea metapopulation persists 50 years, post-Bd survival"
+published = 0.2695
+call = "_heard2024_reference_grid(:aurea, :contemporary).overall"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+notes = "Ours 0.273."
+
+[[target]]
+id = "heard2024_persistence_Laur_historical"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Zenodo sim_results_Laur_historical_metapop_compiled.csv" }
+quantity = "fraction of the 20,000 scenarios in which the L. aurea metapopulation persists 50 years, pre-Bd survival"
+published = 0.87095
+call = "_heard2024_reference_grid(:aurea, :historical).overall"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+notes = "Ours 0.869."
+
+[[target]]
+id = "heard2024_recruitment_needed"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Abstract ('considerably higher recruitment rates' needed post-Bd)" }
+quantity = "smallest fecundity (metamorphs per female) at which half the scenarios persist: post-Bd minus pre-Bd, smaller of the two species"
+published = "considerably higher post-Bd"
+call = """
+min(_heard2024_mets_half(:raniformis, :contemporary) - _heard2024_mets_half(:raniformis, :historical),
+    _heard2024_mets_half(:aurea, :contemporary) - _heard2024_mets_half(:aurea, :historical))
+"""
+tolerance = { lower = 5.0, upper = 100.0 }
+status = "qualitative"
+notes = "Ours: 27 vs 9 (L. raniformis) and 24 vs 6 (L. aurea), a difference of 18 in both; the authors' outputs give the same thresholds (by-mets persistence computed from the compiled CSVs)."
+
+# ---- turner2025 ----
+# Turner et al. 2025, Conserv Sci Pract 7:e70022 (doi:10.1111/csp2.70022). The full text could
+# not be retrieved; the published values are from the abstract. The archived model outputs
+# (Zenodo doi:10.5281/zenodo.10921748, modelOutputs/Adult_popn_size_from_runs_*V2.csv) were
+# made by the archived code and differ from the abstract for August and September: e.g.
+# August, random dry years, 0.1627 archived against 0.13 in the abstract, and
+# Run_scenariosV2.R hard-codes the abstract's values (0.1296, 0.0491, 0.0411) for its figure.
+# Our reimplementation of the archived code reproduces the archived outputs.
+
+[[target]]
+id = "turner2025_extinction_august"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Abstract; Results; Discussion; Fig. 2 (August inflow, ~10 °C)" }
+quantity = "probability of local extinction within 52 years, August watering, independent dry years"
+published = 0.13
+call = "turner_extinction_probability(solve(TurnerPVAProblem(:turner2025; month = :august); rng = Random.Xoshiro(2025)))"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.1603, atol = 0.012 }
+notes = "Ours 0.160 (10,000 replicates; 40,000 give 0.158), matching the authors' archived output for this scenario (0.1627). The paper prints 0.13 in the abstract, Results, Discussion and Fig. 2 (the authors' plotting script hard-codes 0.1296), so the archive does not reproduce its own paper: the published figures apparently came from an earlier version of the code or survival arrays."
+
+[[target]]
+id = "turner2025_extinction_september"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Abstract; Results; Discussion; Fig. 2 (September inflow, ~15 °C)" }
+quantity = "probability of local extinction within 52 years, September watering, independent dry years"
+published = 0.05
+call = "turner_extinction_probability(solve(TurnerPVAProblem(:turner2025; month = :september); rng = Random.Xoshiro(2025)))"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.0570, atol = 0.008 }
+notes = "Ours 0.057 (40,000 replicates: 0.0578); archived output 0.0588. The paper prints 0.05 in the abstract, Results, Discussion and Fig. 2 (code table 0.0491), i.e. the published value, not the archived one."
+
+[[target]]
+id = "turner2025_extinction_october"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Abstract; Results; Discussion; Fig. 2 (October inflow, ~20 °C)" }
+quantity = "probability of local extinction within 52 years, October watering, independent dry years"
+published = 0.04
+call = "turner_extinction_probability(solve(TurnerPVAProblem(:turner2025; month = :october); rng = Random.Xoshiro(2025)))"
+tolerance = { atol = 0.008 }
+status = "reproduced"
+regression = { value = 0.0403, atol = 0.008 }
+notes = "Ours 0.040 (40,000 replicates: 0.0431); archived output 0.0456; the paper prints 0.04 (abstract, Results, Fig. 2; code table 0.0411)."
+
+[[target]]
+id = "turner2025_extinction_august_max2dry_archived"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Zenodo modelOutputs/Adult_popn_size_from_runs_August_2DryYearsV2.csv (row 53 == 0)" }
+quantity = "probability of extinction, August watering, at most two consecutive dry years (archived output)"
+published = 0.0436
+call = "turner_extinction_probability(solve(TurnerPVAProblem(:turner2025; month = :august, pattern = :max2dry); rng = Random.Xoshiro(2025)))"
+tolerance = { atol = 0.008 }
+status = "reproduced"
+notes = "Ours 0.039 (40,000 replicates: 0.0407). Run_scenariosV2.R's figure table has 0.0249 for this scenario (same earlier version as the abstract)."
+
+[[target]]
+id = "turner2025_median_minimum_august"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Zenodo modelOutputs/Adult_popn_size_from_runs_August_RandomDryYearsV2.csv" }
+quantity = "median over replicates of the minimum number of females aged >= 1, August, independent dry years (archived output)"
+published = 1.0
+call = "Distributions.median(turner_minimum_population(solve(TurnerPVAProblem(:turner2025; month = :august); rng = Random.Xoshiro(2025))))"
+tolerance = {}
+status = "reproduced"
+notes = "All nine scenarios' medians agree with the archived outputs (1, 3, 15; 4, 11, 34; 6, 15, 44 for August, September, October and random, max2dry, max1dry)."
+
+[[target]]
+id = "turner2025_timing_ordering"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Abstract ('less likely to go extinct when environmental water is delivered in spring compared to late winter')" }
+quantity = "extinction probability falls from August to September to October (smallest successive drop)"
+published = "decreasing"
+call = """
+let e = [turner_extinction_probability(solve(TurnerPVAProblem(:turner2025; month = m); rng = Random.Xoshiro(2025)))
+         for m in (:august, :september, :october)]
+    min(e[1] - e[2], e[2] - e[3])
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0 }
+status = "qualitative"
+notes = "Ours 0.160 > 0.057 > 0.040."
+# ---- gajewski2021 ----
+# Gajewski et al. 2021 Ecol Evol 11:17920 (doi:10.1002/ece3.8379). Curve summaries are computed
+# from the curve at the printed posterior medians (gajewski_summary), which approximates the
+# paper's posterior medians of each summary; tolerances: 0.2 degC for temperatures, 1% for rates.
+# Targets that need the authors' data (Zenodo doi:10.5281/zenodo.4525954, not bundled: no
+# licence) are pending; their notes give the values we get with the data in the lab workspace.
+
+[[target]]
+id = "gajewski2021_briere2_Topt"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 2" }
+quantity = "Briere 2 fit: temperature at which r(T) peaks (degC), from the curve at the posterior medians"
+published = 19.92
+call = "gajewski_summary(:briere2).Topt"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_r_max"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Briere 2 fit: maximum logistic growth rate over temperature (d⁻¹), from the curve at the posterior medians"
+published = 1.07
+call = "gajewski_summary(:briere2).r_max"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_Tmin_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Briere 2 fit: adjusted Tmin, where r(T) rises above 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 7.33
+call = "gajewski_summary(:briere2).Tmin_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_Tmax_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Briere 2 fit: adjusted Tmax, where r(T) falls below 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 27.92
+call = "gajewski_summary(:briere2).Tmax_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_r_DLA"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Briere 2 fit: median r over a day of the Dry Low Air regime (d⁻¹), from the curve at the posterior medians"
+published = 1.044
+call = "gajewski_summary(:briere2).r_DLA"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_r_WHF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Briere 2 fit: median r over a day of the Wet High Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 1.06
+call = "gajewski_summary(:briere2).r_WHF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_briere2_r_WLF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Briere 2 fit: median r over a day of the Wet Low Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.666
+call = "gajewski_summary(:briere2).r_WLF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_Topt"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 2" }
+quantity = "Ratkowsky fit: temperature at which r(T) peaks (degC), from the curve at the posterior medians"
+published = 20.94
+call = "gajewski_summary(:ratkowsky).Topt"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_r_max"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ratkowsky fit: maximum logistic growth rate over temperature (d⁻¹), from the curve at the posterior medians"
+published = 1.166
+call = "gajewski_summary(:ratkowsky).r_max"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_Tmin_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ratkowsky fit: adjusted Tmin, where r(T) rises above 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 3.07
+call = "gajewski_summary(:ratkowsky).Tmin_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_Tmax_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ratkowsky fit: adjusted Tmax, where r(T) falls below 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 28.31
+call = "gajewski_summary(:ratkowsky).Tmax_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_r_DLA"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ratkowsky fit: median r over a day of the Dry Low Air regime (d⁻¹), from the curve at the posterior medians"
+published = 1.084
+call = "gajewski_summary(:ratkowsky).r_DLA"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_r_WHF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ratkowsky fit: median r over a day of the Wet High Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 1.163
+call = "gajewski_summary(:ratkowsky).r_WHF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ratkowsky_r_WLF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ratkowsky fit: median r over a day of the Wet Low Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.719
+call = "gajewski_summary(:ratkowsky).r_WLF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+As coded: kelvin offset 273.16 and the authors' slip in the last WLF segment (25 K, r = 0 for 3.3 h a day)."""
+
+[[target]]
+id = "gajewski2021_ikemoto_Topt"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 2" }
+quantity = "Ikemoto fit: temperature at which r(T) peaks (degC), from the curve at the posterior medians"
+published = 18.92
+call = "gajewski_summary(:ikemoto).Topt"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_r_max"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ikemoto fit: maximum logistic growth rate over temperature (d⁻¹), from the curve at the posterior medians"
+published = 1.01
+call = "gajewski_summary(:ikemoto).r_max"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_Tmin_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ikemoto fit: adjusted Tmin, where r(T) rises above 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 2.93
+call = "gajewski_summary(:ikemoto).Tmin_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_Tmax_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ikemoto fit: adjusted Tmax, where r(T) falls below 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 40.35
+call = "gajewski_summary(:ikemoto).Tmax_adj"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_r_DLA"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ikemoto fit: median r over a day of the Dry Low Air regime (d⁻¹), from the curve at the posterior medians"
+published = 0.972
+call = "gajewski_summary(:ikemoto).r_DLA"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_r_WHF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ikemoto fit: median r over a day of the Wet High Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.935
+call = "gajewski_summary(:ikemoto).r_WHF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_ikemoto_r_WLF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Ikemoto fit: median r over a day of the Wet Low Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.494
+call = "gajewski_summary(:ikemoto).r_WLF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+As coded: kelvin offset 273.16 and the authors' slip in the last WLF segment (25 K, r = 0 for 3.3 h a day)."""
+
+[[target]]
+id = "gajewski2021_stinner_r_max"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Stinner fit: maximum logistic growth rate over temperature (d⁻¹), from the curve at the posterior medians"
+published = 0.813
+call = "gajewski_summary(:stinner).r_max"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_stinner_Tmin_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Stinner fit: adjusted Tmin, where r(T) rises above 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 10.95
+call = "gajewski_summary(:stinner).Tmin_adj"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_stinner_Tmax_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Stinner fit: adjusted Tmax, where r(T) falls below 0.01 d⁻¹ (degC), from the curve at the posterior medians"
+published = 27.52
+call = "gajewski_summary(:stinner).Tmax_adj"
+tolerance = { digits = 2 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_stinner_r_DLA"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Stinner fit: median r over a day of the Dry Low Air regime (d⁻¹), from the curve at the posterior medians"
+published = 0.8126
+call = "gajewski_summary(:stinner).r_DLA"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_stinner_r_WHF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Stinner fit: median r over a day of the Wet High Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.81269
+call = "gajewski_summary(:stinner).r_WHF"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_stinner_r_WLF"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Stinner fit: median r over a day of the Wet Low Frog regime (d⁻¹), from the curve at the posterior medians"
+published = 0.72
+call = "gajewski_summary(:stinner).r_WLF"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+
+[[target]]
+id = "gajewski2021_logan10_Topt"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 2" }
+quantity = "Logan 10 fit: temperature at which r(T) peaks (degC), from the curve at the posterior medians"
+published = 19.86
+call = "gajewski_summary(:logan10).Topt"
+tolerance = { atol = 0.2 }
+status = "reproduced"
+notes = """
+α scales the curve and does not move its optimum, so the printed α (see the next target) does not matter here."""
+
+[[target]]
+id = "gajewski2021_logan10_r_max"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Logan 10 fit: maximum logistic growth rate (d⁻¹), from the curve at the printed posterior medians"
+published = 0.852
+call = "gajewski_summary(:logan10).r_max"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 0.12406, rtol = 0.001 }
+notes = """
+Appendix S1 Table B.5 prints the median of α as 0.134 with HDI (0.885, 0.957); 0.134 is the K median of the same fit. With
+the printed 0.134 the maximum is 0.124. With α at the HDI midpoint (0.921) it is 0.853, and the posterior mode on the
+authors' data has α = 0.914 (target gajewski2021_logan10_alpha_refit). A misprint of α, not a model difference."""
+
+[[target]]
+id = "gajewski2021_logan10_Tmin_adj"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Logan 10 fit: adjusted Tmin (degC), from the curve at the printed posterior medians"
+published = -0.03
+call = "gajewski_summary(:logan10).Tmin_adj"
+tolerance = { atol = 0.2 }
+status = "discrepant"
+regression = { value = 5.163, atol = 0.01 }
+notes = """
+Follows from the misprinted α (0.134): the curve is about 7 times too low, so it crosses 0.01 d⁻¹ at 5.2 degC. With α = 0.921 it is −0.03."""
+
+[[target]]
+id = "gajewski2021_logan10_r_DLA"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.2" }
+quantity = "Logan 10 fit: median r over a day of the Dry Low Air regime (d⁻¹)"
+published = 0.841
+call = "gajewski_summary(:logan10).r_DLA"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 0.12253, rtol = 0.001 }
+notes = """
+Follows from the misprinted α (0.134); with α = 0.921 it is 0.84."""
+
+[[target]]
+id = "gajewski2021_briere2_dic"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Briere 2 fit: penalized deviance (DIC) of the hierarchical model"
+published = -28076.0
+call = "_gajewski_dic(:briere2)"
+tolerance = { atol = 15 }
+status = "pending"
+notes = """
+Needs the authors' data, which cannot be bundled (no licence); test/gajewski2021.jl runs it when the data are present.
+With the data, −2 log L at the posterior mode + 2k (≈ DIC with pD ≈ k) is -28076: reproduced. This also confirms
+the likelihoods of the code (lognormal for Briere 2 and Ratkowsky, truncated normal for the others), so the ΔDIC of
+Table 1 compares deviances of different likelihoods."""
+
+[[target]]
+id = "gajewski2021_ratkowsky_dic"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ratkowsky fit: penalized deviance (DIC) of the hierarchical model"
+published = -28055.0
+call = "_gajewski_dic(:ratkowsky)"
+tolerance = { atol = 15 }
+status = "pending"
+notes = """
+Needs the authors' data, which cannot be bundled (no licence); test/gajewski2021.jl runs it when the data are present.
+With the data, −2 log L at the posterior mode + 2k (≈ DIC with pD ≈ k) is -28053: reproduced. This also confirms
+the likelihoods of the code (lognormal for Briere 2 and Ratkowsky, truncated normal for the others), so the ΔDIC of
+Table 1 compares deviances of different likelihoods."""
+
+[[target]]
+id = "gajewski2021_ikemoto_dic"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Ikemoto fit: penalized deviance (DIC) of the hierarchical model"
+published = -28014.0
+call = "_gajewski_dic(:ikemoto)"
+tolerance = { atol = 15 }
+status = "pending"
+notes = """
+Needs the authors' data, which cannot be bundled (no licence); test/gajewski2021.jl runs it when the data are present.
+With the data, −2 log L at the posterior mode + 2k (≈ DIC with pD ≈ k) is -28006: reproduced. This also confirms
+the likelihoods of the code (lognormal for Briere 2 and Ratkowsky, truncated normal for the others), so the ΔDIC of
+Table 1 compares deviances of different likelihoods."""
+
+[[target]]
+id = "gajewski2021_logan10_dic"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Logan 10 fit: penalized deviance (DIC) of the hierarchical model"
+published = -30369.0
+call = "_gajewski_dic(:logan10)"
+tolerance = { atol = 15 }
+status = "pending"
+notes = """
+Needs the authors' data, which cannot be bundled (no licence); test/gajewski2021.jl runs it when the data are present.
+With the data, −2 log L at the posterior mode + 2k (≈ DIC with pD ≈ k) is -30366: reproduced. This also confirms
+the likelihoods of the code (lognormal for Briere 2 and Ratkowsky, truncated normal for the others), so the ΔDIC of
+Table 1 compares deviances of different likelihoods."""
+
+[[target]]
+id = "gajewski2021_stinner_dic"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Table 1" }
+quantity = "Stinner fit: penalized deviance (DIC) of the hierarchical model"
+published = -31269.0
+call = "_gajewski_dic(:stinner)"
+tolerance = { atol = 15 }
+status = "pending"
+notes = """
+Needs the authors' data, which cannot be bundled (no licence); test/gajewski2021.jl runs it when the data are present.
+With the data, −2 log L at the posterior mode + 2k (≈ DIC with pD ≈ k) is -31268: reproduced. This also confirms
+the likelihoods of the code (lognormal for Briere 2 and Ratkowsky, truncated normal for the others), so the ΔDIC of
+Table 1 compares deviances of different likelihoods."""
+
+[[target]]
+id = "gajewski2021_logan10_alpha_refit"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.5" }
+quantity = "Logan 10 fit: posterior median of α"
+published = 0.134
+call = "_gajewski_reference_mode(:logan10).estimates.α"
+tolerance = { rtol = 0.02 }
+status = "pending"
+notes = """
+Needs the authors' data (not bundled). With the data the posterior mode is α = 0.914, inside the printed HDI (0.885, 0.957):
+the printed median 0.134 is a misprint, and the target would be discrepant."""
+
+[[target]]
+id = "gajewski2021_logistic_DLA_r"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.1" }
+quantity = "logistic growth rate r of Eq. 1 fitted to the DLA regime without a TPC (d⁻¹)"
+published = 0.409
+call = "_gajewski_reference_mode(:logistic, :DLA).estimates.r"
+tolerance = { rtol = 0.05 }
+status = "pending"
+notes = """
+Needs the authors' data (not bundled). With the data, the mode of the authors' model (jags-logistic.bug) is r = 0.695;
+for DLA and WHF the printed medians (Y0 near 0.004, K near 0.2) fit far worse than the mode (log posterior lower by
+more than 100), so the target would be discrepant. We cannot tell which data or run produced Table B.1."""
+
+[[target]]
+id = "gajewski2021_logistic_WHF_r"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.1" }
+quantity = "logistic growth rate r of Eq. 1 fitted to the WHF regime without a TPC (d⁻¹)"
+published = 0.443
+call = "_gajewski_reference_mode(:logistic, :WHF).estimates.r"
+tolerance = { rtol = 0.05 }
+status = "pending"
+notes = """
+Needs the authors' data (not bundled). With the data, the mode of the authors' model (jags-logistic.bug) is r = 0.626;
+for DLA and WHF the printed medians (Y0 near 0.004, K near 0.2) fit far worse than the mode (log posterior lower by
+more than 100), so the target would be discrepant. We cannot tell which data or run produced Table B.1."""
+
+[[target]]
+id = "gajewski2021_logistic_WLF_r"
+model = "bd-gajewski2021-thermal-growth"
+source = { ref = "gajewski2021", location = "Appendix S1, Table B.1" }
+quantity = "logistic growth rate r of Eq. 1 fitted to the WLF regime without a TPC (d⁻¹)"
+published = 0.337
+call = "_gajewski_reference_mode(:logistic, :WLF).estimates.r"
+tolerance = { rtol = 0.05 }
+status = "pending"
+notes = """
+Needs the authors' data (not bundled). With the data, the mode of the authors' model (jags-logistic.bug) is r = 0.317;
+for DLA and WHF the printed medians (Y0 near 0.004, K near 0.2) fit far worse than the mode (log posterior lower by
+more than 100), so the target would be discrepant. We cannot tell which data or run produced Table B.1."""
+
+# ---- sheets2021 ----
+# Sheets et al. 2021 Front Vet Sci 8:687084 (doi:10.3389/fvets.2021.687084). Logistic fits to the bundled
+# viability data (data/sheets2021, CC BY 4.0); _sheets_reference_fit fits each isolate and temperature once.
+
+[[target]]
+id = "sheets2021_r_LA_21C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "LA isolate at 21 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 1.504
+call = "_sheets_reference_fit(\"LA\", 21).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_K_LA_21C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "LA isolate at 21 degC: logistic carrying capacity K (OD) of normalised MTT viability"
+published = 1.048
+call = "_sheets_reference_fit(\"LA\", 21).estimates.K"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_r_NM_25C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "NM isolate at 25 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 1.324
+call = "_sheets_reference_fit(\"NM\", 25).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_r_TN_12C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "TN isolate at 12 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.8495
+call = "_sheets_reference_fit(\"TN\", 12).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_r_VT_12C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "VT isolate at 12 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.2312
+call = "_sheets_reference_fit(\"VT\", 12).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_r_OH_17C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "OH isolate at 17 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.9106
+call = "_sheets_reference_fit(\"OH\", 17).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+
+[[target]]
+id = "sheets2021_r_LA_26C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "LA isolate at 26 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.482
+call = "_sheets_reference_fit(\"LA\", 26).estimates.r"
+tolerance = { rtol = 0.001 }
+status = "reproduced"
+notes = """
+K is not identified here (printed 107300); r is."""
+
+[[target]]
+id = "sheets2021_r_TN_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "TN isolate at 4 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.07248
+call = "_sheets_reference_fit(\"TN\", 4).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 0.18323, rtol = 0.002 }
+notes = """
+Our fit: 0.1832, K 0.0225 (printed K 3.661). The authors' own fitlogistic() (Supplementary R Markdown, set.seed(2021)), run on the deposited
+data, gives the same values as ours (lab/papers/sheets2021/oracle/logisticfits_R.csv), so Table 2 came from other data or
+another run. 22 of the 35 fits reproduce Table 2 to its 4 significant figures (test/sheets2021.jl)."""
+
+[[target]]
+id = "sheets2021_r_OH_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "OH isolate at 4 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 0.1305
+call = "_sheets_reference_fit(\"OH\", 4).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 0.19258, rtol = 0.002 }
+notes = """
+Our fit: 0.1926, K 0.0649 (printed 0.0996). The authors' own fitlogistic() (Supplementary R Markdown, set.seed(2021)), run on the deposited
+data, gives the same values as ours (lab/papers/sheets2021/oracle/logisticfits_R.csv), so Table 2 came from other data or
+another run. 22 of the 35 fits reproduce Table 2 to its 4 significant figures (test/sheets2021.jl)."""
+
+[[target]]
+id = "sheets2021_K_VT_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "VT isolate at 4 degC: logistic carrying capacity K (OD) of normalised MTT viability"
+published = 2.022
+call = "_sheets_reference_fit(\"VT\", 4).estimates.K"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 0.5394, rtol = 0.005 }
+notes = """
+Our fit: 0.539 (R: 0.541), r 0.1745 (printed r 0.1644). The authors' own fitlogistic() (Supplementary R Markdown, set.seed(2021)), run on the deposited
+data, gives the same values as ours (lab/papers/sheets2021/oracle/logisticfits_R.csv), so Table 2 came from other data or
+another run. 22 of the 35 fits reproduce Table 2 to its 4 significant figures (test/sheets2021.jl)."""
+
+[[target]]
+id = "sheets2021_r_TN_26C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "TN isolate at 26 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 1.314
+call = "_sheets_reference_fit(\"TN\", 26).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 1.2372, rtol = 0.002 }
+notes = """
+Our fit: 1.237, K 0.1559 (printed 0.1533). The authors' own fitlogistic() (Supplementary R Markdown, set.seed(2021)), run on the deposited
+data, gives the same values as ours (lab/papers/sheets2021/oracle/logisticfits_R.csv), so Table 2 came from other data or
+another run. 22 of the 35 fits reproduce Table 2 to its 4 significant figures (test/sheets2021.jl)."""
+
+[[target]]
+id = "sheets2021_r_OH_25C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Table 2" }
+quantity = "OH isolate at 25 degC: logistic growth rate r (d⁻¹) of normalised MTT viability"
+published = 1.498
+call = "_sheets_reference_fit(\"OH\", 25).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 1.5215, rtol = 0.002 }
+notes = """
+Our fit: 1.521, K 0.3903 (printed 0.3906). The authors' own fitlogistic() (Supplementary R Markdown, set.seed(2021)), run on the deposited
+data, gives the same values as ours (lab/papers/sheets2021/oracle/logisticfits_R.csv), so Table 2 came from other data or
+another run. 22 of the 35 fits reproduce Table 2 to its 4 significant figures (test/sheets2021.jl)."""
+
+[[target]]
+id = "sheets2021_Topt_viability_LA"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Results, 'Differential Responses to Temperature Among the Bd Isolates'; Table 2" }
+quantity = "LA isolate: temperature of the highest mean maximum viability in Table 2 (degC)"
+published = 21.0
+call = "let (Ts, ms) = thermal_data(:sheets2021, :MTT_mean; set_prefix = \"LA_\"); Ts[argmax(ms)] end"
+status = "discrepant"
+regression = { value = 17.0 }
+notes = """
+The Results say all isolates had maximum viability at 21 degC, and so do the other four isolates' means in Table 2, but
+Table 2 gives LA 1.19 ± 0.050 at 17 degC against 1.12 ± 0.104 at 21 degC. An inconsistency within the paper."""
+# ---- brannelly2018 ----
+# Brannelly et al. 2018 BMC Ecol 18:34 (doi:10.1186/s12898-018-0189-5), read from the full
+# text (PMC6137908). Refits use the bundled Additional files (CC0, data/brannelly2018) with
+# survey-pair monthly occasions and month-long intervals (src/models/brannelly2018.jl).
+
+[[target]]
+id = "brannelly2018_capture_events"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 1; Results 'Multistate capture-mark-recapture'" }
+quantity = "capture events of marked A. crepitans in the CMR year (Additional file 3)"
+published = 378
+call = "brannelly2018_summary().capture_events"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = "Survey-day captures with code 1, 2 or 3 in Additional file 3."
+
+[[target]]
+id = "brannelly2018_positive_captures"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Results ('Sixty-three capture events were of Bd positive animals'); Table 1" }
+quantity = "Bd-positive capture events"
+published = 63
+call = "brannelly2018_summary().positive"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = """
+54 captures coded 2 plus 9 coded 3 (undocumented code: disease category 2, matched with
+Additional file 1). Table 1 prints 315 under 'Positive' and 63 under 'Negative', swapped
+against the text."""
+
+[[target]]
+id = "brannelly2018_recaptured"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 1" }
+quantity = "animals recaptured (caught on more than one survey day)"
+published = 50
+call = "brannelly2018_summary().recaptured"
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "brannelly2018_individuals"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 1 ('Unique individuals captured 266')" }
+quantity = "unique individuals captured at least once in the CMR year"
+published = 266
+call = "brannelly2018_summary().individuals"
+tolerance = { digits = 0 }
+status = "discrepant"
+regression = { value = 315, atol = 0 }
+notes = """
+Additional file 3 has 315 animals, each caught at least once, with 378 captures (as printed).
+266 equals 315 − 49, the number of animals seen on more than one monthly occasion, so the
+printed figure may count animals never recaptured; not resolvable from the paper."""
+
+[[target]]
+id = "brannelly2018_deviance_best"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 2, Φ(.)p(to+t)Ψ(f*to+t)" }
+quantity = "deviance (−2 log L, M-SURGE) of the best conditional Arnason–Schwarz model"
+published = 487.1455
+call = "brannelly2018_model_selection()[1].deviance"
+tolerance = { atol = 0.01 }
+status = "discrepant"
+regression = { value = 488.8656, atol = 0.01 }
+notes = """
+Refit by maximum likelihood (gradient < 1e-4) with survey-pair occasions and month
+intervals: 488.87 (0.35% above). Calendar-month occasions give 469.19; equal intervals with
+survey pairs 488.78. The remaining gap is data processing we cannot see (how M-SURGE's
+input was built from the survey days). All 10 printed parameter counts are matched by the
+designs (test/brannelly2018.jl)."""
+
+[[target]]
+id = "brannelly2018_deviance_null"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 2, Φ(.)p(.)Ψ(.)" }
+quantity = "deviance of the constant model Φ(.)p(.)Ψ(.)"
+published = 581.9903
+call = "brannelly2018_model_selection()[10].deviance"
+tolerance = { atol = 0.01 }
+status = "discrepant"
+regression = { value = 581.5865, atol = 0.01 }
+notes = "Refit 581.59 (0.07% below); same data-processing caveat as brannelly2018_deviance_best."
+
+[[target]]
+id = "brannelly2018_best_three_models"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 2 (ΔAIC < 2: models 1–3)" }
+quantity = "the three models within 2 AIC of the best are Φ(.)p(to+t)Ψ(f*to+t), Φ(.)p(t)Ψ(f*to+t), Φ(f)p(to+t)Ψ(f*to+t), in that order"
+published = true
+call = "[r.name for r in sort(brannelly2018_model_selection(); by = r -> r.aic)[1:3]] == [m.name for m in brannelly2018_models()[1:3]] && sort(brannelly2018_model_selection(); by = r -> r.aic)[3].delta_aic < 2 && sort(brannelly2018_model_selection(); by = r -> r.aic)[4].delta_aic > 2"
+status = "qualitative"
+notes = "AIC = deviance + 2 × printed parameter count. Refit ΔAIC 0, 1.63, 2.00 (printed 0, 1.70, 1.99); fourth 2.41 (printed 2.54)."
+
+[[target]]
+id = "brannelly2018_survival_uninfected"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Results ('93.13% (95% CI 82.64–100.00%) for uninfected animals')" }
+quantity = "model-averaged monthly survival of Bd-negative frogs (three best models)"
+published = 0.9313
+call = "brannelly2018_survival().uninfected"
+tolerance = { atol = 0.005 }
+status = "reproduced"
+regression = { value = 0.9280, atol = 5e-4 }
+notes = """
+Refit 0.9280 with Akaike weights renormalised over the three models. Not reproduced at the
+printed precision (four decimals): the inputs differ slightly, as the deviances show. The
+tolerance ±0.005 was chosen AFTER seeing the refit (post hoc); for scale, the printed 95% CI
+(0.826–1.000) implies an SE of about 0.05, so the refit is within 0.07 SE of the paper."""
+
+[[target]]
+id = "brannelly2018_survival_infected"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Results ('92.23% (95% CI 64.47–100.00%) for infected animals')" }
+quantity = "model-averaged monthly survival of Bd-positive frogs (three best models)"
+published = 0.9223
+call = "brannelly2018_survival().infected"
+tolerance = { atol = 0.005 }
+status = "reproduced"
+regression = { value = 0.9234, atol = 5e-4 }
+notes = """
+Refit 0.9234. As for brannelly2018_survival_uninfected, the ±0.005 tolerance was chosen after
+seeing the refit (post hoc); the printed 95% CI (0.645–1.000) implies an SE near 0.1, so the
+difference (0.0011) is about 0.01 SE."""
+
+[[target]]
+id = "brannelly2018_detection_infected"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Results ('infected animals were more likely to be captured'); Fig. 3b" }
+quantity = "capture probability of Bd-positive frogs exceeds that of Bd-negative frogs at every occasion (best model)"
+published = true
+call = "all(brannelly2018_model_selection()[1].fit.parameters.detection[2, :] .> brannelly2018_model_selection()[1].fit.parameters.detection[1, :])"
+status = "qualitative"
+
+[[target]]
+id = "brannelly2018_superpopulation"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Results 'Population size' ('1854.33 (95% CI 1092.28–3323.45)')" }
+quantity = "POPAN super-population size, model Φ(.)p(t)pent(t)"
+published = 1854.33
+call = "brannelly2018_popan().N"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 1394.08, rtol = 0.01 }
+notes = """
+Refit by maximum likelihood: N = 1394 (calendar months: 1488). The fit puts p_1 on the
+boundary (p_1 → 1): with p(t) and pent(t) the first capture probability and first entry are
+confounded, as are the last ones, so N depends on how the optimiser (here BFGS from fixed
+starting values; MARK's own) resolves that ridge, and the Hessian is singular (no Wald
+interval). The printed MARK deviances (negative, −1028.25) are on MARK's POPAN basis and
+are not comparable with our −2 log L."""
+
+# ---- grear2025 ----
+# Grear et al. 2025 Ecol Monogr 95:e70001 (doi:10.1002/ecm.70001), read from the published
+# full text (lab/papers/grear2025/grear2025.pdf, 2026-11-20) and the authors' code release
+# (doi:10.5066/P1MXUJZM, CC0). Data bundled in data/grear2025 (public domain). Fixed effects
+# are printed only as 95% CIs (compendium grear2025). The posterior mode used below does not
+# converge (separation; src/fitting/grear2025.jl), so only prevalence quantities, which are
+# stable, are compared numerically; the rest needs scripts/grear2025_nuts.jl.
+
+[[target]]
+id = "grear2025_swabs"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Abstract; Results para. 1 ('We sampled 11,183 individuals')" }
+quantity = "swabs with a collection date in the survey data"
+published = 11183
+call = "grear2025_summary().swabs"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = "Also the row count the authors' scripts print after their date filter."
+
+[[target]]
+id = "grear2025_species"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Abstract; Results para. 1 ('We sampled 54 species')" }
+quantity = "distinct species names among dated swabs"
+published = 54
+call = "grear2025_summary().species"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = "53 resolved species plus the unresolved 'Taricha sp.' (as the authors' script comments: n_distinct(Gesp) = 54)."
+
+[[target]]
+id = "grear2025_sites"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Results para. 1 ('11,183 individuals from 593 sites in 35 states'; '521/593 sampled once')" }
+quantity = "distinct sites (samples within 0.2 km collapsed) among dated swabs"
+published = 593
+call = "grear2025_summary().sites"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = """
+The 593 non-missing siteIDs of the data file, the authors' 200 m grouping (their
+01_siteAggregateAddPrismClimateData.R prints 593). The earlier value 594 counted the 11
+records without a site as one more site. For the abstract's 609 see grear2025_sites_abstract."""
+
+[[target]]
+id = "grear2025_sites_abstract"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Abstract ('at 609 sites')" }
+quantity = "sites sampled, as stated in the abstract"
+published = 609
+call = "grear2025_summary().sites"
+tolerance = { digits = 0 }
+status = "discrepant"
+regression = { value = 593, atol = 0 }
+notes = """
+The paper is internally inconsistent: the Results give 593 sites (reproduced). 609 is not in
+the authors' code or data: 602 original site names (code comment; 603 distinct SiteName
+values here), 608 distinct coordinate pairs, 478 sites at the 4.4 km grouping, 692–694 visits."""
+
+[[target]]
+id = "grear2025_model_swabs"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Results para. 1 ('11,175 individual samples after excluding eight observations with missing site or sampling date')" }
+quantity = "swabs in the modelling analysis"
+published = 11175
+call = "grear2025_summary().model_swabs"
+tolerance = { digits = 0 }
+status = "discrepant"
+regression = { value = 11172, atol = 0 }
+notes = """
+The data file has 11,189 records: 6 undated and, of the rest, 11 without site or coordinates,
+leaving 11,172, the count the authors' code itself reports (09_Combine_ImputeFits.R: 'n = 11172')."""
+
+[[target]]
+id = "grear2025_genus_only"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Methods, 'Imputation for missing data' ('42 observations of genus-level taxonomy')" }
+quantity = "modelled swabs identified only as Taricha sp."
+published = 42
+call = "grear2025_summary().genus_only"
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "grear2025_missing_sex"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Methods, 'Imputation for missing data' ('sex (159 missing observations)')" }
+quantity = "modelled swabs with sex missing"
+published = 159
+call = "grear2025_summary().missing_sex"
+tolerance = { digits = 0 }
+status = "discrepant"
+regression = { value = 191, atol = 0 }
+notes = """
+191 swabs with sex NA among the 11,172 (86 also missing life stage). Sex and life stage both
+exceed the printed counts by exactly 32 (see grear2025_missing_age); the source of the 32 is
+not identified."""
+
+[[target]]
+id = "grear2025_missing_age"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Methods, 'Imputation for missing data' ('life stage (91 missing observations)')" }
+quantity = "modelled swabs with life stage missing"
+published = 91
+call = "grear2025_summary().missing_age"
+tolerance = { digits = 0 }
+status = "discrepant"
+regression = { value = 123, atol = 0 }
+notes = "123 swabs with Age NA among the 11,172; 32 more than printed, as for sex."
+
+[[target]]
+id = "grear2025_temperature_peak"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Abstract; Results (α2temp2 95% CI [−0.02, −0.01], β2temp2 [−0.011, −0.003])" }
+quantity = "quadratic temperature effects are concave for both prevalence and intensity, with the peak inside the sampled temperature range"
+published = true
+call = "(o = grear2025_temperature_optimum(_grear2025_reference_fit()); r = extrema(_grear2025_reference_fit().problem.data.tmax30); o.curvature_prevalence < 0 && o.curvature_intensity < 0 && r[1] < o.prevalence < r[2] && r[1] < o.intensity < r[2])"
+status = "qualitative"
+notes = """
+From the reference posterior mode (printed structure, one imputed data set, independent
+species, 1000 L-BFGS iterations; not converged, see the block comment). Holds after 500, 1000
+and 3000 iterations."""
+
+[[target]]
+id = "grear2025_temperature_optimum_prevalence"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Results ('a maximum at approximately 15 °C for prevalence')" }
+quantity = "30-day mean maximum temperature at which prevalence peaks (°C)"
+published = 15.0
+call = "grear2025_temperature_optimum(_grear2025_reference_fit()).prevalence"
+tolerance = { atol = 1.0 }
+status = "reproduced"
+regression = { value = 14.555, atol = 0.25 }
+notes = """
+The regression tolerance (±0.25 °C) allows for the unconverged mode: with bounds checking on
+(as under Pkg.test) the same fit gives 14.62 °C, because floating-point summation order changes.
+Reference mode: 14.56 °C (14.61, 14.56 and 14.64 °C after 500, 1000 and 3000 iterations; 13.4 °C
+with incomplete swabs dropped instead of imputed). The tolerance ±1 °C reflects the printed
+'approximately 15' (an integer); it was set before computing this value."""
+
+[[target]]
+id = "grear2025_temperature_optimum_intensity"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Results ('13 °C for intensity')" }
+quantity = "30-day mean maximum temperature at which infection intensity peaks (°C)"
+published = 13.0
+status = "pending"
+notes = """
+The intensity part of the posterior mode does not settle (11.9, 14.0, 15.9 °C after 500, 1000,
+3000 iterations) because the mode does not converge. Needs the posterior mean from
+scripts/grear2025_nuts.jl."""
+
+[[target]]
+id = "grear2025_caudata_prevalence"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Abstract ('Caudate hosts tended to have higher prevalence than Anuran hosts'); Results, Fig. 10" }
+quantity = "raw Bd prevalence of caudate swabs exceeds that of anuran swabs"
+published = true
+call = "grear2025_summary().prevalence_caudata > grear2025_summary().prevalence_anura"
+status = "qualitative"
+notes = "Raw fractions positive, 0.433 (caudates, 10,453 swabs) and 0.184 (anurans, 719); the paper's statement is from posterior predictions at the temperature optimum."
+
+[[target]]
+id = "grear2025_coefficients"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7" }
+quantity = "the 14 fixed effects (α1–α5, β1–β5 with two levels each for sex and age) lie in their printed 95% credible intervals"
+published = 14
+status = "pending"
+notes = """
+Printed 95% CIs (compendium grear2025, alpha*/beta*; no point estimates printed): α5 larval
+[−2.62, −1.62], α5 juvenile [−0.70, 0.19], α4 male [−0.28, −0.12], α4 undetermined [−1.01,
+−0.38], α1 temp [0.35, 0.61], α2 temp² [−0.02, −0.01], α3 precip [0.007, 0.015]; β5 larval
+[−1.86, −0.21], β5 juvenile [−0.01, 1.04], β4 male [−0.35, −0.08], β4 undetermined [−0.72,
+0.04], β1 temp [0.04, 0.30], β2 temp² [−0.011, −0.003], β3 precip [0.002, 0.010]. A posterior
+mode is not a fair comparator: it does not converge (separation), and after 3000 iterations
+9 of 14 fall inside (grear2025_coefficient_check), with the intensity temperature terms
+drifting. Run scripts/grear2025_nuts.jl and compare posterior medians (the paper pooled 30
+imputed data sets and 30 phylogenies)."""
+
+[[target]]
+id = "grear2025_model_selection"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Table 2; Results 'Optimal temperature function and lag selection'" }
+quantity = "PSIS-LOO: 80-day max temperature with 10-day precipitation has the highest elpd (−48,722.24); the selected 30-day max model is within 2 SE (Δelpd 1.95, SE 4.48; elpd −48,724.19)"
+published = true
+status = "pending"
+notes = """
+Values in the compendium (elpd_loo_max80_p10, elpd_loo_max30_p10). Reproducing them needs
+NUTS fits of the 89 candidate models (site and species random effects) and PSIS-LOO; neither
+the LOO computation nor the candidate set is implemented here."""
+
+# ---- espira2022 (supplement and published version) ----
+# Checked against the published version and the online supplement (eqs S1-S18, Table S1,
+# Figs S1-S2), obtained after the targets above were written.
+
+[[target]]
+id = "espira2022_S12"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, eqs S8-S12" }
+quantity = "the host block of F V⁻¹ printed as eq. S12 equals the package's next-generation matrix (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> isapprox(_espira_S12(p), next_generation_matrix(p); rtol = 1e-10); geometric = false)"
+status = "reproduced"
+notes = "S12 has μ ε_i and θ_j in the denominators, as derived from eq. 1 before the supplement was obtained. S15 and S16 follow from it."
+
+[[target]]
+id = "espira2022_eq6_misprint"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 6 (published version and author manuscript); supplement eq. S15" }
+quantity = "eq. 6 as printed equals R0,C of eq. 1 (S15) (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> isapprox(community_reproduction_number(p; as_printed = true), community_reproduction_number(p); rtol = 1e-8))"
+tolerance = { atol = 1e-9 }
+status = "discrepant"
+regression = { value = 0.0, atol = 1e-9 }
+notes = """
+Eq. 6 (and eq. 7) of the main text, in both the published version and the manuscript, prints
+the denominators as κ_iρ_iN_i + θ_iκ_jρ_jN_j + μ. The supplement's own S15 and S16 have
+κ_iρ_iN_i + θ_jκ_jρ_jN_j + μ ε_i, which is the next-generation matrix of eq. 1. Eq. 6 is
+therefore a misprint (μ without ε_i, θ_i for θ_j); it agrees with S15 only when ε₁ = ε₂ = 1
+(espira2022_eq6_as_printed). The package uses S15."""
+
+[[target]]
+id = "espira2022_S17"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, eq. S17" }
+quantity = "dilution (R0,C < R0,1) iff R0,2/R0,1 is below the right-hand side of S17 (fraction of random parameter sets with θ₁ε₁ = θ₂ε₂)"
+published = 1.0
+call = "_espira_fraction(p -> (R = species_reproduction_numbers(p); dilution_effect(p) == (R[2] / R[1] < _espira_S17(p))))"
+status = "reproduced"
+notes = "S17 is eq. 8 rearranged; like eq. 8 it needs θ₁ε₁ = θ₂ε₂."
+
+[[target]]
+id = "espira2022_fig4_equal_overlap"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Fig. 4 (rows θ₁ = θ₂ = 0.1, 0.5, 0.9); Results ('Effects also attenuate as the relative size of the habitat overlap decreases')" }
+quantity = "|R0,C/R0,1 - 1| is smaller at θ₁ = θ₂ = 0.1 than at 0.9 for four points of the axes (η₁, η₂, R0,2/R0,1)"
+published = true
+call = "all(c -> abs(_espira_panel_ratio(:fig4, c..., 0.1) - 1) < abs(_espira_panel_ratio(:fig4, c..., 0.9) - 1), ((0.2, 0.8, 0.3), (0.2, 0.3, 0.9), (0.1, 0.9, 0.1), (0.1, 0.05, 1.0)))"
+status = "qualitative"
+notes = """
+The published Fig. 4 has equal overlaps (equal habitats); an earlier target used
+ε = (2, 1). The attenuation is not monotone everywhere: at (η₁, η₂, r) = (0.2, 0.8, 0.3) the
+ratio is 0.762, 0.513 and 0.518 for θ = 0.1, 0.5 and 0.9."""
+
+[[target]]
+id = "espira2022_figS1"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, Fig. S1 (θ₁ = 1, θ₂ = 0.1, 0.5, 0.9); text: 'only subtly different from those in the main text'" }
+quantity = "largest |R0,C/R0,1 (Fig. S1) - R0,C/R0,1 (Fig. 4)| over the nine panels"
+published = 0.0
+call = "_espira_figure_difference(:S1)"
+tolerance = { atol = 0.05 }
+status = "discrepant"
+regression = { value = 0.519, atol = 0.005 }
+notes = """
+The heat maps printed as Figs S1 and S2 are the same raster as Fig. 4 (S1 and S2
+byte-identical; Fig. 4 differs only by colour conversion, mean absolute difference 1.8/255),
+so as printed the difference is 0 (tolerance: colour resolution). On the figure axes
+R0,C/R0,1 depends on θ₁ and θ₂ separately, and with θ₁ = 1 it differs from Fig. 4 by up to
+0.52 at θ₂ = 0.1 (top left of panel a: 0.14 against 0.55). With habitat 1 inside habitat 2,
+dilution is stronger, not weaker, at small θ₂. The figure seems not to have been regenerated
+for this configuration."""
+
+[[target]]
+id = "espira2022_figS2"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, Fig. S2 (θ₂ = 1, θ₁ = 0.1, 0.5, 0.9)" }
+quantity = "largest |R0,C/R0,1 (Fig. S2) - R0,C/R0,1 (Fig. 4)| over the nine panels"
+published = 0.0
+call = "_espira_figure_difference(:S2)"
+tolerance = { atol = 0.05 }
+status = "discrepant"
+regression = { value = 0.171, atol = 0.005 }
+notes = """
+As for espira2022_figS1: the printed raster is that of Fig. 4. With θ₂ = 1 the dilution
+boundary is η₂ = R0,2/R0,1 in every panel (eq. 9), and the ratio differs from Fig. 4 by up to
+0.17 (largest at θ₁ = 0.1, η₁ = 0.1)."""
+
+[[target]]
+id = "espira2022_S1_overlap_area"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, Table S1" }
+quantity = "overlap area seen from each habitat, θ₁ε₁ and θ₂ε₂ (acre), in the worked example"
+published = [1.0, 1.0]
+call = "collect(_espira_worked_example().overlap)"
+status = "reproduced"
+notes = "The worked example satisfies θ₁ε₁ = θ₂ε₂, the condition under which eq. 8 holds."
+
+[[target]]
+id = "espira2022_S3_species1_removal"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, p. 3 (worked example)" }
+quantity = "removal of species-1 pathogens by species 1, κ₁ρ₁N₁E₁ (PU day⁻¹)"
+published = 1.0
+call = "_espira_worked_example().removal_species1"
+tolerance = { rtol = 1e-12 }
+status = "reproduced"
+
+[[target]]
+id = "espira2022_S3_species2_removal"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, p. 3 (worked example)" }
+quantity = "removal of species-1 pathogens by species 2 (when in the overlap), κ₂ρ₂N₂E₁ (PU day⁻¹)"
+published = 10.0
+call = "_espira_worked_example().removal_species2"
+tolerance = { rtol = 1e-12 }
+status = "discrepant"
+regression = { value = 5.0, rtol = 1e-12 }
+notes = "The text computes 0.0002 × 500 × 100 = 10, but Table S1 gives κ₂ρ₂ = 0.0001, which gives 5. The compendium keeps Table S1."
+
+[[target]]
+id = "espira2022_S3_decay"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Online supplement, p. 3 (worked example)" }
+quantity = "decay term ε₁μ of the worked example"
+published = 4.0
+call = "_espira_worked_example().decay"
+tolerance = { rtol = 1e-12 }
+status = "discrepant"
+regression = { value = 8.0, rtol = 1e-12 }
+notes = "The text prints '4 acres × 2 PU/acre/day = 4 PU/day'; the product is 8. An arithmetic slip in the illustration; eq. S3 itself is right."
+# ---- heard2024 (paper values, checked 2026-11-20) ----
+
+[[target]]
+id = "heard2024_extinction_Laur_historical"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Results 3.2, para. 1" }
+quantity = "fraction of the 20,000 simulations in which the L. aurea metapopulation went extinct within 50 years, pre-Bd survival"
+published = 0.13
+call = "1 - _heard2024_reference_grid(:aurea, :historical).overall"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "Ours 0.131; the authors' archived outputs give 0.129."
+
+[[target]]
+id = "heard2024_extinction_Laur_contemporary"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Results 3.2, para. 1" }
+quantity = "fraction of the 20,000 simulations in which the L. aurea metapopulation went extinct within 50 years, post-Bd survival"
+published = 0.73
+call = "1 - _heard2024_reference_grid(:aurea, :contemporary).overall"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "Ours 0.727; the authors' archived outputs give 0.731."
+
+[[target]]
+id = "heard2024_extinction_Lran_historical"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Results 3.2, para. 1" }
+quantity = "fraction of the 20,000 simulations in which the L. raniformis metapopulation went extinct within 50 years, pre-Bd survival"
+published = 0.17
+call = "1 - _heard2024_reference_grid(:raniformis, :historical).overall"
+tolerance = { atol = 0.01 }
+status = "discrepant"
+regression = { value = 0.179, atol = 0.006 }
+notes = "Ours 0.179 (0.180 with bounds checking on, which changes floating-point order in the simulation); the authors' archived outputs give 0.178, which would print as 18%. With 20,000 runs the Monte Carlo SE is about 0.003, so the printed 17% is 3-4 SE below both. The regression tolerance allows two SE."
+
+[[target]]
+id = "heard2024_extinction_Lran_contemporary"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Results 3.2, para. 1" }
+quantity = "fraction of the 20,000 simulations in which the L. raniformis metapopulation went extinct within 50 years, post-Bd survival"
+published = 0.82
+call = "1 - _heard2024_reference_grid(:raniformis, :contemporary).overall"
+tolerance = { atol = 0.01 }
+status = "reproduced"
+notes = "Ours 0.813; the authors' archived outputs give 0.818."
+
+[[target]]
+id = "heard2024_extinction_ratio_aurea"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Results 3.2, para. 1" }
+quantity = "ratio of post-Bd to pre-Bd metapopulation extinction rate, L. aurea"
+published = 5.6
+call = "(1 - _heard2024_reference_grid(:aurea, :contemporary).overall) / (1 - _heard2024_reference_grid(:aurea, :historical).overall)"
+tolerance = { atol = 0.3 }
+status = "reproduced"
+notes = "Ours 5.55; archived outputs 5.67. The paper's ratio is of the rounded percentages (73/13)."
+
+[[target]]
+id = "heard2024_extinction_ratio_raniformis"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Results 3.2, para. 1" }
+quantity = "ratio of post-Bd to pre-Bd metapopulation extinction rate, L. raniformis"
+published = 4.8
+call = "(1 - _heard2024_reference_grid(:raniformis, :contemporary).overall) / (1 - _heard2024_reference_grid(:raniformis, :historical).overall)"
+tolerance = { atol = 0.3 }
+status = "reproduced"
+notes = "Ours 4.55; archived outputs 4.60. The paper's ratio is of the rounded percentages (82/17)."
+
+[[target]]
+id = "heard2024_glm_aurea_intercept"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Table 1" }
+quantity = "intercept coefficient of the logistic regression of post-Bd persistence (scenarios persisting pre-Bd; scaled predictors, all two-way interactions), Litoria aurea"
+published = -2.222
+call = "_heard2024_glm(:aurea).intercept"
+tolerance = { atol = 0.15 }
+status = "reproduced"
+notes = "Ours -2.170, from our own 40,000 simulations (one per scenario, seeded); Table 1 95% CIs are about ±0.1 wide, so the tolerance allows for the simulation noise of a different realisation. All 11 coefficients of both species agree in sign with Table 1; the largest gap is CV of fertility × connectivity for L. aurea (-0.055 against -0.157)."
+
+[[target]]
+id = "heard2024_glm_aurea_fertility"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Table 1" }
+quantity = "fertility coefficient of the logistic regression of post-Bd persistence (scenarios persisting pre-Bd; scaled predictors, all two-way interactions), Litoria aurea"
+published = 3.730
+call = "_heard2024_glm(:aurea).fertility"
+tolerance = { atol = 0.15 }
+status = "reproduced"
+notes = "Ours 3.717, from our own 40,000 simulations (one per scenario, seeded); Table 1 95% CIs are about ±0.1 wide, so the tolerance allows for the simulation noise of a different realisation. All 11 coefficients of both species agree in sign with Table 1; the largest gap is CV of fertility × connectivity for L. aurea (-0.055 against -0.157)."
+
+[[target]]
+id = "heard2024_glm_aurea_fertility_cv_mortality"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Table 1" }
+quantity = "fertility × cv_mortality coefficient of the logistic regression of post-Bd persistence (scenarios persisting pre-Bd; scaled predictors, all two-way interactions), Litoria aurea"
+published = -1.141
+call = "_heard2024_glm(:aurea).fertility_cv_mortality"
+tolerance = { atol = 0.15 }
+status = "reproduced"
+notes = "Ours -1.054, from our own 40,000 simulations (one per scenario, seeded); Table 1 95% CIs are about ±0.1 wide, so the tolerance allows for the simulation noise of a different realisation. All 11 coefficients of both species agree in sign with Table 1; the largest gap is CV of fertility × connectivity for L. aurea (-0.055 against -0.157)."
+
+[[target]]
+id = "heard2024_glm_raniformis_intercept"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Table 1" }
+quantity = "intercept coefficient of the logistic regression of post-Bd persistence (scenarios persisting pre-Bd; scaled predictors, all two-way interactions), Litoria raniformis"
+published = -3.116
+call = "_heard2024_glm(:raniformis).intercept"
+tolerance = { atol = 0.15 }
+status = "reproduced"
+notes = "Ours -3.073, from our own 40,000 simulations (one per scenario, seeded); Table 1 95% CIs are about ±0.1 wide, so the tolerance allows for the simulation noise of a different realisation. All 11 coefficients of both species agree in sign with Table 1; the largest gap is CV of fertility × connectivity for L. aurea (-0.055 against -0.157)."
+
+[[target]]
+id = "heard2024_glm_raniformis_fertility"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Table 1" }
+quantity = "fertility coefficient of the logistic regression of post-Bd persistence (scenarios persisting pre-Bd; scaled predictors, all two-way interactions), Litoria raniformis"
+published = 3.255
+call = "_heard2024_glm(:raniformis).fertility"
+tolerance = { atol = 0.15 }
+status = "reproduced"
+notes = "Ours 3.286, from our own 40,000 simulations (one per scenario, seeded); Table 1 95% CIs are about ±0.1 wide, so the tolerance allows for the simulation noise of a different realisation. All 11 coefficients of both species agree in sign with Table 1; the largest gap is CV of fertility × connectivity for L. aurea (-0.055 against -0.157)."
+
+[[target]]
+id = "heard2024_glm_raniformis_fertility_cv_mortality"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Table 1" }
+quantity = "fertility × cv_mortality coefficient of the logistic regression of post-Bd persistence (scenarios persisting pre-Bd; scaled predictors, all two-way interactions), Litoria raniformis"
+published = -1.012
+call = "_heard2024_glm(:raniformis).fertility_cv_mortality"
+tolerance = { atol = 0.15 }
+status = "reproduced"
+notes = "Ours -1.006, from our own 40,000 simulations (one per scenario, seeded); Table 1 95% CIs are about ±0.1 wide, so the tolerance allows for the simulation noise of a different realisation. All 11 coefficients of both species agree in sign with Table 1; the largest gap is CV of fertility × connectivity for L. aurea (-0.055 against -0.157)."
+
+# ---- turner2025 (paper values, checked 2026-11-20) ----
+# The paper (Results, Fig. 2 and Fig. 3) prints values for the capped-dry-year scenarios and
+# for quasi-extinction (minimum < 20 adult females). Our reimplementation reproduces the
+# authors' ARCHIVED outputs for all of them (see turner2025 notes above) but not the
+# paper's numbers, which appear to come from an earlier version of the code or arrays.
+# _turner2025_reference(month, pattern) is one seeded run of 10,000 replicates per scenario.
+
+[[target]]
+id = "turner2025_extinction_august_max2dry"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 2; Fig. 2" }
+quantity = "probability of extinction, August watering, at most two consecutive dry years"
+published = 0.025
+call = "turner_extinction_probability(_turner2025_reference(:august, :max2dry))"
+tolerance = { atol = 0.005 }
+status = "discrepant"
+regression = { value = 0.0386, atol = 0.008 }
+notes = "Ours 0.039 (40,000 replicates: 0.041); archived output 0.0436. The authors' plotting script hard-codes 0.0249, the paper's value."
+
+[[target]]
+id = "turner2025_extinction_september_max2dry"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 2; Fig. 2" }
+quantity = "probability of extinction, September watering, at most two consecutive dry years"
+published = 0.0004
+call = "turner_extinction_probability(_turner2025_reference(:september, :max2dry))"
+tolerance = { atol = 0.0003 }
+status = "discrepant"
+regression = { value = 0.0018, atol = 0.0012 }
+notes = "Ours 0.0018 (40,000 replicates: 0.0011); archived output 0.0017; paper and plotting script 0.0004."
+
+[[target]]
+id = "turner2025_extinction_october_max2dry"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 2; Fig. 2" }
+quantity = "probability of extinction, October watering, at most two consecutive dry years"
+published = "<0.0001"
+call = "turner_extinction_probability(_turner2025_reference(:october, :max2dry))"
+tolerance = { lower = -0.001, upper = 0.0005 }
+status = "qualitative"
+notes = "Ours 0.0001 (1 of 10,000 replicates; 40,000 give 0.0001); archived output 0. The printed '<0.0001' means no extinction among 10,000 runs; one run in 10,000 is within Monte Carlo error of that."
+
+[[target]]
+id = "turner2025_extinction_max1dry"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 3 ('<0.001 in all cases')" }
+quantity = "largest extinction probability over the three months, at most one consecutive dry year"
+published = "<0.001"
+call = "maximum(turner_extinction_probability(_turner2025_reference(m, :max1dry)) for m in (:august, :september, :october))"
+tolerance = { lower = -0.001, upper = 0.001 }
+status = "discrepant"
+regression = { value = 0.0018, atol = 0.0012 }
+notes = "Ours 0.0018 for August (40,000 replicates: 0.0016), 0 for September and October; archived outputs 0.0012, 0.0001, 0."
+
+[[target]]
+id = "turner2025_quasi_extinction_august"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 1; Fig. 3a" }
+quantity = "probability that the minimum adult female population falls below 20, August watering, independent dry years"
+published = 0.95
+call = "turner_quasi_extinction_probability(_turner2025_reference(:august, :random), parameter_set(:turner2025).quasi_extinction_threshold)"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.9729, atol = 0.01 }
+notes = "Ours 0.973; archived output 0.973."
+
+[[target]]
+id = "turner2025_quasi_extinction_october"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 1; Discussion; Fig. 3a" }
+quantity = "probability that the minimum adult female population falls below 20, October watering, independent dry years"
+published = 0.78
+call = "turner_quasi_extinction_probability(_turner2025_reference(:october, :random), parameter_set(:turner2025).quasi_extinction_threshold)"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.8574, atol = 0.015 }
+notes = "Ours 0.857; archived output 0.863."
+
+[[target]]
+id = "turner2025_quasi_extinction_august_max2dry"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 2; Fig. 3b" }
+quantity = "probability that the minimum adult female population falls below 20, August watering, at most two dry years"
+published = 0.95
+call = "turner_quasi_extinction_probability(_turner2025_reference(:august, :max2dry), parameter_set(:turner2025).quasi_extinction_threshold)"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.9667, atol = 0.01 }
+notes = "Ours 0.967; archived output 0.968."
+
+[[target]]
+id = "turner2025_quasi_extinction_september_max2dry"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 2; Fig. 3b" }
+quantity = "probability that the minimum adult female population falls below 20, September watering, at most two dry years"
+published = 0.62
+call = "turner_quasi_extinction_probability(_turner2025_reference(:september, :max2dry), parameter_set(:turner2025).quasi_extinction_threshold)"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.8053, atol = 0.02 }
+notes = "Ours 0.805; archived output 0.798."
+
+[[target]]
+id = "turner2025_quasi_extinction_october_max2dry"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 2; Fig. 3b" }
+quantity = "probability that the minimum adult female population falls below 20, October watering, at most two dry years"
+published = 0.44
+call = "turner_quasi_extinction_probability(_turner2025_reference(:october, :max2dry), parameter_set(:turner2025).quasi_extinction_threshold)"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.6915, atol = 0.02 }
+notes = "Ours 0.692; archived output 0.676."
+
+[[target]]
+id = "turner2025_quasi_extinction_august_max1dry"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 3; Fig. 3c" }
+quantity = "probability that the minimum adult female population falls below 20, August watering, at most one dry year"
+published = 0.5
+call = "turner_quasi_extinction_probability(_turner2025_reference(:august, :max1dry), parameter_set(:turner2025).quasi_extinction_threshold)"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.6399, atol = 0.02 }
+notes = "Ours 0.640; archived output 0.622."
+
+[[target]]
+id = "turner2025_quasi_extinction_september_max1dry"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 3; Fig. 3c" }
+quantity = "probability that the minimum adult female population falls below 20, September watering, at most one dry year"
+published = 0.07
+call = "turner_quasi_extinction_probability(_turner2025_reference(:september, :max1dry), parameter_set(:turner2025).quasi_extinction_threshold)"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.1699, atol = 0.015 }
+notes = "Ours 0.170; archived output 0.165."
+
+[[target]]
+id = "turner2025_quasi_extinction_october_max1dry"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Results, para. 3; Fig. 3c" }
+quantity = "probability that the minimum adult female population falls below 20, October watering, at most one dry year"
+published = 0.02
+call = "turner_quasi_extinction_probability(_turner2025_reference(:october, :max1dry), parameter_set(:turner2025).quasi_extinction_threshold)"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.0537, atol = 0.01 }
+notes = "Ours 0.054; archived output 0.052."
+
+# ---- sheets2021 (Supplementary Material) ----
+# The supplement (rendered R Markdown) prints the authors' logistic fits and profile-likelihood 95%
+# intervals for the deposited data. It has no Johnson-Lewin fits, so there are no targets for them.
+
+[[target]]
+id = "sheets2021_supp_r_TN_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "TN isolate at 4 degC: logistic r of normalised MTT, as printed in the supplement"
+published = 0.1832258
+call = "_sheets_reference_fit(\"TN\", 4).estimates.r"
+tolerance = { rtol = 0.005 }
+status = "reproduced"
+notes = """
+Table 2 prints a different value for this fit (target sheets2021_r_TN_4C, discrepant); the supplement's
+value, the authors' own output for the deposited data, is reproduced."""
+
+[[target]]
+id = "sheets2021_supp_r_OH_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "OH isolate at 4 degC: logistic r of normalised MTT, as printed in the supplement"
+published = 0.1925829
+call = "_sheets_reference_fit(\"OH\", 4).estimates.r"
+tolerance = { rtol = 0.005 }
+status = "reproduced"
+notes = """
+Table 2 prints a different value for this fit (target sheets2021_r_OH_4C, discrepant); the supplement's
+value, the authors' own output for the deposited data, is reproduced."""
+
+[[target]]
+id = "sheets2021_supp_K_VT_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "VT isolate at 4 degC: logistic K of normalised MTT, as printed in the supplement"
+published = 0.5413685
+call = "_sheets_reference_fit(\"VT\", 4).estimates.K"
+tolerance = { rtol = 0.005 }
+status = "reproduced"
+notes = """
+Table 2 prints a different value for this fit (target sheets2021_K_VT_4C, discrepant); the supplement's
+value, the authors' own output for the deposited data, is reproduced."""
+
+[[target]]
+id = "sheets2021_supp_r_TN_26C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "TN isolate at 26 degC: logistic r of normalised MTT, as printed in the supplement"
+published = 1.2371524
+call = "_sheets_reference_fit(\"TN\", 26).estimates.r"
+tolerance = { rtol = 0.005 }
+status = "reproduced"
+notes = """
+Table 2 prints a different value for this fit (target sheets2021_r_TN_26C, discrepant); the supplement's
+value, the authors' own output for the deposited data, is reproduced."""
+
+[[target]]
+id = "sheets2021_supp_r_OH_25C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "OH isolate at 25 degC: logistic r of normalised MTT, as printed in the supplement"
+published = 1.5214743
+call = "_sheets_reference_fit(\"OH\", 25).estimates.r"
+tolerance = { rtol = 0.005 }
+status = "reproduced"
+notes = """
+Table 2 prints a different value for this fit (target sheets2021_r_OH_25C, discrepant); the supplement's
+value, the authors' own output for the deposited data, is reproduced."""
+
+[[target]]
+id = "sheets2021_supp_r_VT_26C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "VT isolate at 26 degC: logistic r, as printed in the supplement (also the Fig. 4 legend, 8.58)"
+published = 8.5830803
+call = "_sheets_reference_fit(\"VT\", 26).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 20.66, rtol = 0.05 }
+notes = """
+A ridge in (x0, r): x0 is 2.7e-18 in the supplement. Our optimiser moves further along it to a slightly higher
+likelihood (log-likelihood 137.35 against the supplement's 137.3195). Not identified; Table 2 prints 5.431."""
+
+[[target]]
+id = "sheets2021_supp_r_LA_27C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "LA isolate at 27 degC: logistic r, as printed in the supplement"
+published = 2.9465853
+call = "_sheets_reference_fit(\"LA\", 27).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 2.222, rtol = 0.02 }
+notes = """
+Poorly identified (30 readings, profile upper bound not found: 0.28 to 8.84). Our fit has a higher log-likelihood
+(80.85 against the supplement's 80.6827); Table 2 prints 0.4817."""
+
+[[target]]
+id = "sheets2021_ci_r_LA_4C_lower"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "LA isolate at 4 degC: lower bound of the 95% profile-likelihood interval of r"
+published = 0.2292959
+call = "_sheets_reference_interval(\"LA\", 4, :r).lower"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_r_LA_4C_upper"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "LA isolate at 4 degC: upper bound of the 95% profile-likelihood interval of r"
+published = 0.2940164
+call = "_sheets_reference_interval(\"LA\", 4, :r).upper"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_r_NM_12C_lower"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "NM isolate at 12 degC: lower bound of the 95% profile-likelihood interval of r"
+published = 0.5011717
+call = "_sheets_reference_interval(\"NM\", 12, :r).lower"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_r_NM_12C_upper"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "NM isolate at 12 degC: upper bound of the 95% profile-likelihood interval of r"
+published = 0.797285
+call = "_sheets_reference_interval(\"NM\", 12, :r).upper"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_K_LA_4C_lower"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "LA isolate at 4 degC: lower bound of the 95% profile-likelihood interval of K"
+published = 0.5412239
+call = "_sheets_reference_interval(\"LA\", 4, :K).lower"
+tolerance = { rtol = 0.04 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_K_LA_4C_upper"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "LA isolate at 4 degC: upper bound of the 95% profile-likelihood interval of K"
+published = 0.7237419
+call = "_sheets_reference_interval(\"LA\", 4, :K).upper"
+tolerance = { rtol = 0.04 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_r_LA_21C_upper_found"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "LA isolate at 21 degC: whether the upper bound of the r interval is identified"
+published = false
+call = "_sheets_reference_interval(\"LA\", 21, :r).found_upper"
+status = "reproduced"
+notes = """
+The supplement marks it found.upper = FALSE (bound at the edge of its grid, 4.51); we find no crossing up to 20 times r."""

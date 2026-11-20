@@ -1,0 +1,343 @@
+# Barnett KM, McMahon TA, Shepack AD, Buelow HN, Barkley Z, Belsare AV, Risin M, Milloway O,
+# Carozza J, Beasley J, Hobart BK, Moss WE, McDevitt-Galles T, Detmering S, Hilgendorff BA,
+# Nordheim-Maestas CL, Calhoun DM, Rohr JR, Johnson PTJ, Civitello DJ (2026) From protection
+# to amplification: imperfect chytridiomycosis prophylaxis increases infections in wild
+# amphibians. bioRxiv PREPRINT (not peer reviewed), doi:10.64898/2026.05.15.725113.
+#
+# VERSION CHECKED: preprint v2 (posted 2026-08-12), main text (Materials and Methods,
+# "Bd–amphibian–vaccine model", "Modes of protection", "Two-way interactions with tolerance",
+# "Hypothetical adverse reactions to vaccination") and Supplementary Information Table S1
+# (media-1.pdf), read on 2026-11-19 (lab/papers/barnett2026/). Licence of the preprint:
+# CC BY-NC-ND 4.0. The model was written in NetLogo 6.3.0; no model code or field data are
+# linked from the preprint, and none were found on GitHub or Zenodo.
+#
+# System: Bd in Pseudacris regilla (Pacific chorus frog) tadpoles and metamorphs, ephemeral
+# ponds in Santa Clara County, California. Time unit: days (one NetLogo tick = one day).
+# Loads are zoosporangia per host; zoospores are counts per patch.
+#
+# Several values are quoted by the paper from Briggs et al. (2010) (shedding rate, clearance,
+# self-reinfection fraction, and the derivation of smax) and Rumschlag et al. (2022) (z_mort).
+# They are recorded here as the values the preprint uses, with provenance A (assumed from the
+# literature) or D (derived), and the citation in `notes`.
+
+source = { ref = "barnett2026", doi = "10.64898/2026.05.15.725113", review_ref = 36 }
+
+# --- amphibian phenology and ecology -------------------------------------------------------
+
+[[parameter]]
+symbol = "last_day"
+quantity = "length of a simulation (aquatic transmission season), in daily ticks"
+value = 90
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole to metamorph" }
+location = "Methods ('spanning from 0–90 days'); Table S1 ('Last-day = 90 ticks')"
+verified = true
+
+[[parameter]]
+symbol = "tad_mort"
+quantity = "daily probability of natural death of a tadpole"
+value = 0.06
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
+location = "Methods; Table S1 ('tad-mort = 0.06 day-1')"
+verified = true
+notes = "Table S1 cites Govindarajulu & Anholt (2006). Applied as a probability per time step."
+
+[[parameter]]
+symbol = "meta_mort"
+quantity = "daily probability of natural death of a metamorph"
+value = 0.02
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "metamorph" }
+location = "Methods; Table S1 ('meta-mort = 0.02 day-1')"
+verified = true
+notes = "Determined through pattern-matching (Table S1 refers to Fig. S16, which is not in the supplement)."
+
+[[parameter]]
+symbol = "t_movement"
+quantity = "proportion of tadpoles that move to a new perimeter pond patch each day"
+value = 0.25
+units = "1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
+location = "Methods; Table S1 ('t-movement = 0.25')"
+verified = true
+
+[[parameter]]
+symbol = "m_land"
+quantity = "proportion of metamorphs on a terrestrial patch at each time step"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "metamorph" }
+location = "Methods; Table S1 ('m-land = 0.1')"
+verified = true
+notes = "The other 90% are on perimeter pond patches."
+
+[[parameter]]
+symbol = "meta_start"
+quantity = "first day on which tadpoles can metamorphose"
+value = 55
+units = "day"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
+location = "Methods; Table S1 (metamorphosis)"
+verified = true
+notes = "Determined through pattern-matching (Fig. S16, not in the supplement)."
+
+[[parameter]]
+symbol = "meta_prob"
+quantity = "daily probability that a tadpole metamorphoses, from meta_start on"
+value = 0.11
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
+location = "Methods; Table S1 ('each tadpole has a 11% chance')"
+verified = true
+
+[[parameter]]
+symbol = "meta_end"
+quantity = "day on which all remaining tadpoles become metamorphs"
+value = 74
+units = "day"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
+location = "Methods; Table S1 ('On day 74, all remaining tadpoles become metamorphs')"
+verified = true
+
+[[parameter]]
+symbol = "init_prevalence"
+quantity = "fraction of tadpoles infected at the start of a simulation"
+value = 0.002
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
+location = "Methods ('Each simulation began with 0.2% of tadpoles infected')"
+verified = true
+
+[[parameter]]
+symbol = "init_load"
+quantity = "zoosporangia on each initially infected tadpole"
+value = 100
+units = "sporangia host^-1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
+location = "Methods ('infected with 100 zoosporangia')"
+verified = true
+
+# --- between-host transmission ---------------------------------------------------------------
+
+[[parameter]]
+symbol = "exposure"
+quantity = "environmental units each host is exposed to per day (per-host zoospore contact parameter)"
+value = 0.25
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "Methods ('exposure parameter ... of 0.25'); Table S1 (host exposure to zoospores)"
+verified = true
+notes = "Table S1 calls it unitless and says it was determined through pattern-matching (Fig. S17, not in the supplement). Transmission is a multinomial draw (Table S1, citing Civitello et al. 2022); the package's reading of it as a daily contact hazard per host is documented in src/models/barnett2026.jl."
+
+[[parameter]]
+symbol = "est"
+quantity = "probability that a zoospore contacting a host establishes an infection"
+value = 0.25
+units = "1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "Methods ('baseline establishment probability of 0.25'); Table S1"
+verified = true
+
+[[parameter]]
+symbol = "z_mort"
+quantity = "zoospore mortality factor (background death rate)"
+value = 2
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "Methods ('background death rate of 2 day-1'); Table S1 ('z-mort = 2 day-1')"
+verified = true
+notes = "Cited from Rumschlag et al. (2022). Table S1: removal by exposure to hosts and exponential decay."
+
+# --- within-host infection ---------------------------------------------------------------------
+
+[[parameter]]
+symbol = "maturation_days"
+quantity = "days for an established zoospore to mature into a zoosporangium (prezoosporangium stages)"
+value = 4
+units = "day"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "Methods ('fixed 4-day period'); Table S1 (zoosporangium maturation)"
+verified = true
+notes = "Cited from Voyles et al. (2012). Table S1 names the stages 'pz0-pz4' but says one of 4 stages per day for 4 days."
+
+[[parameter]]
+symbol = "clearance"
+quantity = "daily probability that a zoosporangium is cleared (baseline_spn_clearance)"
+value = 0.2
+units = "day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "Methods ('clear zoosporangia with a baseline probability of 0.2 per day'); Table S1"
+verified = true
+notes = "Cited from Briggs et al. (2010). Binomial draw of surviving sporangia (Table S1)."
+
+[[parameter]]
+symbol = "shedding"
+quantity = "zoospores produced per zoosporangium per day"
+value = 17.8
+units = "zoospores sporangium^-1 day^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "Methods ('17.8 zoospores per zoosporangium per day'); Table S1"
+verified = true
+notes = "Cited from Briggs et al. (2010)."
+
+[[parameter]]
+symbol = "shed_own"
+quantity = "fraction of shed zoospores deposited on the patch the host is on"
+value = 0.4
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "Table S1 (zoosporangia shedding: 'shed 40% of zoospores to the patch the host is currently on')"
+verified = true
+
+[[parameter]]
+symbol = "shed_neighbour"
+quantity = "fraction of shed zoospores deposited on a neighbouring perimeter or inner patch"
+value = 0.5
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd" }
+location = "Table S1 (zoosporangia shedding: '50% of zoospores to a neighboring perimeter or inner patch')"
+verified = true
+
+[[parameter]]
+symbol = "self_reinfection"
+quantity = "fraction of shed zoospores that directly re-expose the host that produced them"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd" }
+location = "Table S1 (zoosporangia shedding; self-reinfection)"
+verified = true
+notes = "Cited from Briggs et al. (2010). Re-exposed zoospores establish with probability est (Table S1)."
+
+[[parameter]]
+symbol = "smax"
+quantity = "zoosporangium load at or above which a metamorph dies of chytridiomycosis"
+value = 562
+units = "sporangia host^-1"
+provenance = "D"
+role = "default"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "metamorph" }
+location = "Table S1 (infection-induced mortality: 'smax = 562')"
+verified = true
+notes = "Derived in Table S1 as 10,000 zoospores released per day (Briggs et al. 2010) divided by 17.8 zoospores per zoosporangium per day (10000/17.8 = 561.8). Only metamorphs die of Bd (Methods; Table S1)."
+
+[[parameter]]
+symbol = "s_k"
+quantity = "tadpole zoosporangium carrying capacity: a tadpole at this load cannot be further infected"
+value = 10000
+units = "sporangia host^-1"
+provenance = "A"
+role = "default"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
+location = "Table S1 (tadpole sporangia carrying capacity, 's_k = 10,000')"
+verified = true
+notes = "Determined through pattern-matching (Fig. S17, not in the supplement). The tadpole can still be exposed to zoospores."
+
+# --- acquired immunity (vaccination) -------------------------------------------------------------
+
+[[parameter]]
+symbol = "v_efficacy"
+quantity = "vaccine efficacy multiplier of a vaccinated host's 'imm' value"
+value = 1
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "Table S1 (vaccination: 'v-efficacy = 1')"
+verified = true
+
+[[parameter]]
+symbol = "relative_variation"
+quantity = "individual variation (±) in the response to vaccination"
+value = 0.1
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "Table S1 (vaccination: 'relative_variation = 10%', '+/- 10% differences in response')"
+verified = true
+notes = "The distribution of the variation is not stated; the package draws imm uniformly in v_efficacy × [1 − 0.1, 1 + 0.1]."
+
+[[parameter]]
+symbol = "vaccination_day"
+quantity = "day on which the vaccinated tadpoles are selected"
+value = 0
+units = "day"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
+location = "Table S1 (vaccination coverage: 'default = day 0')"
+verified = true
+
+# --- scenario design -------------------------------------------------------------------------------
+
+[[parameter]]
+symbol = "n_reps"
+quantity = "replicate runs of each vaccination scenario"
+value = 25
+units = "1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "Methods, 'Modes of protection' ('replicated 25 times')"
+verified = true
+
+[[parameter]]
+symbol = "n_control"
+quantity = "replicate runs of the unvaccinated control scenario"
+value = 250
+units = "1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "Methods, 'Modes of protection' ('baseline control scenario ... 250 times')"
+verified = true
+
+[[parameter]]
+symbol = "coverage_two_way"
+quantity = "vaccine coverage in the tolerance × resistance (two-way) scenarios"
+value = 0.75
+units = "1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "Methods, 'Two-way interactions with tolerance' ('constant at 75%')"
+verified = true
