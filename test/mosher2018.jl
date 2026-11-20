@@ -6,7 +6,12 @@
 #   Ch. 1 Tables 1.1-1.2 (matrices), Table 1.3 (host occupancy declines 0.90 → 0.71 and
 #   0.20 → 0.07 over 4 seasons), Ch. 2 Table 2.3 (parameter counts K of the listed models);
 # - recovery of known parameters from simulated data;
-# - Adams et al. 2010 Appendix A (Fig. A1 caption: the finite-population ratio → 1).
+# - the Dryad deposit of Mosher et al. 2018 (doi:10.5061/dryad.1c990, bundled): 82 sites after
+#   dropping Site 33, n = 494 site-years (the AICc sample size implied by Table 3), εA = εB =
+#   0.00 in the all-constant model (Methods). The Table 3 refits are validation targets;
+# - Adams et al. 2010 (published PDF): Appendix A and the finite-population factor; odds ratios
+#   from the printed coefficients (Tables 4, 6); the covariate occupancy model against the
+#   closed-form MLE and against simulated data.
 using Chytridiomycosis
 using Test
 using Random: Xoshiro
@@ -156,22 +161,40 @@ using Random: Xoshiro
         m = Mosher2018Model(d)
         f = maximum_likelihood(m)
         @test f.converged
-        @test f.k == 14 && f.n == 1000
+        @test f.k == 14 && f.n == 4000                # site-years surveyed
         est = mosher2018_site_parameters(m, f.θ, 1)
         for s in (:ψA, :ψBA, :γBA, :εAB, :εBA, :pA, :rA, :rBA)
             @test abs(getproperty(est, s) - getproperty(p, s)) < 0.08
         end
-        @test f.aicc ≈ -2f.loglik + 2 * 14 + 2 * 14 * 15 / (1000 - 15)
+        @test f.aicc ≈ -2f.loglik + 2 * 14 + 2 * 14 * 15 / (4000 - 15)
     end
 
-    @testset "data location" begin
-        if C._mosher2018_find() === nothing
-            withenv("CHYTRIDIOMYCOSIS_MOSHER2018" => mktempdir()) do
-                @test_throws ArgumentError mosher2018_path()
-            end
-        else
-            @test isdir(mosher2018_path())
-        end
+    @testset "Dryad data (bundled)" begin
+        @test isdir(mosher2018_path())
+        d = load_mosher2018()
+        @test length(d.sites) == parameter_set(:mosher2018).nsites       # 82, as in the paper
+        @test !("Site 33" in d.sites)
+        @test size(d.toad) == (82, 10, 10)
+        # surveys with a Bd record always have a toad record; Bd swabs start in 2003
+        @test all(I -> ismissing(d.bd[I]) || !ismissing(d.toad[I]), CartesianIndices(d.bd))
+        @test all(ismissing, d.bd[:, 1:2, :])
+        @test all(I -> ismissing(d.toad[I]) == ismissing(d.doy[I]), CartesianIndices(d.toad))
+        @test extrema(d.elevation) == (2468.0, 3679.0)
+        @test sort(unique(d.region)) == ["NE", "NW", "SE", "SW"]
+        d83 = load_mosher2018(; drop_incomplete = false)
+        @test length(d83.sites) == 83
+        # the AICc sample size: site-years with at least one survey
+        m = Mosher2018Model(d)
+        f = maximum_likelihood(m)
+        @test f.n == 494 && f.k == 14
+        p = mosher2018_site_parameters(m, f.θ, 1)
+        @test p.εA < 0.005 && p.εB < 0.005          # "εA = εB = 0.00" (Methods)
+        # covariates at their means reproduce the site parameters of a constant model
+        q = mosher2018_parameters_at(m, f.θ; elevation = 3000.0)
+        @test q.γAB ≈ p.γAB && q.pA ≈ p.pA
+        @test length(mosher2018_models()) == 12
+        @test length(parameter_names(mosher2018_model(d, 1))) == 25
+        @test_throws SystemError load_mosher2018(; dir = mktempdir())
     end
 
     @testset "Adams 2010 finite population" begin
@@ -183,5 +206,45 @@ using Random: Xoshiro
         @test_throws DomainError finite_population_occurrence(1.2, 0.1, 3)
         q = parameter_set(:adams2010; set = "bullfrog")
         @test q.npop == 40 && 0 < q.ψ < 1
+    end
+
+    @testset "Adams 2010 coefficients and covariate model" begin
+        c = adams2010_coefficients(:bullfrog)
+        @test c.p_date.scale == parameter_set(:adams2010; set = "bullfrog").scale_p_date
+        @test c.p_intercept.scale == 1
+        @test adams2010_odds_ratio(:bullfrog, :p_stag) ≈ exp(c.p_stag.β)
+        lo, hi = adams2010_odds_ratio(:bullfrog, :p_stag; level = 0.95)
+        @test lo < adams2010_odds_ratio(:bullfrog, :p_stag) < hi
+        @test round(adams2010_occupancy(:bullfrog); digits = 3) ==
+              parameter_set(:adams2010; set = "bullfrog").ψ
+        @test_throws ArgumentError adams2010_coefficients(:toads)
+
+        # the covariate model with intercepts only is the constant model
+        rng = Xoshiro(7)
+        N, K = 300, 6
+        Y = Matrix{Union{Missing,Int}}(undef, N, K)
+        x = randn(rng, N)                          # a site covariate of ψ
+        z = randn(rng, N, K)                       # an animal covariate of p
+        for i in 1:N
+            occ = rand(rng) < 1 / (1 + exp(-(0.3 + 0.8x[i])))
+            for j in 1:K
+                Y[i, j] = j > 2 + i % 5 ? missing :
+                          (occ && rand(rng) < 1 / (1 + exp(-(-0.5 + 1.0z[i, j]))) ? 1 : 0)
+            end
+        end
+        m0 = SingleSeasonOccupancyModel(Y, ones(N, 1), ones(N, 1))
+        f0 = maximum_likelihood(m0)
+        g = occupancy_mle(Y)
+        @test 1 / (1 + exp(-f0.θ[1])) ≈ g.ψ rtol = 1e-4
+        @test f0.loglik ≈ g.loglik rtol = 1e-8
+        @test f0.n == N && f0.k == 2
+        Xp = cat(ones(N, K), z; dims = 3)
+        m = SingleSeasonOccupancyModel(Y, hcat(ones(N), x), Xp; ψnames = ["ψ", "ψ:x"],
+                                       pnames = ["p", "p:z"])
+        @test parameter_names(m) == ["ψ", "ψ:x", "p", "p:z"]
+        f = maximum_likelihood(m)
+        @test all(abs.(f.θ .- [0.3, 0.8, -0.5, 1.0]) .< 4 .* f.se)
+        @test f.aicc < f0.aicc
+        @test_throws DimensionMismatch SingleSeasonOccupancyModel(Y, ones(N - 1, 1), ones(N, 1))
     end
 end

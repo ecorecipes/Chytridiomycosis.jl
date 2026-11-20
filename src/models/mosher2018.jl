@@ -1,38 +1,36 @@
 # Mosher, Bailey, Muths & Huyvaert (2018) Host–pathogen metapopulation dynamics suggest high
 # elevation refugia for boreal toads. Ecol Appl 28:926-937, doi:10.1002/eap.1699.
-# Data: Dryad doi:10.5061/dryad.1c990 (CC0): detection histories of boreal toads (Anaxyrus
-# boreas boreas) and Bd at 83 historic breeding sites in the southern Rocky Mountains,
-# 2001-2010, with site and survey covariates.
+# Data: Dryad doi:10.5061/dryad.1c990 (CC0), bundled in data/mosher2018: detection histories
+# of boreal toads (Anaxyrus boreas boreas) and Bd at historic breeding sites in the southern
+# Rocky Mountains, 2001-2010, with site and survey covariates.
 #
-# SOURCE OF THE EQUATIONS. The published article (paywalled) could not be read. The model
-# below was read from the first author's PhD dissertation (Mosher BA 2017, "Informing the
-# ecology and conservation of amphibians imperiled by chytridiomycosis", Colorado State
-# University; Mountain Scholar), whose Chapter 2 ("Complex ecological relationships influence
-# extinction risk in an amphibian-pathogen system") is the pre-publication version of the
-# paper and whose Chapter 1 (published as Mosher et al. 2018, Ecography 41:32) gives the
-# transition and detection matrices (Tables 1.1, 1.2). The dissertation analysed 82 sites;
-# the Dryad deposit has 83. Numbers in the published paper may differ from the dissertation.
+# SOURCE OF THE EQUATIONS. Checked against the accepted manuscript of the article (Wiley
+# "Accepted Article", lab/papers/mosher2018/mosher2018.pdf; the typeset version was not
+# seen). Its Methods, Tables 1-3 and estimates are identical to Chapter 2 of the first
+# author's PhD dissertation (Mosher 2017, Colorado State University), which was used first.
+# The transition and detection matrices are printed only in the dissertation, Ch. 1 Tables
+# 1.1-1.2 (published as Mosher et al. 2017/2018, Ecography); the article describes them in
+# words (e.g. A → AB is (1 − εA) γBA) and in its Fig. 2. Both the article and the dissertation
+# analyse 82 sites; the deposit has 83 (Site 33 is dropped, see data/mosher2018/README.md).
 #
 # Model: dynamic two-species occupancy, conditional parameterisation of Richmond et al.
 # (2010), species A = boreal toad (host), species B = Bd (pathogen), states (A, B, U, AB);
 # the equations are in src/observation/occupancy.jl. Bd is detected only on swabs of
 # detected toads, so pB = rBa = 0 and the Bd-only state B is unobservable. Colonisation and
-# extinction are constant over years (time-varying rates are not identifiable with the
-# unobservable state; dissertation Ch. 1). Initial state probabilities are constant over
-# sites. Covariates enter on the logit scale: elevation (linear or quadratic), presence of
-# other amphibians, habitat permanence and region for the vital rates; day of year (linear
-# or quadratic) for toad detection pA, rA; elevation for Bd detection rBA.
+# extinction are constant over years; initial state probabilities are constant over sites.
+# Covariates enter on the logit scale: elevation (linear or quadratic), presence of other
+# amphibians, habitat permanence and region for the vital rates; day of year (quadratic) for
+# toad detection pA, rA; elevation for Bd detection rBA. "We explored only additive
+# relationships between parameter pairs" (Table 3 caption): members of a pair with the same
+# covariate share slopes. Program MARK was used.
 #
-# Choices where the source is silent (src/fitting/mosher2018.jl):
+# Choices where the article is silent (src/fitting/mosher2018.jl):
 # - Covariates are standardised (mean 0, SD 1 over sites, or over surveys for day of year).
 #   With an intercept this does not change the maximised likelihood.
-# - When both members of a pair (γA, γAB), (γB, γBA), (εA, εAB), (εB, εBA) or (pA, rA)
-#   have the same covariate structure, they share slopes and differ in intercept
-#   ("additive"). Inferred from the parameter counts K of dissertation Table 2.3, which this
-#   rule reproduces for every model listed except the null model (14 printed, 13 here).
-# - AICc uses the number of sites as the sample size (the Program MARK default for
-#   occupancy data).
-# - A performed survey without a recorded day of year is given the mean day of year.
+# - AICc uses n = the number of site-years with at least one survey (494). The paper does
+#   not say; this n reproduces its AICc and deviance pairs for every model of Table 3.
+# - The null model has one constant per rate pair (13 parameters); Table 3 prints K = 14 and
+#   a higher deviance, so its null model differs in a way the paper does not describe.
 
 """
     Mosher2018Parameters(; ψA, ψBA, ψBa, γA, γAB, γB, γBA, εA, εAB, εB, εBA, pA, rA, rBA,
@@ -54,8 +52,8 @@ survey (detection):
 The keyed constructor reads the scenarios of Mosher (2017, PhD dissertation, Table 1.3) from
 the compendium: the base set is the "SRM boreal toad–Bd" scenario chosen to mimic the
 southern Rocky Mountain data, and `set = "rare_susceptible"` the rare, susceptible host.
-These are simulation scenarios, not estimates; the published paper's estimates were not
-available (see the docs page).
+These are simulation scenarios, not estimates. The estimates of the paper come from
+refitting its models to the data ([`Mosher2018Model`](@ref), [`mosher2018_parameters_at`](@ref)).
 """
 Base.@kwdef struct Mosher2018Parameters{T<:Real}
     ψA::T

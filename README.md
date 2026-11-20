@@ -49,8 +49,8 @@ Every model belongs to one of three categories. They differ in what a result fro
 | Aggregation of swab loads (Taylor's power law) | Schrock et al. 2025, doi:10.1098/rspb.2024.2013 | `TaylorPowerLawProblem` |
 | Bd load with adaptive immunity; antifungal, probiotic and density-reduction treatments | Woodhams et al. 2011, doi:10.1186/1742-9994-8-8 | `ConstantPoolFrogProblem`, `ImmunePopulationProblem` |
 | Log-linear mixed models of Bd intensity and zoospore output in *Atelopus zeteki* | DiRenzo et al. 2014, doi:10.1371/journal.pone.0093356 | `DiRenzoLoadModel`, `load_direnzo2014` |
-| Host–pathogen dynamic occupancy of boreal toads and Bd (equations from the first author's dissertation; data not yet read) | Mosher et al. 2018, doi:10.1002/eap.1699 | `Mosher2018Problem`, `Mosher2018Model` |
-| Bd occurrence in host populations by single-season occupancy (likelihood and Appendix A only) | Adams et al. 2010, doi:10.1890/08-2319.1 | `occupancy_loglikelihood`, `finite_population_occurrence` |
+| Host–pathogen dynamic occupancy of boreal toads and Bd, refitted to the Dryad data | Mosher et al. 2018, doi:10.1002/eap.1699 | `Mosher2018Problem`, `Mosher2018Model`, `load_mosher2018` |
+| Bd occurrence in host populations by single-season occupancy with covariates (no data deposited) | Adams et al. 2010, doi:10.1890/08-2319.1 | `SingleSeasonOccupancyModel`, `adams2010_coefficients` |
 | Survival, recruitment and growth of boreal toads before and after Bd (robust-design Pradel) | Hardy et al. 2023, doi:10.1111/1365-2664.14310 | `hardy2023_problem`, `PradelProblem` |
 | Itraconazole treatment of Cascades frog metamorphs: stochastic stage-structured projection | Cook et al. 2022, doi:10.1111/csp2.12762 | `CookProjectionProblem`, `cook_treatment_grid` |
 | Adult survival before and after Bd from age structure; spatial metapopulation viability of *Litoria* (Bd only lowers survival) | Heard et al. 2024, doi:10.1111/1365-2656.14177 | `HeardCatchCurve`, `HeardMetapopulationProblem` |

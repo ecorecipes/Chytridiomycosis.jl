@@ -16,18 +16,21 @@ This page has a reusable occupancy layer and two published Bd applications:
   ([doi:10.1890/08-2319.1](https://doi.org/10.1890/08-2319.1)): single-season occupancy of
   Bd in native-amphibian and bullfrog populations, where each animal tested is a survey.
 
-!!! warning "What could and could not be checked"
-    Neither article could be read (both are paywalled).
-    - **Mosher et al. 2018.** The equations come from the first author's PhD dissertation
-      (Mosher 2017, Colorado State University). Its Chapter 2 is the pre-publication version
-      of the paper, and its Chapter 1 gives the transition and detection matrices. The
-      dissertation analysed 82 sites; the Dryad deposit
-      ([doi:10.5061/dryad.1c990](https://doi.org/10.5061/dryad.1c990), CC0) has 83. The
-      deposit could not be downloaded, so the paper's estimates are **not yet reproduced**:
-      its targets are pending, and there is no reader for its CSV files yet.
-    - **Adams et al. 2010.** Only the abstract and the two Ecological Archives appendices
-      (figshare, CC0) were read. No detection histories are deposited. The covariate models
-      of the paper are not implemented; its two occupancy estimates are pending targets.
+!!! note "What was checked"
+    - **Mosher et al. 2018.** The equations were checked against the accepted manuscript of
+      the article, and its models were refitted to the Dryad data
+      ([doi:10.5061/dryad.1c990](https://doi.org/10.5061/dryad.1c990), CC0, bundled in
+      `data/mosher2018`).
+      - The fits reproduce the AICc of 10 of the 12 models in Table 3, to 0.01, and the
+        estimates quoted in the text.
+      - The deposit has 83 sites; dropping Site 33, which has no covariates, gives the paper's
+        82.
+      - The transition and detection matrices are written out only in the first author's
+        dissertation (Mosher 2017, Ch. 1). The article describes them in words.
+    - **Adams et al. 2010.** Checked against the published article. No detection histories
+      are deposited, so the models cannot be refitted. The targets use quantities derived
+      from the printed coefficients (Tables 4 and 6), and three of them disagree with numbers
+      printed in the text.
 
 ## Occupancy layer
 
@@ -87,29 +90,56 @@ Mosher2018Problem
 simulate_mosher2018
 ```
 
-### Fitting
+### Data and refit
 
-[`Mosher2018Model`](@ref) is the likelihood with covariates on the logit scale: elevation
-(linear or quadratic), other amphibians, habitat permanence and region for colonisation and
-extinction; day of year for toad detection; elevation for Bd detection. Initial occupancy is
-constant, as in the source. Fit it with [`maximum_likelihood`](@ref).
+[`Mosher2018Model`](@ref) is the likelihood with covariates on the logit scale:
 
-!!! note "Choices where the source is silent"
-    - When both members of a pair (`γA`/`γAB`, `γB`/`γBA`, `εA`/`εAB`, `εB`/`εBA`,
-      `pA`/`rA`) have the same covariate structure, they share slopes and differ only in
-      intercept. With this rule, the parameter counts of all eleven models listed in
-      dissertation Table 2.3 are reproduced. The exception is the null model: Table 2.3
-      prints `K = 14`, and this rule gives 13.
-    - Covariates are standardised. This does not change the maximised likelihood.
-    - AICc uses the number of sites as the sample size.
-    - A survey with no recorded day of year gets the mean day of year.
+- elevation (linear or quadratic), other amphibians, habitat permanence or region for
+  colonisation and extinction;
+- day of year (quadratic) for toad detection;
+- elevation for Bd detection.
+
+Initial occupancy is constant. When both members of a pair (`γA`/`γAB`, `γB`/`γBA`,
+`εA`/`εAB`, `εB`/`εBA`, `pA`/`rA`) have the same covariate structure, they share slopes, as
+the caption of Table 3 says. Fit the model with [`maximum_likelihood`](@ref).
+[`mosher2018_models`](@ref) lists the 12 models printed in Table 3, and
+`scripts/mosher2018_refit.jl` fits them all in about two minutes.
+
+The refit reproduces:
+
+- the AICc of 10 of the 12 printed models, and the deviance (2175.3) and `K` (25) of the
+  best;
+- `εA = εB = 0.00` in the all-constant model; in the best model, `εA = 0.00`,
+  `εB = 0.02` and `γA = 1.00`;
+- the elevation patterns of Fig. 5: `εAB` and `εBA` peak at about 0.3 at intermediate
+  elevations, toads recolonise high sites (`γAB` increases with elevation), and Bd colonises
+  low and mid-elevation sites.
+
+!!! warning "Not reproduced"
+    - **Model 3** (`γB`, `γBA`, `εBA` quadratic). Our deviance is 0.22 lower than the
+      printed one, so the printed fit seems to fall short of the maximum.
+    - **The null model.** Table 3 prints `K = 14` and deviance 2232.15. Ours has one
+      constant per rate pair: `K = 13` and a lower deviance, 2230.93. The paper does not
+      describe its null model further.
+
+!!! note "Choices where the paper is silent"
+    - **AICc sample size.** It is the number of site-years with at least one survey (494 at
+      the 82 sites). The paper does not state it. This value reproduces every AICc–deviance
+      pair in Table 3, which number of sites (82) does not.
+    - **Standardised covariates.** This does not change the maximised likelihood.
+    - **Site 33 dropped.** This gives the paper's 82 sites; see `data/mosher2018/README.md`.
 
 ```@docs
 Mosher2018Data
 mosher2018_path
+load_mosher2018
 Mosher2018Model
 mosher2018_loglikelihood
 mosher2018_site_parameters
+mosher2018_parameters_at
+mosher2018_models
+mosher2018_model
+mosher2018_model_selection
 ```
 
 [`maximum_likelihood`](@ref) and [`parameter_names`](@ref) also have methods for a
@@ -117,13 +147,43 @@ mosher2018_site_parameters
 
 ## Adams et al. 2010: Bd in amphibian populations
 
-Here a "site" is a host population and a "survey" is one animal tested. The likelihood is
-[`occupancy_loglikelihood`](@ref). The abstract reports Bd in an estimated 53.4% of 78
-native-amphibian populations and 66.4% of 40 bullfrog populations (compendium `adams2010`).
-These are pending targets until the detection histories are available.
+Here a "site" is a host population and a "survey" is one animal swabbed once. The
+probability `p` that an animal from a population with Bd tests positive combines prevalence
+and test sensitivity. Native anurans (72 populations analysed) and bullfrogs (40) were
+fitted separately in Program MARK, with logit-linear covariates:
 
-Appendix A notes that the number of animals that could be sampled is finite, so the
-probability that Bd occurs and could be detected is `ψ[1 − (1 − p′)^N]`, not `ψ`.
+- **Native anurans, best model.** `p` depends on larvae, date, elevation, date × elevation
+  and the human footprint index; `ψ` depends on *Rana luteiventris*.
+- **Bullfrogs, best model.** `p` depends on larvae, date and stagnant water; `ψ` depends on
+  latitude.
+
+[`SingleSeasonOccupancyModel`](@ref) is this likelihood with any design matrices. No
+detection histories are deposited, so the paper's models cannot be refitted. Its printed
+coefficients (Tables 4 and 6) are in the compendium.
+
+From those coefficients:
+
+- **Bullfrogs.** `ψ = 0.664` (CI 0.429–0.838) is reproduced, and so are all four odds
+  ratios quoted in the text.
+- **Native anurans.** The *R. luteiventris* odds ratio (4.2) is reproduced. Three printed
+  numbers do not follow:
+
+  | Quantity | Printed | From Table 4 |
+  |---|---|---|
+  | `ψ` | 53.4% | 0.741 (non-*R. luteiventris* populations) |
+  | larval odds ratio | 0.10 | 0.088 |
+  | odds ratio per human-footprint point | 2.37 | 1.54; 2.37 is close to 2.39, the ratio per standard deviation |
+
+```@docs
+SingleSeasonOccupancyModel
+adams2010_coefficients
+adams2010_odds_ratio
+adams2010_occupancy
+```
+
+Appendix A: because a population has a finite number `N` of animals, the probability that
+Bd occurs and could be detected is `ψ[1 − (1 − p′)^N]`, not `ψ`. The difference is small
+for `p′ > 0.05` and `N > 50`.
 
 ```@docs
 finite_population_occurrence

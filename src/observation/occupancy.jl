@@ -246,3 +246,76 @@ function two_species_records(code)
     return ((1, 0), (0, 1), (0, 0), (1, 1), (1, missing), (0, missing), (missing, 1),
             (missing, 0))[code]
 end
+
+# ---------------------------------------------------------------------------------------
+# Single season with covariates (logit links), as fitted in Program MARK or PRESENCE
+
+"""
+    SingleSeasonOccupancyModel(Y, Xψ, Xp; ψnames, pnames)
+
+Single-season occupancy model with logit-linear covariates: `Y` is the `sites × surveys`
+detection matrix (`1`, `0`, `missing`), `Xψ` the `sites × kψ` design matrix of occupancy
+(include a column of ones for the intercept) and `Xp` the design of detection, either
+`sites × kp` (site covariates) or `sites × surveys × kp` (survey or animal covariates, as
+in Adams et al. 2010 where each survey is one animal tested). Coefficients are ordered
+`[βψ; βp]`. Implements the `LogDensityProblems` interface (the log-likelihood) and
+[`parameter_names`](@ref); fit with [`maximum_likelihood`](@ref).
+"""
+struct SingleSeasonOccupancyModel{TY<:AbstractMatrix,TA<:AbstractMatrix,TB<:AbstractArray}
+    Y::TY
+    Xψ::TA
+    Xp::TB
+    names::Vector{String}
+end
+
+function SingleSeasonOccupancyModel(Y::AbstractMatrix, Xψ::AbstractMatrix, Xp::AbstractArray;
+        ψnames = ["ψ:" * string(k) for k in 1:size(Xψ, 2)],
+        pnames = ["p:" * string(k) for k in 1:size(Xp, ndims(Xp))])
+    size(Xψ, 1) == size(Y, 1) || throw(DimensionMismatch("Xψ needs one row per site"))
+    if ndims(Xp) == 2
+        size(Xp, 1) == size(Y, 1) || throw(DimensionMismatch("Xp needs one row per site"))
+    elseif ndims(Xp) == 3
+        size(Xp)[1:2] == size(Y) || throw(DimensionMismatch("Xp must be sites × surveys × k"))
+    else
+        throw(ArgumentError("Xp must be a matrix or a 3-d array"))
+    end
+    return SingleSeasonOccupancyModel(Y, Xψ, Xp, vcat(string.(ψnames), string.(pnames)))
+end
+
+parameter_names(m::SingleSeasonOccupancyModel) = m.names
+LogDensityProblems.dimension(m::SingleSeasonOccupancyModel) = length(m.names)
+LogDensityProblems.capabilities(::Type{<:SingleSeasonOccupancyModel}) =
+    LogDensityProblems.LogDensityOrder{0}()
+
+function LogDensityProblems.logdensity(m::SingleSeasonOccupancyModel, θ::AbstractVector)
+    kψ = size(m.Xψ, 2)
+    βψ, βp = view(θ, 1:kψ), view(θ, kψ+1:length(θ))
+    s = zero(eltype(θ))
+    J = size(m.Y, 2)
+    for i in axes(m.Y, 1)
+        ψ = _expit(dot(view(m.Xψ, i, :), βψ))
+        p = ndims(m.Xp) == 2 ? _expit(dot(view(m.Xp, i, :), βp)) :
+            [_expit(dot(view(m.Xp, i, j, :), βp)) for j in 1:J]
+        s += occupancy_loglikelihood(view(m.Y, i, :), ψ, p)
+    end
+    return s
+end
+
+"""
+    maximum_likelihood(m::SingleSeasonOccupancyModel; x0 = zeros(dim)) -> NamedTuple
+
+Maximum likelihood fit by BFGS. Returns `θ`, `names`, `se` (Wald), `loglik`, `deviance`
+(`−2 loglik`), `k`, `n` (sites, the AICc sample size) and `aicc`.
+"""
+function maximum_likelihood(m::SingleSeasonOccupancyModel; x0 = nothing, iters::Integer = 2000,
+                            gtol::Real = 1e-6)
+    k = length(m.names)
+    nll(θ) = -LogDensityProblems.logdensity(m, θ)
+    r = _ms_bfgs(nll, x0 === nothing ? zeros(k) : collect(float.(x0)); iters, gtol)
+    V, _ = _ms_vcov(-_ms_hessian(nll, r.x; h = 1e-4))
+    n = size(m.Y, 1)
+    ll = -r.f
+    return (θ = r.x, names = m.names, se = [v >= 0 ? sqrt(v) : NaN for v in LinearAlgebra.diag(V)],
+            loglik = ll, deviance = -2ll, k = k, n = n,
+            aicc = -2ll + 2k + 2k * (k + 1) / (n - k - 1))
+end
