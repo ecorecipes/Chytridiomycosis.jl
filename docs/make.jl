@@ -28,6 +28,8 @@ makedocs(;
                                          "Zoospore persistence (Rumschlag 2022)" => "api/rumschlag2022.md",
                                          "Adaptive immunity and treatments (Woodhams 2011)" => "api/woodhams2011.md",
                                          "Atelopus load and zoospore output (DiRenzo 2014)" => "api/direnzo2014.md",
+                                         "Midwife toads and a zoospore pool (Doddington 2013)" => "api/doddington2013.md",
+                                         "Overlapping habitats and dilution (Espira 2022)" => "api/espira2022.md",
                                          "Refugia CTMC (Miller 2025)" => "api/miller2025.md",
                                          "Seasonal Bsal (Bozzuto 2019)" => "api/bozzuto2019.md",
                                          "Bsal transmission functions" => "api/bsal_transmission.md",

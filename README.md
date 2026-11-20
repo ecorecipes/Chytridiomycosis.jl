@@ -28,6 +28,8 @@ Every model belongs to one of three categories. They differ in what a result fro
 | Bd growth in culture | Woodhams et al. 2008, doi:10.1890/06-1842.1 | `intrinsic_growth_rate` |
 | Several host species sharing one zoospore pool | Daversa et al. 2022, doi:10.1086/720638 | `MultiHostPoolProblem` |
 | Live and dead zoospores in pond water | Rumschlag et al. 2022, doi:10.1111/1365-2656.13612 | `ZoosporePersistenceProblem`, `RumschlagModel` |
+| Midwife toad stages and a zoospore pool (stochastic, as coded) | Doddington et al. 2013, doi:10.1890/12-1270.1 | `DoddingtonStochasticProblem`, `DoddingtonODEProblem`, `doddington_outcomes` |
+| Two hosts with overlapping habitats: environmental transmission and dilution | Espira et al. 2022, doi:10.1086/717413 | `EspiraParameters`, `OverlappingHabitatProblem`, `community_reproduction_number` |
 | Sunlight-heated refugia (CTMC, ABC) | Miller et al. 2025, arXiv:2503.06846 | `RefugiaCTMCProblem`, `RefugiaODEProblem`, `refugia_abc` |
 | Seasonal Bsal and a Floquet R0 | Bozzuto & Canessa 2019, doi:10.1016/j.gecco.2019.e00551 | `SeasonalBsalProblem` |
 | Bsal transmission functions in eastern newts | Malagon et al. 2020, doi:10.1038/s41598-020-62351-x; Tompros et al. 2022, doi:10.1111/tbed.14043 | `TransmissionSLIProblem`, `SusceptibleChainProblem`, `CohabitationProblem` |

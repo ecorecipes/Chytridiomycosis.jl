@@ -5496,3 +5496,313 @@ call = "finite_population_occurrence(1.0, 0.5, 50) / 1.0"
 tolerance = { lower = 0.999, upper = 1.0000001 }
 status = "qualitative"
 notes = "Checks the limit at N = 50, p′ = 0.5 (values chosen here); monotonicity in N and p′ is in test/mosher2018.jl."
+# ---- doddington2013 ----
+# Doddington et al. 2013 Ecology 94:1795 (doi:10.1890/12-1270.1): exposure trial (Table 1) and
+# the stochastic midwife toad-zoospore model of the authors' Berkeley Madonna code (Appendix B,
+# Supplement 1). Stochastic targets use 100 runs with a fixed seed (the paper used 500).
+
+[[target]]
+id = "doddington2013_control_death_rate"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "group death rate of sham-exposed tadpoles (yr⁻¹)"
+published = 0.40
+call = "doddington_exposure_trial().control"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "4 deaths / 9.96 yr = 0.4016."
+
+[[target]]
+id = "doddington2013_CAPE_death_rate"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "group death rate, Mallorcan BdCAPE (TF5a1) (yr⁻¹)"
+published = 1.01
+call = "doddington_exposure_trial().CAPE"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "9 deaths / 8.93 yr = 1.0078."
+
+[[target]]
+id = "doddington2013_GPL_death_rate"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "group death rate, BdGPL (UKTvB) (yr⁻¹)"
+published = 3.38
+call = "doddington_exposure_trial().GPL"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 3.3748, atol = 1e-4 }
+notes = """
+19 deaths / 5.63 yr = 3.3748, which rounds to 3.37. A cumulative time of about 5.625 yr gives
+3.378 and the published 3.38 (and the published excess rate 2.98, next-but-one target), so the
+printed 5.63 is probably itself rounded. Not tuned."""
+
+[[target]]
+id = "doddington2013_CAPE_excess"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "isolate-specific death rate of BdCAPE, excess over control (yr⁻¹); α of Fig. 3b"
+published = 0.61
+call = "doddington_exposure_trial().CAPE_excess.rate"
+tolerance = { digits = 2 }
+status = "reproduced"
+notes = "1.0078 - 0.4016 = 0.6062."
+
+[[target]]
+id = "doddington2013_CAPE_excess_ci"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "95% CI of the BdCAPE excess death rate, lower and upper (yr⁻¹)"
+published = [-0.16, 1.37]
+call = "(e = doddington_exposure_trial().CAPE_excess; round.([e.lo, e.hi]; digits = 2))"
+status = "reproduced"
+notes = "Standard error of a difference of rates, sqrt(d₁/T₁² + d₀/T₀²), with z = 1.96: (-0.161, 1.373)."
+
+[[target]]
+id = "doddington2013_GPL_excess"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1 (2.98); Table B1 prints α = 2.97" }
+quantity = "isolate-specific death rate of BdGPL, excess over control (yr⁻¹)"
+published = 2.98
+call = "doddington_exposure_trial().GPL_excess.rate"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 2.9732, atol = 1e-4 }
+notes = """
+3.3748 - 0.4016 = 2.9732, which rounds to 2.97, the value of Table B1 and of the code
+(JInfectDeath = 2.97). Table 1 prints 2.98; see doddington2013_GPL_death_rate."""
+
+[[target]]
+id = "doddington2013_GPL_excess_ci"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Table 1" }
+quantity = "95% CI of the BdGPL excess death rate, lower and upper (yr⁻¹); the upper limit is α of Fig. 3a"
+published = [1.41, 4.54]
+call = "(e = doddington_exposure_trial().GPL_excess; round.([e.lo, e.hi]; digits = 2))"
+status = "reproduced"
+notes = "(1.405, 4.541)."
+
+[[target]]
+id = "doddington2013_fig3a_top_right"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Fig. 3a" }
+quantity = "host survival probability over 35 yr at ν = 7.27e-5, ρ = 6.6e6, α = 4.54 (the darkest cell, near 0)"
+published = 0.0
+call = "(g = doddington_grid(); doddington_outcomes(DoddingtonParameters(:doddington2013; set = \"fig3a\", ν = g.ν[end], ρ = g.ρ[end]); runs = 100, rng = Random.Xoshiro(1)).host_survival)"
+tolerance = { lower = -1e-9, upper = 0.2 }
+status = "qualitative"
+notes = """
+0.09 with 100 runs. The full grid (scripts/doddington2013_fig3.jl) has the paper's pattern:
+survival falls with ν and ρ, and is 1 for ρ ≤ 8.7e4. Our half-survival contour lies at about
+2-3 times larger ν than the shading of the printed figure suggests (top row: 0.5 near
+ν = 1e-5); the figure gives no numbers to check this against."""
+
+[[target]]
+id = "doddington2013_fig3a_bottom_left"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Fig. 3a" }
+quantity = "host survival probability at ν = 2.57e-6, ρ = 1e4, α = 4.54 (white, 1)"
+published = 1.0
+call = "(g = doddington_grid(); doddington_outcomes(DoddingtonParameters(:doddington2013; set = \"fig3a\", ν = g.ν[1], ρ = g.ρ[1]); runs = 100, rng = Random.Xoshiro(1)).host_survival)"
+status = "qualitative"
+
+[[target]]
+id = "doddington2013_fig3b_top_right"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Fig. 3b; Results ('Host extinction was rare even at the highest rates')" }
+quantity = "host survival probability at ν = 7.27e-5, ρ = 6.6e6, α = 0.61 (light grey, above 0.5)"
+published = true
+call = "(g = doddington_grid(); doddington_outcomes(DoddingtonParameters(:doddington2013; set = \"fig3b\", ν = g.ν[end], ρ = g.ρ[end]); runs = 100, rng = Random.Xoshiro(1)).host_survival > 0.5)"
+status = "qualitative"
+notes = "0.78 with 100 runs; the minimum over the full grid is about 0.75."
+
+[[target]]
+id = "doddington2013_high_virulence_mode"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Results ('when α = 4.54, the most likely outcome was the extinction of Bd')" }
+quantity = "most frequent outcome with α = 4.54 and the Table B1 ν, ρ, μZ"
+published = "Bd_extinction"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; set = \"fig3a\"))"
+status = "qualitative"
+notes = "Bd goes extinct in 99-100% of runs; it is also the modal outcome in 90 of the 100 cells of Fig. 3a."
+
+[[target]]
+id = "doddington2013_weak_virulence_mode"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Results ('If α was set to ... 0.61, the most likely outcome was coexistence'; Fig. 3b)" }
+quantity = "most frequent outcome with α = 0.61 and the Table B1 ν, ρ, μZ"
+published = "coexistence"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; set = \"fig3b\"))"
+status = "discrepant"
+regression = { value = "Bd_extinction" }
+notes = """
+Bd goes extinct in about 85% of runs at the Table B1 values (ν = 8.17e-6, ρ = 1e5).
+Coexistence is the modal outcome in only 48 of the 100 cells of Fig. 3b (those with larger ν
+and ρ; scripts/doddington2013_fig3.jl). With maturation = :as_printed (constant εJ)
+coexistence is modal (97%), but then it is also modal with α = 4.54, against the previous
+target. The paper does not say at which ν and ρ the statement holds."""
+
+[[target]]
+id = "doddington2013_no_virulence_mode"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Results ('If pathogen-induced mortality was zero (α = 0), the most likely outcome was host-Bd coexistence')" }
+quantity = "most frequent outcome with α = 0 and the Table B1 ν, ρ, μZ"
+published = "coexistence"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; α = 0.0))"
+status = "discrepant"
+regression = { value = "Bd_extinction" }
+notes = "Bd extinction in about 70% of runs, coexistence in about 30%. As for the previous target, maturation = :as_printed gives coexistence."
+
+[[target]]
+id = "doddington2013_appB_a"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Appendix B, Model Output (a)" }
+quantity = "outcome with ν = 1e-5, ρ = 1e5, μZ = 52, α = 4.54 (example of Bd extinction)"
+published = "Bd_extinction"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; set = \"appB_a\"))"
+status = "qualitative"
+notes = "The appendix shows one run; here the most frequent of 100 runs (98% Bd extinction)."
+
+[[target]]
+id = "doddington2013_appB_b"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Appendix B, Model Output (b)" }
+quantity = "outcome with ν = 5e-5, ρ = 1e6, μZ = 52, α = 4.54 (example of Bd and host extinction)"
+published = "host_extinction"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; set = \"appB_b\"))"
+status = "qualitative"
+notes = "About 64% host extinction (Bd is then extinct too), 36% Bd extinction."
+
+[[target]]
+id = "doddington2013_appB_c"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Appendix B, Model Output (c)" }
+quantity = "outcome with ν = 1e-5, ρ = 1e5, μZ = 52, α = 0.61 (example of coexistence with a depressed host population)"
+published = "coexistence"
+call = "_doddington_mode(DoddingtonParameters(:doddington2013; set = \"appB_c\"))"
+status = "discrepant"
+regression = { value = "Bd_extinction" }
+notes = """
+The appendix shows a single run, which may not be the typical one: here coexistence occurs in
+about 24% of runs and Bd extinction in 76%."""
+
+[[target]]
+id = "doddington2013_fig4_fit"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Fig. 4a" }
+quantity = "SIR model with temperature-dependent recovery fitted to Coco de sa Bova and Torrent des Ferrerets tadpole counts (ν = 3.1546e-5, ρ = 28 730)"
+published = 3.1546e-5
+status = "pending"
+notes = """
+Needs the datalogger temperature series (Fig. 4c; not deposited), the tadpole counts (Fig. 4a;
+not deposited) and the mapping from Eq. 1 (probability of remaining infected) to a recovery
+rate, which is not printed. The fitted values are in the compendium (set fig4)."""
+
+[[target]]
+id = "doddington2013_load_model"
+model = "bd-doddington2013-midwife-toad-pool"
+source = { ref = "doddington2013", location = "Appendix B, Fig. B3; Results ('The effect of host density incorporating fungal load')" }
+quantity = "fungal-load IBM: a small expanding population coexists with Bd for years, then crashes, when zoospores live longer than a month"
+published = true
+status = "pending"
+notes = "The individual-based fungal-load model is described only in words and its code was not deposited; not implemented. Its Fig. B3 values are in the compendium (set load_model)."
+
+# ---- espira2022 ----
+# Espira et al. 2022 Am Nat 199:E43 (doi:10.1086/717413; author manuscript PMC9136953). The
+# paper is analytical and prints no parameter values; its results are statements about the
+# reproduction numbers, checked here on random parameter sets (2000 draws, fixed seed) or on
+# the axes of Figs 3-4.
+
+[[target]]
+id = "espira2022_ngm"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 6 and supplement Eqs S5-S16" }
+quantity = "closed form of R0,C equals the spectral radius of F V⁻¹ of eq. 1 (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> isapprox(community_reproduction_number(p), maximum(abs, LinearAlgebra.eigvals(next_generation_matrix(p; reduced = false))); rtol = 1e-8); geometric = false)"
+status = "reproduced"
+notes = "Checks the package's closed form (with ε) against a numerical next-generation matrix built from eq. 1; holds with or without θ₁ε₁ = θ₂ε₂."
+
+[[target]]
+id = "espira2022_eq6_as_printed"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 6" }
+quantity = "eq. 6 as printed equals R0,C of eq. 1 when ε₁ = ε₂ = 1 (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> (q = EspiraParameters(; N = p.N, γ = p.γ, κ = p.κ, ρ = p.ρ, π = p.π, α = p.α, ε = (1.0, 1.0), θ = (p.θ[1], p.θ[1]), μ = p.μ); isapprox(community_reproduction_number(q; as_printed = true), community_reproduction_number(q); rtol = 1e-10)))"
+status = "reproduced"
+notes = """
+Eq. 6 as printed has no habitat areas, and θ₁ where eq. 1 implies θ₂ in the first denominator
+(θ₂ in the second). It is R0,C of eq. 1 when ε₁ = ε₂ = 1, which forces θ₁ = θ₂. For other
+areas it differs; community_reproduction_number(p; as_printed = true) evaluates it. The
+supplement, which may define units with ε = 1, could not be obtained."""
+
+[[target]]
+id = "espira2022_lower_bound"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Results, 'Community reproduction number' (Eqs S17-S19)" }
+quantity = "R0,C ≥ min(R0,1, R0,2) (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> community_reproduction_number(p) >= minimum(species_reproduction_numbers(p)) * (1 - 1e-12); geometric = false)"
+status = "reproduced"
+
+[[target]]
+id = "espira2022_eq8"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 8" }
+quantity = "dilution (R0,C < R0,1) if and only if η₂ exceeds the eq. 8 threshold (fraction of random parameter sets with θ₁ε₁ = θ₂ε₂)"
+published = 1.0
+call = "_espira_fraction(p -> dilution_effect(p) == dilution_effect(p; criterion = :eq8))"
+status = "reproduced"
+notes = """
+Exact when the overlaps come from one overlap area (θ_i = area(E₁ ∩ E₂)/ε_i, the paper's
+definition). With independent θ₁, θ₂ the criterion fails on about 4% of draws, so eq. 8 relies
+on θ₁ε₁ = θ₂ε₂."""
+
+[[target]]
+id = "espira2022_eq9"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 9" }
+quantity = "with habitat 2 inside habitat 1 (θ₂ = 1), dilution iff η₂ > R0,2/R0,1 (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> (ε = (p.ε[1] + p.ε[2], p.ε[2]); q = EspiraParameters(; N = p.N, γ = p.γ, κ = p.κ, ρ = p.ρ, π = p.π, α = p.α, ε, θ = (ε[2] / ε[1], 1.0), μ = p.μ); R = species_reproduction_numbers(q); dilution_effect(q) == (pickup_efficiency(q)[2] > R[2] / R[1])))"
+status = "reproduced"
+
+[[target]]
+id = "espira2022_no_overlap"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 10 (no overlap)" }
+quantity = "with θ₁ = θ₂ = 0, R0,C = max(R0,1, R0,2) (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> (q = EspiraParameters(; N = p.N, γ = p.γ, κ = p.κ, ρ = p.ρ, π = p.π, α = p.α, ε = p.ε, θ = (0.0, 0.0), μ = p.μ); isapprox(community_reproduction_number(q), maximum(species_reproduction_numbers(q)); rtol = 1e-12)))"
+status = "reproduced"
+
+[[target]]
+id = "espira2022_complete_overlap"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Eq. 11 (complete overlap)" }
+quantity = "with θ₁ = θ₂ = 1 (ε₁ = ε₂), R0,C = R0,1 (a₁+μ)/(a₁+a₂+μ) + R0,2 (a₂+μ)/(a₁+a₂+μ) (fraction of random parameter sets)"
+published = 1.0
+call = "_espira_fraction(p -> (q = EspiraParameters(; N = p.N, γ = p.γ, κ = p.κ, ρ = p.ρ, π = p.π, α = p.α, ε = (p.ε[1], p.ε[1]), θ = (1.0, 1.0), μ = p.μ); R = species_reproduction_numbers(q); a = [q.κ[i] * q.ρ[i] * q.N[i] / q.ε[i] for i in 1:2]; isapprox(community_reproduction_number(q), (R[1] * (a[1] + q.μ) + R[2] * (a[2] + q.μ)) / (a[1] + a[2] + q.μ); rtol = 1e-10)))"
+status = "reproduced"
+notes = "The second line of the printed complete-overlap equation; its first line (in terms of the rates) is the same expression."
+
+[[target]]
+id = "espira2022_fig3_attenuation"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Fig. 3; Results ('both dilution and amplification effects have stronger magnitudes when species 1 is less efficient at picking up pathogens')" }
+quantity = "with complete overlap, |R0,C/R0,1 - 1| falls as η₁ rises (η₂ = 0.5; r = 0.2 dilution and r = 0.9 amplification; η₁ = 0.1, 0.5, 0.9)"
+published = true
+call = "all(r -> (v = [abs(_espira_ratio(η1, 0.5, r) - 1) for η1 in (0.1, 0.5, 0.9)]; issorted(v; rev = true)), (0.2, 0.9))"
+status = "qualitative"
+notes = "R0,C/R0,1 - 1 = (r - η₂)/(1 - η₂) · μ/(a₁ + a₂ + μ) with complete overlap, which shrinks as a₁ (η₁) grows."
+
+[[target]]
+id = "espira2022_fig4_overlap"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Fig. 4; Results ('Effects also attenuate as the relative size of the habitat overlap decreases')" }
+quantity = "|R0,C/R0,1 - 1| grows with θ₂ (0.1, 0.5, 1; ε = (2, 1)), for a dilution case (η = (0.2, 0.8), r = 0.3) and an amplification case (η = (0.2, 0.3), r = 0.9)"
+published = true
+call = "all(c -> (v = [abs(_espira_ratio(c...; θ₂ = t, ε = (2.0, 1.0)) - 1) for t in (0.1, 0.5, 1.0)]; issorted(v)), ((0.2, 0.8, 0.3), (0.2, 0.3, 0.9)))"
+status = "qualitative"
