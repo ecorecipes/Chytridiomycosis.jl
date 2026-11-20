@@ -153,6 +153,8 @@ include("models/adams2010.jl")
 # Pradel (1996) temporal-symmetry model (robust design) and Hardy et al. 2023 boreal toads
 include("observation/pradel.jl")
 include("fitting/hardy2023.jl")
+# Cook et al. 2022 stage-structured projection with itraconazole treatment of metamorphs
+include("models/cook2022.jl")
 # Disease-linked demography of Australian Litoria: Heard et al. 2024 (catch-curve survival,
 # spatial metapopulation) and Turner et al. 2025 (age-classified PVA with watering scenarios)
 include("models/heard2024.jl")
@@ -357,6 +359,8 @@ export PradelGroup, pradel_capture_probability, pradel_loglikelihood, pradel_abu
        PradelProblem, PradelFit, pradel_se, pradel_derived, pradel_coefficient, simulate_pradel
 export hardy2023_path, Hardy2023Site, load_hardy2023, hardy2023_captures, hardy2023_problem,
        hardy2023_fit, hardy2023_model_set, hardy2023_summary
+export CookParameters, CookProjectionProblem, CookProjectionSolution, cook_growth_rate,
+       cook_treatment_grid, cook_projection_matrix
 export HeardParameters, heard_scenario_grid, heard_projection_matrix, heard_survival_sd,
        heard_lambda, HeardMetapopulationProblem, HeardMetapopulationSolution, heard_persistence,
        heard_persistence_grid, heard2024_path, heard2024_landscapes

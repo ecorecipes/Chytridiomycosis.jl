@@ -3,14 +3,14 @@
 #
 # Pradel R (1996) Utilization of capture-mark-recapture for the study of recruitment and
 # population growth rate. Biometrics 52:703-709. Williams, Nichols & Conroy (2002) Analysis and
-# Management of Animal Populations, section 18.4. Hardy et al. (2023, Appendix S2) restate the
+# Management of Animal Populations, section 18.4. Hardy et al. (2023, Appendix S1.2) restate the
 # model in the f (per-capita recruitment) parameterization used here.
 #
 # Primary periods t = 1…T, each with one or more secondary occasions j. Parameters:
 #   φ_t  apparent survival from t to t + 1                (t = 1…T−1)
 #   f_t  per-capita recruitment from t to t + 1           (t = 1…T−1)
 #   p_tj capture probability at secondary occasion j of t (p = c: no behavioural effect)
-# Derived: λ_t = φ_t + f_t (eq. 2 of Hardy et al. Appendix S2), seniority
+# Derived: λ_t = φ_t + f_t (eq. 2 of Hardy et al. Appendix S1.2), seniority
 # γ_{t+1} = φ_t / λ_t (their eq. 3), p*_t = 1 − ∏_j (1 − p_tj), and N_t = n_t / p*_t.
 #
 # Likelihood. The history of an animal first caught in period e and last caught in period l
@@ -195,7 +195,7 @@ Maximum-likelihood problem for a multi-group Pradel model with linear predictors
   coefficient vector `θ = [βφ; βf; βp]` (the matrices of one parameter must have the same
   number of columns in every group).
 - Links: `logit φ = Xφ βφ`, `log f = Xf βf`, `logit p = Xp βp`, as in Hardy et al. (2023,
-  Appendix S2). Rows of `Xp` for unsampled occasions are ignored.
+  Appendix S1.2). Rows of `Xp` for unsampled occasions are ignored.
 
 `names` optionally labels the coefficients (default `φ_1, …, f_1, …, p_1, …`). The problem
 implements the LogDensityProblems interface (log density = log-likelihood, flat prior on `θ`).
@@ -258,7 +258,7 @@ end
     nobs(prob::PradelProblem)
 
 Sample size used for AICc: the total number of captures (sum of the capture histories). With
-this sample size the AICc values of Hardy et al. (2023, Appendices S3–S5), which come from
+this sample size the AICc values of Hardy et al. (2023, Appendices S1.3–S1.5), which come from
 Program MARK, are reproduced from their −2 log L and K.
 """
 nobs(prob::PradelProblem) = sum(sum(g.captures) for g in prob.groups)

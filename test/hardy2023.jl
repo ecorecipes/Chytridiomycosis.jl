@@ -4,14 +4,14 @@
 # (CC0, data/hardy2023).
 #
 # Oracles:
-#   - Table 1.1 (captures before and after Bd at each site) and "We captured 1,594 individual
+#   - Table 1 (captures before and after Bd at each site) and "We captured 1,594 individual
 #     male boreal toads";
-#   - Appendices S3, S4 and S5: −2 log L, K and AICc of the focal model sets, fitted in
+#   - Appendices S1.3, S1.4 and S1.5: −2 log L, K and AICc of the focal model sets, fitted in
 #     Program MARK (all 27 models are fitted here; 26 reproduce MARK's −2 log L to 0.01);
-#   - Table 1.3 (AICc of the top model) and Results (post-Bd φ, f and λ; pre-Bd φ at the
+#   - Table 3 (AICc of the top model) and Results (post-Bd φ, f and λ; pre-Bd φ at the
 #     lowest and highest site; range of p).
-#   The paper was read in the version reprinted as Chapter 1 of B. M. Hardy's dissertation
-#   (Colorado State University, 2023); see src/fitting/hardy2023.jl.
+#   All are from the version of record (J Appl Ecol 60:121-131) and its Supporting
+#   Information, which print the same numbers as the reprint in B. M. Hardy's dissertation.
 #   - Closed forms: probabilities of all possible histories sum to one; brute-force
 #     enumeration of the history likelihood; simulation and recovery of known parameters.
 using Chytridiomycosis
@@ -79,7 +79,7 @@ using LogDensityProblems: LogDensityProblems
 
     data = load_hardy2023()
 
-    @testset "data (Table 1.1)" begin
+    @testset "data (Table 1)" begin
         caps = hardy2023_captures(data)
         @test sum(c.toads for c in caps) == 1594
         tbl = parameter_set(:hardy2023)
@@ -97,7 +97,7 @@ using LogDensityProblems: LogDensityProblems
         @test all(s -> all(skipmissing(s.env.drought) .< skipmissing(s.env.winter_start)), data)
     end
 
-    @testset "focal model sets (Appendices S3-S5)" begin
+    @testset "focal model sets (Appendices S1.3-S1.5)" begin
         # −2 log L and K printed by MARK
         S3 = Dict(:s_bd_t_bd => (27669.30, 77), :s_bd => (28676.37, 8), :t_bd => (28669.52, 21),
                   :site => (28905.69, 7), :constant => (29334.27, 3))
@@ -131,7 +131,7 @@ using LogDensityProblems: LogDensityProblems
         end
     end
 
-    @testset "top model (Table 1.3, Results)" begin
+    @testset "top model (Table 3, Results)" begin
         fit = hardy2023_fit(; data)
         @test fit.k == 115
         @test fit.aicc ≈ 26649.10 atol = 1     # MARK: 26649.10; ours 26649.35
@@ -143,7 +143,7 @@ using LogDensityProblems: LogDensityProblems
         @test round(s.λ_post.value; digits = 2) == pub.lambda_post
         @test round.(s.λ_post.ci; digits = 2) == (pub.lambda_post_lo, pub.lambda_post_hi)
         @test round.(s.p_range; digits = 2) == (pub.p_min, pub.p_max)
-        # Fig. 1.1A model: pre-Bd survival at the lowest and highest site
+        # Fig. 1a model: pre-Bd survival at the lowest and highest site
         fit2 = hardy2023_fit(; φ = :elev_bd, f = :elev_bd, data)
         φM = pradel_se(fit2, θ -> pradel_derived(fit2.problem, θ, 5).φ[1])
         @test round(φM.value; digits = 2) == pub.phi_pre_morgans
