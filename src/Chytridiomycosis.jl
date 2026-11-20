@@ -192,6 +192,7 @@ export gajewski2021_path, load_gajewski2021, GajewskiModel, GajewskiLogisticMode
        gajewski_start, posterior_mode
 export SheetsReading, sheets2021_path, load_sheets2021, SheetsGrowthModel, sheets_fits,
        sheets_tpc
+export sheets_profile_interval
 export LoadBDI, aggregation, load_distribution, mean_load, prevalence, infection_gain_rate,
        infection_loss_rate, swab, enzootic_pool, enzootic_load_distribution
 export LoadTipping, LoadTippingProblem, pool_feedback, net_growth_rate, critical_immigration,

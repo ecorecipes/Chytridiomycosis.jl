@@ -83,7 +83,9 @@ function LogDensityProblems.logdensity(m::SheetsGrowthModel, x::AbstractVector)
     ll = 0.0
     for i in eachindex(m.y)
         μ = delayed_logistic(m.t[i], x0, K, r)
-        ll += logpdf(Normal(μ, b0 + 1e-4 + b1 * μ), m.y[i])
+        sd = b0 + 1e-4 + b1 * μ
+        isfinite(μ) && isfinite(sd) || return -Inf
+        ll += logpdf(Normal(μ, sd), m.y[i])
     end
     return isfinite(ll) ? ll : -Inf
 end
@@ -136,3 +138,50 @@ const _SHEETS_REFERENCE = Dict{Tuple{String,Float64},Any}()
 _sheets_reference_fit(isolate::AbstractString, T::Real) =
     get!(() -> maximum_likelihood(SheetsGrowthModel(isolate, T)), _SHEETS_REFERENCE,
         (String(isolate), Float64(T)))
+
+"""
+    sheets_profile_interval(fit, name::Symbol; level = 0.95, maxfactor = 20.0, iters = 1500)
+        -> (lower, upper, found_lower, found_upper)
+
+Profile-likelihood confidence interval of parameter `name` (`:r` or `:K`) of a
+[`maximum_likelihood`](@ref) fit of a [`SheetsGrowthModel`](@ref), as in the Supplementary
+Material of Sheets et al. (2021): the values at which the likelihood ratio statistic
+`2 (ℓ̂ − ℓ_profile)` reaches the `level` quantile of χ²₁, with the other four parameters
+re-optimised at each fixed value. The authors scan a grid and interpolate; this finds each
+crossing by bisection on `log(name)` between the estimate and `maxfactor` times (or
+`1/maxfactor` of) it. When no crossing is found in that range the bound is returned with
+`found_* = false` (an unidentified bound, plotted dotted in the paper).
+"""
+function sheets_profile_interval(fit::NamedTuple, name::Symbol; level::Real = 0.95,
+        maxfactor::Real = 20.0, iters::Integer = 1500)
+    m = fit.model
+    m isa SheetsGrowthModel || throw(ArgumentError("fit must be of a SheetsGrowthModel"))
+    j = findfirst(==(name), parameter_names(m))
+    j === nothing && throw(ArgumentError("name must be one of $(parameter_names(m))"))
+    crit = quantile(Chisq(1), level)
+    others = setdiff(1:5, j)
+    function lr(v)               # likelihood ratio statistic at log value v
+        g(y) = (x = similar(fit.x); x[j] = v; x[others] = y;
+                -LogDensityProblems.logdensity(m, x))
+        y, fy = nelder_mead(g, fit.x[others]; iters, step = 0.3)
+        y, fy = nelder_mead(g, y; iters = iters ÷ 2, step = 0.03)
+        return 2 * (fit.loglik + fy)
+    end
+    function bound(dir)
+        a, b = fit.x[j], fit.x[j] + dir * log(maxfactor)
+        lr(b) < crit && return (exp(b), false)
+        for _ in 1:30
+            mid = (a + b) / 2
+            lr(mid) < crit ? (a = mid) : (b = mid)
+        end
+        return (exp((a + b) / 2), true)
+    end
+    lo, flo = bound(-1)
+    hi, fhi = bound(1)
+    return (lower = lo, upper = hi, found_lower = flo, found_upper = fhi)
+end
+
+const _SHEETS_INTERVALS = Dict{Tuple{String,Float64,Symbol},Any}()
+_sheets_reference_interval(isolate::AbstractString, T::Real, name::Symbol) =
+    get!(() -> sheets_profile_interval(_sheets_reference_fit(isolate, T), name),
+        _SHEETS_INTERVALS, (String(isolate), Float64(T), name))
