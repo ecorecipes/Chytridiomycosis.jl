@@ -47,6 +47,7 @@ Every model belongs to one of three categories. They differ in what a result fro
 | Log-linear mixed models of Bd intensity and zoospore output in *Atelopus zeteki* | DiRenzo et al. 2014, doi:10.1371/journal.pone.0093356 | `DiRenzoLoadModel`, `load_direnzo2014` |
 | Host–pathogen dynamic occupancy of boreal toads and Bd (equations from the first author's dissertation; data not yet read) | Mosher et al. 2018, doi:10.1002/eap.1699 | `Mosher2018Problem`, `Mosher2018Model` |
 | Bd occurrence in host populations by single-season occupancy (likelihood and Appendix A only) | Adams et al. 2010, doi:10.1890/08-2319.1 | `occupancy_loglikelihood`, `finite_population_occurrence` |
+| Survival, recruitment and growth of boreal toads before and after Bd (robust-design Pradel) | Hardy et al. 2023, doi:10.1111/1365-2664.14310 | `hardy2023_problem`, `PradelProblem` |
 
 ### 2. Modified published models
 

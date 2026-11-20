@@ -144,6 +144,9 @@ include("observation/occupancy.jl")
 include("models/mosher2018.jl")
 include("fitting/mosher2018.jl")
 include("models/adams2010.jl")
+# Pradel (1996) temporal-symmetry model (robust design) and Hardy et al. 2023 boreal toads
+include("observation/pradel.jl")
+include("fitting/hardy2023.jl")
 include("resilience.jl")
 
 export solve
@@ -322,5 +325,10 @@ export ImmuneFrogParameters, FrogTreatment, ConstantPoolFrogProblem, infection_f
 export DiRenzoParameters, direnzo_trajectory, daily_percent_increase, direnzo_t_statistic,
        DiRenzoSeries, DiRenzoLoadModel, direnzo_covariance, DiRenzoFrog, direnzo2014_path,
        load_direnzo2014, direnzo_summary, direnzo_logrank
+# Pradel temporal-symmetry model and Hardy et al. 2023
+export PradelGroup, pradel_capture_probability, pradel_loglikelihood, pradel_abundance,
+       PradelProblem, PradelFit, pradel_se, pradel_derived, pradel_coefficient, simulate_pradel
+export hardy2023_path, Hardy2023Site, load_hardy2023, hardy2023_captures, hardy2023_problem,
+       hardy2023_fit, hardy2023_model_set, hardy2023_summary
 
 end # module Chytridiomycosis
