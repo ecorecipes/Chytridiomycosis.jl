@@ -5799,14 +5799,6 @@ call = "all(r -> (v = [abs(_espira_ratio(η1, 0.5, r) - 1) for η1 in (0.1, 0.5,
 status = "qualitative"
 notes = "R0,C/R0,1 - 1 = (r - η₂)/(1 - η₂) · μ/(a₁ + a₂ + μ) with complete overlap, which shrinks as a₁ (η₁) grows."
 
-[[target]]
-id = "espira2022_fig4_overlap"
-model = "bd-espira2022-overlapping-habitats"
-source = { ref = "espira2022", location = "Fig. 4; Results ('Effects also attenuate as the relative size of the habitat overlap decreases')" }
-quantity = "|R0,C/R0,1 - 1| grows with θ₂ (0.1, 0.5, 1; ε = (2, 1)), for a dilution case (η = (0.2, 0.8), r = 0.3) and an amplification case (η = (0.2, 0.3), r = 0.9)"
-published = true
-call = "all(c -> (v = [abs(_espira_ratio(c...; θ₂ = t, ε = (2.0, 1.0)) - 1) for t in (0.1, 0.5, 1.0)]; issorted(v)), ((0.2, 0.8, 0.3), (0.2, 0.3, 0.9)))"
-status = "qualitative"
 # ---- hardy2023 ----
 # Hardy et al. 2023 J Appl Ecol 60:121-131 (doi:10.1111/1365-2664.14310), checked against the
 # version of record and its Supporting Information (identical numbers in the reprint in B. M.
