@@ -32,6 +32,7 @@ Every model belongs to one of three categories. They differ in what a result fro
 | Seasonal Bsal and a Floquet R0 | Bozzuto & Canessa 2019, doi:10.1016/j.gecco.2019.e00551 | `SeasonalBsalProblem` |
 | Bsal transmission functions in eastern newts | Malagon et al. 2020, doi:10.1038/s41598-020-62351-x; Tompros et al. 2022, doi:10.1111/tbed.14043 | `TransmissionSLIProblem`, `SusceptibleChainProblem`, `CohabitationProblem` |
 | Stochastic individual-based Bd model with interventions | Drawert et al. 2017, doi:10.1098/rsif.2017.0480 | `DrawertIBMProblem`, `DrawertODEProblem` |
+| Agent-based model of imperfect Bd prophylaxis (resistance vs tolerance); preprint | Barnett et al. 2026, bioRxiv doi:10.64898/2026.05.15.725113 | `BarnettABMProblem`, `barnett_vaccine`, `barnett_relative_change` |
 | Bsal with life stages and temperature in eastern newts | Chowdhury et al. 2025, doi:10.1016/j.ecolmodel.2025.111028 | `BsalStageTemperatureProblem` |
 | Integral projection model of Bd load | Wilber et al. 2016, doi:10.1111/2041-210X.12561 | `BdIPMProblem` |
 | Hybrid IPM with a zoospore pool and tadpoles | Wilber et al. 2017, doi:10.1111/ele.12814 | `HybridIPMProblem` |

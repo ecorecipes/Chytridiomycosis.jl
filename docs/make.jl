@@ -30,6 +30,7 @@ makedocs(;
                                          "Seasonal Bsal (Bozzuto 2019)" => "api/bozzuto2019.md",
                                          "Bsal transmission functions" => "api/bsal_transmission.md",
                                          "Stochastic IBM (Drawert 2017)" => "api/drawert2017.md",
+                                         "Imperfect prophylaxis ABM (Barnett 2026)" => "api/barnett2026.md",
                                          "Life stages and temperature (Chowdhury 2025)" => "api/chowdhury2025.md",
                                          "Integral projection models (Wilber 2016)" => "api/wilber2016.md",
                                          "Extinction risk with a zoospore pool (Wilber 2017)" => "api/wilber2017.md",

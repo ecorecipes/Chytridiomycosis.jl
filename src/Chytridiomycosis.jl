@@ -90,6 +90,8 @@ include("fitting/malagon2020.jl")
 include("fitting/tompros2022.jl")
 # Drawert et al. 2017 stochastic individual-based Bd model with one-time interventions
 include("models/drawert2017.jl")
+# Barnett et al. 2026 (bioRxiv preprint) agent-based model of imperfect Bd prophylaxis
+include("models/barnett2026.jl")
 # Chowdhury et al. 2025 stage- and temperature-structured Bsal model of the eastern newt
 include("models/chowdhury2025.jl")
 # Integral projection models: generic machinery, and Wilber et al. 2016 Bd–R. muscosa IPM
@@ -213,6 +215,9 @@ export DrawertParameters, DrawertIBMProblem, DrawertODEProblem, DrawertIntervent
        sporangium_loss_rate, nondimensional_parameters, nondimensional_ranges,
        nondimensional_distance, equilibrium_load_ratio, drawert2017_path, load_drawert2017, load_drawert2017_reproduction,
        drawert_summary, outcome_class, survival_group, intervention_effect
+# Barnett et al. 2026 (bioRxiv preprint) agent-based model of imperfect Bd prophylaxis
+export BarnettParameters, BarnettVaccine, barnett_vaccine, BarnettABMProblem, barnett_summary,
+       barnett_relative_change
 # Chowdhury et al. 2025 stage- and temperature-structured Bsal model
 export ChowdhuryParameters, BsalStageTemperatureProblem, chowdhury_scenarios,
        stage_transmission_rates, stage_totals, stage_decline_time, stage_disease_free_state,

@@ -4969,3 +4969,246 @@ quantity = "geometric mean annual population growth rate λ (Pradel model, MARK)
 published = 0.92
 status = "pending"
 notes = "The Pradel (1996) temporal-symmetry model is not implemented, and the data are not deposited."
+
+# ---- barnett2026 ----
+# Barnett et al. 2026, bioRxiv PREPRINT doi:10.64898/2026.05.15.725113 (v2). No model code was
+# released, so the ABM targets are the preprint's qualitative statements about its contour
+# plots (signs of percent changes against the unvaccinated control), checked with the
+# package's documented choices (src/models/barnett2026.jl), 25 scenario runs and 250 control
+# runs (compendium n_reps, n_control) and fixed seeds. Infection intensity is the default
+# `metric = :metamorph` of barnett_relative_change (season mean load of infected metamorphs;
+# the preprint does not define its intensity statistic). Efficacy and coverage levels in the
+# calls are points of the preprint's scenario grid (10–100% in steps of 10).
+
+[[target]]
+id = "barnett2026_antiinfection_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. 1a" }
+quantity = "percent change in infection intensity, anti-infection resistance (80% efficacy, 80% coverage)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    barnett_relative_change(p, barnett_vaccine(:infection, 0.8; coverage = 0.8);
+                            rng = Random.Xoshiro(2026)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_antiinfection_population"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. 1b" }
+quantity = "percent change in final frog population, anti-infection resistance (80% efficacy, 80% coverage)"
+published = "increase"
+call = """
+let p = BarnettParameters(:barnett2026)
+    barnett_relative_change(p, barnett_vaccine(:infection, 0.8; coverage = 0.8);
+                            rng = Random.Xoshiro(2026)).survivors
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0e6 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_antitransmission_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. S1a" }
+quantity = "percent change in infection intensity, anti-transmission resistance (80% efficacy, 80% coverage)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    barnett_relative_change(p, barnett_vaccine(:transmission, 0.8; coverage = 0.8);
+                            rng = Random.Xoshiro(2027)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_antigrowth_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. S1b" }
+quantity = "percent change in infection intensity, anti-growth resistance (80% efficacy, 80% coverage)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    barnett_relative_change(p, barnett_vaccine(:growth, 0.8; coverage = 0.8);
+                            rng = Random.Xoshiro(2028)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "discrepant"
+regression = { value = 7.18, atol = 5.0 }
+notes = """
+Not reproduced with the package's choices: +7.2% (metamorph metric). With doubled-at-most
+clearance (0.2 to 0.36) self-reinfection (17.8 × 0.1 × 0.25 = 0.445 per sporangium per day) still
+outgrows clearance, so infected metamorphs still reach the lethal load and the mean load of the
+living ones barely moves. With the season-mean metric (metric = :season) the change is −45%.
+The preprint does not define its intensity statistic, and no code was released."""
+
+[[target]]
+id = "barnett2026_tolerance_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Abstract; Results, 'Modes of protection'; Fig. 1c" }
+quantity = "percent change in infection intensity, tolerance (100% efficacy, 100% coverage): imperfect prophylaxis amplifies infection"
+published = "increase"
+call = """
+let p = BarnettParameters(:barnett2026)
+    barnett_relative_change(p, barnett_vaccine(:tolerance, 1.0; coverage = 1.0);
+                            rng = Random.Xoshiro(2029)).intensity
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0e6 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_tolerance_weak_resistance_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Two-way interactions with tolerance'; Fig. S7a; Discussion" }
+quantity = "percent change in infection intensity, tolerance 100% with weak anti-infection resistance 10%, coverage 75%"
+published = "increase"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:tolerance => 1.0, :infection => 0.1;
+                        coverage = parameter_set(:barnett2026).coverage_two_way)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2030)).intensity
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0e6 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_tolerance_strong_resistance_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Two-way interactions with tolerance'; Fig. S7a" }
+quantity = "percent change in infection intensity, tolerance 100% with strong anti-infection resistance 100%, coverage 75%"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:tolerance => 1.0, :infection => 1.0;
+                        coverage = parameter_set(:barnett2026).coverage_two_way)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2031)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "discrepant"
+regression = { value = 48.82, atol = 5.0 }
+notes = """
+Not reproduced: +48.8%. In the package's reading, hosts made fully resistant are never infected,
+so the intensity of infected metamorphs comes from the unvaccinated 25% and from vaccinated hosts
+with higher lethal loads, and tolerance still raises it. The preprint reports that resistance
+counteracts tolerance. With metric = :season the change is −41%. No code to check against."""
+
+[[target]]
+id = "barnett2026_tolerance_growth_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Two-way interactions with tolerance'; Fig. 4a" }
+quantity = "percent change in infection intensity, tolerance 100% with anti-growth resistance 100%, coverage 75%"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:tolerance => 1.0, :growth => 1.0;
+                        coverage = parameter_set(:barnett2026).coverage_two_way)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2032)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "discrepant"
+regression = { value = 63.42, atol = 5.0 }
+notes = """
+Not reproduced: +63.4% (Fig. 4a reports a decrease once anti-growth resistance is at least
+small). As for barnett2026_antigrowth_intensity, increased clearance does not stop runaway
+self-reinfection here. With metric = :season the change is −43%. No code to check against."""
+
+[[target]]
+id = "barnett2026_adverse_infection_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Abstract; Results, 'Hypothetical adverse reactions'; Fig. 5a" }
+quantity = "percent change in infection intensity, vaccination increases susceptibility (establishment +100%, coverage 50%)"
+published = "increase"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:infection, 1.0; coverage = 0.5, adverse = true)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2033)).intensity
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0e6 }
+status = "qualitative"
+notes = "Reproduced only weakly (+3.9% with this seed; the season-mean metric gives +89%)."
+
+[[target]]
+id = "barnett2026_adverse_infection_population"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Hypothetical adverse reactions'; Fig. 5b" }
+quantity = "percent change in final frog population, vaccination increases susceptibility (establishment +100%, coverage 50%)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:infection, 1.0; coverage = 0.5, adverse = true)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2033)).survivors
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_adverse_tolerance_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Hypothetical adverse reactions'; Fig. S11c" }
+quantity = "percent change in infection intensity, vaccination reduces tolerance (smax −50%, coverage 100%)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    v = barnett_vaccine(:tolerance, 0.5; coverage = 1.0, adverse = true)
+    barnett_relative_change(p, v; rng = Random.Xoshiro(2034)).intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_control_prevalence"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection' ('Median infection prevalence in unvaccinated scenarios was already 100%')" }
+quantity = "median infection prevalence of the unvaccinated control"
+published = 1.0
+call = """
+barnett_summary(BarnettParameters(:barnett2026); rng = Random.Xoshiro(2035),
+                nreps = round(Int, parameter_set(:barnett2026).n_control)).median_final_prevalence
+"""
+tolerance = { atol = 0.05 }
+status = "discrepant"
+regression = { value = 0.0, atol = 5.0 }
+notes = """
+Not reproduced: in the package's runs most infected hosts die when they metamorphose with
+loads above smax, so the survivors at day 90 are mostly uninfected (median 0). The preprint
+does not give the number of tadpoles, the pond geometry or its prevalence statistic; with
+denser ponds (n_tadpoles = 5000, n_perimeter = 120) the median is 1. Not tuned."""
+
+[[target]]
+id = "barnett2026_field_intensity_ratio"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
+quantity = "post-intervention Bd intensity in treated ponds relative to the expectation had they declined like controls (ZINB BACI interaction)"
+published = 6.42
+status = "pending"
+notes = "Field swab data (Santa Clara County ponds, 2011–2022) are not deposited with the preprint; the BACI zero-inflated negative binomial GLMM (glmmTMB) is not implemented."
+
+[[target]]
+id = "barnett2026_field_interaction_p"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. 3" }
+quantity = "P value of the time-by-treatment interaction on infection intensity"
+published = 0.001
+status = "pending"
+notes = "Field data not deposited."
+
+[[target]]
+id = "barnett2026_field_control_decline"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
+quantity = "percent decrease in estimated marginal mean infection intensity, control ponds, pre to post (1,625 to 194 Bd GE)"
+published = 88.0
+status = "pending"
+notes = "Field data not deposited. Treated ponds: 23% decrease (866 to 667)."
