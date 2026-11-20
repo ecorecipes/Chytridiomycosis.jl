@@ -23,7 +23,9 @@ makedocs(;
                                   "Modified and new models" => ["Does a protective microbiome save the population?" => "tutorials/07_building_realism.md",
                                                                 "One model, many switches" => "tutorials/08_nested_model.md",
                                                                 "Fitting to a field trial" => "tutorials/09_knapp_fit.md"]],
-                  "Published models" => ["Schmidt 2017, Briggs 2010, Mitchell 2008" => "api/published.md",
+                  "Published models" => ["Bsal in fire salamanders (Schmidt 2017)" => "api/schmidt2017.md",
+                                         "Bd loads in frogs (Briggs 2010)" => "api/briggs2010.md",
+                                         "Common toads at a pond (Mitchell 2008)" => "api/mitchell2008.md",
                                          "Several hosts, one pool (Daversa 2022)" => "api/daversa2022.md",
                                          "Zoospore persistence (Rumschlag 2022)" => "api/rumschlag2022.md",
                                          "Adaptive immunity and treatments (Woodhams 2011)" => "api/woodhams2011.md",
@@ -63,6 +65,7 @@ makedocs(;
                                        "Thermal performance" => "api/thermal.md",
                                        "Swab loads: units, likelihoods, operators" => "api/observation_load.md",
                                        "Validation targets" => "api/validation.md",
+                                       "Solving problems" => "api/solving.md",
                                        "Resilience and thresholds" => "api/resilience.md"]])
 
 if get(ENV, "CI", "false") == "true"

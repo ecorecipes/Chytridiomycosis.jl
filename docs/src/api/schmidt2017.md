@@ -1,13 +1,14 @@
-# Published models
+# Bsal in fire salamanders (Schmidt et al. 2017)
 
 ```@meta
 CurrentModule = Chytridiomycosis
 ```
 
-Reference implementations of published models, checked against the papers. Parameters are
-read from the [compendium](compendium.md), for example `SchmidtParameters(:schmidt2017)`.
-
-## Bsal in fire salamanders (Schmidt et al. 2017)
+This is a reference implementation of the susceptible–latent–infectious model of Bsal in fire
+salamanders of Schmidt et al. (2017), *R Soc Open Sci* 4:160801
+([doi:10.1098/rsos.160801](https://doi.org/10.1098/rsos.160801)). It is checked against the
+paper. Parameters are read from the [compendium](compendium.md):
+`SchmidtParameters(:schmidt2017)`.
 
 Four values are not reproduced (see `data/validation/targets.toml`): S_eq and K_H below,
 and the shares of the German habitat infected after 8 years by scattered colonies (Results;
@@ -34,7 +35,7 @@ scattered_colony_area
 population_crash
 ```
 
-### Spatial spread and long-distance jumps
+## Spatial spread and long-distance jumps
 
 The reaction–diffusion version (§2.2) is discretised by finite volumes and lowered to an
 `ODEProblem`; its front speed converges to [`wave_speed`](@ref). The scattered-colony model
@@ -52,48 +53,4 @@ SchmidtPDEProblem
 front_position
 front_speed
 SchmidtColonyProblem
-```
-
-## Bd loads in frogs (Briggs et al. 2010)
-
-```@docs
-BriggsParameters
-BriggsLoadProblem
-transmission_rate
-load_growth_rate(::BriggsParameters, ::Any)
-host_density_threshold
-```
-
-### With seasons and life stages
-
-```@docs
-BriggsStage
-BriggsSeasonalParameters
-BriggsSeasonalProblem
-persistence_probability
-```
-
-The six-stage *R. muscosa*/*R. sierrae* model of Fig. 4 (three tadpole and two subadult year
-classes plus adults):
-
-```@docs
-BriggsLifeStages
-BriggsStagedProblem
-disease_free_stages
-```
-
-## Bd in common toads at a pond (Mitchell et al. 2008)
-
-```@docs
-MitchellParameters
-MitchellPondProblem
-```
-
-## Solving
-
-Every problem is solved with `solve` (from CommonSolve.jl). Those that lower to one ODE can
-also be converted directly:
-
-```@docs
-to_ode_problem
 ```

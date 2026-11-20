@@ -9,7 +9,7 @@ engine: julia
 
 | Model | Source | Category | API page |
 |---|---|---|---|
-| Load model, deterministic and seasonal stochastic, `BriggsLoadProblem`, `BriggsSeasonalProblem` | Briggs et al. 2010 | published | `api/published.md` |
+| Load model, deterministic and seasonal stochastic, `BriggsLoadProblem`, `BriggsSeasonalProblem` | Briggs et al. 2010 | published | `api/briggs2010.md` |
 | Individual-based model, `DrawertIBMProblem`, `DrawertODEProblem` | Drawert et al. 2017 | published | `api/drawert2017.md` |
 | Refugia CTMC, `RefugiaCTMCProblem`, `RefugiaODEProblem` | Miller et al. 2025 | published | `api/miller2025.md` |
 

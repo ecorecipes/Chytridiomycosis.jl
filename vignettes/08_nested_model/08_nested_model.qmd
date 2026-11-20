@@ -12,7 +12,7 @@ engine: julia
 | Nested model with switches, `ChytridBiology`, `NestedChytridProblem` | this package (reduces to Schmidt et al. 2017) | new | `api/nested.md` |
 | Stochastic nested model, `StochasticNestedProblem` | this package | new | `api/nested.md` |
 | Microbiome treatment, `MicrobiomeTreatment` | this package | new | `api/treatment.md` |
-| S–L–I model, `SchmidtParameters` (parameters) | Schmidt et al. 2017 | published | `api/published.md` |
+| S–L–I model, `SchmidtParameters` (parameters) | Schmidt et al. 2017 | published | `api/schmidt2017.md` |
 
 Categories: **published** models reimplement a paper's equations and are checked against it;
 **modified** models add structure to a published model; **new** models are new structure.

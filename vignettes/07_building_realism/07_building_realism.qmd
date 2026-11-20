@@ -9,9 +9,9 @@ engine: julia
 
 | Model | Source | Category | API page |
 |---|---|---|---|
-| S–L–I model, `SchmidtParameters` | Schmidt et al. 2017 | published | `api/published.md` |
-| Toad pond model, `MitchellParameters` | Mitchell et al. 2008 | published | `api/published.md` |
-| Load model | Briggs et al. 2010 | published | `api/published.md` |
+| S–L–I model, `SchmidtParameters` | Schmidt et al. 2017 | published | `api/schmidt2017.md` |
+| Toad pond model, `MitchellParameters` | Mitchell et al. 2008 | published | `api/mitchell2008.md` |
+| Load model | Briggs et al. 2010 | published | `api/briggs2010.md` |
 | Bsal with an infectable larval stage, `BsalLarvalStage` | Schmidt et al. 2017, modified | modified | `api/stages.md` |
 | Toads infected after metamorphosis, `ToadStageProblem` | Mitchell et al. 2008, modified | modified | `api/stages.md` |
 | Load tipping and stochastic frogs, `LoadTippingProblem`, `StochasticFrogProblem` | Briggs et al. 2010, modified | modified | `api/load.md` |
