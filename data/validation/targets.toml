@@ -4968,7 +4968,7 @@ source = { ref = "palomar2023", location = "Results, 'Pradel model'" }
 quantity = "geometric mean annual population growth rate λ (Pradel model, MARK)"
 published = 0.92
 status = "pending"
-notes = "The Pradel (1996) temporal-symmetry model is not implemented, and the data are not deposited."
+notes = "Needs the capture histories, which are not deposited. The Pradel (1996) temporal-symmetry likelihood itself is now available (`pradel_loglikelihood`, used for Hardy et al. 2023)."
 
 # ---- barnett2026 ----
 # Barnett et al. 2026, bioRxiv PREPRINT doi:10.64898/2026.05.15.725113 (v2). No model code was

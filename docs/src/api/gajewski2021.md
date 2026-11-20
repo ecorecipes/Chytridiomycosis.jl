@@ -83,7 +83,7 @@ load_gajewski2021
 GajewskiModel
 GajewskiLogisticModel
 gajewski_start
-posterior_mode
+posterior_mode(::Union{GajewskiModel,GajewskiLogisticModel})
 ```
 
 [`parameter_names`](@ref) also has methods for [`GajewskiModel`](@ref) and

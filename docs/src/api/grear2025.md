@@ -47,7 +47,7 @@ sampler can draw from the full posterior. [`posterior_mode`](@ref) finds its mod
 ```@docs
 HurdleRegressionProblem
 hurdle_coefficients
-posterior_mode
+posterior_mode(::Any)
 phylogenetic_correlation
 ```
 

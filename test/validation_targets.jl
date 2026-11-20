@@ -8,7 +8,7 @@
     @test validation_target("schmidt2017_K_threshold").source === :schmidt2017
     @test_throws ArgumentError validation_target("no_such_target")
     @test_throws ArgumentError reproduce(validation_target("blooi2015_heat_clearance"))
-    @test length(validation_targets(; status = :discrepant)) == 63
+    @test length(validation_targets(; status = :discrepant)) == 103
     @test all(t -> t.source === :schmidt2017, validation_targets(; source = :schmidt2017))
     # Wilber 2022 targets need the authors' deposit, which is not bundled (data/wilber2022)
     w22 = Chytridiomycosis._wilber2022_find() !== nothing
