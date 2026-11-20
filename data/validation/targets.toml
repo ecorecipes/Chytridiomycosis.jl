@@ -7699,8 +7699,10 @@ published = 15.0
 call = "grear2025_temperature_optimum(_grear2025_reference_fit()).prevalence"
 tolerance = { atol = 1.0 }
 status = "reproduced"
-regression = { value = 14.555, atol = 0.05 }
+regression = { value = 14.555, atol = 0.25 }
 notes = """
+The regression tolerance (±0.25 °C) allows for the unconverged mode: with bounds checking on
+(as under Pkg.test) the same fit gives 14.62 °C, because floating-point summation order changes.
 Reference mode: 14.56 °C (14.61, 14.56 and 14.64 °C after 500, 1000 and 3000 iterations; 13.4 °C
 with incomplete swabs dropped instead of imputed). The tolerance ±1 °C reflects the printed
 'approximately 15' (an integer); it was set before computing this value."""
@@ -7920,8 +7922,9 @@ quantity = "fraction of the 20,000 simulations in which the L. raniformis metapo
 published = 0.17
 call = "1 - _heard2024_reference_grid(:raniformis, :historical).overall"
 tolerance = { atol = 0.01 }
-status = "reproduced"
-notes = "Ours 0.179; the authors' archived outputs give 0.178."
+status = "discrepant"
+regression = { value = 0.179, atol = 0.006 }
+notes = "Ours 0.179 (0.180 with bounds checking on, which changes floating-point order in the simulation); the authors' archived outputs give 0.178, which would print as 18%. With 20,000 runs the Monte Carlo SE is about 0.003, so the printed 17% is 3-4 SE below both. The regression tolerance allows two SE."
 
 [[target]]
 id = "heard2024_extinction_Lran_contemporary"
