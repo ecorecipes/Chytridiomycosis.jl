@@ -22,6 +22,9 @@ notes = "On the tested grid, so known only to within the 17 and 25 degC neighbou
 
 
 # --- Table 2: viability (MTT), and the logistic r and K, by isolate and temperature ---------------
+# Tables 2 and 4 were re-checked on 2026-11-20 against the published PDF (fvets-08-687084.pdf,
+# 11 pages): every value matches the PMC full text they were first entered from. The
+# Supplementary Material (Data_Sheet_1.PDF, with the Johnson-Lewin fits) is still not available.
 # Sets "<isolate>_<T>C"; thermal_data(:sheets2021, :r; set_prefix = "LA_") gives one isolate's r(T).
 # r and K are maximum likelihood fits of a logistic curve to the normalised MTT series
 # (Supplementary R code); "Mean (±SE)" is the mean maximum viability (OD after the MTT assay).
