@@ -172,7 +172,10 @@ swab_loglikelihood
 
 The registry block `# --- observation load` of `data/validation/targets.toml` holds the
 reproduced numbers (Longo et al.'s efficiencies, copy-number range and amplicon mass; the
-slope of 2 for lognormal loads; Maguire et al.'s 80% viability) and two discrepancies: Longo
-et al.'s text gives 6.0 × 10⁶ copies in 1.5 ng where Fig. 4B's highest bar reads 6.4 × 10⁶,
-and Chestnut et al.'s "approximately four orders of magnitude" between their largest filter
-and any previous observation is 2.81 orders against the Nevada filter they name.
+slope of 2 for lognormal loads), qualitative statements matched as conditions (among them
+Maguire et al.'s 80% viability) and three discrepancies: Longo et al.'s text gives
+6.0 × 10⁶ copies in 1.5 ng where Fig. 4B's highest bar reads 6.4 × 10⁶; Chestnut et al.'s
+"approximately four orders of magnitude" between their largest filter and any previous
+observation is 2.81 orders against the Nevada filter they name; and Schrock et al.'s
+enzootic Taylor's power law slope of 2.08 is 1.98 (1.90–2.07) from the deposit, so its
+claimed contrast with the post-invasion slope (1.93) is not reproduced.

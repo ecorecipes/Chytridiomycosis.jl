@@ -1,10 +1,17 @@
 # Becker MH, Brucker RM, Schwantes CR, Harris RN, Minbiole KPC (2009) The bacterially produced
 # metabolite violacein is associated with survival of amphibians infected with a lethal fungus.
 # Appl Environ Microbiol 75:6635-6638. https://doi.org/10.1128/AEM.01294-09
-# Trial outcome counts, not model parameters. Copied from the microbiome literature review
-# (lab/papers/litreview, Manus AI). NOT checked against the paper (publisher returned 403).
-# The review notes an inconsistent pooled survival description in the paper. Follow-up ended
-# 14 days after challenge.
+# Trial outcome counts, not model parameters. First copied from the microbiome literature review
+# (lab/papers/litreview, Manus AI). Checked on 2026-11-19 against the full text in PubMed Central
+# (PMC2772424, https://pmc.ncbi.nlm.nih.gov/articles/PMC2772424/; Materials and Methods and
+# Results): all four values match. The flags stay verified = false only because
+# test/runtests.jl asserts that no becker2009aem record is verified; flip them together with
+# that assertion.
+# The pooled survival description is inconsistent with the per-group counts: Results and the
+# Fig. 3 legend give "salamanders that died (n = 10) and survived (n = 21)", but the per-group
+# survival (11/15 and 9/16) implies 11 deaths and 20 survivors. The records use the per-group
+# counts. Follow-up ended 14 days after challenge ("The experiment ended 14 days after exposure
+# to B. dendrobatidis"); deaths occurred "between days 9 and 13".
 
 source = { ref = "becker2009aem", doi = "10.1128/AEM.01294-09" }
 
@@ -16,8 +23,9 @@ units = "salamanders"
 provenance = "M"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Plethodon cinereus", stage = "adult" }
-location = "Results (per the review)"
+location = "Materials and Methods, treatment groups"
 verified = false
+notes = "Matches the paper (checked 2026-11-19, PMC2772424): 'B. dendrobatidis group (n = 16) (animals exposed to Provosoli medium containing 6 × 10^6 B. dendrobatidis zoospores)'. Unverified only because test/runtests.jl requires it."
 
 [[parameter]]
 symbol = "deaths_control"
@@ -27,9 +35,9 @@ units = "salamanders"
 provenance = "D"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Plethodon cinereus", stage = "adult" }
-location = "Results (per the review)"
+location = "Results (survival paragraph after Fig. 2)"
 verified = false
-notes = "n_control - survivors = 16 - 9; survival reported as 56% (9/16)"
+notes = "n_control - survivors = 16 - 9. Matches the paper (checked 2026-11-19, PMC2772424): 'In the bacterium-B. dendrobatidis and B. dendrobatidis treatment groups, the levels of survival were 73% (11/15) and 56% (9/16), respectively.' Unverified only because test/runtests.jl requires it."
 
 [[parameter]]
 symbol = "n_treated"
@@ -39,8 +47,9 @@ units = "salamanders"
 provenance = "M"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Plethodon cinereus", stage = "adult" }
-location = "Results (per the review)"
+location = "Materials and Methods, treatment groups"
 verified = false
+notes = "Matches the paper (checked 2026-11-19, PMC2772424): 'bacterium-B. dendrobatidis group (n = 15) (animals exposed to 6.7 × 10^7 J. lividum cells 3 days prior to exposure to 6 × 10^6 B. dendrobatidis strain JEL 310 zoospores ...)'. Unverified only because test/runtests.jl requires it."
 
 [[parameter]]
 symbol = "deaths_treated"
@@ -50,6 +59,6 @@ units = "salamanders"
 provenance = "D"
 role = "uncertain"
 system = { pathogen = "Bd", host = "Plethodon cinereus", stage = "adult" }
-location = "Results (per the review)"
+location = "Results (survival paragraph after Fig. 2)"
 verified = false
-notes = "n_treated - survivors = 15 - 11; survival reported as 73% (11/15)"
+notes = "n_treated - survivors = 15 - 11. Matches the paper (checked 2026-11-19, PMC2772424): survival '73% (11/15)' in the bacterium-B. dendrobatidis group. Unverified only because test/runtests.jl requires it."

@@ -210,7 +210,7 @@ using Test
         # the eft totals rise several-fold instead of staying flat and falling (Fig. 4 a-b).
         @test all(r -> peak(r, :efts) > 3 * r.tot[1].efts, s6)
         @test_broken all(r -> peak(r, :efts) < 1.1 * r.tot[1].efts, s6)
-        # Fig. 4 (c, d): infected efts peak at 0.38 (6 °C, day ~85) and 0.24 (14 °C, day ~70)
+        # Fig. 4 (e, f): infected efts peak at 0.38 (6 °C, day ~85) and 0.24 (14 °C, day ~65)
         @test_broken peak(s6[4], :infected_efts) ≈ 0.38 rtol = 0.15
         @test_broken peak(s14[4], :infected_efts) ≈ 0.243 rtol = 0.15
         # Without larval recruitment (λ = 0) the 14 °C eft curves match the figures

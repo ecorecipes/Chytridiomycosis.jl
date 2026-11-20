@@ -148,8 +148,8 @@ following the authors' R script (see the comments in `src/fitting/wilber2016.jl`
 regressions for survival, loss of infection and infection, and generalized least squares
 with an exponential variance function (REML) for growth and initial load.
 
-`survival_temperatures = (4, 12, 20)` fits survival to all temperatures (Appendix S2's
-comparison) instead of 20 °C only.
+`survival_temperatures = (4, 12, 20)` fits survival to all three temperatures instead of
+20 °C only; this refit reproduces Table 1's survival coefficients.
 
 The `tests` are those of the Results section: survival on load (`survival_load`), growth on
 load, temperature and non-constant variance (`growth_load`, `growth_temperature`,

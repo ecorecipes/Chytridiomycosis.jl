@@ -187,7 +187,9 @@ infections a zoospore causes in species i during its lifetime, the time an infec
 infected, and its shedding.
 
 The formula printed on p. 6 has `μ_i` alone in the denominator, which drops recovery. Pass
-`as_printed = true` to use it. It overstates R0 about twentyfold when σ ≈ 0.7 day⁻¹.
+`as_printed = true` to use it. With the tank mortality rates its per-tank medians are about
+30 times the salamander contributions and 150 times the frog contributions, and it is `Inf`
+where no host of a species was lost.
 
 The total `R0_TOT` is the sum of the contributions ([`basic_reproduction_number`](@ref)).
 """
