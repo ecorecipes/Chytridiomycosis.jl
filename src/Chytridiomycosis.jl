@@ -125,6 +125,9 @@ include("models/hollanders2023.jl")
 include("fitting/hollanders2023.jl")
 include("models/palomar2023.jl")
 include("fitting/palomar2023.jl")
+# Pradel (1996) temporal-symmetry model (robust design) and Hardy et al. 2023 boreal toads
+include("observation/pradel.jl")
+include("fitting/hardy2023.jl")
 include("resilience.jl")
 
 export solve
@@ -277,5 +280,10 @@ export hollanders2023_path, Hollanders2023Data, load_hollanders2023,
 export palomar2023_structure, palomar2023_models, palomar2023_parameters,
        palomar2023_implied_prevalence, palomar2023_model_selection,
        palomar2023_swabbing_experiment
+# Pradel temporal-symmetry model and Hardy et al. 2023
+export PradelGroup, pradel_capture_probability, pradel_loglikelihood, pradel_abundance,
+       PradelProblem, PradelFit, pradel_se, pradel_derived, pradel_coefficient, simulate_pradel
+export hardy2023_path, Hardy2023Site, load_hardy2023, hardy2023_captures, hardy2023_problem,
+       hardy2023_fit, hardy2023_model_set, hardy2023_summary
 
 end # module Chytridiomycosis
