@@ -5212,3 +5212,223 @@ quantity = "percent decrease in estimated marginal mean infection intensity, con
 published = 88.0
 status = "pending"
 notes = "Field data not deposited. Treated ponds: 23% decrease (866 to 667)."
+# ---- woodhams2011 ----
+# Woodhams et al. 2011 Front Zool 8:8, Appendix and extended Figure 6 legend. Fig. 6B runs on
+# the compendium set "fig6b". Fig. 6C and 6D need the antibody rates r and c (and μ for 6D),
+# which the paper does not print, so their targets are pending.
+
+[[target]]
+id = "woodhams2011_fig6b_untreated_death"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (B)(a)" }
+quantity = "day on which the untreated frog in a constant pool reaches Smax = 10000 sporangia"
+published = 33
+call = """
+let q = parameter_set(:woodhams2011; set = "fig6b")
+    time_to_lethal_load(ImmuneFrogParameters(:woodhams2011; set = "fig6b"); S0 = q.S0)
+end
+"""
+tolerance = { atol = 1.0 }
+status = "reproduced"
+notes = "Closed form: 32.18 days, that is during day 33 ('will hit S max = 10000 sporangia in 33 days'). The ODE with a lethal-load callback gives the same."
+
+[[target]]
+id = "woodhams2011_fig6b_pool_removed"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (B)(b)" }
+quantity = "eliminating the zoospore pool on day 20 delays, but does not prevent, death (self-reinfection)"
+published = true
+call = """
+let q = parameter_set(:woodhams2011; set = "fig6b"), p = ImmuneFrogParameters(:woodhams2011; set = "fig6b")
+    r = solve(ConstantPoolFrogProblem(p; S0 = q.S0, tspan = (0.0, 60.0),
+        treatments = [FrogTreatment(q.t_treat; γZ = 0)]))
+    isfinite(r.death_time) && r.death_time > time_to_lethal_load(p; S0 = q.S0)
+end
+"""
+status = "qualitative"
+notes = "Death on day 36.9 instead of 32.2; the figure's curve (b) crosses 10,000 near day 37."
+
+[[target]]
+id = "woodhams2011_fig6b_probiotic_clears"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (B)(c)" }
+quantity = "load left on the frog after ν is lowered to 0.15 on day 20 ('sufficient to allow the frog to eventually clear the infection')"
+published = 0.0
+call = """
+let q = parameter_set(:woodhams2011; set = "fig6b"), p = ImmuneFrogParameters(:woodhams2011; set = "fig6b")
+    only(constant_pool_equilibria(ImmuneFrogParameters(; p = q.ν_treated, γZ = p.γZ, ηf = p.ηf,
+        σ = p.σ, Smax = p.Smax)))
+end
+"""
+tolerance = { atol = 1.0 }
+status = "discrepant"
+regression = { value = 1500.0, rtol = 1e-6 }
+notes = """
+With ν = 0.15 the per-sporangium rate a = νηf − σ = −0.05 < 0, so self-reinfection no longer
+sustains growth, but the frog stays in the constant pool and the load settles at
+−b/a = 0.15·500/0.05 = 1500 sporangia, not zero. The paper's own Fig. 6B curve (c) levels off
+near 1,500-2,000, as ours does (1,879 on day 60); only the legend's wording ('clear') disagrees.
+Clearance needs the pool removed as well (panel d, next target)."""
+
+[[target]]
+id = "woodhams2011_fig6b_both_clear"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (B)(d)" }
+quantity = "with the pool removed and ν lowered to 0.15 on day 20, the load decays to zero faster than with ν lowered alone"
+published = true
+call = """
+let q = parameter_set(:woodhams2011; set = "fig6b"), p = ImmuneFrogParameters(:woodhams2011; set = "fig6b")
+    run(tr) = solve(ConstantPoolFrogProblem(p; S0 = q.S0, tspan = (0.0, 200.0), treatments = tr)).sol.u[end][1]
+    both = run([FrogTreatment(q.t_treat; γZ = 0, p = q.ν_treated)])
+    both < 1.0 && both < run([FrogTreatment(q.t_treat; p = q.ν_treated)])
+end
+"""
+status = "qualitative"
+notes = "Load 582 on day 60 (figure: about 600), decaying at rate 0.05 per day to zero."
+
+[[target]]
+id = "woodhams2011_fig6c_stable_load"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (C)" }
+quantity = "stable load after the day-30 antifungal treatment of a frog with adaptive immunity (sporangia)"
+published = 916
+status = "pending"
+notes = """
+Needs the antibody production r and decay c, which the paper does not print. The equilibrium
+depends only on r/c: constant_pool_equilibria gives 917.4 with r/c = 0.01 (A* = 9.17, in the
+range of the figure's antibody axis). The values r = 1e-4, c = 0.01 (our inference, not
+published) reproduce the figure closely: untreated death on day 32.0, and after treatment a
+peak of 6,849 sporangia on day 82.6, as drawn."""
+
+[[target]]
+id = "woodhams2011_fig6c_untreated_death"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Appendix, Figure 6 extended legend (C)" }
+quantity = "day on which an untreated frog with adaptive immunity reaches the lethal threshold"
+published = 33
+status = "pending"
+notes = "Needs r and c individually (not printed). See woodhams2011_fig6c_stable_load."
+
+[[target]]
+id = "woodhams2011_fig6d_density_reduction"
+model = "bd-woodhams2011-adaptive-immunity"
+source = { ref = "woodhams2011", location = "Figure 6 legend (D)" }
+quantity = "100 untreated frogs reach Smax and the population dies out; reduced to 10 on day 30, the frogs' antibodies suppress the infection before Smax"
+published = true
+status = "pending"
+notes = "ImmunePopulationProblem with DensityReduction implements the scenario, but the zoospore death rate μ and the antibody rates r and c are not printed."
+
+# ---- direnzo2014 ----
+# DiRenzo et al. 2014 PLOS ONE 9:e93356. Only the slopes of the mixed models are printed;
+# Table 1 (data/direnzo2014/table1.csv) holds the only individual values.
+
+[[target]]
+id = "direnzo2014_intensity_t"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract; Results para. 3" }
+quantity = "t statistic of the infection-intensity slope, r/SE with r = 0.354 (the printed '35.4%') and SE = 0.05"
+published = 7.018
+call = "direnzo_t_statistic(DiRenzoParameters(:direnzo2014))"
+tolerance = { lower = 6.44, upper = 7.87 }
+status = "reproduced"
+notes = """
+0.354/0.05 = 7.08. The interval is the range of r/SE allowed by the SE's rounding (0.045-0.055).
+This confirms that the 'daily percent increase' is 100 × the ln-scale slope: reading it as
+100(e^r − 1) gives r = 0.303 and t = 6.06, outside the interval. The actual increase per day
+is therefore 42.5% (daily_percent_increase(...; as_printed = false))."""
+
+[[target]]
+id = "direnzo2014_output_t"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract; Results para. 3" }
+quantity = "t statistic of the zoospore-output slope, r/SE with r = 0.131 and SE = 0.04"
+published = 3.164
+call = "direnzo_t_statistic(DiRenzoParameters(:direnzo2014); response = :output)"
+tolerance = { lower = 2.91, upper = 3.74 }
+status = "reproduced"
+notes = "0.131/0.04 = 3.28; the interval is the range allowed by the SE's rounding (0.035-0.045)."
+
+[[target]]
+id = "direnzo2014_intensity_at_death"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract; Results para. 2; Table 1" }
+quantity = "mean Bd infection intensity at death (zoospore genomic equivalents)"
+published = 4334422
+call = "direnzo_summary().intensity.mean"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = "Exactly the mean of the eight Table 1 values."
+
+[[target]]
+id = "direnzo2014_intensity_at_death_se"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Results para. 2" }
+quantity = "SE of the intensity at death"
+published = 1156576
+call = "direnzo_summary().intensity.se"
+tolerance = { atol = 1.0 }
+status = "reproduced"
+notes = "SD/√8 of Table 1 = 1,156,575.6. The abstract prints a different SE, 1,236,431 (next target)."
+
+[[target]]
+id = "direnzo2014_intensity_at_death_se_abstract"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract" }
+quantity = "SE of the intensity at death, as printed in the abstract"
+published = 1236431
+call = "direnzo_summary().intensity.se"
+tolerance = { atol = 1.0 }
+status = "discrepant"
+regression = { value = 1156575.6, atol = 1.0 }
+notes = "The Results print 1,156,576, which Table 1 reproduces; the abstract's value is not reproduced by any simple variant (population SD/√8 gives 1,081,877)."
+
+[[target]]
+id = "direnzo2014_survival_mean"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract; Results para. 1" }
+quantity = "mean days from inoculation to death (euthanasia)"
+published = 28.88
+call = "direnzo_summary().days.mean"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 25.625, atol = 1e-9 }
+notes = """
+Table 1's 'Total days survived post-inoculation' (21, 28, 18, 31, 25, 18, 33, 31) give mean
+25.625 (SE 2.14), not 28.88 (SE 1.58). Figure 1 shows deaths at about 22, 25, 31, 32 and 33
+days, consistent with neither. The source of the difference cannot be resolved without the raw
+data, which are not published."""
+
+[[target]]
+id = "direnzo2014_survival_min"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract ('All animals died between 22 and 33 days post-inoculation')" }
+quantity = "earliest day of death"
+published = 22
+call = "direnzo_summary().days.min"
+status = "discrepant"
+regression = { value = 18.0 }
+notes = "Two frogs in Table 1 (one naive, one previously exposed) survived 18 days, and another 21. The maximum, 33, agrees. This is the abstract-versus-table inconsistency noted in the literature review."
+
+[[target]]
+id = "direnzo2014_output_at_death"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Abstract; Results para. 2" }
+quantity = "mean zoospore output at death (zoospores per minute)"
+published = 23.55
+call = "direnzo_summary().output.mean"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 23.2875, atol = 1e-9 }
+notes = "Table 1 gives 23.29 (SE 21.07, maximum 170.6); the text prints 23.55 (SE 22.78) and a range up to 172.61. Table 1 is rounded to one decimal, but rounding cannot move the sum by 2.1 (8 × 0.26)."
+
+[[target]]
+id = "direnzo2014_logrank"
+model = "obs-direnzo2014-load-shedding"
+source = { ref = "direnzo2014", location = "Figure 1 legend" }
+quantity = "log-rank χ² comparing survival of naive and previously exposed frogs"
+published = 0.7
+call = "direnzo_logrank().chisq"
+tolerance = { digits = 1 }
+status = "discrepant"
+regression = { value = 1.2974, atol = 1e-4 }
+notes = "From the Table 1 survival times, uncensored: χ² = 1.30 (p = 0.25). The conclusion (no difference, p > 0.05) holds. Figure 1's curves carry censoring marks at sampling days and different death times, so the paper's test was not run on the Table 1 times."

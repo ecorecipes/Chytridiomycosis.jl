@@ -127,6 +127,13 @@ include("models/hollanders2023.jl")
 include("fitting/hollanders2023.jl")
 include("models/palomar2023.jl")
 include("fitting/palomar2023.jl")
+# Woodhams et al. 2011: Briggs load model with adaptive immunity, treatments and culling
+using SciMLBase: ContinuousCallback, CallbackSet
+include("models/woodhams2011.jl")
+# DiRenzo et al. 2014: log-linear mixed models of Bd intensity and zoospore output
+using Distributions: std, Chisq
+include("models/direnzo2014.jl")
+include("fitting/direnzo2014.jl")
 include("resilience.jl")
 
 export solve
@@ -282,5 +289,14 @@ export hollanders2023_path, Hollanders2023Data, load_hollanders2023,
 export palomar2023_structure, palomar2023_models, palomar2023_parameters,
        palomar2023_implied_prevalence, palomar2023_model_selection,
        palomar2023_swabbing_experiment
+
+# Woodhams et al. 2011 adaptive immunity and treatments
+export ImmuneFrogParameters, FrogTreatment, ConstantPoolFrogProblem, infection_fraction,
+       constant_pool_load, time_to_lethal_load, constant_pool_equilibria,
+       ImmunePopulationParameters, DensityReduction, ImmunePopulationProblem
+# DiRenzo et al. 2014 log-linear load and zoospore output trajectories
+export DiRenzoParameters, direnzo_trajectory, daily_percent_increase, direnzo_t_statistic,
+       DiRenzoSeries, DiRenzoLoadModel, direnzo_covariance, DiRenzoFrog, direnzo2014_path,
+       load_direnzo2014, direnzo_summary, direnzo_logrank
 
 end # module Chytridiomycosis
