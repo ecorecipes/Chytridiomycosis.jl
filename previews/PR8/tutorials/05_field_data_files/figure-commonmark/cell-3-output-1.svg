@@ -1,0 +1,82 @@
+<svg width="961pt" height="105pt"
+ viewBox="0.00 0.00 961.00 105.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 101)">
+<!-- swab -->
+<g id="node1" class="node">
+<title>swab</title>
+<path fill="#f2f2f2" stroke="#555555" d="M104.28,-56C104.28,-56 12,-56 12,-56 6,-56 0,-50 0,-44 0,-44 0,-32 0,-32 0,-26 6,-20 12,-20 12,-20 104.28,-20 104.28,-20 110.28,-20 116.28,-26 116.28,-32 116.28,-32 116.28,-44 116.28,-44 116.28,-50 110.28,-56 104.28,-56"/>
+<text xml:space="preserve" text-anchor="middle" x="58.14" y="-39.55" font-family="Helvetica,sans-Serif" font-size="11.00">swab</text>
+<text xml:space="preserve" text-anchor="middle" x="58.14" y="-27.55" font-family="Helvetica,sans-Serif" font-size="11.00">(part of the infection)</text>
+</g>
+<!-- ct -->
+<g id="node2" class="node">
+<title>ct</title>
+<path fill="#f2f2f2" stroke="#555555" d="M305.31,-56C305.31,-56 233.28,-56 233.28,-56 227.28,-56 221.28,-50 221.28,-44 221.28,-44 221.28,-32 221.28,-32 221.28,-26 227.28,-20 233.28,-20 233.28,-20 305.31,-20 305.31,-20 311.31,-20 317.31,-26 317.31,-32 317.31,-32 317.31,-44 317.31,-44 317.31,-50 311.31,-56 305.31,-56"/>
+<text xml:space="preserve" text-anchor="middle" x="269.29" y="-39.55" font-family="Helvetica,sans-Serif" font-size="11.00">Ct</text>
+<text xml:space="preserve" text-anchor="middle" x="269.29" y="-27.55" font-family="Helvetica,sans-Serif" font-size="11.00">(cycle threshold)</text>
+</g>
+<!-- swab&#45;&gt;ct -->
+<g id="edge1" class="edge">
+<title>swab&#45;&gt;ct</title>
+<path fill="none" stroke="#444444" d="M116.57,-38C146.53,-38 183.01,-38 212.69,-38"/>
+<polygon fill="#444444" stroke="#444444" points="212.36,-40.45 219.36,-38 212.36,-35.55 212.36,-40.45"/>
+<text xml:space="preserve" text-anchor="middle" x="168.78" y="-39.2" font-family="Helvetica,sans-Serif" font-size="9.00">extraction, qPCR</text>
+</g>
+<!-- ze -->
+<g id="node3" class="node">
+<title>ze</title>
+<path fill="#f4c7c3" stroke="#555555" d="M511.59,-56C511.59,-56 426.06,-56 426.06,-56 420.06,-56 414.06,-50 414.06,-44 414.06,-44 414.06,-32 414.06,-32 414.06,-26 420.06,-20 426.06,-20 426.06,-20 511.59,-20 511.59,-20 517.59,-20 523.59,-26 523.59,-32 523.59,-32 523.59,-44 523.59,-44 523.59,-50 517.59,-56 511.59,-56"/>
+<text xml:space="preserve" text-anchor="middle" x="468.82" y="-39.55" font-family="Helvetica,sans-Serif" font-size="11.00">ZE per swab</text>
+<text xml:space="preserve" text-anchor="middle" x="468.82" y="-27.55" font-family="Helvetica,sans-Serif" font-size="11.00">(strain s standards)</text>
+</g>
+<!-- ct&#45;&gt;ze -->
+<g id="edge2" class="edge">
+<title>ct&#45;&gt;ze</title>
+<path fill="none" stroke="#444444" d="M317.61,-38C343.89,-38 376.92,-38 405.3,-38"/>
+<polygon fill="#444444" stroke="#444444" points="405.05,-40.45 412.05,-38 405.05,-35.55 405.05,-40.45"/>
+<text xml:space="preserve" text-anchor="middle" x="365.68" y="-39.2" font-family="Helvetica,sans-Serif" font-size="9.00">standard curve</text>
+</g>
+<!-- its -->
+<g id="node4" class="node">
+<title>its</title>
+<path fill="#f4c7c3" stroke="#555555" d="M750.12,-97C750.12,-97 699.84,-97 699.84,-97 693.84,-97 687.84,-91 687.84,-85 687.84,-85 687.84,-73 687.84,-73 687.84,-67 693.84,-61 699.84,-61 699.84,-61 750.12,-61 750.12,-61 756.12,-61 762.12,-67 762.12,-73 762.12,-73 762.12,-85 762.12,-85 762.12,-91 756.12,-97 750.12,-97"/>
+<text xml:space="preserve" text-anchor="middle" x="724.98" y="-80.55" font-family="Helvetica,sans-Serif" font-size="11.00">ITS1 copies</text>
+<text xml:space="preserve" text-anchor="middle" x="724.98" y="-68.55" font-family="Helvetica,sans-Serif" font-size="11.00">per swab</text>
+</g>
+<!-- ze&#45;&gt;its -->
+<g id="edge3" class="edge">
+<title>ze&#45;&gt;its</title>
+<path fill="none" stroke="#444444" d="M524.04,-46.75C570.23,-54.2 635.83,-64.78 679.12,-71.76"/>
+<polygon fill="#444444" stroke="#444444" points="678.68,-74.17 685.98,-72.87 679.46,-69.34 678.68,-74.17"/>
+<text xml:space="preserve" text-anchor="middle" x="591.84" y="-66.94" font-family="Helvetica,sans-Serif" font-size="9.00">× n_s</text>
+</g>
+<!-- host -->
+<g id="node6" class="node">
+<title>host</title>
+<path fill="#e2efda" stroke="#555555" d="M777.87,-36C777.87,-36 672.09,-36 672.09,-36 666.09,-36 660.09,-30 660.09,-24 660.09,-24 660.09,-12 660.09,-12 660.09,-6 666.09,0 672.09,0 672.09,0 777.87,0 777.87,0 783.87,0 789.87,-6 789.87,-12 789.87,-12 789.87,-24 789.87,-24 789.87,-30 783.87,-36 777.87,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="724.98" y="-19.55" font-family="Helvetica,sans-Serif" font-size="11.00">zoospores or sporangia</text>
+<text xml:space="preserve" text-anchor="middle" x="724.98" y="-7.55" font-family="Helvetica,sans-Serif" font-size="11.00">on the host</text>
+</g>
+<!-- ze&#45;&gt;host -->
+<g id="edge5" class="edge">
+<title>ze&#45;&gt;host</title>
+<path fill="none" stroke="#444444" stroke-dasharray="5,2" d="M523.83,-29.33C529.81,-28.54 535.82,-27.83 541.59,-27.25 577.65,-23.64 617.88,-21.41 651.35,-20.05"/>
+<polygon fill="#444444" stroke="#444444" points="651.3,-22.5 658.2,-19.78 651.11,-17.61 651.3,-22.5"/>
+<text xml:space="preserve" text-anchor="middle" x="591.84" y="-28.45" font-family="Helvetica,sans-Serif" font-size="9.00">no published conversion</text>
+</g>
+<!-- ze2 -->
+<g id="node5" class="node">
+<title>ze2</title>
+<path fill="#f4c7c3" stroke="#555555" d="M941.4,-97C941.4,-97 858.12,-97 858.12,-97 852.12,-97 846.12,-91 846.12,-85 846.12,-85 846.12,-73 846.12,-73 846.12,-67 852.12,-61 858.12,-61 858.12,-61 941.4,-61 941.4,-61 947.4,-61 953.4,-67 953.4,-73 953.4,-73 953.4,-85 953.4,-85 953.4,-91 947.4,-97 941.4,-97"/>
+<text xml:space="preserve" text-anchor="middle" x="899.76" y="-80.55" font-family="Helvetica,sans-Serif" font-size="11.00">ZE per swab</text>
+<text xml:space="preserve" text-anchor="middle" x="899.76" y="-68.55" font-family="Helvetica,sans-Serif" font-size="11.00">(strain t standards)</text>
+</g>
+<!-- its&#45;&gt;ze2 -->
+<g id="edge4" class="edge">
+<title>its&#45;&gt;ze2</title>
+<path fill="none" stroke="#444444" d="M762.2,-79C783.98,-79 812.28,-79 837.46,-79"/>
+<polygon fill="#444444" stroke="#444444" points="837.35,-81.45 844.35,-79 837.35,-76.55 837.35,-81.45"/>
+<text xml:space="preserve" text-anchor="middle" x="818" y="-80.2" font-family="Helvetica,sans-Serif" font-size="9.00">÷ n_t</text>
+</g>
+</g>
+</svg>
