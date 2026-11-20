@@ -1,6 +1,7 @@
 # Turner et al. 2025 Conserv Sci Pract 7:e70022 (doi:10.1111/csp2.70022): age-classified PVA
-# of Litoria raniformis under environmental-watering scenarios. The full text could not be
-# retrieved; the oracles are
+# of Litoria raniformis under environmental-watering scenarios. The oracles are
+# - the published paper (read 2026-11-20): Methods 2.2 values (checked in the compendium) and
+#   the extinction and quasi-extinction probabilities (validation targets, mostly discrepant);
 # - the authors' code and archive (Zenodo doi:10.5281/zenodo.10921748, CC BY 4.0): the first
 #   rows of the archived survival arrays; the archived extinction probabilities and minimum
 #   population sizes (in data/validation/targets.toml);
@@ -18,7 +19,13 @@ using Random
 
     @testset "Turner density dependence and watering" begin
         p = TurnerParameters(:turner2025)
-        @test !any(r -> r.verified, parameter_records(:turner2025))
+        recs = parameter_records(:turner2025)
+        vr = Dict((r.set, r.symbol) => r.verified for r in recs)
+        @test vr[("", :years)] && vr[("", :fecundity_sd)] && vr[("", :p_wet)]
+        @test !vr[("", :spawn_capacity)] && !vr[("", :egg_a)]
+        @test p.winter_daily_survival^p.winter_duration ≈ 0.692 atol = 5e-4  # paper, 2.2.1
+        @test TurnerParameters(:turner2025; as_printed = true).fecundity_mean == 3244
+        @test p.fecundity_mean == 3245
         @test p.years == 52
         # fitted curves pass near the authors' anchor points (compendium notes)
         @test turner_egg_multiplier(p, 0.01) ≈ 1.0 atol = 0.05
@@ -67,6 +74,8 @@ using Random
         e = TurnerPVASolution([5.0 3; 0 2; 0 1], zeros(6, 2))
         @test turner_extinction_probability(e) == 0.5
         @test turner_minimum_population(e) == [0.0, 1.0]
+        @test turner_quasi_extinction_probability(e, 1) == 0.5
+        @test turner_quasi_extinction_probability(e, 20) == 1
         # watering later in the season lowers extinction risk (abstract)
         ext(m) = turner_extinction_probability(solve(TurnerPVAProblem(:turner2025;
             month = m, replicates = 3000); rng = Xoshiro(4)))

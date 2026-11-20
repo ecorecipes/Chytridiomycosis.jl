@@ -10,16 +10,17 @@ A reimplementation of the stochastic population viability model of Turner et al.
 *Litoria raniformis* in a regulated floodplain wetland that receives environmental water in
 August (~10 °C), September (~15 °C) or October (~20 °C).
 
-!!! warning "Checked against the authors' code, not the paper"
-    The full text could not be retrieved; the model follows the authors' R code (Zenodo
-    [doi:10.5281/zenodo.10921748](https://doi.org/10.5281/zenodo.10921748), CC BY 4.0).
-    Only the abstract was read.
+!!! note "Sources"
+    The model follows the authors' R code (Zenodo
+    [doi:10.5281/zenodo.10921748](https://doi.org/10.5281/zenodo.10921748), CC BY 4.0) and
+    was checked against the published paper, which describes it in outline.
 
 !!! note "Bd's role"
     The authors converted watering month into adult and metamorph survival through Bd
     load–survival relationships and stored the result as precomputed arrays. The code that
-    produced them is not in the archive, so here **Bd enters only through those survival
-    series**, which are bundled (`data/turner2025`).
+    produced them is not in the archive, and the paper describes the step without printing
+    its regression coefficients or temperature series, so here **Bd enters only through
+    those survival series**, which are bundled (`data/turner2025`).
 
 ## Model
 
@@ -30,9 +31,11 @@ no breeding. A replicate is extinct when no female aged 1 or more is left.
 
 The reimplementation reproduces the authors' archived outputs (e.g. extinction 0.16, 0.06
 and 0.04 for August, September and October with independent dry years, and the median
-minimum population sizes of all nine scenarios). The abstract's 0.13 and 0.05 for August and
-September are not reproduced; they match a table hard-coded in the authors' script, which
-appears to come from an earlier version of the code or arrays.
+minimum population sizes of all nine scenarios). The paper's values (0.13 and 0.05 for
+August and September; 0.025 and 0.0004 with at most two dry years; the quasi-extinction
+probabilities of its Fig. 3) are not reproduced, and the archived outputs do not reproduce
+them either: the paper's figures match a table hard-coded in the authors' script and
+appear to come from an earlier version of the code or arrays. October (0.04) agrees.
 
 !!! note "As coded"
     The authors' `pop.func` reads the survival arrays with the replicate count (10,000) as
@@ -56,4 +59,5 @@ TurnerPVAProblem
 TurnerPVASolution
 turner_extinction_probability
 turner_minimum_population
+turner_quasi_extinction_probability
 ```

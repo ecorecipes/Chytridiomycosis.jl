@@ -2,10 +2,22 @@
 # doi:10.1111/csp2.70022. Code and data: Zenodo doi:10.5281/zenodo.10921748 (CC BY 4.0).
 #
 # PUBLISHED MODEL, reimplemented from the AUTHORS' CODE (customFunctions/PVA_functionsV2.R,
-# pop.func, and Run_scenariosV2.R). The full text could not be retrieved (publisher and
-# repository bot checks); only the abstract was read. The abstract's extinction
-# probabilities (0.13, 0.05, 0.04 for August, September and October watering) are the
-# validation targets.
+# pop.func, and Run_scenariosV2.R) and checked against the paper (Methods 2.2, read
+# 2026-11-20), which describes the model in outline. The paper's Results (Fig. 2, and the
+# abstract) give extinction probabilities 0.13, 0.05, 0.04 (August, September, October; dry
+# years independent), 0.025, 0.0004, <0.0001 (at most two dry years) and <0.001 (at most
+# one); the archived code and outputs give higher values for August and September and for
+# the capped scenarios, so the paper's figures apparently came from an earlier version.
+#
+# The Bd step (paper section 2.2.1) is NOT implemented: the paper describes it (monthly
+# infection probability from a logistic regression on mean midnight water temperature,
+# salinity 223 µS/cm and pH 7.9; zoospore load from a linear regression on air
+# temperature; daily survival from the Heard et al. 2014 logistic load-survival relation
+# with its intercept replaced by a base daily survival ~ (0.996, SD 0.001); 500
+# simulated frogs per year; winter survival 0.692) but does not print the regression
+# coefficients (they are in Turner, Wassens & Heard 2021 Biol Conserv 264:109391 and Heard
+# et al. 2014 Ecol Appl 24:650) or the monthly temperature series, and the archive does not
+# contain that code.
 #
 # Bd's role: the authors turned watering month (inflow temperature ~10, 15, 20 °C) into
 # annual adult survival and summer survival of metamorphs through Bd load-survival
@@ -59,12 +71,12 @@ const TURNER_MONTHS = (:august, :september, :october)
 const TURNER_PATTERNS = (:random, :max2dry, :max1dry)
 
 """
-    TurnerParameters(:turner2025)
+    TurnerParameters(:turner2025; as_printed = false)
     TurnerParameters(; kwargs...)
 
 Life history and density dependence of the *Litoria raniformis* population viability model
-of Turner et al. (2025), read from the compendium (the authors' code; the paper itself was
-not available): `years`, `sex_ratio`, fecundity (`fecundity_mean`, `fecundity_sd`, eggs per
+of Turner et al. (2025), read from the compendium (the authors' code; the values the paper
+prints were checked against it): `years`, `sex_ratio`, fecundity (`fecundity_mean`, `fecundity_sd`, eggs per
 female aged 1–5), `hatch_mean`/`hatch_sd`, the beta distribution of survival from hatching
 to metamorphosis (`tadpole_alpha`, `tadpole_beta`), winter survival of first-years
 (`winter_daily_survival`^`winter_duration`), the egg ceiling (`spawn_capacity` ×
@@ -72,6 +84,7 @@ to metamorphosis (`tadpole_alpha`, `tadpole_beta`), winter survival of first-yea
 `juvenile_capacity`, `adult_capacity` with their caps, the three fitted multiplier curves
 (`egg_a/b/c`, `tadpole_a/b/c`, `juvenile_a/b/c`) and `p_wet`, the probability that a year is
 watered. Bd-dependent survival is not a parameter: see [`TurnerPVAProblem`](@ref).
+`as_printed = true` uses the paper's mean clutch size (3244) instead of the coded 3245.
 """
 Base.@kwdef struct TurnerParameters
     years::Int
@@ -105,8 +118,8 @@ Base.@kwdef struct TurnerParameters
     p_wet::Float64
 end
 
-function TurnerParameters(key::Symbol)
-    v = parameter_set(key)
+function TurnerParameters(key::Symbol; as_printed::Bool = false)
+    v = parameter_set(key; set = as_printed ? "as_printed" : "")
     kw = Dict{Symbol,Any}()
     for f in fieldnames(TurnerParameters)
         kw[f] = f === :years ? round(Int, v.years) : getfield(v, f)
@@ -376,6 +389,22 @@ Minimum number of females aged ≥ 1 over the projection, per replicate (the qua
 paper's cumulative distribution plots).
 """
 turner_minimum_population(sol::TurnerPVASolution) = vec(minimum(sol.population; dims = 1))
+
+"""
+    turner_quasi_extinction_probability(sol::TurnerPVASolution, threshold) -> Float64
+
+Fraction of replicates whose minimum number of females aged ≥ 1 falls below `threshold`
+(the paper's Fig. 3 uses 20, `parameter_set(:turner2025).quasi_extinction_threshold`).
+"""
+turner_quasi_extinction_probability(sol::TurnerPVASolution, threshold::Real) =
+    mean(<(threshold), turner_minimum_population(sol))
+
+const _TURNER2025_RUNS = Dict{Tuple{Symbol,Symbol},TurnerPVASolution}()
+
+# One seeded run of 10,000 replicates per scenario and session, for the validation targets.
+_turner2025_reference(month::Symbol, pattern::Symbol = :random) =
+    get!(() -> solve(TurnerPVAProblem(:turner2025; month, pattern);
+                     rng = Random.Xoshiro(2025)), _TURNER2025_RUNS, (month, pattern))
 
 function CommonSolve.solve(prob::TurnerPVAProblem; rng::AbstractRNG = Random.default_rng())
     p = prob.p

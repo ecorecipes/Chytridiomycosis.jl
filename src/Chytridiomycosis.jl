@@ -373,6 +373,7 @@ export TurnerParameters, turner_egg_multiplier, turner_juvenile_multiplier,
        load_turner2025, load_turner2025_survival_array, turner2025_archive_path,
        TurnerPVAProblem, TurnerPVASolution, turner_extinction_probability,
        turner_minimum_population
+export turner_quasi_extinction_probability
 # Open-population capture–recapture layer (conditional Arnason–Schwarz, POPAN)
 export ArnasonSchwarzProblem, ArnasonSchwarzFit, arnason_schwarz_parameters, PopanProblem,
        PopanFit, popan_parameters, akaike_weights

@@ -1,6 +1,8 @@
 # Heard et al. 2024 J Anim Ecol 93:1670 (doi:10.1111/1365-2656.14177): catch-curve survival
-# and spatial metapopulation of Australian Litoria. The full text could not be retrieved; the
-# oracles are
+# and spatial metapopulation of Australian Litoria. The oracles are
+# - the published paper (read 2026-11-20): sample sizes and priors (Methods 2.1), the
+#   posterior means of survival (Results 3.1), extinction rates and Table 1 (Results 3.2;
+#   checked as validation targets);
 # - the authors' code and archive (Zenodo doi:10.5281/zenodo.10457229, CC BY 4.0): sample
 #   sizes in Age_structure_analysis.R; survival values entered in Run_STEPS_simulations.R;
 #   the archived simulation outputs (persistence fractions, in data/validation/targets.toml);
@@ -31,7 +33,18 @@ using LogDensityProblems
         @test sum(L.habitat[1]) == 1 && sum(L.habitat[20]) == 25
         @test L.connectivity[1] == 0 && L.connectivity[end] == 85
         recs = parameter_records(:heard2024)
-        @test !any(r -> r.verified, recs)          # paper not available: code values only
+        # paper-checked records are verified; K, dispersal and the 1500 m cut-off are only in
+        # the (unread) Supplementary Material and stay unverified
+        vr = Dict((r.set, r.symbol) => r.verified for r in recs)
+        @test vr[("", :met_survival)] && vr[("", :distance_decay)] && vr[("", :prior_precision)]
+        @test !vr[("", :max_distance)] && !vr[("Lran_contemporary", :carrying_capacity)]
+        @test vr[("Laur_historical", :adult_survival_printed)]
+        # as printed (Results 3.1) versus as coded (simulation script)
+        @test HeardParameters(:heard2024; species = :aurea, epoch = :historical,
+            survival = :as_printed).adult_survival == 0.688
+        @test HeardParameters(:heard2024; species = :aurea, epoch = :historical).adult_survival ==
+              0.673
+        @test_throws ArgumentError HeardParameters(:heard2024; survival = :guessed)
         g = heard_scenario_grid()
         @test g.mets == 3:3:30 && length(g.mets_cv) == 10 && g.mortality_cv[end] ≈ 1.0
         for (sp, ep, S) in ((:raniformis, :contemporary, "Lran_contemporary"),

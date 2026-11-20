@@ -9,11 +9,13 @@ Ecol* 93:1670–1683
 ([doi:10.1111/1365-2656.14177](https://doi.org/10.1111/1365-2656.14177)), for the green
 and golden bell frog (*Litoria aurea*) and the growling grass frog (*L. raniformis*).
 
-!!! warning "Checked against the authors' code, not the paper"
-    The full text could not be retrieved. Everything here follows the authors' R code and
-    data (Zenodo [doi:10.5281/zenodo.10457229](https://doi.org/10.5281/zenodo.10457229),
-    CC BY 4.0) and the source of the R package `steps` 1.3.0 that they used. The compendium
-    records are therefore unverified. Only the abstract was read.
+!!! note "Sources"
+    The model follows the authors' R code and data (Zenodo
+    [doi:10.5281/zenodo.10457229](https://doi.org/10.5281/zenodo.10457229), CC BY 4.0) and
+    the source of the R package `steps` 1.3.0 that they used, and was checked against the
+    published paper. Carrying capacities, dispersal proportions and the dispersal cut-off
+    are given only in the paper's Supplementary Material (not read); those compendium
+    records are unverified.
 
 !!! note "Bd's role"
     Bd acts **only through an imposed change in adult (and sub-adult) survival**, from the
@@ -29,9 +31,11 @@ geometric with annual survival `S` (a catch curve, Scroggie 2012):
 P(a) = (1 − S) S^a,   logit S = α + β₁ [L. raniformis] + β₂ [post-Bd] + u_site
 ```
 
-with Normal site effects and the priors of the authors' NIMBLE code. The posterior gives
-0.32 (post-Bd) against 0.65 (pre-Bd) for *L. raniformis* and 0.36 against 0.69 for *L.
-aurea*; the authors simulated with 0.319, 0.641, 0.352 and 0.673. Survival roughly halves.
+with Normal site effects and the priors of the paper. The posterior means are 0.32 (post-Bd)
+against 0.65 (pre-Bd) for *L. raniformis* and 0.36 against 0.69 for *L. aurea*; the paper
+prints 0.318, 0.655, 0.352 and 0.688. The authors' simulation script enters 0.319, 0.641,
+0.352 and 0.673; `HeardParameters(...; survival = :as_printed)` uses the printed values.
+Survival roughly halves.
 
 ```@docs
 HeardAgeRecord
@@ -51,8 +55,9 @@ A female-only two-stage (sub-adult, adult) matrix model in every habitat cell of
 landscape of 65 m cells, with global environmental stochasticity, demographic
 stochasticity, exponential-kernel dispersal and a ceiling carrying capacity, run for 50
 years over a grid of recruitment (`mets`), fecundity CV and mortality CV scenarios and 20
-landscapes. The reimplementation reproduces the authors' archived persistence fractions
-(0.18 and 0.82 for *L. raniformis*, 0.27 and 0.87 for *L. aurea*, post- and pre-Bd).
+landscapes. The reimplementation reproduces the paper's extinction rates (82 % and 17 % of
+simulations for *L. raniformis*, 73 % and 13 % for *L. aurea*, post- and pre-Bd) and the
+logistic regression of Table 1 (fitted to our own simulations).
 
 !!! note "Quirks of `steps` kept by default"
     With `as_coded = true` the simulation keeps two behaviours of `steps` 1.3.0: a cell in

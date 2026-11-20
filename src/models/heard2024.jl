@@ -1,8 +1,10 @@
 # Heard, Scroggie, Hollanders & Scheele (2024) J Anim Ecol 93:1670-1683,
 # doi:10.1111/1365-2656.14177. Data and code: Zenodo doi:10.5281/zenodo.10457229 (CC BY 4.0).
 #
-# PUBLISHED MODEL, reimplemented from the AUTHORS' CODE. The full text of the paper could not
-# be retrieved (publisher bot check); only the abstract was read. Everything below follows
+# PUBLISHED MODEL. Checked against the published paper (Methods 2.2; read 2026-11-20) and
+# implemented from the authors' code: the paper describes the model in outline and defers
+# details (carrying capacity, dispersal proportion and range, initial abundance) to its
+# Supplementary Material, which was not available. Everything below follows
 # STEPS_model.R and Run_STEPS_simulations.R in the archive and the R package `steps` 1.3.0
 # (CRAN archive; the version current when the paper was written), whose source was read for
 # the semantics of growth(), kernel_dispersal() and ceiling_density().
@@ -70,7 +72,7 @@ end
                     time_steps = 50, cell_size = 65.0, distance_decay = 200.0,
                     max_distance = 1500.0)
     HeardParameters(:heard2024; species = :raniformis, epoch = :contemporary, mets = 24,
-                    mets_cv = 0.5, mortality_cv = 0.5)
+                    mets_cv = 0.5, mortality_cv = 0.5, survival = :as_coded)
 
 Parameters of the female-only, two-stage spatial metapopulation model of Heard et al. (2024)
 for *Litoria aurea* (`species = :aurea`) and *L. raniformis* (`:raniformis`):
@@ -92,11 +94,14 @@ for *Litoria aurea* (`species = :aurea`) and *L. raniformis* (`:raniformis`):
 The keyed constructor reads the species × epoch set (`epoch = :historical` for pre-Bd,
 `:contemporary` for post-Bd survival) from the compendium; `mets`, `mets_cv` and
 `mortality_cv` are scenario values the paper varies over a grid (see
-[`heard_scenario_grid`](@ref)).
+[`heard_scenario_grid`](@ref)). `survival = :as_coded` (default) uses the survival the
+authors' simulation script enters (0.319, 0.641, 0.352, 0.673 for *L. raniformis* post- and
+pre-Bd and *L. aurea* post- and pre-Bd); `:as_printed` uses the posterior means printed in
+the paper's Results (0.318, 0.655, 0.352, 0.688).
 
 **Bd acts only through `adult_survival`** (an imposed change between epochs); the model has
-no infection process. The values come from the authors' code (the paper itself was not
-available), so their compendium records are unverified.
+no infection process. The carrying capacities and dispersal proportions are given only in
+the paper's Supplementary Material and come from the authors' code (unverified records).
 """
 Base.@kwdef struct HeardParameters
     adult_survival::Float64
@@ -118,11 +123,13 @@ end
 
 function HeardParameters(key::Symbol; species::Symbol = :raniformis,
         epoch::Symbol = :contemporary, mets::Real = 24, mets_cv::Real = 0.5,
-        mortality_cv::Real = 0.5)
+        mortality_cv::Real = 0.5, survival::Symbol = :as_coded)
     _heard_check(species, epoch)
+    survival in (:as_coded, :as_printed) ||
+        throw(ArgumentError("survival must be :as_coded or :as_printed; got :$survival"))
     v = parameter_set(key; set = _heard_set(species, epoch))
-    return HeardParameters(; adult_survival = v.adult_survival,
-        subadult_survival = v.adult_survival, carrying_capacity = v.carrying_capacity,
+    S = survival === :as_coded ? v.adult_survival : v.adult_survival_printed
+    return HeardParameters(; adult_survival = S, subadult_survival = S, carrying_capacity = v.carrying_capacity,
         prop_dispersing = v.prop_dispersing, mets = Float64(mets),
         mets_cv = Float64(mets_cv), mortality_cv = Float64(mortality_cv),
         met_survival = v.met_survival, sex_ratio = v.sex_ratio,
@@ -458,14 +465,65 @@ end
 const _HEARD2024_GRID = Dict{Tuple{Symbol,Symbol},Any}()
 
 # The paper's full scenario grid (20,000 simulations) for one species and epoch, once per
-# session with a fixed seed: overall persistence fraction and the fraction per `mets` value.
+# session with a fixed seed. Loops in the order of heard_persistence_grid (mets, mets_cv,
+# mortality_cv, landscape) with one generator. Returns every run (`runs`: mets, mets_cv,
+# mortality_cv, landscape, persist), the overall persistence fraction and the fraction per
+# `mets` value.
 function _heard2024_reference_grid(species::Symbol, epoch::Symbol)
     get!(_HEARD2024_GRID, (species, epoch)) do
         g = heard_scenario_grid()
+        L = heard2024_landscapes().habitat
         rng = Random.Xoshiro(2024)
-        by = [heard_persistence_grid(; species, epoch, mets = [m], rng) for m in g.mets]
-        (overall = sum(by) / length(by), mets = g.mets, by_mets = by)
+        runs = NamedTuple{(:mets, :mets_cv, :mortality_cv, :landscape, :persist),
+                          Tuple{Float64,Float64,Float64,Int,Bool}}[]
+        for m in g.mets, f in g.mets_cv, v in g.mortality_cv
+            p = HeardParameters(:heard2024; species, epoch, mets = m, mets_cv = f,
+                mortality_cv = v)
+            for l in eachindex(L)
+                ok = !solve(HeardMetapopulationProblem(p, L[l]); rng).extinct
+                push!(runs, (mets = m, mets_cv = f, mortality_cv = v, landscape = l,
+                             persist = ok))
+            end
+        end
+        by = [count(r -> r.mets == m && r.persist, runs) / count(r -> r.mets == m, runs)
+              for m in g.mets]
+        (runs = runs, overall = count(r -> r.persist, runs) / length(runs), mets = g.mets,
+         by_mets = by)
     end
+end
+
+# Logistic regression of Heard et al. (2024) Table 1 (Metapop_sims_analysis_GLM.R): post-Bd
+# persistence of the scenarios that persisted pre-Bd, on fertility, CV of fertility, CV of
+# mortality and landscape connectivity, each scaled to mean 0 and SD 1 (R's scale()), with
+# all two-way interactions. Returns the 11 coefficients in the order of Table 1. Pre- and
+# post-Bd runs are paired by scenario and landscape (the authors match on connectivity,
+# which pairs landscapes 18 and 19, both 77, with landscape 18; a negligible difference).
+function _heard2024_glm(species::Symbol)
+    pre = _heard2024_reference_grid(species, :historical).runs
+    post = _heard2024_reference_grid(species, :contemporary).runs
+    conn = heard2024_landscapes().connectivity
+    keep = [i for i in eachindex(pre) if pre[i].persist]
+    z(v) = (v .- mean(v)) ./ sqrt(var(v))
+    F = z([post[i].mets for i in keep])
+    Cf = z([post[i].mets_cv for i in keep])
+    Cm = z([post[i].mortality_cv for i in keep])
+    Co = z(Float64[conn[post[i].landscape] for i in keep])
+    y = Float64[post[i].persist for i in keep]
+    X = hcat(ones(length(y)), F, Cf, Cm, Co, F .* Cf, F .* Cm, F .* Co, Cf .* Cm, Cf .* Co,
+             Cm .* Co)
+    β = zeros(size(X, 2))
+    for _ in 1:50                                   # IRLS (Newton) for the logit link
+        η = X * β
+        μ = 1 ./ (1 .+ exp.(-η))
+        w = max.(μ .* (1 .- μ), 1e-12)
+        step = (X' * (w .* X)) \ (X' * (y .- μ))
+        β .+= step
+        maximum(abs, step) < 1e-10 && break
+    end
+    names = (:intercept, :fertility, :cv_fertility, :cv_mortality, :connectivity,
+             :fertility_cv_fertility, :fertility_cv_mortality, :fertility_connectivity,
+             :cv_fertility_cv_mortality, :cv_fertility_connectivity, :cv_mortality_connectivity)
+    return NamedTuple{names}(Tuple(β))
 end
 
 # Smallest fecundity (metamorphs per female) at which at least half the scenarios persist.
