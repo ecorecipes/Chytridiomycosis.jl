@@ -5800,9 +5800,24 @@ status = "qualitative"
 notes = "R0,C/R0,1 - 1 = (r - η₂)/(1 - η₂) · μ/(a₁ + a₂ + μ) with complete overlap, which shrinks as a₁ (η₁) grows."
 
 [[target]]
+id = "espira2022_fig4_overlap"
+model = "bd-espira2022-overlapping-habitats"
+source = { ref = "espira2022", location = "Fig. 4; Results ('Effects also attenuate as the relative size of the habitat overlap decreases')" }
+quantity = "|R0,C/R0,1 - 1| grows with θ₂ (0.1, 0.5, 1; ε = (2, 1)), for a dilution case (η = (0.2, 0.8), r = 0.3) and an amplification case (η = (0.2, 0.3), r = 0.9)"
+published = true
+call = "all(c -> (v = [abs(_espira_ratio(c...; θ₂ = t, ε = (2.0, 1.0)) - 1) for t in (0.1, 0.5, 1.0)]; issorted(v)), ((0.2, 0.8, 0.3), (0.2, 0.3, 0.9)))"
+status = "qualitative"
+# ---- hardy2023 ----
+# Hardy et al. 2023 J Appl Ecol 60:121-131 (doi:10.1111/1365-2664.14310), checked against the
+# version of record and its Supporting Information (identical numbers in the reprint in B. M.
+# Hardy's 2023 dissertation, from which they were first read). Refits use
+# the bundled Dryad data (CC0, data/hardy2023). _hardy2023_reference_fit(; φ, f, p) fits one
+# robust-design Pradel model once per session (default: the top model of Table 3).
+
+[[target]]
 id = "hardy2023_toads"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, para. 1" }
+source = { ref = "hardy2023", location = "Results 3" }
 quantity = "individual adult male boreal toads captured at the five sites, 1998-2020"
 published = 1594
 call = "sum(c.toads for c in hardy2023_captures())"
@@ -5812,17 +5827,17 @@ notes = "Rows of the five Dryad capture-history files."
 [[target]]
 id = "hardy2023_captures_cottonwood_pre"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Table 1.1" }
+source = { ref = "hardy2023", location = "Table 1" }
 quantity = "captures at South Cottonwood before Bd arrival (1998-2013)"
 published = 2073
 call = "hardy2023_captures()[4].before"
 status = "reproduced"
-notes = "All ten counts of Table 1.1 are reproduced (test/hardy2023.jl)."
+notes = "All ten counts of Table 1 are reproduced (test/hardy2023.jl)."
 
 [[target]]
 id = "hardy2023_captures_cottonwood_post"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Table 1.1" }
+source = { ref = "hardy2023", location = "Table 1" }
 quantity = "captures at South Cottonwood after Bd arrival (2014-2020)"
 published = 253
 call = "hardy2023_captures()[4].after"
@@ -5831,7 +5846,7 @@ status = "reproduced"
 [[target]]
 id = "hardy2023_null_deviance"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Appendices S3-S5 (model p(.) φ(.) f(.))" }
+source = { ref = "hardy2023", location = "Appendices S1.3-S1.5 (model p(.) φ(.) f(.))" }
 quantity = "−2 log L of the constant robust-design Pradel model (Program MARK)"
 published = 29334.27
 call = "_hardy2023_reference_fit(; φ = :constant, f = :constant, p = :constant).deviance"
@@ -5842,7 +5857,7 @@ notes = "29334.2711; checks the Pradel likelihood against MARK's."
 [[target]]
 id = "hardy2023_null_aicc"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Appendix S5 (f(.))" }
+source = { ref = "hardy2023", location = "Appendix S1.5 (f(.))" }
 quantity = "AICc of the constant model (K = 3)"
 published = 29340.2758
 call = "_hardy2023_reference_fit(; φ = :constant, f = :constant, p = :constant).aicc"
@@ -5853,7 +5868,7 @@ notes = "With n = total captures (4986) as the AICc sample size."
 [[target]]
 id = "hardy2023_p_top_deviance"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Appendix S3" }
+source = { ref = "hardy2023", location = "Appendix S1.3" }
 quantity = "−2 log L of p(sBd × tBd) φ(.) f(.), the top capture-probability structure (K = 77)"
 published = 27669.30
 call = "_hardy2023_reference_fit(; φ = :constant, f = :constant, p = :s_bd_t_bd).deviance"
@@ -5863,7 +5878,7 @@ status = "reproduced"
 [[target]]
 id = "hardy2023_phi_top_deviance"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Appendix S4" }
+source = { ref = "hardy2023", location = "Appendix S1.4" }
 quantity = "−2 log L of φ(ELEV + tBd) with p(.) f(.), the top survival structure (K = 22)"
 published = 28046.40
 call = "_hardy2023_reference_fit(; φ = :elev_t_bd, f = :constant, p = :constant).deviance"
@@ -5874,7 +5889,7 @@ notes = "Confirms the choice that an interval takes the Bd status of its first y
 [[target]]
 id = "hardy2023_phi_tbd_deviance"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Appendix S4" }
+source = { ref = "hardy2023", location = "Appendix S1.4" }
 quantity = "−2 log L of φ(tBd) with p(.) f(.) (K = 21)"
 published = 28085.86
 call = "_hardy2023_reference_fit(; φ = :t_bd, f = :constant, p = :constant).deviance"
@@ -5883,13 +5898,13 @@ status = "discrepant"
 regression = { value = 28076.58, atol = 0.05 }
 notes = """
 Our maximum is 9.28 units lower (a better fit) with the same K. φ(ELEV + tBd), which nests
-φ(tBd), is reproduced exactly, as are the other 25 models of Appendices S3-S5, so MARK's fit of
+φ(tBd), is reproduced exactly, as are the other 25 models of Appendices S1.3-S1.5, so MARK's fit of
 this model probably stopped short of the maximum. Its rank (second of seven) is unchanged."""
 
 [[target]]
 id = "hardy2023_f_winstart_deviance"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Appendix S5" }
+source = { ref = "hardy2023", location = "Appendix S1.5" }
 quantity = "−2 log L of f(WINSTART) with p(.) φ(.) (K = 4)"
 published = 29278.102
 call = "_hardy2023_reference_fit(; φ = :constant, f = :winstart, p = :constant).deviance"
@@ -5900,7 +5915,7 @@ notes = "Checks the climate covariates: winter onset three years before the recr
 [[target]]
 id = "hardy2023_f_elev_tbd_weight"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Appendix S5" }
+source = { ref = "hardy2023", location = "Appendix S1.5" }
 quantity = "Akaike weight of f(ELEV + tBd), second of the 15 recruitment structures (f(tBd) has 0.72)"
 published = 0.28
 call = "hardy2023_model_set(:f)[2].weight"
@@ -5910,7 +5925,7 @@ status = "reproduced"
 [[target]]
 id = "hardy2023_top_aicc"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Table 1.3" }
+source = { ref = "hardy2023", location = "Table 3" }
 quantity = "AICc of the top model p(sBd × tBd) φ(ELEV + tBd) f(ELEV + tBd) (K = 115)"
 published = 26649.10
 call = "_hardy2023_reference_fit().aicc"
@@ -5924,7 +5939,7 @@ makes the optimum flat in that direction; the remaining difference is unexplaine
 [[target]]
 id = "hardy2023_top_deviance"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Table 1.3" }
+source = { ref = "hardy2023", location = "Table 3" }
 quantity = "−2 log L of the top model, as printed"
 published = 10503.97
 call = "_hardy2023_reference_fit().deviance"
@@ -5933,13 +5948,13 @@ status = "discrepant"
 regression = { value = 26413.87, atol = 0.05 }
 notes = """
 The printed −2Log(L) cannot go with the printed AICc 26649.10 and K = 115, which imply
-−2 log L ≈ 26413.6 with the sample size that reproduces every AICc of Appendices S3-S5. The
+−2 log L ≈ 26413.6 with the sample size that reproduces every AICc of Appendices S1.3-S1.5. The
 printed value appears to be a different quantity or a typo; ours is 26413.87."""
 
 [[target]]
 id = "hardy2023_top_delta_aicc"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Table 1.3" }
+source = { ref = "hardy2023", location = "Table 3" }
 quantity = "ΔAICc of the second model p(sBd × tBd) φ(ELEV + tBd) f(tBd)"
 published = 56.81
 call = "_hardy2023_reference_fit(; f = :t_bd).aicc - _hardy2023_reference_fit().aicc"
@@ -5951,7 +5966,7 @@ notes = "Our second model has AICc 26697.80 against the printed 26705.91. The to
 [[target]]
 id = "hardy2023_phi_post"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Disease" }
+source = { ref = "hardy2023", location = "Results 3.1" }
 quantity = "annual apparent survival after Bd arrival (all sites; 'reduced to 0')"
 published = 0.0
 call = "hardy2023_summary(_hardy2023_reference_fit()).φ_post.value"
@@ -5962,7 +5977,7 @@ notes = "A boundary estimate (logit → −∞)."
 [[target]]
 id = "hardy2023_f_post"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Disease" }
+source = { ref = "hardy2023", location = "Results 3.1" }
 quantity = "per-capita recruitment after Bd arrival (all sites)"
 published = 0.25
 call = "hardy2023_summary(_hardy2023_reference_fit()).f_post.value"
@@ -5973,7 +5988,7 @@ notes = "0.2506."
 [[target]]
 id = "hardy2023_f_post_se"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Disease" }
+source = { ref = "hardy2023", location = "Results 3.1" }
 quantity = "standard error of the post-Bd per-capita recruitment"
 published = 0.02
 call = "hardy2023_summary(_hardy2023_reference_fit()).f_post.se"
@@ -5984,7 +5999,7 @@ notes = "0.0226 (delta method, boundary coefficients left out of the information
 [[target]]
 id = "hardy2023_lambda_post"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Disease" }
+source = { ref = "hardy2023", location = "Results 3.1" }
 quantity = "realized population growth rate after Bd arrival (all sites)"
 published = 0.25
 call = "hardy2023_summary(_hardy2023_reference_fit()).λ_post.value"
@@ -5994,7 +6009,7 @@ status = "reproduced"
 [[target]]
 id = "hardy2023_lambda_post_lo"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Disease" }
+source = { ref = "hardy2023", location = "Results 3.1" }
 quantity = "lower 95% confidence limit of the post-Bd λ"
 published = 0.21
 call = "hardy2023_summary(_hardy2023_reference_fit()).λ_post.ci[1]"
@@ -6005,7 +6020,7 @@ notes = "Log-scale interval λ exp(±1.96 se/λ): 0.210-0.299."
 [[target]]
 id = "hardy2023_lambda_post_hi"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Disease" }
+source = { ref = "hardy2023", location = "Results 3.1" }
 quantity = "upper 95% confidence limit of the post-Bd λ"
 published = 0.30
 call = "hardy2023_summary(_hardy2023_reference_fit()).λ_post.ci[2]"
@@ -6015,7 +6030,7 @@ status = "reproduced"
 [[target]]
 id = "hardy2023_lambda_pre_min"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Disease; Fig. 1.3" }
+source = { ref = "hardy2023", location = "Results 3.1; Fig. 3" }
 quantity = "smallest annual realized growth rate before Bd arrival (SE 0.08)"
 published = 0.65
 call = "hardy2023_summary(_hardy2023_reference_fit()).λ_pre_range[1].value"
@@ -6030,7 +6045,7 @@ stated."""
 [[target]]
 id = "hardy2023_lambda_pre_max"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Disease; Fig. 1.3" }
+source = { ref = "hardy2023", location = "Results 3.1; Fig. 3" }
 quantity = "largest annual realized growth rate before Bd arrival (SE 0.24)"
 published = 1.46
 call = "hardy2023_summary(_hardy2023_reference_fit()).λ_pre_range[2].value"
@@ -6042,7 +6057,7 @@ notes = "Ours 1.40 (SE 0.19, Collegiate Camp 1999-2000). Within one SE of the pr
 [[target]]
 id = "hardy2023_p_min"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, para. 1" }
+source = { ref = "hardy2023", location = "Results 3" }
 quantity = "smallest capture probability per visit in the top model"
 published = 0.03
 call = "hardy2023_summary(_hardy2023_reference_fit()).p_range[1]"
@@ -6053,7 +6068,7 @@ notes = "0.026."
 [[target]]
 id = "hardy2023_p_max"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, para. 1" }
+source = { ref = "hardy2023", location = "Results 3" }
 quantity = "largest capture probability per visit in the top model"
 published = 0.81
 call = "hardy2023_summary(_hardy2023_reference_fit()).p_range[2]"
@@ -6064,7 +6079,7 @@ notes = "0.809."
 [[target]]
 id = "hardy2023_phi_pre_morgans"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Environment; Fig. 1.1A" }
+source = { ref = "hardy2023", location = "Results 3.2; Fig. 1a" }
 quantity = "pre-Bd apparent survival at Morgan's Gulch (3366 m), model p(sBd × tBd) φ(ELEV + Bd) f(ELEV + Bd)"
 published = 0.83
 call = "let r = _hardy2023_reference_fit(; φ = :elev_bd, f = :elev_bd); r.groups[5].φ[1] end"
@@ -6075,8 +6090,8 @@ notes = "0.831 (SE 0.010; printed SE 0.01)."
 [[target]]
 id = "hardy2023_phi_pre_delilah"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Environment; Fig. 1.1A" }
-quantity = "pre-Bd apparent survival at Delilah Pond (2755 m), model of Fig. 1.1A (SE 0.03)"
+source = { ref = "hardy2023", location = "Results 3.2; Fig. 1a" }
+quantity = "pre-Bd apparent survival at Delilah Pond (2755 m), model of Fig. 1a (SE 0.03)"
 published = 0.47
 call = "let r = _hardy2023_reference_fit(; φ = :elev_bd, f = :elev_bd); r.groups[1].φ[1] end"
 tolerance = { digits = 2 }
@@ -6087,7 +6102,7 @@ notes = "Ours 0.48 (SE 0.026); within half an SE. Morgan's Gulch is reproduced w
 [[target]]
 id = "hardy2023_beta_elev_phi"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Environment" }
+source = { ref = "hardy2023", location = "Results 3.2" }
 quantity = "elevation coefficient of pre-Bd survival, logit scale per 100 m (SE 0.03)"
 published = 0.28
 call = "pradel_coefficient(_hardy2023_reference_fit(; φ = :elev_bd, f = :elev_bd), :φ_elev).value"
@@ -6095,25 +6110,25 @@ tolerance = { digits = 2 }
 status = "discrepant"
 regression = { value = 0.2722, atol = 0.001 }
 notes = """
-Ours 0.27 (SE 0.025) in the Fig. 1.1A model; the top model gives 0.31 (SE 0.027). The text
+Ours 0.27 (SE 0.025) in the Fig. 1a model; the top model gives 0.31 (SE 0.027). The text
 does not say which model the coefficient comes from."""
 
 [[target]]
 id = "hardy2023_beta_elev_f"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Environment" }
+source = { ref = "hardy2023", location = "Results 3.2" }
 quantity = "elevation coefficient of pre-Bd per-capita recruitment, log scale per 100 m (SE 0.02)"
 published = -0.12
 call = "pradel_coefficient(_hardy2023_reference_fit(; φ = :elev_bd, f = :elev_bd), :f_elev).value"
 tolerance = { digits = 2 }
 status = "discrepant"
 regression = { value = -0.1119, atol = 0.001 }
-notes = "Ours −0.11 (SE 0.013) in the Fig. 1.1A model; the top model gives −0.13 (SE 0.013)."
+notes = "Ours −0.11 (SE 0.013) in the Fig. 1a model; the top model gives −0.13 (SE 0.013)."
 
 [[target]]
 id = "hardy2023_no_compensatory_recruitment"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Disease; Fig. 1.1B-C" }
+source = { ref = "hardy2023", location = "Results 3.1; Fig. 1b-c" }
 quantity = "per-capita recruitment is lower after Bd arrival than before (no compensatory recruitment)"
 published = true
 call = "let r = _hardy2023_reference_fit(; φ = :bd, f = :bd); r.groups[1].f[end] < r.groups[1].f[1] end"
@@ -6123,16 +6138,18 @@ notes = "Model p(sBd × tBd) φ(Bd) f(Bd) of Fig. 1.1B: f 0.33 before and 0.23 a
 [[target]]
 id = "hardy2023_elevation_tradeoff"
 model = "obs-hardy2023-pradel-recruitment"
-source = { ref = "hardy2023", location = "Results, Environment" }
+source = { ref = "hardy2023", location = "Results 3.2" }
 quantity = "before Bd, survival increases and recruitment decreases with elevation"
 published = true
 call = "let r = _hardy2023_reference_fit(; φ = :elev_bd, f = :elev_bd); pradel_coefficient(r, :φ_elev).value > 0 > pradel_coefficient(r, :f_elev).value end"
 status = "qualitative"
 
 # ---- cook2022 ----
-# Cook et al. 2022 Conserv Sci Pract 4:e12762 (doi:10.1111/csp2.12762). The stage-structured
-# projection is described only in the Supporting Information (Figure S3, Table S2), which could
-# not be downloaded, and the data/script archive was not found; see data/compendium/cook2022.toml.
+# Cook et al. 2022 Conserv Sci Pract 4:e12762 (doi:10.1111/csp2.12762), with the projection
+# model of its Supporting Information (Figure S3, Table S2). The authors' simulation code was
+# not found, so the choices in src/models/cook2022.jl (breeding after survival, paired SA and F,
+# posterior means for SU and ST) are ours. Simulations: 1000 runs with Xoshiro(1), as in the paper's
+# 1000 runs per scenario.
 
 [[target]]
 id = "cook2022_survival_ratio_treated"
@@ -6162,8 +6179,10 @@ model = "obs-cook2022-treatment-projection"
 source = { ref = "cook2022", location = "Results 3.4; Fig. 4a" }
 quantity = "mean adult population growth rate λ with untreated metamorph overwinter survival"
 published = 0.9
-status = "pending"
-notes = "Needs the projection model of Figure S3 and Table S2 (Supporting Information, not obtained)."
+call = "cook_growth_rate(solve(CookProjectionProblem(CookParameters(:cook2022)); nsims = 1000, rng = Random.Xoshiro(1))).mean"
+tolerance = { digits = 1 }
+status = "reproduced"
+notes = "0.939 (22% of runs with λ > 1). With breeding by the adults before survival (breeding = :before_survival) it is 0.968."
 
 [[target]]
 id = "cook2022_lambda_treated"
@@ -6171,8 +6190,14 @@ model = "obs-cook2022-treatment-projection"
 source = { ref = "cook2022", location = "Results 3.4; Fig. 4a" }
 quantity = "mean adult population growth rate λ when all metamorphs are treated every year"
 published = 1.2
-status = "pending"
-notes = "Needs the projection model of Figure S3 and Table S2 (Supporting Information, not obtained)."
+call = "cook_growth_rate(solve(CookProjectionProblem(CookParameters(:cook2022); treated_fraction = 1, treated_years = 1); nsims = 1000, rng = Random.Xoshiro(1))).mean"
+tolerance = { digits = 1 }
+status = "discrepant"
+regression = { value = 1.301, atol = 0.01 }
+notes = """
+Ours 1.30, against 1.2. Breeding before survival gives 1.25, which is still not 1.2. Sampling
+SU and ST from their CJS posteriors (not published) instead of fixing their means would change
+the value. The untreated value (0.9) and the 40%/40% threshold are reproduced."""
 
 [[target]]
 id = "cook2022_treatment_threshold"
@@ -6180,8 +6205,19 @@ model = "obs-cook2022-treatment-projection"
 source = { ref = "cook2022", location = "Results 3.4; Fig. 4b" }
 quantity = "mean λ > 1 when 40% of metamorphs are treated in 40% of years"
 published = true
-status = "pending"
-notes = "Needs the projection model and its stochastic simulation settings (Supporting Information, not obtained)."
+call = "let c = parameter_set(:cook2022); cook_growth_rate(solve(CookProjectionProblem(CookParameters(:cook2022); treated_fraction = c.threshold_treated_fraction, treated_years = c.threshold_treated_years); nsims = 1000, rng = Random.Xoshiro(1))).mean > 1 end"
+status = "qualitative"
+notes = "Mean λ 1.018, with 57% of runs above 1."
+
+[[target]]
+id = "cook2022_treatment_compensation"
+model = "obs-cook2022-treatment-projection"
+source = { ref = "cook2022", location = "Results 3.4; Fig. 4b" }
+quantity = "lowering either the treated fraction or the treatment frequency below 40% (with the other at 40%) gives mean λ < 1"
+published = true
+call = "let p = CookParameters(:cook2022); g(q, r) = cook_growth_rate(solve(CookProjectionProblem(p; treated_fraction = q, treated_years = r); nsims = 1000, rng = Random.Xoshiro(1))).mean; g(0.2, 0.4) < 1 && g(0.4, 0.2) < 1 end"
+status = "qualitative"
+notes = "λ 0.985 at 20%/40% and 0.980 at 40%/20%. The paper says such decreases need 'compensatory increases in the other' to keep λ > 1."
 # ---- heard2024 ----
 # Heard, Scroggie, Hollanders & Scheele 2024, J Anim Ecol 93:1670 (doi:10.1111/1365-2656.14177).
 # The paper's full text could not be retrieved; only the abstract was read. The survival values

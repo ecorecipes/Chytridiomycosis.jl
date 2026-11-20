@@ -1,12 +1,13 @@
 # Refit every model of Hardy et al. (2023, J Appl Ecol, doi:10.1111/1365-2664.14310):
-# the focal model sets of Appendices S3 (p), S4 (φ) and S5 (f), the combined set of
-# Table 1.3, and the derived quantities of the Results. Prints each −2 log L, K and AICc next
+# the focal model sets of Appendices S1.3 (p), S1.4 (φ) and S1.5 (f), the combined set of
+# Table 3, and the derived quantities of the Results. Prints each −2 log L, K and AICc next
 # to the printed values. About a minute on one thread.
 #
 #   julia --project scripts/hardy2023_model_sets.jl
 #
-# Printed values are those of the version reprinted in B. M. Hardy's dissertation (CSU 2023);
-# they are oracles typed here for the comparison, not inputs to any fit.
+# Printed values are those of the version of record and its Supporting Information (identical
+# in B. M. Hardy's 2023 dissertation); they are oracles typed here for the comparison, not
+# inputs to any fit.
 using Chytridiomycosis
 using Printf
 
@@ -22,7 +23,7 @@ printed = Dict(
                :winstart_elev => 29266.9, :winstart => 29278.102, :drought_elev => 29323.899,
                :drought => 29329.822, :elev => 29330.671, :constant => 29334.271))
 
-for (par, app) in ((:p, "S3"), (:φ, "S4"), (:f, "S5"))
+for (par, app) in ((:p, "S1.3"), (:φ, "S1.4"), (:f, "S1.5"))
     println("\nAppendix $app: focal parameter $par")
     @printf("  %-15s %10s %10s %8s %4s %10s %6s\n", "structure", "-2logL", "printed", "diff",
             "K", "AICc", "weight")
@@ -33,7 +34,7 @@ for (par, app) in ((:p, "S3"), (:φ, "S4"), (:f, "S5"))
     end
 end
 
-println("\nTable 1.3 (printed AICc 26649.10 and 26705.91)")
+println("\nTable 3 (printed AICc 26649.10 and 26705.91)")
 top = hardy2023_fit(; data)
 second = hardy2023_fit(; f = :t_bd, data)
 for (nm, r) in (("p(sBd×tBd) φ(ELEV+tBd) f(ELEV+tBd)", top), ("p(sBd×tBd) φ(ELEV+tBd) f(tBd)", second))
@@ -52,7 +53,7 @@ lo, hi = s.λ_pre_range
 fig = hardy2023_fit(; φ = :elev_bd, f = :elev_bd, data)
 for c in (:φ_elev, :f_elev)
     r = pradel_coefficient(fig, c)
-    @printf("  Fig. 1.1A model: %s = %.3f (SE %.3f)\n", c, r.value, r.se)
+    @printf("  Fig. 1a model: %s = %.3f (SE %.3f)\n", c, r.value, r.se)
 end
 for g in eachindex(data)
     r = pradel_se(fig, θ -> pradel_derived(fig.problem, θ, g).φ[1])

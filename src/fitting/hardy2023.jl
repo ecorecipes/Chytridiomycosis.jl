@@ -1,14 +1,13 @@
 # Hardy, Muths, Lambert, Schneider, Funk & Bailey (2023) Compensatory recruitment unlikely in
-# high-elevation amphibian populations challenged with disease. J Appl Ecol 60:400-411,
+# high-elevation amphibian populations challenged with disease. J Appl Ecol 60:121-131,
 # doi:10.1111/1365-2664.14310. Data: Dryad doi:10.5061/dryad.fttdz08wv (CC0), bundled in
 # data/hardy2023/. This reproduces a published analysis; it is not a new model.
 #
-# VERSION READ: the journal PDF and its Supporting Information could not be downloaded (Wiley
-# bot check). The analysis was read from Chapter 1 and its Appendices S1-S6 of B. M. Hardy's
-# PhD dissertation (Colorado State University, 2023; mountainscholar.org), which reprints the
-# paper ("Originally published as: Hardy et al. (2023) ... doi:10.1111/1365-2664.14310")
-# with its Tables 1.1-1.3 and the appendix model-selection tables. Numbers are cited from that
-# version; differences from the journal version, if any, are unknown.
+# VERSION READ: the version of record (J Appl Ecol 60:121-131) and its Supporting Information
+# (Appendices S1.1-S1.6), checked on 2026-11-20. The implementation was first written from
+# Chapter 1 of B. M. Hardy's PhD dissertation (Colorado State University, 2023), which
+# reprints the paper; its numbers are identical (only the table, figure and appendix numbers
+# differ).
 #
 # Model: robust-design Pradel model (Pradel 1996) fitted in Program MARK to adult male boreal
 # toads (Anaxyrus boreas boreas) at five Colorado sites, 1998-2020, three secondary occasions per
@@ -16,13 +15,13 @@
 # capita recruitment f (log) and capture probability p (logit) are linear in covariates;
 # λ = φ + f and N = n/p* are derived. The likelihood is src/observation/pradel.jl.
 #
-# Structures (Appendices S2-S5; the superscript Bd means "until Bd arrival, then one value for
+# Structures (Appendices S1.2-S1.5; the superscript Bd means "until Bd arrival, then one value for
 # all sites"):
 #   p:  (.), (s) site, (t^Bd) year before Bd, (s^Bd) site before Bd, (s^Bd × t^Bd) site-year
 #       before Bd; post-Bd p is a single value shared by all sites.
 #   φ, f: (.), (ELEV), (Bd), (t^Bd), (ELEV + t^Bd), (ELEV + Bd), (ELEV × Bd); f also DROUGHT
 #       and WINSTART, alone, + Bd, × Bd and + ELEV. ELEV = elevation (m) / 100.
-#   With t^Bd the elevation term applies only before Bd (Appendix S2: "log(f) = β18 for years
+#   With t^Bd the elevation term applies only before Bd (Appendix S1.2: "log(f) = β18 for years
 #   after Bd was detected").
 #
 # Choices where the text is silent (each checked against the printed −2 log L and K where
@@ -42,7 +41,7 @@
 #   - Climate covariates are centred and scaled (all sites and years pooled); the paper does
 #     not say how they were scaled, and the likelihood does not depend on it.
 #   - AICc uses n = total captures, which reproduces MARK's AICc from −2 log L and K.
-#   - Site names follow Table 1.1, matched to the files by elevation (2755, 2951, 3238, 3183,
+#   - Site names follow Table 1, matched to the files by elevation (2755, 2951, 3238, 3183,
 #     3366 m) and Bd arrival year (2015, 2015, 2016, 2014, 2014).
 
 const HARDY2023_SITES = ("Delilah Pond", "Collegiate Camp", "Denny Creek", "South Cottonwood",
@@ -68,7 +67,7 @@ end
 
 One boreal toad site of Hardy et al. (2023), from [`load_hardy2023`](@ref):
 
-- `site` (file number 1…5), `name` (Table 1.1), `elevation` (m) and `bd_year`, the first year
+- `site` (file number 1…5), `name` (Table 1), `elevation` (m) and `bd_year`, the first year
   with Bd;
 - `pit`: the PIT tag of each adult male;
 - `histories`: one row per toad, 69 columns (1998–2020, three occasions per year), `1` caught,
@@ -145,7 +144,7 @@ end
     hardy2023_captures(data = load_hardy2023()) -> Vector{NamedTuple}
 
 Captures (capture events, the sum of the histories) at each site before and after Bd arrival,
-as in Hardy et al. (2023) Table 1.1: `name`, `elevation`, `bd_year`, `before`, `after`,
+as in Hardy et al. (2023) Table 1: `name`, `elevation`, `bd_year`, `before`, `after`,
 `toads` (individuals).
 """
 function hardy2023_captures(data::AbstractVector{Hardy2023Site} = load_hardy2023())
@@ -261,9 +260,9 @@ end
 
 The robust-design Pradel model of Hardy et al. (2023) for the five boreal toad sites (one
 group per site) as a [`PradelProblem`](@ref). The defaults are the paper's top model,
-`p(s^Bd × t^Bd) φ(ELEV + t^Bd) f(ELEV + t^Bd)` (Table 1.3).
+`p(s^Bd × t^Bd) φ(ELEV + t^Bd) f(ELEV + t^Bd)` (Table 3).
 
-Structures (Appendices S3–S5):
+Structures (Appendices S1.3–S1.5):
 
 - `p`: `:constant`, `:site`, `:t_bd` (year before Bd), `:s_bd` (site before Bd), `:s_bd_t_bd`
   (site × year before Bd). With `_bd` the post-Bd value is one parameter for all sites.
@@ -303,7 +302,7 @@ hardy2023_fit(; kwargs...) = solve(hardy2023_problem(; kwargs...))
     hardy2023_model_set(parameter::Symbol; data = load_hardy2023()) -> Vector{NamedTuple}
 
 Fit one focal model set of Hardy et al. (2023) and rank it by AICc: `parameter` is `:p`
-(Appendix S3), `:φ` (S4) or `:f` (S5). Each model varies the focal parameter and keeps the
+(Appendix S1.3), `:φ` (S1.4) or `:f` (S1.5). Each model varies the focal parameter and keeps the
 others constant. Entries (sorted by AICc) have `structure`, `deviance` (−2 log L), `k`,
 `aicc`, `Δaicc` and `weight`.
 """
@@ -346,9 +345,9 @@ The quantities that Hardy et al. (2023) report from a fit of [`hardy2023_problem
   realized growth rate (shared by all sites), each `(value, se)`; `λ_post` also has a 95%
   interval `ci` on the log scale;
 - `λ_pre`: the realized growth rates `(site, year, value, se)` of the intervals `year → year + 1`
-  that end before Bd arrival (Fig. 1.3), between sampled years of each site;
+  that end before Bd arrival (Fig. 3), between sampled years of each site;
 - `λ_pre_range`: the smallest and largest of those;
-- `N`: the estimated number of breeding males of each site by year (Fig. 1.2), `NaN` in
+- `N`: the estimated number of breeding males of each site by year (Fig. 2), `NaN` in
   unsampled years;
 - `p_range`: the range of the estimated capture probabilities at sampled occasions.
 

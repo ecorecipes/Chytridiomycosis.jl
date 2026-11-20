@@ -6,7 +6,7 @@
   2022-10-07). Retrieved 2026-11-19.
 - **Paper**: Hardy BM, Muths E, Lambert BA, Schneider SC, Funk WC, Bailey LL (2023).
   Compensatory recruitment unlikely in high-elevation amphibian populations challenged with
-  disease. *J Appl Ecol* 60:400–411. https://doi.org/10.1111/1365-2664.14310
+  disease. *J Appl Ecol* 60:121–131. https://doi.org/10.1111/1365-2664.14310
 - **Licence**: CC0 1.0 (public domain dedication).
 
 ## Sites

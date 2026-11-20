@@ -3,13 +3,18 @@
 # https://doi.org/10.1111/csp2.12762 (CC BY 4.0).
 #
 # VERSION CHECKED: the published article (PDF from the US Forest Service Treesearch record
-# 64973, lab/papers/cook2022/cook2022.pdf), read on 2026-11-19. Only main-text values are
-# entered. The stage-structured projection model (Figure S3, Table S2: adult and subadult
-# survival, growth and per-female fecundity from a Bayesian Jolly-Seber model) is in the
-# Supporting Information, which could not be downloaded (Wiley bot check), and the US Forest
-# Service Research Data Archive accession promised in the data availability statement was not
-# found. The projection is therefore not implemented; its outputs are pending targets.
+# 64973, lab/papers/cook2022/cook2022.pdf), read on 2026-11-19, and its Supporting Information
+# (lab/papers/cook2022/cook2022_si.docx: "Population simulations", Figure S3, Table S2), read
+# on 2026-11-20. The US Forest Service Research Data Archive accession promised in the data
+# availability statement was not found, so the authors' simulation code was not available.
 #
+# Projection model (SI Figure S3, Table S2): stages metamorph, young of the previous year
+# (YOPY), subadult and adult; one-year time step. Adult and subadult survival SA = SS and
+# fecundity F (metamorphs per adult female) are drawn each year from the pools of 28 values in
+# Table S2 (records sa_01…sa_28 and f_01…f_28, in the printed order); YOPY survival is
+# 0.80 SA. Metamorph overwinter survival is SU (untreated) or ST (treated), "sampled from the
+# posterior distribution" of the CJS model; the posterior is not published, only its mean
+# (0.12 and 0.49 in Table S2; the main text prints 0.11 and 0.48).
 # System: Bd and Cascades frog (Rana cascadae) metamorphs, three wet meadows in northern
 # California, treated in September 2018 with itraconazole (0.0025%, 5 min, 6 days). Survival
 # is apparent overwinter survival (fall 2018 to the first 2019 survey) from a Bayesian CJS
@@ -28,7 +33,7 @@ role = "estimated"
 system = { pathogen = "Bd", host = "Rana cascadae", stage = "metamorph", setting = "field, wet meadows, northern California, USA" }
 location = "Results 3.2 ('0.48, 95% credible interval: 0.21–0.86'); Fig. 2"
 verified = true
-notes = "Posterior mean. Used in the projection as the survival of treated metamorphs."
+notes = "Posterior mean (main text). Table S2 gives 0.49 as the mean used in the projection (st_mean)."
 
 [[parameter]]
 symbol = "phi_overwinter_field_control"
@@ -41,7 +46,7 @@ role = "estimated"
 system = { pathogen = "Bd", host = "Rana cascadae", stage = "metamorph", setting = "field, wet meadows, northern California, USA" }
 location = "Results 3.2 ('(0.11, 0.03–0.29)'); Fig. 2"
 verified = true
-notes = "Posterior mean. Used in the projection as the survival of untreated metamorphs."
+notes = "Posterior mean (main text). Table S2 gives 0.12 as the mean used in the projection (su_mean)."
 
 [[parameter]]
 symbol = "phi_overwinter_experimental_control"
@@ -143,4 +148,814 @@ provenance = "A"
 role = "numerical"
 system = { pathogen = "Bd", host = "Rana cascadae", stage = "metamorph", setting = "field, wet meadows, northern California, USA" }
 location = "Methods 2.4"
+verified = true
+
+[[parameter]]
+symbol = "su_mean"
+quantity = "mean overwinter survival of untreated metamorphs used in the projection (SU)"
+value = 0.12
+units = "per winter"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "metamorph", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SU)"
+verified = true
+notes = "Mean of the CJS posterior for field controls; the posterior itself is not published."
+
+[[parameter]]
+symbol = "st_mean"
+quantity = "mean overwinter survival of itraconazole-treated metamorphs used in the projection (ST)"
+value = 0.49
+units = "per winter"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "metamorph", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (ST)"
+verified = true
+notes = "Mean of the CJS posterior for treated metamorphs."
+
+[[parameter]]
+symbol = "sa_01"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 1 of 28"
+value = 0.353
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_02"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 2 of 28"
+value = 0.501
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_03"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 3 of 28"
+value = 0.753
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_04"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 4 of 28"
+value = 0.284
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_05"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 5 of 28"
+value = 0.829
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_06"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 6 of 28"
+value = 0.811
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_07"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 7 of 28"
+value = 0.774
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_08"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 8 of 28"
+value = 0.723
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_09"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 9 of 28"
+value = 0.707
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_10"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 10 of 28"
+value = 0.897
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_11"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 11 of 28"
+value = 0.594
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_12"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 12 of 28"
+value = 0.779
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_13"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 13 of 28"
+value = 0.526
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_14"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 14 of 28"
+value = 0.578
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_15"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 15 of 28"
+value = 0.303
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_16"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 16 of 28"
+value = 0.536
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_17"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 17 of 28"
+value = 0.36
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_18"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 18 of 28"
+value = 0.581
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_19"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 19 of 28"
+value = 0.502
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_20"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 20 of 28"
+value = 0.595
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_21"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 21 of 28"
+value = 0.478
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_22"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 22 of 28"
+value = 0.294
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_23"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 23 of 28"
+value = 0.462
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_24"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 24 of 28"
+value = 0.849
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_25"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 25 of 28"
+value = 0.577
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_26"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 26 of 28"
+value = 0.599
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_27"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 27 of 28"
+value = 0.316
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "sa_28"
+quantity = "adult and subadult annual survival, pooled Jolly-Seber estimate 28 of 28"
+value = 0.433
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SA, SS)"
+verified = true
+notes = "Environmental stochasticity: one of the 28 values is drawn each year. Adult and subadult survival are assumed equal."
+
+[[parameter]]
+symbol = "f_01"
+quantity = "metamorphs produced per adult female, pooled estimate 1 of 28"
+value = 59
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_02"
+quantity = "metamorphs produced per adult female, pooled estimate 2 of 28"
+value = 28
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_03"
+quantity = "metamorphs produced per adult female, pooled estimate 3 of 28"
+value = 32
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_04"
+quantity = "metamorphs produced per adult female, pooled estimate 4 of 28"
+value = 47
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_05"
+quantity = "metamorphs produced per adult female, pooled estimate 5 of 28"
+value = 39
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_06"
+quantity = "metamorphs produced per adult female, pooled estimate 6 of 28"
+value = 4
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_07"
+quantity = "metamorphs produced per adult female, pooled estimate 7 of 28"
+value = 11
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_08"
+quantity = "metamorphs produced per adult female, pooled estimate 8 of 28"
+value = 28
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_09"
+quantity = "metamorphs produced per adult female, pooled estimate 9 of 28"
+value = 38
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_10"
+quantity = "metamorphs produced per adult female, pooled estimate 10 of 28"
+value = 20
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_11"
+quantity = "metamorphs produced per adult female, pooled estimate 11 of 28"
+value = 16
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_12"
+quantity = "metamorphs produced per adult female, pooled estimate 12 of 28"
+value = 21
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_13"
+quantity = "metamorphs produced per adult female, pooled estimate 13 of 28"
+value = 16
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_14"
+quantity = "metamorphs produced per adult female, pooled estimate 14 of 28"
+value = 39
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_15"
+quantity = "metamorphs produced per adult female, pooled estimate 15 of 28"
+value = 13
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_16"
+quantity = "metamorphs produced per adult female, pooled estimate 16 of 28"
+value = 34
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_17"
+quantity = "metamorphs produced per adult female, pooled estimate 17 of 28"
+value = 31
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_18"
+quantity = "metamorphs produced per adult female, pooled estimate 18 of 28"
+value = 44
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_19"
+quantity = "metamorphs produced per adult female, pooled estimate 19 of 28"
+value = 9
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_20"
+quantity = "metamorphs produced per adult female, pooled estimate 20 of 28"
+value = 24
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_21"
+quantity = "metamorphs produced per adult female, pooled estimate 21 of 28"
+value = 48
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_22"
+quantity = "metamorphs produced per adult female, pooled estimate 22 of 28"
+value = 55
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_23"
+quantity = "metamorphs produced per adult female, pooled estimate 23 of 28"
+value = 41
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_24"
+quantity = "metamorphs produced per adult female, pooled estimate 24 of 28"
+value = 30
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_25"
+quantity = "metamorphs produced per adult female, pooled estimate 25 of 28"
+value = 66
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_26"
+quantity = "metamorphs produced per adult female, pooled estimate 26 of 28"
+value = 33
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_27"
+quantity = "metamorphs produced per adult female, pooled estimate 27 of 28"
+value = 72
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "f_28"
+quantity = "metamorphs produced per adult female, pooled estimate 28 of 28"
+value = 70
+units = "metamorphs female^-1 yr^-1"
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (F)"
+verified = true
+notes = "Per-capita recruitment from the Jolly-Seber model divided by the probability of surviving from metamorph to adult. Printed in the same order as SA; the SI does not say whether the two are drawn together."
+
+[[parameter]]
+symbol = "yopy_survival_ratio"
+quantity = "YOPY annual survival relative to adult survival (SY = ratio x SA)"
+value = 0.8
+units = "1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "young of previous year", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (SY)"
+verified = true
+notes = "From a multi-state CMR model of the same data."
+
+[[parameter]]
+symbol = "subadult_growth"
+quantity = "annual transition probability from subadult to adult (GS)"
+value = 0.725
+units = "yr^-1"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "subadult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (GS)"
+verified = true
+notes = "From a multi-state CMR model of the same data."
+
+[[parameter]]
+symbol = "female_fraction"
+quantity = "adult sex ratio, proportion female (PF)"
+value = 0.52
+units = "1"
+provenance = "M"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "SI Table S2 (PF)"
+verified = true
+notes = "Long-term field data."
+
+[[parameter]]
+symbol = "initial_metamorphs"
+quantity = "initial number of metamorphs in each simulation"
+value = 1500
+units = "metamorphs"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "metamorph", setting = "field, wet meadows, northern California, USA" }
+location = "SI, Population simulations"
+verified = true
+
+[[parameter]]
+symbol = "initial_yopy"
+quantity = "initial number of young of the previous year in each simulation"
+value = 50
+units = "frogs"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "young of previous year", setting = "field, wet meadows, northern California, USA" }
+location = "SI, Population simulations"
+verified = true
+
+[[parameter]]
+symbol = "initial_subadults"
+quantity = "initial number of subadults in each simulation"
+value = 50
+units = "frogs"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "subadult", setting = "field, wet meadows, northern California, USA" }
+location = "SI, Population simulations"
+verified = true
+
+[[parameter]]
+symbol = "lambda_untreated"
+quantity = "mean adult population growth rate with untreated metamorph survival"
+value = 0.9
+units = "yr^-1"
+provenance = "D"
+role = "estimate"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "Results 3.4 ('from 0.9 to 1.2'); Fig. 4a"
+verified = true
+notes = "Mean over simulations of the geometric mean of the annual adult growth rates over 10 years."
+
+[[parameter]]
+symbol = "lambda_treated"
+quantity = "mean adult population growth rate when all metamorphs are treated every year"
+value = 1.2
+units = "yr^-1"
+provenance = "D"
+role = "estimate"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "adult", setting = "field, wet meadows, northern California, USA" }
+location = "Results 3.4; Fig. 4a"
+verified = true
+
+[[parameter]]
+symbol = "threshold_treated_fraction"
+quantity = "fraction of metamorphs treated at which mean lambda exceeds 1 (with threshold_treated_years)"
+value = 0.4
+units = "1"
+provenance = "D"
+role = "estimate"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "metamorph", setting = "field, wet meadows, northern California, USA" }
+location = "Results 3.4 ('when 40% of metamorphs are treated in 40% of years'); Fig. 4b"
+verified = true
+
+[[parameter]]
+symbol = "threshold_treated_years"
+quantity = "fraction of years with treatment at which mean lambda exceeds 1 (with threshold_treated_fraction)"
+value = 0.4
+units = "1"
+provenance = "D"
+role = "estimate"
+system = { pathogen = "Bd", host = "Rana cascadae", stage = "metamorph", setting = "field, wet meadows, northern California, USA" }
+location = "Results 3.4; Fig. 4b"
 verified = true
