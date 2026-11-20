@@ -5,7 +5,9 @@
 #   written out again here, and a one-off run of its fitlogistic() loop (set.seed(2021)) on
 #   the deposited data, kept in lab/papers/sheets2021/oracle/logisticfits_R.csv; the values
 #   used below are copied from that run;
-# - the Fig. 4 legend (VT 26 °C: r = 8.58), which the R run reproduces.
+# - the Fig. 4 legend (VT 26 °C: r = 8.58), which the R run reproduces;
+# - the Supplementary Material (Data_Sheet_1.PDF, the rendered R Markdown): its printed fits
+#   (compendium r_fit, K_fit) and profile-likelihood 95% intervals. It has no Johnson-Lewin fits.
 using Chytridiomycosis
 using Test
 using LogDensityProblems
@@ -91,5 +93,34 @@ using Distributions: Normal, logpdf
         end
         @test_throws ArgumentError sheets_tpc("CA")
         @test_throws ArgumentError sheets_tpc("LA"; trait = :x0)
+    end
+    @testset "Supplementary Material: fits and profile intervals" begin
+        supp(iso, T) = parameter_set(:sheets2021; set = "$(iso)_$(Int(T))C")
+        # the supplement's fits are the authors' output for the deposited data; all but the
+        # unidentified ones (LA 26/27, VT 26/27) are reproduced
+        for iso in C.SHEETS_ISOLATES, T in C.SHEETS_TEMPERATURES
+            (iso, T) in (("LA", 26.0), ("LA", 27.0), ("VT", 26.0), ("VT", 27.0)) && continue
+            f = C._sheets_reference_fit(iso, T)
+            @test f.estimates.r ≈ supp(iso, T).r_fit rtol = 5e-3
+            @test f.estimates.K ≈ supp(iso, T).K_fit rtol = 5e-3
+        end
+        # profile intervals: r bounds to 1 %, K bounds to 4 % (grid interpolation in the R code)
+        raw = C.TOML.parsefile(joinpath(C.COMPENDIUM_DIR, "sheets2021.toml"))["parameter"]
+        interval(iso, T, sym) = only(r["uncertainty"] for r in raw
+            if get(r, "set", "") == "$(iso)_$(T)C" && r["symbol"] == sym)
+        for (iso, T) in (("LA", 4), ("NM", 12), ("VT", 12), ("OH", 21), ("TN", 17))
+            ir = C._sheets_reference_interval(iso, T, :r)
+            u = interval(iso, T, "r_fit")
+            @test ir.found_lower && ir.found_upper
+            @test ir.lower ≈ u["lo"] rtol = 0.01
+            @test ir.upper ≈ u["hi"] rtol = 0.01
+            iK = C._sheets_reference_interval(iso, T, :K)
+            u = interval(iso, T, "K_fit")
+            @test iK.lower ≈ u["lo"] rtol = 0.04
+            @test iK.upper ≈ u["hi"] rtol = 0.04
+        end
+        @test !C._sheets_reference_interval("LA", 21, :r).found_upper    # supplement: FALSE
+        @test !C._sheets_reference_interval("VT", 4, :K).found_upper     # supplement: FALSE
+        @test_throws ArgumentError sheets_profile_interval(C._sheets_reference_fit("LA", 4), :b2)
     end
 end

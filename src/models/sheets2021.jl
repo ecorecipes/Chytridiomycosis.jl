@@ -11,8 +11,9 @@
 #
 # by maximum likelihood (multi-start Nelder–Mead in optim()). Time in days. The thermal
 # response of each isolate is then r (and K) against temperature (Fig. 4, Table 2). The paper
-# also fitted Johnson–Lewin curves to r, in a Supplementary Material we could not retrieve
-# (Data_Sheet_1.PDF); its Discussion calls those fits overfitted, and they are not implemented.
+# says it constrained r to Johnson–Lewin curves and refers to the Supplementary Material
+# (Data_Sheet_1.PDF) for details, but the supplement is the rendered R Markdown and holds no
+# Johnson–Lewin form or fit; its Discussion calls those fits overfitted. Not implemented.
 
 const SHEETS_ISOLATES = ("LA", "TN", "VT", "NM", "OH")
 const SHEETS_TEMPERATURES = (4.0, 12.0, 17.0, 21.0, 25.0, 26.0, 27.0)

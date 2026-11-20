@@ -22,6 +22,9 @@ notes = "On the tested grid, so known only to within the 17 and 25 degC neighbou
 
 
 # --- Table 2: viability (MTT), and the logistic r and K, by isolate and temperature ---------------
+# Tables 2 and 4 were re-checked on 2026-11-20 against the published PDF (fvets-08-687084.pdf,
+# 11 pages): every value matches the PMC full text they were first entered from. The
+# Supplementary Material is entered at the end of this file (r_fit, K_fit).
 # Sets "<isolate>_<T>C"; thermal_data(:sheets2021, :r; set_prefix = "LA_") gives one isolate's r(T).
 # r and K are maximum likelihood fits of a logistic curve to the normalised MTT series
 # (Supplementary R code); "Mean (±SE)" is the mean maximum viability (OD after the MTT assay).
@@ -1735,3 +1738,991 @@ system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "cultu
 location = "Table 4"
 verified = true
 notes = "The paper gives no unit; the figshare data hold the same counts."
+
+# --- Supplementary Material (Data_Sheet_1.PDF, 30 pages; checked 2026-11-20) ---------------------
+# The supplement is the rendered R Markdown of the figshare code: it prints the logistic fits
+# (r_fit, K_fit) and their profile-likelihood 95% intervals. It contains NO Johnson-Lewin curves
+# or fitted values, although the main text refers to it for them. Its fits differ from Table 2
+# for TN, OH, VT at 4 degC, TN 26 and OH 25 degC (and the unidentified LA 26/27, VT 26/27); they
+# equal what the deposited code gives on the deposited data. found = FALSE marks a bound at the
+# edge of the authors' grid (not a crossing).
+
+[[parameter]]
+set = "LA_4C"
+symbol = "r_fit"
+quantity = "LA isolate at 4 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.2590634
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.2292959, hi = 0.2940164, as_printed = "0.2292959 - 0.2940164 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_4C"
+symbol = "K_fit"
+quantity = "LA isolate at 4 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.6245595
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.5412239, hi = 0.7237419, as_printed = "5.412239e-01 - 7.237419e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_12C"
+symbol = "r_fit"
+quantity = "LA isolate at 12 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.5867231
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.5263215, hi = 0.6573467, as_printed = "0.5263215 - 0.6573467 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_12C"
+symbol = "K_fit"
+quantity = "LA isolate at 12 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.8337093
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.7969333, hi = 0.8509523, as_printed = "7.969333e-01 - 8.509523e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_17C"
+symbol = "r_fit"
+quantity = "LA isolate at 17 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.853917
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.7569545, hi = 0.9826965, as_printed = "0.7569545 - 0.9826965 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_17C"
+symbol = "K_fit"
+quantity = "LA isolate at 17 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 1.276013
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 1.163373, hi = 1.377908, as_printed = "1.163373e+00 - 1.377908e+00 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_21C"
+symbol = "r_fit"
+quantity = "LA isolate at 21 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 1.5042143
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 1.1587989, hi = 4.5126429, as_printed = "1.1587989 - 4.5126429 (found.lower TRUE, found.upper FALSE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper FALSE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_21C"
+symbol = "K_fit"
+quantity = "LA isolate at 21 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 1.047551
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.9081032, hi = 1.16146, as_printed = "9.081032e-01 - 1.161460e+00 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_25C"
+symbol = "r_fit"
+quantity = "LA isolate at 25 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.9155305
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.8240365, hi = 1.0051841, as_printed = "0.8240365 - 1.0051841 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_25C"
+symbol = "K_fit"
+quantity = "LA isolate at 25 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.9878376
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.8663331, hi = 1.150793, as_printed = "8.663331e-01 - 1.150793e+00 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_26C"
+symbol = "r_fit"
+quantity = "LA isolate at 26 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.4820032
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.4176526, hi = 0.6157598, as_printed = "0.4176526 - 0.6157598 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_26C"
+symbol = "K_fit"
+quantity = "LA isolate at 26 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 1417591.0
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 1417.591, hi = 7087956.0, as_printed = "1.417591e+03 - 7.087956e+06 (found.lower FALSE, found.upper FALSE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower FALSE, upper FALSE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_27C"
+symbol = "r_fit"
+quantity = "LA isolate at 27 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 2.9465853
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.2814622, hi = 8.8397558, as_printed = "0.2814622 - 8.8397558 (found.lower TRUE, found.upper FALSE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper FALSE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "LA_27C"
+symbol = "K_fit"
+quantity = "LA isolate at 27 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.02611439
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.01686124, hi = 0.1305719, as_printed = "1.686124e-02 - 1.305719e-01 (found.lower TRUE, found.upper FALSE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "LA", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper FALSE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_4C"
+symbol = "r_fit"
+quantity = "NM isolate at 4 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.1938702
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.1493578, hi = 0.2529656, as_printed = "0.1493578 - 0.2529656 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_4C"
+symbol = "K_fit"
+quantity = "NM isolate at 4 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.1047245
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.08473013, hi = 0.1360709, as_printed = "8.473013e-02 - 1.360709e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_12C"
+symbol = "r_fit"
+quantity = "NM isolate at 12 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.6296962
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.5011717, hi = 0.797285, as_printed = "0.5011717 - 0.7972850 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_12C"
+symbol = "K_fit"
+quantity = "NM isolate at 12 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.5608233
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.5247461, hi = 0.5802449, as_printed = "5.247461e-01 - 5.802449e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_17C"
+symbol = "r_fit"
+quantity = "NM isolate at 17 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.8780131
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.7212113, hi = 1.0961544, as_printed = "0.7212113 - 1.0961544 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_17C"
+symbol = "K_fit"
+quantity = "NM isolate at 17 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.8240407
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.7337385, hi = 0.9165345, as_printed = "7.337385e-01 - 9.165345e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_21C"
+symbol = "r_fit"
+quantity = "NM isolate at 21 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.8080043
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.6978039, hi = 0.9555013, as_printed = "0.6978039 - 0.9555013 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_21C"
+symbol = "K_fit"
+quantity = "NM isolate at 21 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.8820931
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.8272623, hi = 0.9207185, as_printed = "8.272623e-01 - 9.207185e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_25C"
+symbol = "r_fit"
+quantity = "NM isolate at 25 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 1.3242149
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 1.1864515, hi = 1.4777541, as_printed = "1.1864515 - 1.4777541 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_25C"
+symbol = "K_fit"
+quantity = "NM isolate at 25 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.4455282
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.3985363, hi = 0.5042385, as_printed = "3.985363e-01 - 5.042385e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_26C"
+symbol = "r_fit"
+quantity = "NM isolate at 26 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 1.1802665
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 1.0522883, hi = 1.3259138, as_printed = "1.0522883 - 1.3259138 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_26C"
+symbol = "K_fit"
+quantity = "NM isolate at 26 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.2762338
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.2211046, hi = 0.3638817, as_printed = "2.211046e-01 - 3.638817e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_27C"
+symbol = "r_fit"
+quantity = "NM isolate at 27 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 1.0628639
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.8130549, hi = 1.5082925, as_printed = "0.8130549 - 1.5082925 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "NM_27C"
+symbol = "K_fit"
+quantity = "NM isolate at 27 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.07503278
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.06008805, hi = 0.102635, as_printed = "6.008805e-02 - 1.026350e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "NM", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_4C"
+symbol = "r_fit"
+quantity = "OH isolate at 4 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.1925829
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.1309649, hi = 0.2818191, as_printed = "0.1309649 - 0.2818191 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_4C"
+symbol = "K_fit"
+quantity = "OH isolate at 4 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.06490205
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.04869205, hi = 0.1026431, as_printed = "4.869205e-02 - 1.026431e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_12C"
+symbol = "r_fit"
+quantity = "OH isolate at 12 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.3071427
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.2591165, hi = 0.365771, as_printed = "0.2591165 - 0.3657710 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_12C"
+symbol = "K_fit"
+quantity = "OH isolate at 12 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.2312914
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.2099856, hi = 0.2522847, as_printed = "2.099856e-01 - 2.522847e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_17C"
+symbol = "r_fit"
+quantity = "OH isolate at 17 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.9106411
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.7900681, hi = 1.0556496, as_printed = "0.7900681 - 1.0556496 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_17C"
+symbol = "K_fit"
+quantity = "OH isolate at 17 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.544479
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.5028084, hi = 0.5846507, as_printed = "5.028084e-01 - 5.846507e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_21C"
+symbol = "r_fit"
+quantity = "OH isolate at 21 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.8263378
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.7178522, hi = 0.9565726, as_printed = "0.7178522 - 0.9565726 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_21C"
+symbol = "K_fit"
+quantity = "OH isolate at 21 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.6487234
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.5801681, hi = 0.7214135, as_printed = "5.801681e-01 - 7.214135e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_25C"
+symbol = "r_fit"
+quantity = "OH isolate at 25 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 1.5214743
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 1.3001598, hi = 1.7571974, as_printed = "1.3001598 - 1.7571974 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_25C"
+symbol = "K_fit"
+quantity = "OH isolate at 25 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.3902704
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.3382199, hi = 0.4511431, as_printed = "3.382199e-01 - 4.511431e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_26C"
+symbol = "r_fit"
+quantity = "OH isolate at 26 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 1.4512178
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 1.1961378, hi = 2.1537904, as_printed = "1.1961378 - 2.1537904 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_26C"
+symbol = "K_fit"
+quantity = "OH isolate at 26 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.2993768
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.247637, hi = 0.3680603, as_printed = "2.476370e-01 - 3.680603e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_27C"
+symbol = "r_fit"
+quantity = "OH isolate at 27 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 1.001579
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.7853119, hi = 1.2736843, as_printed = "0.7853119 - 1.2736843 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "OH_27C"
+symbol = "K_fit"
+quantity = "OH isolate at 27 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.1116322
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.08703454, hi = 0.1566491, as_printed = "8.703454e-02 - 1.566491e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "OH", lineage = "BdGPL2", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_4C"
+symbol = "r_fit"
+quantity = "TN isolate at 4 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.1832258
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.1085697, hi = 0.3416453, as_printed = "0.1085697 - 0.3416453 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_4C"
+symbol = "K_fit"
+quantity = "TN isolate at 4 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.02250046
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.01551995, hi = 0.03924279, as_printed = "1.551995e-02 - 3.924279e-02 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_12C"
+symbol = "r_fit"
+quantity = "TN isolate at 12 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.8495657
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.7071292, hi = 1.0484447, as_printed = "0.7071292 - 1.0484447 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_12C"
+symbol = "K_fit"
+quantity = "TN isolate at 12 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.4357259
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.4191547, hi = 0.4428003, as_printed = "4.191547e-01 - 4.428003e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_17C"
+symbol = "r_fit"
+quantity = "TN isolate at 17 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.7361102
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.6550232, hi = 0.8359714, as_printed = "0.6550232 - 0.8359714 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_17C"
+symbol = "K_fit"
+quantity = "TN isolate at 17 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.6317436
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.5689626, hi = 0.7042897, as_printed = "5.689626e-01 - 7.042897e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_21C"
+symbol = "r_fit"
+quantity = "TN isolate at 21 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.8276446
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.6981779, hi = 1.0033057, as_printed = "0.6981779 - 1.0033057 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_21C"
+symbol = "K_fit"
+quantity = "TN isolate at 21 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.6701784
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.5900024, hi = 0.76371, as_printed = "5.900024e-01 - 7.637100e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_25C"
+symbol = "r_fit"
+quantity = "TN isolate at 25 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 1.017094
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.870198, hi = 1.1872033, as_printed = "0.8701980 - 1.1872033 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_25C"
+symbol = "K_fit"
+quantity = "TN isolate at 25 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.3259483
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.2688694, hi = 0.4225117, as_printed = "2.688694e-01 - 4.225117e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_26C"
+symbol = "r_fit"
+quantity = "TN isolate at 26 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 1.2371524
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.9682207, hi = 1.7390811, as_printed = "0.9682207 - 1.7390811 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_26C"
+symbol = "K_fit"
+quantity = "TN isolate at 26 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.1559253
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.1191953, hi = 0.2205951, as_printed = "1.191953e-01 - 2.205951e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_27C"
+symbol = "r_fit"
+quantity = "TN isolate at 27 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 1.8740154
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 1.0774341, hi = 3.2857901, as_printed = "1.0774341 - 3.2857901 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "TN_27C"
+symbol = "K_fit"
+quantity = "TN isolate at 27 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.05331168
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.04525465, hi = 0.06348513, as_printed = "4.525465e-02 - 6.348513e-02 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "TN", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_4C"
+symbol = "r_fit"
+quantity = "VT isolate at 4 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.174466
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.1438889, hi = 0.2265475, as_printed = "0.1438889 - 0.2265475 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_4C"
+symbol = "K_fit"
+quantity = "VT isolate at 4 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.5413685
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.151955, hi = 2.706842, as_printed = "1.519550e-01 - 2.706842e+00 (found.lower TRUE, found.upper FALSE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 4.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper FALSE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_12C"
+symbol = "r_fit"
+quantity = "VT isolate at 12 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.2312362
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.2093787, hi = 0.2548583, as_printed = "0.2093787 - 0.2548583 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_12C"
+symbol = "K_fit"
+quantity = "VT isolate at 12 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.4757365
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.4314625, hi = 0.5231256, as_printed = "4.314625e-01 - 5.231256e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 12.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_17C"
+symbol = "r_fit"
+quantity = "VT isolate at 17 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.4320938
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.3714102, hi = 0.5005735, as_printed = "0.3714102 - 0.5005735 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_17C"
+symbol = "K_fit"
+quantity = "VT isolate at 17 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.6248107
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.5066912, hi = 0.8402362, as_printed = "5.066912e-01 - 8.402362e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 17.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_21C"
+symbol = "r_fit"
+quantity = "VT isolate at 21 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.3991459
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.3246974, hi = 0.5187218, as_printed = "0.3246974 - 0.5187218 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_21C"
+symbol = "K_fit"
+quantity = "VT isolate at 21 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.6020393
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.4906162, hi = 0.7529875, as_printed = "4.906162e-01 - 7.529875e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 21.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_25C"
+symbol = "r_fit"
+quantity = "VT isolate at 25 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 0.9505612
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.6343968, hi = 1.3832665, as_printed = "0.6343968 - 1.3832665 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_25C"
+symbol = "K_fit"
+quantity = "VT isolate at 25 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.0715516
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.04918598, hi = 0.2960775, as_printed = "4.918598e-02 - 2.960775e-01 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 25.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_26C"
+symbol = "r_fit"
+quantity = "VT isolate at 26 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 8.5830803
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 4.3311781, hi = 15.7787992, as_printed = "4.3311781 - 15.7787992 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_26C"
+symbol = "K_fit"
+quantity = "VT isolate at 26 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 0.01922429
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.01335145, hi = 0.02515182, as_printed = "1.335145e-02 - 2.515182e-02 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 26.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_27C"
+symbol = "r_fit"
+quantity = "VT isolate at 27 degC: intrinsic growth rate r of the logistic fit to normalised MTT (authors' R output)"
+value = 1.1167202
+units = "d^-1"
+uncertainty = { kind = "profile_ci95", lo = 0.4023632, hi = 2.5086527, as_printed = "0.4023632 - 2.5086527 (found.lower TRUE, found.upper TRUE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower TRUE, upper TRUE (Supplementary rCI/KCI tables)."
+
+[[parameter]]
+set = "VT_27C"
+symbol = "K_fit"
+quantity = "VT isolate at 27 degC: carrying capacity K of the logistic fit to normalised MTT (authors' R output)"
+value = 42.44246
+units = "OD (570 nm)"
+uncertainty = { kind = "profile_ci95", lo = 0.04244246, hi = 212.2123, as_printed = "4.244246e-02 - 2.122123e+02 (found.lower FALSE, found.upper FALSE)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", isolate = "VT", lineage = "BdGPL1", setting = "culture, TGhL, MTT assay at 570 nm", temperature_C = 27.0 }
+location = "Supplementary Material, logistic fits and r/K confidence interval tables"
+verified = true
+notes = "Profile interval bounds found: lower FALSE, upper FALSE (Supplementary rCI/KCI tables)."

@@ -7802,3 +7802,195 @@ tolerance = { digits = 2 }
 status = "discrepant"
 regression = { value = 0.0537, atol = 0.01 }
 notes = "Ours 0.054; archived output 0.052."
+
+# ---- sheets2021 (Supplementary Material) ----
+# The supplement (rendered R Markdown) prints the authors' logistic fits and profile-likelihood 95%
+# intervals for the deposited data. It has no Johnson-Lewin fits, so there are no targets for them.
+
+[[target]]
+id = "sheets2021_supp_r_TN_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "TN isolate at 4 degC: logistic r of normalised MTT, as printed in the supplement"
+published = 0.1832258
+call = "_sheets_reference_fit(\"TN\", 4).estimates.r"
+tolerance = { rtol = 0.005 }
+status = "reproduced"
+notes = """
+Table 2 prints a different value for this fit (target sheets2021_r_TN_4C, discrepant); the supplement's
+value, the authors' own output for the deposited data, is reproduced."""
+
+[[target]]
+id = "sheets2021_supp_r_OH_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "OH isolate at 4 degC: logistic r of normalised MTT, as printed in the supplement"
+published = 0.1925829
+call = "_sheets_reference_fit(\"OH\", 4).estimates.r"
+tolerance = { rtol = 0.005 }
+status = "reproduced"
+notes = """
+Table 2 prints a different value for this fit (target sheets2021_r_OH_4C, discrepant); the supplement's
+value, the authors' own output for the deposited data, is reproduced."""
+
+[[target]]
+id = "sheets2021_supp_K_VT_4C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "VT isolate at 4 degC: logistic K of normalised MTT, as printed in the supplement"
+published = 0.5413685
+call = "_sheets_reference_fit(\"VT\", 4).estimates.K"
+tolerance = { rtol = 0.005 }
+status = "reproduced"
+notes = """
+Table 2 prints a different value for this fit (target sheets2021_K_VT_4C, discrepant); the supplement's
+value, the authors' own output for the deposited data, is reproduced."""
+
+[[target]]
+id = "sheets2021_supp_r_TN_26C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "TN isolate at 26 degC: logistic r of normalised MTT, as printed in the supplement"
+published = 1.2371524
+call = "_sheets_reference_fit(\"TN\", 26).estimates.r"
+tolerance = { rtol = 0.005 }
+status = "reproduced"
+notes = """
+Table 2 prints a different value for this fit (target sheets2021_r_TN_26C, discrepant); the supplement's
+value, the authors' own output for the deposited data, is reproduced."""
+
+[[target]]
+id = "sheets2021_supp_r_OH_25C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "OH isolate at 25 degC: logistic r of normalised MTT, as printed in the supplement"
+published = 1.5214743
+call = "_sheets_reference_fit(\"OH\", 25).estimates.r"
+tolerance = { rtol = 0.005 }
+status = "reproduced"
+notes = """
+Table 2 prints a different value for this fit (target sheets2021_r_OH_25C, discrepant); the supplement's
+value, the authors' own output for the deposited data, is reproduced."""
+
+[[target]]
+id = "sheets2021_supp_r_VT_26C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "VT isolate at 26 degC: logistic r, as printed in the supplement (also the Fig. 4 legend, 8.58)"
+published = 8.5830803
+call = "_sheets_reference_fit(\"VT\", 26).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 20.66, rtol = 0.05 }
+notes = """
+A ridge in (x0, r): x0 is 2.7e-18 in the supplement. Our optimiser moves further along it to a slightly higher
+likelihood (log-likelihood 137.35 against the supplement's 137.3195). Not identified; Table 2 prints 5.431."""
+
+[[target]]
+id = "sheets2021_supp_r_LA_27C"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, Parameter Estimates" }
+quantity = "LA isolate at 27 degC: logistic r, as printed in the supplement"
+published = 2.9465853
+call = "_sheets_reference_fit(\"LA\", 27).estimates.r"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 2.222, rtol = 0.02 }
+notes = """
+Poorly identified (30 readings, profile upper bound not found: 0.28 to 8.84). Our fit has a higher log-likelihood
+(80.85 against the supplement's 80.6827); Table 2 prints 0.4817."""
+
+[[target]]
+id = "sheets2021_ci_r_LA_4C_lower"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "LA isolate at 4 degC: lower bound of the 95% profile-likelihood interval of r"
+published = 0.2292959
+call = "_sheets_reference_interval(\"LA\", 4, :r).lower"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_r_LA_4C_upper"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "LA isolate at 4 degC: upper bound of the 95% profile-likelihood interval of r"
+published = 0.2940164
+call = "_sheets_reference_interval(\"LA\", 4, :r).upper"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_r_NM_12C_lower"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "NM isolate at 12 degC: lower bound of the 95% profile-likelihood interval of r"
+published = 0.5011717
+call = "_sheets_reference_interval(\"NM\", 12, :r).lower"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_r_NM_12C_upper"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "NM isolate at 12 degC: upper bound of the 95% profile-likelihood interval of r"
+published = 0.797285
+call = "_sheets_reference_interval(\"NM\", 12, :r).upper"
+tolerance = { rtol = 0.01 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_K_LA_4C_lower"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "LA isolate at 4 degC: lower bound of the 95% profile-likelihood interval of K"
+published = 0.5412239
+call = "_sheets_reference_interval(\"LA\", 4, :K).lower"
+tolerance = { rtol = 0.04 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_K_LA_4C_upper"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "LA isolate at 4 degC: upper bound of the 95% profile-likelihood interval of K"
+published = 0.7237419
+call = "_sheets_reference_interval(\"LA\", 4, :K).upper"
+tolerance = { rtol = 0.04 }
+status = "reproduced"
+notes = """
+The authors scan a grid of 31 values on each side and interpolate linearly; we bisect for the crossing of the
+chi-squared(1) 0.95 quantile (3.84; the supplement's text says 'approximately 3.48', its code uses qchisq(0.95, 1)).
+Grid interpolation pulls upper bounds inward, hence the wider tolerance for K."""
+
+[[target]]
+id = "sheets2021_ci_r_LA_21C_upper_found"
+model = "bd-sheets2021-isolate-tpc"
+source = { ref = "sheets2021", location = "Supplementary Material, r and K confidence interval limits" }
+quantity = "LA isolate at 21 degC: whether the upper bound of the r interval is identified"
+published = false
+call = "_sheets_reference_interval(\"LA\", 21, :r).found_upper"
+status = "reproduced"
+notes = """
+The supplement marks it found.upper = FALSE (bound at the edge of its grid, 4.51); we find no crossing up to 20 times r."""

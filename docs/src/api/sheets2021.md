@@ -31,8 +31,12 @@ are bundled in `data/sheets2021`.
     VT 26 °C lies on a ridge in `(x0, r)`. Table 2's mean viabilities put the LA optimum at
     17 °C, not the 21 °C the Results state.
 
-    The paper's Johnson–Lewin curves for `r` are in a Supplementary Material we could not
-    retrieve; its Discussion calls them overfitted. They are not implemented.
+    The Supplementary Material (Data_Sheet_1.PDF) is the rendered R Markdown. Its printed
+    fits are the authors' output for the deposited data, and they equal ours (and differ from
+    Table 2 for the five fits above). It has no Johnson–Lewin curves, although the main text
+    refers to it for them; they are not implemented. Its profile-likelihood 95% intervals
+    for `r` and `K` are reproduced by [`sheets_profile_interval`](@ref) (to 1 % for `r`, 4 % for
+    `K`; the authors interpolate on a coarse grid).
 
 ```@docs
 sheets_tpc
@@ -41,6 +45,7 @@ sheets2021_path
 load_sheets2021
 SheetsGrowthModel
 sheets_fits
+sheets_profile_interval
 ```
 
 [`maximum_likelihood`](@ref) and [`parameter_names`](@ref) also have methods for a
