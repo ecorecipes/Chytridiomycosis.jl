@@ -71,6 +71,10 @@ include("models/daversa2022.jl")
 include("models/zoospore_pool.jl")
 include("models/rumschlag2022.jl")
 include("fitting/rumschlag2022.jl")
+# Doddington et al. 2013 midwife toads and a zoospore pool; Espira et al. 2022 two hosts with
+# overlapping habitats and environmental transmission
+include("models/doddington2013.jl")
+include("models/espira2022.jl")
 
 # N5
 using LinearAlgebra: svd, eigen, Symmetric, Diagonal
@@ -173,6 +177,12 @@ export DaversaParameters, MultiHostPoolProblem, daversa_doses, species_reproduct
        next_generation_matrix, daversa2022_path, MesocosmTank, load_daversa2022,
        observed_infected, predicted_infected, daversa_loglikelihood, tank_reproduction_numbers
 export ValidationTarget, validation_targets, validation_target, reproduce, check_target
+export DoddingtonParameters, DoddingtonODEProblem, DoddingtonStochasticProblem,
+       doddington_outcome, doddington_outcomes, doddington_grid, excess_death_rate,
+       doddington_exposure_trial
+export EspiraParameters, OverlappingHabitatProblem, pickup_efficiency,
+       community_reproduction_number, dilution_threshold, dilution_effect,
+       espira_parameters_from_efficiencies
 
 # N5
 export BriggsMomentProblem, SurveyPond, SurveySample, SurveyObservation, SurveyModel,

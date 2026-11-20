@@ -26,6 +26,8 @@ makedocs(;
                   "Published models" => ["Schmidt 2017, Briggs 2010, Mitchell 2008" => "api/published.md",
                                          "Several hosts, one pool (Daversa 2022)" => "api/daversa2022.md",
                                          "Zoospore persistence (Rumschlag 2022)" => "api/rumschlag2022.md",
+                                         "Midwife toads and a zoospore pool (Doddington 2013)" => "api/doddington2013.md",
+                                         "Overlapping habitats and dilution (Espira 2022)" => "api/espira2022.md",
                                          "Refugia CTMC (Miller 2025)" => "api/miller2025.md",
                                          "Seasonal Bsal (Bozzuto 2019)" => "api/bozzuto2019.md",
                                          "Bsal transmission functions" => "api/bsal_transmission.md",
