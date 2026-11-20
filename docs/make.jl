@@ -47,6 +47,8 @@ makedocs(;
                                          "Pradel recruitment and growth (Hardy 2023)" => "api/hardy2023.md",
                                          "Age truncation and metapopulations (Heard 2024)" => "api/heard2024.md",
                                          "Watering timing and extinction (Turner 2025)" => "api/turner2025.md",
+                                         "Multistate CMR and POPAN (Brannelly 2018)" => "api/brannelly2018.md",
+                                         "Hurdle model across species (Grear 2025)" => "api/grear2025.md",
                                          "Multistate survival (Hollanders 2023, Palomar 2023)" => "api/multistate.md"],
                   "Modified models" => ["Load models" => "api/load.md",
                                         "Life stages" => "api/stages.md",

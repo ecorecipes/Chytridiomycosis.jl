@@ -1,0 +1,77 @@
+# Grear DA, Adams MJ, Backlin AR, et al. (2025) Pan-amphibia distribution of the fungal
+# parasite Batrachochytrium dendrobatidis varies with species and temperature. Ecological
+# Monographs 95:e70001. https://doi.org/10.1002/ecm.70001 (open access, CC BY-NC 4.0)
+#
+# ONLY THE ABSTRACT WAS READ (USGS Publications Warehouse record 70263881, 2026-11-19): the
+# publisher's full text refused automated clients. The model structure and priors are taken
+# from the authors' code release (doi:10.5066/P1MXUJZM; src/models/grear2025.jl), not from
+# printed text, and are not entered here. The study-size numbers below are the only printed
+# values read. System: post-metamorphic and larval amphibians, 54 species, conterminous US,
+# 2015–2017 (the code says 2014–2017), qPCR swabs.
+#
+# Prior values from the code (not printed values we could read): normal(0, 20) on the
+# log-load coefficients and intercept, normal(0, 1) on the hurdle coefficients and intercept
+# (04_tempPrecipModFit.R, `hurprior`). They are passed as the defaults of
+# HurdleRegressionProblem, recorded here for provenance.
+
+source = { ref = "grear2025", doi = "10.1002/ecm.70001", review_ref = 53 }
+
+[[parameter]]
+symbol = "swabs"
+quantity = "amphibians swabbed"
+value = 11183
+units = "swabs"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
+location = "Abstract"
+verified = true
+notes = "Reproduced from the bundled data (validation target grear2025_swabs)."
+
+[[parameter]]
+symbol = "sites"
+quantity = "sites sampled"
+value = 609
+units = "sites"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
+location = "Abstract"
+verified = true
+notes = "The data file has 594 siteIDs (target grear2025_sites, discrepant)."
+
+[[parameter]]
+symbol = "species"
+quantity = "species sampled"
+value = 54
+units = "species"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
+location = "Abstract"
+verified = true
+notes = "53 resolved species plus 'Taricha sp.'."
+
+[[parameter]]
+symbol = "prior_sd_load"
+quantity = "prior standard deviation of the log-load (mu) intercept and coefficients"
+value = 20.0
+units = "log copies per swab"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "model prior" }
+location = "Authors' code, 04_tempPrecipModFit.R (hurprior); not read in the paper"
+verified = false
+notes = "From the code release, not the printed paper."
+
+[[parameter]]
+symbol = "prior_sd_hurdle"
+quantity = "prior standard deviation of the hurdle (hu, logit) intercept and coefficients"
+value = 1.0
+units = "logit"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "model prior" }
+location = "Authors' code, 04_tempPrecipModFit.R (hurprior); not read in the paper"
+verified = false
+notes = "From the code release, not the printed paper."

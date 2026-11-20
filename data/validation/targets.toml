@@ -7031,3 +7031,235 @@ regression = { value = 17.0 }
 notes = """
 The Results say all isolates had maximum viability at 21 degC, and so do the other four isolates' means in Table 2, but
 Table 2 gives LA 1.19 ± 0.050 at 17 degC against 1.12 ± 0.104 at 21 degC. An inconsistency within the paper."""
+# ---- brannelly2018 ----
+# Brannelly et al. 2018 BMC Ecol 18:34 (doi:10.1186/s12898-018-0189-5), read from the full
+# text (PMC6137908). Refits use the bundled Additional files (CC0, data/brannelly2018) with
+# survey-pair monthly occasions and month-long intervals (src/models/brannelly2018.jl).
+
+[[target]]
+id = "brannelly2018_capture_events"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 1; Results 'Multistate capture-mark-recapture'" }
+quantity = "capture events of marked A. crepitans in the CMR year (Additional file 3)"
+published = 378
+call = "brannelly2018_summary().capture_events"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = "Survey-day captures with code 1, 2 or 3 in Additional file 3."
+
+[[target]]
+id = "brannelly2018_positive_captures"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Results ('Sixty-three capture events were of Bd positive animals'); Table 1" }
+quantity = "Bd-positive capture events"
+published = 63
+call = "brannelly2018_summary().positive"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = """
+54 captures coded 2 plus 9 coded 3 (undocumented code: disease category 2, matched with
+Additional file 1). Table 1 prints 315 under 'Positive' and 63 under 'Negative', swapped
+against the text."""
+
+[[target]]
+id = "brannelly2018_recaptured"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 1" }
+quantity = "animals recaptured (caught on more than one survey day)"
+published = 50
+call = "brannelly2018_summary().recaptured"
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "brannelly2018_individuals"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 1 ('Unique individuals captured 266')" }
+quantity = "unique individuals captured at least once in the CMR year"
+published = 266
+call = "brannelly2018_summary().individuals"
+tolerance = { digits = 0 }
+status = "discrepant"
+regression = { value = 315, atol = 0 }
+notes = """
+Additional file 3 has 315 animals, each caught at least once, with 378 captures (as printed).
+266 equals 315 − 49, the number of animals seen on more than one monthly occasion, so the
+printed figure may count animals never recaptured; not resolvable from the paper."""
+
+[[target]]
+id = "brannelly2018_deviance_best"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 2, Φ(.)p(to+t)Ψ(f*to+t)" }
+quantity = "deviance (−2 log L, M-SURGE) of the best conditional Arnason–Schwarz model"
+published = 487.1455
+call = "brannelly2018_model_selection()[1].deviance"
+tolerance = { atol = 0.01 }
+status = "discrepant"
+regression = { value = 488.8656, atol = 0.01 }
+notes = """
+Refit by maximum likelihood (gradient < 1e-4) with survey-pair occasions and month
+intervals: 488.87 (0.35% above). Calendar-month occasions give 469.19; equal intervals with
+survey pairs 488.78. The remaining gap is data processing we cannot see (how M-SURGE's
+input was built from the survey days). All 10 printed parameter counts are matched by the
+designs (test/brannelly2018.jl)."""
+
+[[target]]
+id = "brannelly2018_deviance_null"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 2, Φ(.)p(.)Ψ(.)" }
+quantity = "deviance of the constant model Φ(.)p(.)Ψ(.)"
+published = 581.9903
+call = "brannelly2018_model_selection()[10].deviance"
+tolerance = { atol = 0.01 }
+status = "discrepant"
+regression = { value = 581.5865, atol = 0.01 }
+notes = "Refit 581.59 (0.07% below); same data-processing caveat as brannelly2018_deviance_best."
+
+[[target]]
+id = "brannelly2018_best_three_models"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Table 2 (ΔAIC < 2: models 1–3)" }
+quantity = "the three models within 2 AIC of the best are Φ(.)p(to+t)Ψ(f*to+t), Φ(.)p(t)Ψ(f*to+t), Φ(f)p(to+t)Ψ(f*to+t), in that order"
+published = true
+call = "[r.name for r in sort(brannelly2018_model_selection(); by = r -> r.aic)[1:3]] == [m.name for m in brannelly2018_models()[1:3]] && sort(brannelly2018_model_selection(); by = r -> r.aic)[3].delta_aic < 2 && sort(brannelly2018_model_selection(); by = r -> r.aic)[4].delta_aic > 2"
+status = "qualitative"
+notes = "AIC = deviance + 2 × printed parameter count. Refit ΔAIC 0, 1.63, 2.00 (printed 0, 1.70, 1.99); fourth 2.41 (printed 2.54)."
+
+[[target]]
+id = "brannelly2018_survival_uninfected"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Results ('93.13% (95% CI 82.64–100.00%) for uninfected animals')" }
+quantity = "model-averaged monthly survival of Bd-negative frogs (three best models)"
+published = 0.9313
+call = "brannelly2018_survival().uninfected"
+tolerance = { atol = 0.005 }
+status = "reproduced"
+regression = { value = 0.9280, atol = 5e-4 }
+notes = "Refit 0.9280 with Akaike weights renormalised over the three models. The tolerance (±0.005, two decimals) was set after the refit, matching the precision of the deviance agreement; the printed CIs are 0.83–1.00."
+
+[[target]]
+id = "brannelly2018_survival_infected"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Results ('92.23% (95% CI 64.47–100.00%) for infected animals')" }
+quantity = "model-averaged monthly survival of Bd-positive frogs (three best models)"
+published = 0.9223
+call = "brannelly2018_survival().infected"
+tolerance = { atol = 0.005 }
+status = "reproduced"
+regression = { value = 0.9234, atol = 5e-4 }
+notes = "Refit 0.9234."
+
+[[target]]
+id = "brannelly2018_detection_infected"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Results ('infected animals were more likely to be captured'); Fig. 3b" }
+quantity = "capture probability of Bd-positive frogs exceeds that of Bd-negative frogs at every occasion (best model)"
+published = true
+call = "all(brannelly2018_model_selection()[1].fit.parameters.detection[2, :] .> brannelly2018_model_selection()[1].fit.parameters.detection[1, :])"
+status = "qualitative"
+
+[[target]]
+id = "brannelly2018_superpopulation"
+model = "obs-brannelly2018-multistate-popan"
+source = { ref = "brannelly2018", location = "Results 'Population size' ('1854.33 (95% CI 1092.28–3323.45)')" }
+quantity = "POPAN super-population size, model Φ(.)p(t)pent(t)"
+published = 1854.33
+call = "brannelly2018_popan().N"
+tolerance = { rtol = 0.01 }
+status = "discrepant"
+regression = { value = 1394.08, rtol = 0.01 }
+notes = """
+Refit by maximum likelihood: N = 1394 (calendar months: 1488). The fit puts p_1 on the
+boundary (p_1 → 1): with p(t) and pent(t) the first capture probability and first entry are
+confounded, as are the last ones, so N depends on how the optimiser (here BFGS from fixed
+starting values; MARK's own) resolves that ridge, and the Hessian is singular (no Wald
+interval). The printed MARK deviances (negative, −1028.25) are on MARK's POPAN basis and
+are not comparable with our −2 log L."""
+
+# ---- grear2025 ----
+# Grear et al. 2025 Ecol Monogr 95:e70001 (doi:10.1002/ecm.70001). The full text could not be
+# fetched (publisher bot check); only the abstract (USGS Publications Warehouse 70263881) and
+# the authors' code release (doi:10.5066/P1MXUJZM, CC0) were read. Printed coefficients are
+# therefore pending. Data bundled in data/grear2025 (public domain).
+
+[[target]]
+id = "grear2025_swabs"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Abstract ('swabs from 11,183 amphibians')" }
+quantity = "swabs with a collection date in the survey data"
+published = 11183
+call = "grear2025_summary().swabs"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = "Also the row count the authors' scripts print after their date filter."
+
+[[target]]
+id = "grear2025_species"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Abstract ('54 species')" }
+quantity = "distinct species names among dated swabs"
+published = 54
+call = "grear2025_summary().species"
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = "53 resolved species plus the unresolved 'Taricha sp.' (as the authors' script comments: n_distinct(Gesp) = 54)."
+
+[[target]]
+id = "grear2025_sites"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Abstract ('at 609 sites')" }
+quantity = "distinct sites among dated swabs"
+published = 609
+call = "grear2025_summary().sites"
+tolerance = { digits = 0 }
+status = "discrepant"
+regression = { value = 594, atol = 0 }
+notes = """
+The data file has 594 siteIDs (the authors' grouping of nearby locations used as the model's
+site random effect), 603 raw SiteName values and 693 site visits. How 609 was counted is in
+the unread full text."""
+
+[[target]]
+id = "grear2025_temperature_peak"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Abstract ('peak infection at intermediate temperatures and lower infection at low and high temperatures')" }
+quantity = "quadratic effects of 30-day mean maximum temperature are concave for both prevalence and intensity, with the peak inside the sampled temperature range"
+published = true
+call = "(o = grear2025_temperature_optimum(_grear2025_reference_fit()); r = extrema(_grear2025_reference_fit().problem.data.tmax30); o.curvature_prevalence < 0 && o.curvature_intensity < 0 && r[1] < o.prevalence < r[2] && r[1] < o.intensity < r[2])"
+status = "qualitative"
+notes = """
+From an approximate posterior mode of a reduced model (species random intercepts only,
+independent species, swabs with missing Age/Sex dropped), not the authors' full posterior:
+peaks at 14.9 °C (prevalence) and 10.9 °C (intensity), within the sampled −0.4–36.8 °C. Adding
+region effects moved them little in an exploratory run (14.7 °C, 11.6 °C)."""
+
+[[target]]
+id = "grear2025_caudata_prevalence"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Abstract ('Caudate hosts tended to have higher prevalence than Anuran hosts')" }
+quantity = "raw Bd prevalence of caudate swabs exceeds that of anuran swabs"
+published = true
+call = "grear2025_summary().prevalence_caudata > grear2025_summary().prevalence_anura"
+status = "qualitative"
+notes = "Raw fractions positive, 0.433 (caudates, 10,453 swabs) and 0.184 (anurans, 719); the paper's statement is model-based."
+
+[[target]]
+id = "grear2025_coefficients"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Results, Figs 6–7 (fixed-effect posteriors α, β)" }
+quantity = "posterior summaries of the fixed effects (Age, Sex, temperature, temperature², precipitation) for prevalence and intensity"
+published = true
+status = "pending"
+notes = """
+Full text not read. Needs the paper's printed estimates and a full NUTS fit of
+Grear2025Problem with the phylogeny (scripts/grear2025_nuts.jl); the authors' fit also
+combined 30 multiply-imputed data sets."""
+
+[[target]]
+id = "grear2025_model_selection"
+model = "obs-grear2025-hurdle-temperature"
+source = { ref = "grear2025", location = "Results, temperature/precipitation model selection (LOO)" }
+quantity = "the 30-day maximum temperature with 10-day precipitation is the best temperature/precipitation metric by LOO"
+published = true
+status = "pending"
+notes = "The selection is visible in the authors' code (06 onward uses m30max and t10precip) but its printed table was not read; the LOO comparison of ~60 brms fits is not implemented."
