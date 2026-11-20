@@ -49,6 +49,8 @@ Every model belongs to one of three categories. They differ in what a result fro
 | Load distributions and extinction risk | Louca et al. 2014, [doi:10.1098/rspb.2013.2783](https://doi.org/10.1098/rspb.2013.2783) | [`LoucaDOIProblem`](@ref), [`louca_monte_carlo`](@ref) |
 | Outbreak-state hidden Markov model | Wilber et al. 2022, [doi:10.1111/1365-2656.13823](https://doi.org/10.1111/1365-2656.13823) | [`OutbreakHMMProblem`](@ref), [`Wilber2022DeclineProblem`](@ref) |
 | Multistate capture–recapture survival | Hollanders et al. 2023, [doi:10.1002/eap.2724](https://doi.org/10.1002/eap.2724); Palomar et al. 2023, [doi:10.1007/s10531-022-02525-3](https://doi.org/10.1007/s10531-022-02525-3) | [`CTMultistateProblem`](@ref), [`MultiEventProblem`](@ref) |
+| Multistate CMR (Arnason–Schwarz) and POPAN abundance | Brannelly et al. 2018, [doi:10.1186/s12898-018-0189-5](https://doi.org/10.1186/s12898-018-0189-5) | [`ArnasonSchwarzProblem`](@ref), [`PopanProblem`](@ref) |
+| Hurdle model of prevalence and load across species and temperature | Grear et al. 2025, [doi:10.1002/ecm.70001](https://doi.org/10.1002/ecm.70001) | [`Grear2025Problem`](@ref), [`HurdleRegressionProblem`](@ref) |
 | Aggregation of swab loads (Taylor's power law) | Schrock et al. 2025, [doi:10.1098/rspb.2024.2013](https://doi.org/10.1098/rspb.2024.2013) | [`TaylorPowerLawProblem`](@ref) |
 
 ## 2. Modified published models

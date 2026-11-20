@@ -1,0 +1,89 @@
+# Brannelly LA, Chatfield MWH, Sonn J, Robak M, Richards-Zawacki CL (2018) Fungal infection
+# has sublethal effects in a lowland subtropical amphibian population. BMC Ecology 18:34.
+# https://doi.org/10.1186/s12898-018-0189-5 (open access, CC BY 4.0; PMC6137908)
+#
+# Read on 2026-11-19 from the full text (Europe PMC XML of the published version,
+# lab/papers/brannelly2018/fulltext.xml): Results, Tables 1–2, Discussion. System: northern
+# cricket frog Acris crepitans, post-metamorphic, F. Edward Herbert Research Center, Belle
+# Chasse, Louisiana (lowland subtropical), capture–mark–recapture Nov 2010 – Nov 2011 with
+# monthly occasions. Estimates are M-SURGE (multistate) and Program MARK (POPAN)
+# maximum-likelihood estimates; survival is model-averaged over the three conditional
+# Arnason–Schwarz models within 2 AIC of the best (Table 2). Refits:
+# src/fitting/brannelly2018.jl and the brannelly2018_* validation targets.
+
+source = { ref = "brannelly2018", doi = "10.1186/s12898-018-0189-5", review_ref = 48 }
+
+[[parameter]]
+symbol = "survival_uninfected"
+quantity = "model-averaged monthly apparent survival of Bd-negative frogs, Φ"
+value = 0.9313
+units = "probability per month"
+uncertainty = { kind = "ci95", lo = 0.8264, hi = 1.0, as_printed = "93.13% (95% CI 82.64–100.00%)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Acris crepitans", stage = "post-metamorphic", setting = "field, Louisiana" }
+location = "Results, 'Multistate capture-mark-recapture', para. 2"
+verified = true
+notes = "Natural model averaging over Φ(.)p(to+t)Ψ(f*to+t), Φ(.)p(t)Ψ(f*to+t), Φ(f)p(to+t)Ψ(f*to+t) (Table 2)."
+
+[[parameter]]
+symbol = "survival_infected"
+quantity = "model-averaged monthly apparent survival of Bd-positive frogs, Φ"
+value = 0.9223
+units = "probability per month"
+uncertainty = { kind = "ci95", lo = 0.6447, hi = 1.0, as_printed = "92.23% (95% CI 64.47–100.00%)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Acris crepitans", stage = "post-metamorphic", setting = "field, Louisiana" }
+location = "Results, 'Multistate capture-mark-recapture', para. 2"
+verified = true
+notes = "As survival_uninfected; the paper finds no biologically meaningful survival difference."
+
+[[parameter]]
+symbol = "annual_survival"
+quantity = "annual survival implied by monthly survival ~0.93"
+value = 0.419
+units = "probability per year"
+provenance = "D"
+role = "derived"
+system = { pathogen = "Bd", host = "Acris crepitans", stage = "post-metamorphic", setting = "field, Louisiana" }
+location = "Discussion, para. 3 ('on the order of ~ 0.419')"
+verified = true
+notes = "Derived in the paper: 0.93^12 = 0.419."
+
+[[parameter]]
+symbol = "superpopulation"
+quantity = "POPAN super-population size of the best model Φ(.)p(t)pent(t)"
+value = 1854.33
+units = "individuals"
+uncertainty = { kind = "ci95", lo = 1092.28, hi = 3323.45, as_printed = "1854.33 (95% CI 1092.28–3323.45)" }
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Acris crepitans", stage = "post-metamorphic", setting = "field, Louisiana" }
+location = "Results, 'Population size'"
+verified = true
+notes = "Program MARK, POPAN; ĉ = 0.979 (not adjusted)."
+
+[[parameter]]
+symbol = "c_hat_multistate"
+quantity = "U-CARE goodness-of-fit overdispersion ĉ, multistate data"
+value = 0.788
+units = "dimensionless"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Acris crepitans", stage = "post-metamorphic", setting = "field, Louisiana" }
+location = "Results, 'Multistate capture-mark-recapture', para. 1"
+verified = true
+notes = "Not adjusted in model selection (ĉ < 1)."
+
+[[parameter]]
+symbol = "c_hat_popan"
+quantity = "U-CARE goodness-of-fit overdispersion ĉ, POPAN data"
+value = 0.979
+units = "dimensionless"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Acris crepitans", stage = "post-metamorphic", setting = "field, Louisiana" }
+location = "Results, 'Population size'"
+verified = true
+notes = "Not adjusted."

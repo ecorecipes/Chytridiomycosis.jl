@@ -36,6 +36,8 @@ makedocs(;
                                          "Management decisions with an IPM (Canessa 2018)" => "api/canessa2018.md",
                                          "Load distributions and extinction risk (Louca 2014)" => "api/louca2014.md",
                                          "Outbreak-state HMM (Wilber 2022)" => "api/wilber2022.md",
+                                         "Multistate CMR and POPAN (Brannelly 2018)" => "api/brannelly2018.md",
+                                         "Hurdle model across species (Grear 2025)" => "api/grear2025.md",
                                          "Multistate survival (Hollanders 2023, Palomar 2023)" => "api/multistate.md"],
                   "Modified models" => ["Load models" => "api/load.md",
                                         "Life stages" => "api/stages.md",

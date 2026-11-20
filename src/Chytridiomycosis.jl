@@ -125,6 +125,15 @@ include("models/hollanders2023.jl")
 include("fitting/hollanders2023.jl")
 include("models/palomar2023.jl")
 include("fitting/palomar2023.jl")
+# Open-population capture–recapture (conditional Arnason–Schwarz, POPAN) and
+# Brannelly et al. 2018 (Acris crepitans); covariate hurdle regression and Grear et al. 2025
+using Dates: Dates
+include("observation/cmr_open.jl")
+include("models/brannelly2018.jl")
+include("fitting/brannelly2018.jl")
+include("observation/hurdle_regression.jl")
+include("models/grear2025.jl")
+include("fitting/grear2025.jl")
 include("resilience.jl")
 
 export solve
@@ -277,5 +286,18 @@ export hollanders2023_path, Hollanders2023Data, load_hollanders2023,
 export palomar2023_structure, palomar2023_models, palomar2023_parameters,
        palomar2023_implied_prevalence, palomar2023_model_selection,
        palomar2023_swabbing_experiment
+# Open-population capture–recapture layer (conditional Arnason–Schwarz, POPAN)
+export ArnasonSchwarzProblem, ArnasonSchwarzFit, arnason_schwarz_parameters, PopanProblem,
+       PopanFit, popan_parameters, akaike_weights
+# Brannelly et al. 2018 multistate CMR and POPAN (Acris crepitans)
+export brannelly2018_path, Brannelly2018Data, load_brannelly2018, brannelly2018_summary,
+       brannelly2018_structure, brannelly2018_models, brannelly2018_popan_models,
+       brannelly2018_parameters, brannelly2018_fit, brannelly2018_model_selection,
+       brannelly2018_survival, brannelly2018_popan
+# Hurdle regression layer and Grear et al. 2025 pan-amphibian hurdle model
+export HurdleRegressionProblem, hurdle_coefficients, posterior_mode, phylogenetic_correlation
+export grear2025_path, Grear2025Data, load_grear2025, grear2025_summary,
+       grear2025_phylogeny_path, grear2025_phylogeny, Grear2025Problem, grear2025_fit,
+       grear2025_temperature_optimum
 
 end # module Chytridiomycosis
