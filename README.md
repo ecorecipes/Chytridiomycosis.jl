@@ -40,6 +40,8 @@ Every model belongs to one of three categories. They differ in what a result fro
 | Outbreak-state hidden Markov model | Wilber et al. 2022, doi:10.1111/1365-2656.13823 | `OutbreakHMMProblem`, `Wilber2022DeclineProblem` |
 | Multistate capture–recapture survival | Hollanders et al. 2023, doi:10.1002/eap.2724; Palomar et al. 2023, doi:10.1007/s10531-022-02525-3 | `CTMultistateProblem`, `MultiEventProblem` |
 | Aggregation of swab loads (Taylor's power law) | Schrock et al. 2025, doi:10.1098/rspb.2024.2013 | `TaylorPowerLawProblem` |
+| Adult survival before and after Bd from age structure; spatial metapopulation viability of *Litoria* (Bd only lowers survival) | Heard et al. 2024, doi:10.1111/1365-2656.14177 | `HeardCatchCurve`, `HeardMetapopulationProblem` |
+| Environmental-water timing and extinction risk of *Litoria raniformis* (age-classified PVA) | Turner et al. 2025, doi:10.1111/csp2.70022 | `TurnerPVAProblem` |
 
 ### 2. Modified published models
 

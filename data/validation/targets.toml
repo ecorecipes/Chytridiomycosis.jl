@@ -4969,3 +4969,213 @@ quantity = "geometric mean annual population growth rate λ (Pradel model, MARK)
 published = 0.92
 status = "pending"
 notes = "The Pradel (1996) temporal-symmetry model is not implemented, and the data are not deposited."
+
+# ---- heard2024 ----
+# Heard, Scroggie, Hollanders & Scheele 2024, J Anim Ecol 93:1670 (doi:10.1111/1365-2656.14177).
+# The paper's full text could not be retrieved; only the abstract was read. The survival values
+# are those the authors' simulation script enters "as estimated from age structure data"
+# (Run_STEPS_simulations.R, Zenodo doi:10.5281/zenodo.10457229); the persistence fractions are
+# computed from the authors' archived simulation outputs (sim_results_*_metapop_compiled.csv,
+# 20,000 scenarios each: column `extinct`). _heard2024_reference_fit() samples the catch-curve
+# posterior once per session (seeded); _heard2024_reference_grid() runs the full scenario grid
+# once per species and epoch (about 60 s for all four).
+
+[[target]]
+id = "heard2024_survival_Lran_contemporary"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Run_STEPS_simulations.R (catch-curve estimate used in the simulations)" }
+quantity = "annual adult survival of L. raniformis after Bd (posterior mean)"
+published = 0.319
+call = "heard_survival_summary(_heard2024_reference_fit()).S_c_Lr.mean"
+tolerance = { atol = 0.02 }
+status = "reproduced"
+notes = "Ours 0.320 (95% interval 0.227-0.422); a long chain gives 0.318. Whether the authors' value is a posterior mean or median is not stated."
+
+[[target]]
+id = "heard2024_survival_Lran_historical"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Run_STEPS_simulations.R (catch-curve estimate used in the simulations)" }
+quantity = "annual adult survival of L. raniformis before Bd (posterior mean)"
+published = 0.641
+call = "heard_survival_summary(_heard2024_reference_fit()).S_h_Lr.mean"
+tolerance = { atol = 0.02 }
+status = "reproduced"
+notes = "Ours 0.650 (long chain 0.653, median 0.656); posterior SD about 0.06. The historical estimates are about 0.01 higher than the authors' in both species, the contemporary ones agree."
+
+[[target]]
+id = "heard2024_survival_Laur_contemporary"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Run_STEPS_simulations.R (catch-curve estimate used in the simulations)" }
+quantity = "annual adult survival of L. aurea after Bd (posterior mean)"
+published = 0.352
+call = "heard_survival_summary(_heard2024_reference_fit()).S_c_La.mean"
+tolerance = { atol = 0.02 }
+status = "reproduced"
+notes = "Ours 0.359 (long chain 0.355)."
+
+[[target]]
+id = "heard2024_survival_Laur_historical"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Run_STEPS_simulations.R (catch-curve estimate used in the simulations)" }
+quantity = "annual adult survival of L. aurea before Bd (posterior mean)"
+published = 0.673
+call = "heard_survival_summary(_heard2024_reference_fit()).S_h_La.mean"
+tolerance = { atol = 0.02 }
+status = "reproduced"
+notes = "Ours 0.687 (long chain 0.688): 0.014 above, within the tolerance but the largest gap of the four."
+
+[[target]]
+id = "heard2024_survival_halving"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Abstract ('a halving of annual adult survival probabilities')" }
+quantity = "ratio of post-Bd to pre-Bd adult survival, largest deviation from 1/2 over the two species"
+published = "about one half"
+call = """
+let s = heard_survival_summary(_heard2024_reference_fit())
+    max(abs(s.S_c_Lr.mean / s.S_h_Lr.mean - 0.5), abs(s.S_c_La.mean / s.S_h_La.mean - 0.5))
+end
+"""
+tolerance = { lower = -0.001, upper = 0.1 }
+status = "qualitative"
+notes = "Ratios 0.49 (L. raniformis) and 0.52 (L. aurea)."
+
+[[target]]
+id = "heard2024_persistence_Lran_contemporary"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Zenodo sim_results_Lran_contemporary_metapop_compiled.csv" }
+quantity = "fraction of the 20,000 scenarios in which the L. raniformis metapopulation persists 50 years, post-Bd survival"
+published = 0.1821
+call = "_heard2024_reference_grid(:raniformis, :contemporary).overall"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+notes = "Ours 0.187 (one simulation per scenario, as the authors; binomial SE about 0.003)."
+
+[[target]]
+id = "heard2024_persistence_Lran_historical"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Zenodo sim_results_Lran_historical_metapop_compiled.csv" }
+quantity = "fraction of the 20,000 scenarios in which the L. raniformis metapopulation persists 50 years, pre-Bd survival"
+published = 0.82235
+call = "_heard2024_reference_grid(:raniformis, :historical).overall"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+notes = "Ours 0.821."
+
+[[target]]
+id = "heard2024_persistence_Laur_contemporary"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Zenodo sim_results_Laur_contemporary_metapop_compiled.csv" }
+quantity = "fraction of the 20,000 scenarios in which the L. aurea metapopulation persists 50 years, post-Bd survival"
+published = 0.2695
+call = "_heard2024_reference_grid(:aurea, :contemporary).overall"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+notes = "Ours 0.273."
+
+[[target]]
+id = "heard2024_persistence_Laur_historical"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Zenodo sim_results_Laur_historical_metapop_compiled.csv" }
+quantity = "fraction of the 20,000 scenarios in which the L. aurea metapopulation persists 50 years, pre-Bd survival"
+published = 0.87095
+call = "_heard2024_reference_grid(:aurea, :historical).overall"
+tolerance = { atol = 0.015 }
+status = "reproduced"
+notes = "Ours 0.869."
+
+[[target]]
+id = "heard2024_recruitment_needed"
+model = "obs-heard2024-age-truncation-metapopulation"
+source = { ref = "heard2024", location = "Abstract ('considerably higher recruitment rates' needed post-Bd)" }
+quantity = "smallest fecundity (metamorphs per female) at which half the scenarios persist: post-Bd minus pre-Bd, smaller of the two species"
+published = "considerably higher post-Bd"
+call = """
+min(_heard2024_mets_half(:raniformis, :contemporary) - _heard2024_mets_half(:raniformis, :historical),
+    _heard2024_mets_half(:aurea, :contemporary) - _heard2024_mets_half(:aurea, :historical))
+"""
+tolerance = { lower = 5.0, upper = 100.0 }
+status = "qualitative"
+notes = "Ours: 27 vs 9 (L. raniformis) and 24 vs 6 (L. aurea), a difference of 18 in both; the authors' outputs give the same thresholds (by-mets persistence computed from the compiled CSVs)."
+
+# ---- turner2025 ----
+# Turner et al. 2025, Conserv Sci Pract 7:e70022 (doi:10.1111/csp2.70022). The full text could
+# not be retrieved; the published values are from the abstract. The archived model outputs
+# (Zenodo doi:10.5281/zenodo.10921748, modelOutputs/Adult_popn_size_from_runs_*V2.csv) were
+# made by the archived code and differ from the abstract for August and September: e.g.
+# August, random dry years, 0.1627 archived against 0.13 in the abstract, and
+# Run_scenariosV2.R hard-codes the abstract's values (0.1296, 0.0491, 0.0411) for its figure.
+# Our reimplementation of the archived code reproduces the archived outputs.
+
+[[target]]
+id = "turner2025_extinction_august"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Abstract (August inflow, ~10 °C)" }
+quantity = "probability of local extinction within 52 years, August watering, independent dry years"
+published = 0.13
+call = "turner_extinction_probability(solve(TurnerPVAProblem(:turner2025; month = :august); rng = Random.Xoshiro(2025)))"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.1603, atol = 0.012 }
+notes = "Ours 0.160 (10,000 replicates; 40,000 give 0.158), matching the authors' archived output for this scenario (0.1627) but not the abstract (0.13, code table 0.1296), which apparently came from an earlier version of the code or arrays."
+
+[[target]]
+id = "turner2025_extinction_september"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Abstract (September inflow, ~15 °C)" }
+quantity = "probability of local extinction within 52 years, September watering, independent dry years"
+published = 0.05
+call = "turner_extinction_probability(solve(TurnerPVAProblem(:turner2025; month = :september); rng = Random.Xoshiro(2025)))"
+tolerance = { digits = 2 }
+status = "discrepant"
+regression = { value = 0.0570, atol = 0.008 }
+notes = "Ours 0.057 (40,000 replicates: 0.0578); archived output 0.0588; abstract 0.05 (code table 0.0491)."
+
+[[target]]
+id = "turner2025_extinction_october"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Abstract (October inflow, ~20 °C)" }
+quantity = "probability of local extinction within 52 years, October watering, independent dry years"
+published = 0.04
+call = "turner_extinction_probability(solve(TurnerPVAProblem(:turner2025; month = :october); rng = Random.Xoshiro(2025)))"
+tolerance = { atol = 0.008 }
+status = "reproduced"
+regression = { value = 0.0403, atol = 0.008 }
+notes = "Ours 0.040 (40,000 replicates: 0.0431); archived output 0.0456; abstract 0.04 (code table 0.0411)."
+
+[[target]]
+id = "turner2025_extinction_august_max2dry_archived"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Zenodo modelOutputs/Adult_popn_size_from_runs_August_2DryYearsV2.csv (row 53 == 0)" }
+quantity = "probability of extinction, August watering, at most two consecutive dry years (archived output)"
+published = 0.0436
+call = "turner_extinction_probability(solve(TurnerPVAProblem(:turner2025; month = :august, pattern = :max2dry); rng = Random.Xoshiro(2025)))"
+tolerance = { atol = 0.008 }
+status = "reproduced"
+notes = "Ours 0.039 (40,000 replicates: 0.0407). Run_scenariosV2.R's figure table has 0.0249 for this scenario (same earlier version as the abstract)."
+
+[[target]]
+id = "turner2025_median_minimum_august"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Zenodo modelOutputs/Adult_popn_size_from_runs_August_RandomDryYearsV2.csv" }
+quantity = "median over replicates of the minimum number of females aged >= 1, August, independent dry years (archived output)"
+published = 1.0
+call = "Distributions.median(turner_minimum_population(solve(TurnerPVAProblem(:turner2025; month = :august); rng = Random.Xoshiro(2025))))"
+tolerance = {}
+status = "reproduced"
+notes = "All nine scenarios' medians agree with the archived outputs (1, 3, 15; 4, 11, 34; 6, 15, 44 for August, September, October and random, max2dry, max1dry)."
+
+[[target]]
+id = "turner2025_timing_ordering"
+model = "obs-turner2025-watering-pva"
+source = { ref = "turner2025", location = "Abstract ('less likely to go extinct when environmental water is delivered in spring compared to late winter')" }
+quantity = "extinction probability falls from August to September to October (smallest successive drop)"
+published = "decreasing"
+call = """
+let e = [turner_extinction_probability(solve(TurnerPVAProblem(:turner2025; month = m); rng = Random.Xoshiro(2025)))
+         for m in (:august, :september, :october)]
+    min(e[1] - e[2], e[2] - e[3])
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0 }
+status = "qualitative"
+notes = "Ours 0.160 > 0.057 > 0.040."
