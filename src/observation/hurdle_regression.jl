@@ -21,7 +21,7 @@
 """
     HurdleRegressionProblem(y, X, groups; names = ["x1", …], prior_b = 20, prior_a = 20,
                             prior_b_hu = 1, prior_a_hu = 1, prior_scale = 2.5,
-                            prior_scale_hu = 2.5)
+                            prior_scale_hu = 2.5, sigma_prior = :sd)
 
 Hurdle-lognormal regression of swab loads `y` (`0` = not detected) on the columns of `X` (no
 intercept column; the same design for both parts), in the parametrisation of brms'
@@ -35,7 +35,8 @@ deviation in each part.
 Priors (all on the scale of the linear predictors): `b ~ N(0, prior_b²)` and
 `a ~ N(0, prior_a²)` for the load part; `b_hu ~ N(0, prior_b_hu²)`, `a_hu ~ N(0, prior_a_hu²)`
 for the hurdle part; half-Student-t(3, 0, `prior_scale`) on `σ` and the load-part standard
-deviations and half-Student-t(3, 0, `prior_scale_hu`) on the hurdle-part ones.
+deviations and half-Student-t(3, 0, `prior_scale_hu`) on the hurdle-part ones. With
+`sigma_prior = :variance` the half-Student-t prior on `σ` is put on `σ²` instead.
 
 It is a LogDensityProblems target with gradient (`LogDensityOrder{1}`) on the unconstrained
 parameters `prob.names` (standard deviations on the log scale, with their Jacobian). Use
@@ -61,7 +62,8 @@ function HurdleRegressionProblem(y::AbstractVector{<:Real}, X::AbstractMatrix{<:
         groups::AbstractVector = NamedTuple[];
         names::AbstractVector = ["x$j" for j in axes(X, 2)], prior_b::Real = 20,
         prior_a::Real = 20, prior_b_hu::Real = 1, prior_a_hu::Real = 1,
-        prior_scale::Real = 2.5, prior_scale_hu::Real = 2.5)
+        prior_scale::Real = 2.5, prior_scale_hu::Real = 2.5, sigma_prior::Symbol = :sd)
+    sigma_prior in (:sd, :variance) || throw(ArgumentError("sigma_prior must be :sd or :variance"))
     n, p = size(X)
     length(y) == n || throw(DimensionMismatch("y has $(length(y)) entries, X has $n rows"))
     all(v -> v >= 0, y) || throw(ArgumentError("loads must be non-negative"))
@@ -105,7 +107,7 @@ function HurdleRegressionProblem(y::AbstractVector{<:Real}, X::AbstractMatrix{<:
               log_sigma = blk[:log_sigma][1], groups = gb)
     priors = (b = Float64(prior_b), a = Float64(prior_a), b_hu = Float64(prior_b_hu),
               a_hu = Float64(prior_a_hu), scale = Float64(prior_scale),
-              scale_hu = Float64(prior_scale_hu))
+              scale_hu = Float64(prior_scale_hu), sigma_on = sigma_prior)
     ly = [v > 0 ? log(v) : 0.0 for v in y]
     return HurdleRegressionProblem(collect(Float64, y), ly, pos, Xc, xbar, xs, string.(names), gs,
                                    chol, priors, blocks, nm)
@@ -120,6 +122,12 @@ LogDensityProblems.capabilities(::Type{<:HurdleRegressionProblem}) =
 function _hst_logpdf(s, A)
     x = exp(s)
     return -2 * log1p((x / A)^2 / 3) + s, -4 * x^2 / (3A^2 + x^2) + 1
+end
+
+# the same prior on the variance x = exp(2s), with log Jacobian log 2 + 2s, and its derivative
+function _hst_logpdf_variance(s, A)
+    x = exp(2s)
+    return -2 * log1p((x / A)^2 / 3) + log(2) + 2s, -8 * x^2 / (3A^2 + x^2) + 2
 end
 
 _hr_level_effects(prob, g, z) = prob.chol[g] === nothing ? z : prob.chol[g] * z
@@ -167,7 +175,8 @@ function _hr_eval(prob::HurdleRegressionProblem, θ::AbstractVector, want_grad::
     # priors
     lp += -0.5 * (θ[bl.a] / pr.a)^2 - 0.5 * sum(abs2, b ./ prob.xscale) / pr.b^2 -
           0.5 * (θ[bl.a_hu] / pr.a_hu)^2 - 0.5 * sum(abs2, bh ./ prob.xscale) / pr.b_hu^2
-    ls, dls = _hst_logpdf(θ[bl.log_sigma], pr.scale)
+    ls, dls = pr.sigma_on === :sd ? _hst_logpdf(θ[bl.log_sigma], pr.scale) :
+              _hst_logpdf_variance(θ[bl.log_sigma], pr.scale)
     lp += ls
     for (g, gb) in enumerate(bl.groups)
         l1, _ = _hst_logpdf(θ[gb.log_sd], pr.scale)

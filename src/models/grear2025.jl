@@ -3,51 +3,50 @@
 # Monographs 95:e70001. https://doi.org/10.1002/ecm.70001 (open access, CC BY-NC 4.0)
 # This implements a published model; it is not a new model.
 #
-# SOURCES. The full text could NOT be read: the publisher's site refuses automated clients,
-# and it is not in PubMed Central. What is implemented is read from (1) the abstract (USGS
-# Publications Warehouse record 70263881) and (2) the authors' code, the USGS software release
+# SOURCES. Read from the published full text (lab/papers/grear2025/grear2025.pdf, read
+# 2026-11-20: Methods eqs 1–10, "Model fitting and diagnostics", "Imputation for missing
+# data", Results, Table 2, Figs 4, 6, 7) and from the authors' code, the USGS software release
 # doi:10.5066/P1MXUJZM (CC0; lab/papers/grear2025/code/src, commit b279e8f), whose data file is
-# bundled in data/grear2025. The printed equations, priors and coefficient tables have not
-# been seen, so no printed coefficient is entered in the compendium or reproduced; those
-# validation targets are pending.
+# bundled in data/grear2025.
 #
-# Model (04_tempPrecipModFit.R, 06_randomEffectsFitting.R, 09_Combine_ImputeFits.R,
-# 11_OutOfSampleFit.R). brms `hurdle_lognormal` of the Bd quantity per swab `copyNum`, with
-# the same formula for the log-load part (mu) and the hurdle part (hu = probability of a
-# zero):
+# Model (eqs 1–10). A hurdle model of the estimated ITS copy number y per swab:
+#   P(y = 0) = 1 − π,  y > 0: π · LogNormal(y | μ, σ)                       (1, 6)
+#   logit π = α0 + α1 temp + α2 temp² + α3 precip + α4 sex + α5 age + η_site + ζ_region + ε_spp (2)
+#   log-mean μ = β0 + β1 temp + β2 temp² + β3 precip + β4 sex + β5 age + ξ_site + ρ_region + θ_spp (7)
+#   site and region effects Normal(0, σ²), species effects Normal(0, σ² Σ_spp) (3–5, 8–10)
+# temp: mean daily maximum air temperature over the 30 days before sampling (PRISM, °C); precip:
+# total precipitation over the 10 days before sampling (mm); sex: Female (reference), Male,
+# undetermined; age: Adult (reference), Juvenile, Larval. Priors: α ~ normal(0, 1),
+# β ~ normal(0, 20), half-Student-t(3, 0, 2.5) on "the lognormal variance σ²" and all random
+# effects. Fitted in brms (`hurdle_lognormal`, whose hu = 1 − π, so α = −(hu coefficient), as
+# 09_Combine_ImputeFits.R transforms them for Figs 6–7). Missing sex (159), life stage (91) and
+# genus-only Taricha (42) were multiply imputed: 30 data sets, by-genus multinomial draws of age
+# and sex, Taricha sp. assigned T. torosa or T. granulosa with equal probability; each fitted
+# with one of 30 phylogenies (Jetz & Pyron 2018), posteriors pooled.
 #
-#   copyNum ~ Age + Sex + m30max + I(m30max^2) + t10precip
-#             + (1 | reg/siteID) + (1 | gr(Gesp, cov = phyvcv))
+# Code formula (04/06/09/11): copyNum ~ Age + Sex + m30max + I(m30max^2) + t10precip
+# + (1 | reg/siteID) + (1 | gr(Gesp, cov = phyvcv)), the same in hu; it agrees with eqs 2, 7.
 #
-# m30max: mean daily maximum air temperature over the 30 days before sampling (PRISM, °C);
-# t10precip: total precipitation over the 10 days before sampling (mm); reg: NOAA climate
-# region; Gesp: species, with a phylogenetic correlation matrix from one tree of Jetz & Pyron
-# (2018) (ape::vcv(tree, corr = TRUE)). Priors: normal(0, 20) on the mu coefficients and
-# intercept, normal(0, 1) on the hu coefficients and intercept, brms defaults on σ and the
-# random-effect standard deviations. The prevalence coefficients plotted in the paper (α) are
-# logit(1 − invlogit(hu coefficient)) = −(hu coefficient) (09_Combine_ImputeFits.R).
-# The temperature metric and lag (30-day maximum) and precipitation lag (10 days) were chosen
-# by LOO among many fits (04/05); the random-effect structure by LOO/K-fold (06/07).
+# Paper versus code (switches):
+# - σ prior. The paper puts half-t(3, 0, 2.5) on the variance σ²; the code leaves brms' default,
+#   which is on σ (student_t(3, 0, 2.5); 2.5 because the MAD of log y among positives is 2.42,
+#   below 2.5). `sigma_prior = :as_coded` (default) or `:as_printed`.
+# - Phylogenies. The paper uses 30 trees, one per imputed data set; the code's file has 100
+#   trees and its loop is broken (it calls vcv on an undefined `tree`). `grear2025_phylogeny`
+#   reads one tree (`tree = 1` by default).
 #
-# Reconstructions and choices (the code is not fully consistent, and the paper is unseen):
-# - The fixed-effect formula of the final model is not written out in the release (the
-#   fitting section of 08_ImputeData.R is empty). It is inferred from the parameter indices
-#   and labels of the Figure 6/7 code in 09 (b_Intercept, b_hu_Intercept, then Age Juvenile,
-#   Larval, Sex Male, Unknown, m30max, m30max², t10precip for mu, then the same for hu) and
-#   from the covariates passed to `predict` in 11. Reference levels Adult and Female (R's
-#   alphabetical default).
-# - Random effects: 11 predicts with (1|reg/siteNameID) + (1|gr(Gesp, cov=phyvcv)); siteNameID
-#   is not a column of the data file, and 04/06 use siteID. We use reg and siteID nested in
-#   reg (siteID is unique across regions, so the nesting is (1|reg) + (1|siteID)).
-# - Missing Age/Sex (and the unresolved "Taricha sp.") were multiply imputed (30 data sets,
-#   08) and the 30 posteriors combined. We drop those swabs instead (`missing_covariates = :drop`).
-# - brms' default priors on σ and on the standard deviations are taken to be
-#   half-Student-t(3, 0, 2.5) for both parts. brms may widen the scale to the MAD of the
-#   response on the link scale; for log copyNum among positives that MAD is below 2.5 here
-#   (see test/grear2025.jl), so the scale is 2.5 either way.
-# - A MAP (posterior mode) is not the posterior the paper summarised: the full fit (≈1,300
-#   parameters, 4 chains of NUTS in Stan) is left to scripts/grear2025_nuts.jl with any
-#   LogDensityProblems sampler; the tests use the mode.
+# Choices where neither says (documented):
+# - Missing covariates: `missing_covariates = :impute` (default) draws ONE imputed data set as
+#   the code does (08_ImputeData.R: for each genus, the observed frequencies of Age×Sex
+#   combinations; Spea, with no complete record, gets Adult/Juvenile/Larval with sex Unknown);
+#   `:drop` drops the incomplete swabs. The paper pooled 30 imputations.
+# - Sample: swabs with a date and coordinates (11,172; the code's own filter). The paper says
+#   11,175 after excluding 8 with missing site or date; 11 records here lack a site.
+# - A posterior mode is not the posterior the paper summarised. Sites (and species) whose swabs
+#   are all negative separate: their hurdle effects and the random-effect standard deviations
+#   keep growing, so L-BFGS does not converge to a finite mode (the gradient stays large after
+#   thousands of iterations). The fixed effects settle quickly, which is what the targets use;
+#   the full NUTS fit is scripts/grear2025_nuts.jl.
 
 """
     grear2025_path() -> String
@@ -139,10 +138,12 @@ end
 """
     grear2025_summary(data = load_grear2025(complete = false)) -> NamedTuple
 
-Counts for comparison with the abstract of Grear et al. (2025): `swabs` (records with a
-collection date, the authors' first filter), `species` (distinct species names among them,
-counting the unresolved "Taricha sp." once), `sites` (distinct `siteID`s), `positive` (swabs
-with `load > 0`), and `prevalence_caudata`, `prevalence_anura` (raw fraction of swabs with
+Counts for comparison with Grear et al. (2025): `swabs` (records with a collection date, the
+authors' first filter), `species` (distinct species names among them, counting the
+unresolved "Taricha sp." once), `sites` (distinct non-missing `siteID`s, the authors' 200 m
+grouping), `model_swabs` (swabs with a date and coordinates, the authors' model data),
+`missing_sex`, `missing_age`, `genus_only` (among `model_swabs`), `positive` (dated swabs with
+`load > 0`), and `prevalence_caudata`, `prevalence_anura` (raw fraction of dated swabs with
 `load > 0` by order).
 """
 function grear2025_summary(d::Grear2025Data = load_grear2025(; complete = false))
@@ -150,7 +151,13 @@ function grear2025_summary(d::Grear2025Data = load_grear2025(; complete = false)
     dd = d[dated]
     sp = filter(!isempty, unique(dd.species))
     prev(o) = (i = findall(==(o), dd.order); count(>(0), dd.load[i]) / length(i))
-    return (swabs = length(dd), species = length(sp), sites = length(unique(dd.site)),
+    keep = findall(i -> d.date[i] !== missing && !isnan(d.latitude[i]) &&
+                        !isnan(d.longitude[i]), 1:length(d))
+    m = d[keep]
+    return (swabs = length(dd), species = length(sp),
+            sites = length(unique(filter(!isempty, dd.site))), model_swabs = length(m),
+            missing_sex = count(isempty, m.sex), missing_age = count(isempty, m.age),
+            genus_only = count(==("Taricha sp."), m.species),
             positive = count(>(0), dd.load), prevalence_caudata = prev("Caudata"),
             prevalence_anura = prev("Anura"))
 end
@@ -177,37 +184,81 @@ function grear2025_phylogeny_path()
 end
 
 """
-    grear2025_phylogeny(path = grear2025_phylogeny_path()) -> (; species, correlation)
+    grear2025_phylogeny(path = grear2025_phylogeny_path(); tree = 1) -> (; species, correlation)
 
-The phylogenetic correlation matrix of the first tree in the authors' NEXUS file (as
-`ape::vcv(spTrees[[1]], corr = TRUE)` in their scripts), via
-[`phylogenetic_correlation`](@ref). Throws if the file is not available.
+The phylogenetic correlation matrix of tree number `tree` (of 100) in the authors' NEXUS file
+(`ape::vcv(spTrees[[1]], corr = TRUE)` in their scripts uses the first), via
+[`phylogenetic_correlation`](@ref). The paper used 30 trees, one per imputed data set.
+Throws if the file is not available.
 """
-function grear2025_phylogeny(path = grear2025_phylogeny_path())
+function grear2025_phylogeny(path = grear2025_phylogeny_path(); tree::Integer = 1)
     path === nothing && throw(ArgumentError("phylogeny not found; set ENV[\"CHYTRIDIOMYCOSIS_GREAR2025\"]"))
+    k = 0
     for l in eachline(path)
         m = match(r"^\s*TREE\s+\S+\s*=\s*(.*)$"i, l)
-        m === nothing || return phylogenetic_correlation(m.captures[1])
+        m === nothing && continue
+        k += 1
+        k == tree && return phylogenetic_correlation(m.captures[1])
     end
-    throw(ArgumentError("no TREE line in $path"))
+    throw(ArgumentError("tree $tree not found in $path ($k trees)"))
 end
 
 const GREAR2025_COVARIATES = ["AgeJuvenile", "AgeLarval", "SexMale", "SexUnknown", "m30max",
                               "m30max^2", "t10precip"]
 
 """
-    Grear2025Problem(data = load_grear2025(); random = (:species, :site, :region),
-                     phylogeny = nothing, missing_covariates = :drop)
+    grear2025_impute(data; rng = Random.Xoshiro(2025)) -> Grear2025Data
 
-The hurdle-lognormal model of Grear et al. (2025) as a [`HurdleRegressionProblem`](@ref)
-(log density with gradient, LogDensityProblems interface). Both parts have the fixed effects
-Age (Juvenile, Larval; reference Adult), Sex (Male, Unknown; reference Female), 30-day mean
-maximum temperature and its square, and 10-day precipitation, with the authors' priors
-(normal(0, 20) load part, normal(0, 1) hurdle part; compendium `grear2025`). `random` picks the random intercepts:
-`:species` (correlated by `phylogeny`, a `(; species, correlation)` from
-[`grear2025_phylogeny`](@ref), or independent when `nothing`), `:site` and `:region`. Swabs
-with missing Age or Sex, an unresolved species or a species absent from the phylogeny are
-dropped (`missing_covariates = :drop`; the authors imputed them). The swab data are in `prob.data`.
+One imputed copy of the swab data, as in the authors' 08_ImputeData.R (Methods,
+"Imputation for missing data"): a swab missing Age and/or Sex gets a draw from the observed
+frequencies of the Age×Sex combinations of its genus (keeping the recorded one of the two
+when only one is missing); in a genus with no complete record (Spea) Age is Adult, Juvenile or
+Larval with equal probability and Sex Unknown. Swabs recorded as "Taricha sp." become
+*T. torosa* or *T. granulosa* with equal probability. The paper pooled fits to 30 such data
+sets.
+"""
+function grear2025_impute(d::Grear2025Data; rng::AbstractRNG = Random.Xoshiro(2025))
+    genus(s) = first(split(s, ' '))
+    combos = Dict{String,Vector{Tuple{String,String}}}()
+    for i in 1:length(d)
+        (isempty(d.age[i]) || isempty(d.sex[i]) || isempty(d.species[i])) && continue
+        push!(get!(combos, genus(d.species[i]), Tuple{String,String}[]), (d.age[i], d.sex[i]))
+    end
+    age, sex, sp = copy(d.age), copy(d.sex), copy(d.species)
+    for i in 1:length(d)
+        if sp[i] == "Taricha sp."
+            sp[i] = rand(rng) < 0.5 ? "Taricha torosa" : "Taricha granulosa"
+        end
+        (isempty(age[i]) || isempty(sex[i])) || continue
+        pool = get(combos, genus(sp[i]), nothing)
+        a, s = pool === nothing ? (rand(rng, ("Adult", "Juvenile", "Larval")), "Unknown") :
+               pool[rand(rng, 1:length(pool))]
+        isempty(age[i]) && (age[i] = a)
+        isempty(sex[i]) && (sex[i] = s)
+    end
+    return Grear2025Data(d.date, d.latitude, d.longitude, d.state, sp, d.order, age, sex,
+                         d.site, d.region, d.result, d.load, d.tmax30, d.precip10)
+end
+
+"""
+    Grear2025Problem(data = load_grear2025(); random = (:species, :site, :region),
+                     phylogeny = nothing, missing_covariates = :impute,
+                     rng = Random.Xoshiro(2025), sigma_prior = :as_coded)
+
+The hurdle-lognormal model of Grear et al. (2025, eqs 1–10) as a
+[`HurdleRegressionProblem`](@ref) (log density with gradient, LogDensityProblems interface).
+Both parts have the fixed effects Age (Juvenile, Larval; reference Adult), Sex (Male,
+Unknown; reference Female), 30-day mean maximum temperature and its square, and 10-day
+precipitation, with the printed priors (normal(0, 20) load part, normal(0, 1) prevalence
+part; compendium `grear2025`). `random` picks the random intercepts: `:species` (correlated
+by `phylogeny`, a `(; species, correlation)` from [`grear2025_phylogeny`](@ref), or
+independent when `nothing`), `:site` and `:region`.
+
+`missing_covariates = :impute` (default) fills missing Age/Sex and "Taricha sp." with one
+draw of [`grear2025_impute`](@ref) using `rng`; `:drop` drops those swabs. Swabs of a species
+absent from `phylogeny` are dropped. `sigma_prior = :as_coded` puts the half-Student-t(3, 0,
+2.5) prior on σ (brms' default, as in the authors' code); `:as_printed` puts it on σ² as the
+paper states. The swab data used are in `prob.data`.
 """
 struct Grear2025Problem
     model::HurdleRegressionProblem
@@ -217,13 +268,18 @@ end
 
 function Grear2025Problem(d::Grear2025Data = load_grear2025();
                           random = (:species, :site, :region), phylogeny = nothing,
-                          missing_covariates::Symbol = :drop)
-    missing_covariates === :drop || throw(ArgumentError("only missing_covariates = :drop is implemented"))
+                          missing_covariates::Symbol = :impute,
+                          rng::AbstractRNG = Random.Xoshiro(2025),
+                          sigma_prior::Symbol = :as_coded)
+    missing_covariates in (:impute, :drop) ||
+        throw(ArgumentError("missing_covariates must be :impute or :drop"))
+    sigma_prior in (:as_coded, :as_printed) ||
+        throw(ArgumentError("sigma_prior must be :as_coded or :as_printed"))
+    missing_covariates === :impute && (d = grear2025_impute(d; rng))
     ok = [!isempty(d.age[i]) && !isempty(d.sex[i]) && !isempty(d.species[i]) &&
           d.species[i] != "Taricha sp." && !isnan(d.load[i]) &&
           (phylogeny === nothing || d.species[i] in phylogeny.species) for i in 1:length(d)]
     dd = d[findall(ok)]
-    n = length(dd)
     X = hcat(dd.age .== "Juvenile", dd.age .== "Larval", dd.sex .== "Male",
              dd.sex .== "Unknown", dd.tmax30, dd.tmax30 .^ 2, dd.precip10)
     groups = NamedTuple[]
@@ -248,7 +304,9 @@ function Grear2025Problem(d::Grear2025Data = load_grear2025();
     v = parameter_set(:grear2025)
     m = HurdleRegressionProblem(dd.load, Float64.(X), groups; names = GREAR2025_COVARIATES,
                                 prior_b = v.prior_sd_load, prior_a = v.prior_sd_load,
-                                prior_b_hu = v.prior_sd_hurdle, prior_a_hu = v.prior_sd_hurdle)
+                                prior_b_hu = v.prior_sd_hurdle, prior_a_hu = v.prior_sd_hurdle,
+                                prior_scale = v.prior_scale_sd, prior_scale_hu = v.prior_scale_sd,
+                                sigma_prior = sigma_prior === :as_coded ? :sd : :variance)
     return Grear2025Problem(m, dd, levels)
 end
 

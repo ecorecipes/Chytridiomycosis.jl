@@ -19,20 +19,45 @@ Both parts use the same covariates:
 - precipitation over the previous 10 days;
 - random intercepts for site, NOAA region, and species (phylogenetically correlated).
 
-!!! warning "Source"
-    The full text could not be fetched by an automated client, so only the abstract was read.
-    The model, priors and data here come from the authors' USGS code release
-    ([doi:10.5066/P1MXUJZM](https://doi.org/10.5066/P1MXUJZM), CC0). Its data file is bundled
-    in `data/grear2025`. No printed coefficient is reproduced; those validation targets are
-    pending.
+The model is checked against the published full text, and the authors' USGS code release
+([doi:10.5066/P1MXUJZM](https://doi.org/10.5066/P1MXUJZM), CC0) supplies the data file,
+which is bundled in `data/grear2025`. Their formula and priors agree with eqs 1–10 of the
+paper. Two differences between paper and code are switches:
+
+- **The σ prior** (`sigma_prior`). The paper puts the half-Student-t(3, 0, 2.5) prior on the
+  variance σ² (`:as_printed`). The code leaves brms' default, which is on σ (`:as_coded`, the
+  default).
+- **The phylogeny** (`tree` in [`grear2025_phylogeny`](@ref)). The paper used 30 trees, one
+  per imputed data set. The code's file has 100 trees, and its loop over them is broken.
+
+Missing sex, life stage and genus-only *Taricha* were multiply imputed in the paper (30 data
+sets). [`Grear2025Problem`](@ref) draws one such data set by the authors' rule
+([`grear2025_impute`](@ref)); `missing_covariates = :drop` drops those swabs instead.
 
 What is checked:
 
-- The abstract's counts of swabs (11,183) and species (54) are reproduced. The site count is
-  not: the data have 594 sites, the abstract says 609.
-- The abstract says infection peaks at intermediate temperatures. An approximate posterior
-  mode of a reduced model agrees: temperature effects are concave, peaking at 14.9 °C for
-  prevalence and 10.9 °C for intensity.
+- **Counts.** Swabs (11,183), species (54), sites (593, in the Results) and genus-only records
+  (42) are reproduced.
+  - The abstract's 609 sites contradicts the Results and is not found anywhere in the data
+    or code.
+  - The modelled sample (11,172 against 11,175) and the missing sex and life-stage counts
+    (191 and 123 against 159 and 91) are discrepant.
+- **Temperature.** Both parts are concave in temperature, and prevalence peaks at 14.6 °C,
+  against "approximately 15 °C" in the paper.
+- **Pending.** The printed 95% credible intervals of the 14 fixed effects, the intensity
+  optimum (13 °C) and the PSIS-LOO table need the full posterior
+  (`scripts/grear2025_nuts.jl`). Those targets carry the printed values.
+
+!!! warning "The posterior mode does not converge"
+    Many sites, and some species, have only negative swabs. Their hurdle random effects and
+    the random-effect standard deviations keep growing, so [`posterior_mode`](@ref) does not
+    reach a finite mode. After 3000 iterations the site standard deviation of the prevalence
+    part exceeds 70 on the logit scale.
+
+    The prevalence fixed effects settle within a few hundred iterations. The intensity ones
+    drift: the intensity optimum is 11.9, 14.0 and 15.9 °C after 500, 1000 and 3000
+    iterations. For that reason only prevalence quantities are compared numerically, and the
+    printed credible intervals are compared only with a full posterior.
 
 ## Hurdle regression layer
 
@@ -60,7 +85,10 @@ load_grear2025
 grear2025_summary
 grear2025_phylogeny_path
 grear2025_phylogeny
+grear2025_impute
 Grear2025Problem
 grear2025_fit
 grear2025_temperature_optimum
+grear2025_printed_intervals
+grear2025_coefficient_check
 ```

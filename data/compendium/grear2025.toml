@@ -2,17 +2,18 @@
 # parasite Batrachochytrium dendrobatidis varies with species and temperature. Ecological
 # Monographs 95:e70001. https://doi.org/10.1002/ecm.70001 (open access, CC BY-NC 4.0)
 #
-# ONLY THE ABSTRACT WAS READ (USGS Publications Warehouse record 70263881, 2026-11-19): the
-# publisher's full text refused automated clients. The model structure and priors are taken
-# from the authors' code release (doi:10.5066/P1MXUJZM; src/models/grear2025.jl), not from
-# printed text, and are not entered here. The study-size numbers below are the only printed
-# values read. System: post-metamorphic and larval amphibians, 54 species, conterminous US,
-# 2015–2017 (the code says 2014–2017), qPCR swabs.
+# Read on 2026-11-20 from the published full text (lab/papers/grear2025/grear2025.pdf):
+# Abstract, Methods ("Model fitting and diagnostics", "Imputation for missing data"), Results
+# and Figs 6–7. (An earlier version of this file was written from the abstract only.)
+# System: post-metamorphic and larval amphibians, 54 species, 35 states of the conterminous
+# US, May 2014 – Aug 2017, one qPCR swab per animal, intensity in estimated ITS copies per swab.
 #
-# Prior values from the code (not printed values we could read): normal(0, 20) on the
-# log-load coefficients and intercept, normal(0, 1) on the hurdle coefficients and intercept
-# (04_tempPrecipModFit.R, `hurprior`). They are passed as the defaults of
-# HurdleRegressionProblem, recorded here for provenance.
+# Fixed effects are printed ONLY as 95% credible intervals (Results, "Individual,
+# environmental, and species fixed effects"); no point estimates are printed. Each record
+# below stores the printed interval in `uncertainty` and its midpoint as `value`
+# (provenance D, derived by us). α are prevalence (logit π) coefficients, β log-intensity
+# coefficients; temperature is the 30-day mean daily maximum (°C), precipitation the 10-day
+# total (mm); age relative to adults, sex relative to females.
 
 source = { ref = "grear2025", doi = "10.1002/ecm.70001", review_ref = 53 }
 
@@ -24,13 +25,25 @@ units = "swabs"
 provenance = "M"
 role = "structural"
 system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
-location = "Abstract"
+location = "Abstract; Results para. 1"
 verified = true
-notes = "Reproduced from the bundled data (validation target grear2025_swabs)."
+notes = "Reproduced from the bundled data (target grear2025_swabs)."
 
 [[parameter]]
 symbol = "sites"
-quantity = "sites sampled"
+quantity = "sites sampled (samples within 0.2 km collapsed)"
+value = 593
+units = "sites"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
+location = "Results para. 1 ('593 sites in 35 states'; '521/593 sampled once')"
+verified = true
+notes = "The abstract says 609; see target grear2025_sites_abstract."
+
+[[parameter]]
+symbol = "sites_abstract"
+quantity = "sites sampled, as stated in the abstract"
 value = 609
 units = "sites"
 provenance = "M"
@@ -38,7 +51,19 @@ role = "structural"
 system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
 location = "Abstract"
 verified = true
-notes = "The data file has 594 siteIDs (target grear2025_sites, discrepant)."
+notes = "Conflicts with the 593 of the Results; not found in the data or code (602 raw site names, 608 distinct coordinates, 478 at 4.4 km grouping)."
+
+[[parameter]]
+symbol = "site_visits"
+quantity = "site visits (samples within five days grouped)"
+value = 694
+units = "visits"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
+location = "Results para. 1"
+verified = true
+notes = "The data file has 692 non-missing siteVIDs (the code prints 692)."
 
 [[parameter]]
 symbol = "species"
@@ -48,30 +73,344 @@ units = "species"
 provenance = "M"
 role = "structural"
 system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
-location = "Abstract"
+location = "Abstract; Results para. 1"
 verified = true
 notes = "53 resolved species plus 'Taricha sp.'."
 
 [[parameter]]
-symbol = "prior_sd_load"
-quantity = "prior standard deviation of the log-load (mu) intercept and coefficients"
-value = 20.0
-units = "log copies per swab"
-provenance = "A"
+symbol = "model_swabs"
+quantity = "swabs in the modelling analysis"
+value = 11175
+units = "swabs"
+provenance = "M"
 role = "structural"
-system = { pathogen = "Bd", setting = "model prior" }
-location = "Authors' code, 04_tempPrecipModFit.R (hurprior); not read in the paper"
-verified = false
-notes = "From the code release, not the printed paper."
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
+location = "Results para. 1 ('after excluding eight observations with missing site or sampling date')"
+verified = true
+notes = "The data file has 11,172 swabs with date and coordinates (the code's own filter)."
+
+[[parameter]]
+symbol = "missing_sex"
+quantity = "observations with sex missing (imputed)"
+value = 159
+units = "swabs"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
+location = "Methods, 'Imputation for missing data'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "missing_age"
+quantity = "observations with life stage missing (imputed)"
+value = 91
+units = "swabs"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
+location = "Methods, 'Imputation for missing data'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "genus_only"
+quantity = "observations identified only to genus (Taricha sp., imputed)"
+value = 42
+units = "swabs"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
+location = "Methods, 'Imputation for missing data'"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "apparent_prevalence"
+quantity = "overall apparent Bd prevalence"
+value = 0.42
+units = "proportion"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
+location = "Results para. 1 ('42% of individuals')"
+verified = true
+notes = "Raw fraction of swabs with Bd detected."
+
+[[parameter]]
+symbol = "sites_with_bd"
+quantity = "sites with at least one Bd detection"
+value = 395
+units = "sites"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US" }
+location = "Results para. 1"
+verified = true
+notes = ""
 
 [[parameter]]
 symbol = "prior_sd_hurdle"
-quantity = "prior standard deviation of the hurdle (hu, logit) intercept and coefficients"
+quantity = "prior standard deviation of the prevalence (logit) coefficients α0–α5"
 value = 1.0
 units = "logit"
 provenance = "A"
 role = "structural"
 system = { pathogen = "Bd", setting = "model prior" }
-location = "Authors' code, 04_tempPrecipModFit.R (hurprior); not read in the paper"
-verified = false
-notes = "From the code release, not the printed paper."
+location = "Methods, 'Model fitting and diagnostics' (α0 − α5 ~ normal(0, 1)); code hurprior"
+verified = true
+notes = "Same in the authors' code (on the hu coefficients; symmetric)."
+
+[[parameter]]
+symbol = "prior_sd_load"
+quantity = "prior standard deviation of the log-intensity coefficients β0–β5"
+value = 20.0
+units = "log copies per swab"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "model prior" }
+location = "Methods, 'Model fitting and diagnostics' (β0 − β5 ~ normal(0, 20)); code hurprior"
+verified = true
+notes = ""
+
+[[parameter]]
+symbol = "prior_scale_sd"
+quantity = "scale of the half-Student-t(3, 0, 2.5) prior on σ² and the random-effect variances"
+value = 2.5
+units = "dimensionless"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", setting = "model prior" }
+location = "Methods, 'Model fitting and diagnostics'"
+verified = true
+notes = "Printed on 'the lognormal variance σ²'; the code leaves brms' default, on σ (sigma_prior switch)."
+
+[[parameter]]
+symbol = "alpha5_larval"
+quantity = "fixed effect, prevalence: larval vs adult"
+value = -2.12
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = -2.62, hi = -1.62, as_printed = "95% CI [-2.62, -1.62]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "alpha5_juvenile"
+quantity = "fixed effect, prevalence: juvenile vs adult"
+value = -0.255
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = -0.7, hi = 0.19, as_printed = "95% CI [-0.7, 0.19]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "alpha4_male"
+quantity = "fixed effect, prevalence: male vs female"
+value = -0.2
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = -0.28, hi = -0.12, as_printed = "95% CI [-0.28, -0.12]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "alpha4_undetermined"
+quantity = "fixed effect, prevalence: sex undetermined vs female"
+value = -0.695
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = -1.01, hi = -0.38, as_printed = "95% CI [-1.01, -0.38]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "alpha1_temp"
+quantity = "fixed effect, prevalence: temperature (linear)"
+value = 0.48
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = 0.35, hi = 0.61, as_printed = "95% CI [0.35, 0.61]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "alpha2_temp2"
+quantity = "fixed effect, prevalence: temperature squared"
+value = -0.015
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = -0.02, hi = -0.01, as_printed = "95% CI [-0.02, -0.01]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "alpha3_precip"
+quantity = "fixed effect, prevalence: 10-day precipitation"
+value = 0.011
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = 0.007, hi = 0.015, as_printed = "95% CI [0.007, 0.015]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "beta5_larval"
+quantity = "fixed effect, log intensity: larval vs adult"
+value = -1.035
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = -1.86, hi = -0.21, as_printed = "95% CI [-1.86, -0.21]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "beta5_juvenile"
+quantity = "fixed effect, log intensity: juvenile vs adult"
+value = 0.515
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = -0.01, hi = 1.04, as_printed = "95% CI [-0.01, 1.04]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "beta4_male"
+quantity = "fixed effect, log intensity: male vs female"
+value = -0.215
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = -0.35, hi = -0.08, as_printed = "95% CI [-0.35, -0.08]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "beta4_undetermined"
+quantity = "fixed effect, log intensity: sex undetermined vs female"
+value = -0.34
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = -0.72, hi = 0.04, as_printed = "95% CI [-0.72, 0.04]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "beta1_temp"
+quantity = "fixed effect, log intensity: temperature (linear)"
+value = 0.17
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = 0.04, hi = 0.3, as_printed = "95% CI [0.04, 0.3]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "beta2_temp2"
+quantity = "fixed effect, log intensity: temperature squared"
+value = -0.007
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = -0.011, hi = -0.003, as_printed = "95% CI [-0.011, -0.003]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "beta3_precip"
+quantity = "fixed effect, log intensity: 10-day precipitation"
+value = 0.006
+units = "per unit covariate (logit or log scale)"
+uncertainty = { kind = "ci95", lo = 0.002, hi = 0.01, as_printed = "95% CI [0.002, 0.01]" }
+provenance = "D"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results, 'Individual, environmental, and species fixed effects'; Figs 6–7"
+verified = true
+notes = "Midpoint of the printed 95% CI; no point estimate printed."
+
+[[parameter]]
+symbol = "temperature_optimum_prevalence"
+quantity = "temperature at which prevalence peaks"
+value = 15.0
+units = "°C (30-day mean daily maximum)"
+provenance = "D"
+role = "derived"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results ('approximately 15 °C for prevalence')"
+verified = true
+notes = "Printed as approximate."
+
+[[parameter]]
+symbol = "temperature_optimum_intensity"
+quantity = "temperature at which intensity peaks"
+value = 13.0
+units = "°C (30-day mean daily maximum)"
+provenance = "D"
+role = "derived"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Results ('13 °C for intensity')"
+verified = true
+notes = "Printed as approximate."
+
+[[parameter]]
+symbol = "elpd_loo_max80_p10"
+quantity = "PSIS-LOO elpd, 80-day max temperature, 10-day precipitation (best)"
+value = -48722.24
+units = "log predictive density"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Table 2"
+verified = true
+notes = "Selected 30-day model: Δelpd 1.95, SE 4.48 from the best; chosen as the shortest lag among models not different from the best."
+
+[[parameter]]
+symbol = "elpd_loo_max30_p10"
+quantity = "PSIS-LOO elpd, 30-day max temperature, 10-day precipitation (selected)"
+value = -48724.19
+units = "log predictive density"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "54 amphibian species", setting = "field survey, conterminous US; final model, 30 imputed data sets pooled" }
+location = "Table 2"
+verified = true
+notes = "Selected 30-day model: Δelpd 1.95, SE 4.48 from the best; chosen as the shortest lag among models not different from the best."
