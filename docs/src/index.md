@@ -58,6 +58,8 @@ Every model belongs to one of three categories. They differ in what a result fro
 | Host–pathogen dynamic occupancy of boreal toads and Bd (equations from the first author's dissertation; data not yet read) | Mosher et al. 2018, [doi:10.1002/eap.1699](https://doi.org/10.1002/eap.1699) | [`Mosher2018Problem`](@ref), [`Mosher2018Model`](@ref) |
 | Bd occurrence in host populations by single-season occupancy (likelihood and Appendix A only) | Adams et al. 2010, [doi:10.1890/08-2319.1](https://doi.org/10.1890/08-2319.1) | [`occupancy_loglikelihood`](@ref), [`finite_population_occurrence`](@ref) |
 | Survival, recruitment and growth of boreal toads before and after Bd (robust-design Pradel) | Hardy et al. 2023, [doi:10.1111/1365-2664.14310](https://doi.org/10.1111/1365-2664.14310) | [`hardy2023_problem`](@ref), [`PradelProblem`](@ref) |
+| Adult survival before and after Bd from age structure; spatial metapopulation viability of *Litoria* (Bd only lowers survival) | Heard et al. 2024, [doi:10.1111/1365-2656.14177](https://doi.org/10.1111/1365-2656.14177) | [`HeardCatchCurve`](@ref), [`HeardMetapopulationProblem`](@ref) |
+| Environmental-water timing and extinction risk of *Litoria raniformis* (age-classified PVA) | Turner et al. 2025, [doi:10.1111/csp2.70022](https://doi.org/10.1111/csp2.70022) | [`TurnerPVAProblem`](@ref) |
 
 ## 2. Modified published models
 

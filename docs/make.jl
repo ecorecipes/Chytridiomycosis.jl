@@ -43,6 +43,8 @@ makedocs(;
                                          "Outbreak-state HMM (Wilber 2022)" => "api/wilber2022.md",
                                          "Occupancy models (Mosher 2018, Adams 2010)" => "api/occupancy.md",
                                          "Pradel recruitment and growth (Hardy 2023)" => "api/hardy2023.md",
+                                         "Age truncation and metapopulations (Heard 2024)" => "api/heard2024.md",
+                                         "Watering timing and extinction (Turner 2025)" => "api/turner2025.md",
                                          "Multistate survival (Hollanders 2023, Palomar 2023)" => "api/multistate.md"],
                   "Modified models" => ["Load models" => "api/load.md",
                                         "Life stages" => "api/stages.md",
