@@ -134,6 +134,12 @@ include("models/woodhams2011.jl")
 using Distributions: std, Chisq
 include("models/direnzo2014.jl")
 include("fitting/direnzo2014.jl")
+# Occupancy layer: single-season and dynamic multistate occupancy, two-species host-pathogen
+# parameterisation; Mosher et al. 2018 (boreal toad-Bd) and Adams et al. 2010 (Bd occurrence)
+include("observation/occupancy.jl")
+include("models/mosher2018.jl")
+include("fitting/mosher2018.jl")
+include("models/adams2010.jl")
 include("resilience.jl")
 
 export solve
@@ -289,6 +295,14 @@ export hollanders2023_path, Hollanders2023Data, load_hollanders2023,
 export palomar2023_structure, palomar2023_models, palomar2023_parameters,
        palomar2023_implied_prevalence, palomar2023_model_selection,
        palomar2023_swabbing_experiment
+# Occupancy models (generic layer, Mosher 2018, Adams 2010)
+export occupancy_loglikelihood, occupancy_mle, dynamic_occupancy_loglikelihood,
+       simulate_dynamic_occupancy, two_species_initial, two_species_transition,
+       two_species_detection, two_species_code, two_species_records
+export Mosher2018Parameters, Mosher2018Problem, initial_state, transition_matrix,
+       detection_matrix, simulate_mosher2018, Mosher2018Data, mosher2018_path,
+       Mosher2018Model, mosher2018_site_parameters, mosher2018_loglikelihood
+export finite_population_occurrence
 
 # Woodhams et al. 2011 adaptive immunity and treatments
 export ImmuneFrogParameters, FrogTreatment, ConstantPoolFrogProblem, infection_fraction,

@@ -1,0 +1,60 @@
+# Adams MJ, Chelgren ND, Reinitz D, Cole RA, Rachowicz LJ, Galvan S, McCreary B, Pearl CA,
+# Bailey LL, Bettaso J, Bull EL, Leu M (2010) Using occupancy models to understand the
+# distribution of an amphibian pathogen, Batrachochytrium dendrobatidis. Ecol Appl
+# 20:289-302. https://doi.org/10.1890/08-2319.1
+# VERSION CHECKED: the article is paywalled; only its ABSTRACT (Crossref record of the
+# published version) and the Ecological Archives appendices A020-006-A1/A2 (figshare,
+# CC0) were read, on 2026-11-19. Bd occurrence in native-amphibian and bullfrog populations
+# in the US Pacific Northwest and California; a "survey" is one animal tested.
+
+source = { ref = "adams2010", doi = "10.1890/08-2319.1", review_ref = 49 }
+
+[[parameter]]
+set = "native"
+symbol = "ψ"
+quantity = "estimated probability that Bd occurs in a population of native amphibians"
+value = 0.534
+units = "probability"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "native amphibians", setting = "field" }
+location = "Abstract ('53.4% of 78 populations of native amphibians')"
+verified = true
+notes = "Read from the published abstract; the model behind it (covariates of detection and occurrence) was not read."
+
+[[parameter]]
+set = "native"
+symbol = "npop"
+quantity = "number of native-amphibian populations tested"
+value = 78
+units = "populations"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "native amphibians", setting = "field" }
+location = "Abstract"
+verified = true
+
+[[parameter]]
+set = "bullfrog"
+symbol = "ψ"
+quantity = "estimated probability that Bd occurs in a population of non-native bullfrogs"
+value = 0.664
+units = "probability"
+provenance = "F"
+role = "estimated"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field" }
+location = "Abstract ('66.4% of 40 populations of nonnative Rana catesbeiana')"
+verified = true
+notes = "Read from the published abstract."
+
+[[parameter]]
+set = "bullfrog"
+symbol = "npop"
+quantity = "number of bullfrog populations tested"
+value = 40
+units = "populations"
+provenance = "M"
+role = "structural"
+system = { pathogen = "Bd", host = "Rana catesbeiana", setting = "field" }
+location = "Abstract"
+verified = true
