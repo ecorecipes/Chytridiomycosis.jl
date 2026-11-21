@@ -56,28 +56,36 @@ most are these:
 The targets in `data/validation/targets.toml` test the signs of the preprint's percent
 changes against an unvaccinated control.
 
+!!! note "Replicate runs"
+    The preprint ran 25 replicates per scenario. With 25, the run-to-run spread of a percent
+    change (standard deviations of 5–37 percentage points across seeds) is as large as several
+    of the effects, so their signs depend on the seed and on the Julia version's random
+    streams. The targets therefore use 200 replicates, and 1,000 for the two smallest effects.
+
 The model reproduces the preprint's headline results:
 
-- Resistance (anti-infection or anti-transmission) lowers infection intensity and
-  increases the final population.
+- Resistance (anti-infection, anti-transmission or anti-growth) lowers infection intensity.
+  Anti-infection resistance also increases the final population. The anti-growth effect is
+  small (−7% to −14% with 1,000 replicates).
 - **Tolerance raises infection intensity.** This is the amplification that the preprint
   offers as one explanation of its field result.
-- **Increased susceptibility, an adverse reaction, raises intensity and lowers the
-  population.** This is the second explanation. The intensity effect is only weak with the
-  default statistic.
+- **Increased susceptibility, an adverse reaction, lowers the population.** This is the
+  second explanation. Its effect on intensity is only weak with the default statistic
+  (about +2%, with a sign that is not robust across seeds).
 - Reduced tolerance lowers intensity.
 
-Four statements are **discrepant**:
+Three statements are **discrepant**:
 
-- **Anti-growth resistance** does not lower the metamorph intensity.
-- **Resistance does not counteract tolerance** in the two-way scenarios (Fig. 4a, Fig. S7).
+- **Resistance does not counteract tolerance** in the two-way scenarios (Fig. 4a, Fig. S7):
+  with tolerance, strong anti-infection resistance gives about +40% and anti-growth
+  resistance about +63%, where the preprint reports decreases.
 - The **control's median prevalence** is 0, not 100%.
 
 Self-reinfection (17.8 × 0.1 × 0.25 ≈ 0.45 per zoosporangium per day) outgrows clearance
 even when clearance is doubled. As a result, infected tadpoles reach the lethal load by
-metamorphosis. With the season-mean statistic, the growth and two-way results have the
-preprint's sign, but tolerance alone no longer does. The field-trial numbers are `pending`,
-because the field data are not deposited.
+metamorphosis. With the season-mean statistic, the two-way results have the preprint's sign,
+but tolerance alone no longer does. The field-trial numbers are `pending`, because the field
+data are not deposited.
 
 ## API
 
