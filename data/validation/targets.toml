@@ -4974,8 +4974,11 @@ notes = "Needs the capture histories, which are not deposited. The Pradel (1996)
 # Barnett et al. 2026, bioRxiv PREPRINT doi:10.64898/2026.05.15.725113 (v2). No model code was
 # released, so the ABM targets are the preprint's qualitative statements about its contour
 # plots (signs of percent changes against the unvaccinated control), checked with the
-# package's documented choices (src/models/barnett2026.jl), 25 scenario runs and 250 control
-# runs (compendium n_reps, n_control) and fixed seeds. Infection intensity is the default
+# package's documented choices (src/models/barnett2026.jl) and fixed seeds. The preprint ran 25
+# replicates per scenario (compendium n_reps, n_control); the targets use 200 (1000 for the two
+# smallest effects), because with 25 the run-to-run spread is as large as several of the
+# effects, and the sign then depends on the seed and the Julia version's random streams.
+# Infection intensity is the default
 # `metric = :metamorph` of barnett_relative_change (season mean load of infected metamorphs;
 # the preprint does not define its intensity statistic). Efficacy and coverage levels in the
 # calls are points of the preprint's scenario grid (10–100% in steps of 10).
@@ -4989,7 +4992,7 @@ published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
     barnett_relative_change(p, barnett_vaccine(:infection, 0.8; coverage = 0.8);
-                            rng = Random.Xoshiro(2026)).intensity
+                            nreps = 200, ncontrol = 1000, rng = Random.Xoshiro(2026)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
@@ -5004,7 +5007,7 @@ published = "increase"
 call = """
 let p = BarnettParameters(:barnett2026)
     barnett_relative_change(p, barnett_vaccine(:infection, 0.8; coverage = 0.8);
-                            rng = Random.Xoshiro(2026)).survivors
+                            nreps = 200, ncontrol = 1000, rng = Random.Xoshiro(2026)).survivors
 end
 """
 tolerance = { lower = 0.0, upper = 1.0e6 }
@@ -5019,7 +5022,7 @@ published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
     barnett_relative_change(p, barnett_vaccine(:transmission, 0.8; coverage = 0.8);
-                            rng = Random.Xoshiro(2027)).intensity
+                            nreps = 200, ncontrol = 1000, rng = Random.Xoshiro(2027)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
@@ -5034,18 +5037,18 @@ published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
     barnett_relative_change(p, barnett_vaccine(:growth, 0.8; coverage = 0.8);
-                            rng = Random.Xoshiro(2028)).intensity
+                            nreps = 1000, ncontrol = 2000, rng = Random.Xoshiro(2028)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
-status = "discrepant"
-regression = { value = 7.18, atol = 5.0 }
+status = "qualitative"
 notes = """
-Not reproduced with the package's choices: +7.2% (metamorph metric). With doubled-at-most
-clearance (0.2 to 0.36) self-reinfection (17.8 × 0.1 × 0.25 = 0.445 per sporangium per day) still
-outgrows clearance, so infected metamorphs still reach the lethal load and the mean load of the
-living ones barely moves. With the season-mean metric (metric = :season) the change is −45%.
-The preprint does not define its intensity statistic, and no code was released."""
+A small decrease: −7% to −14% with 1000 replicate runs (five seeds, Julia 1.12 and 1.13). With
+25 runs, as in the preprint, the run-to-run spread (SD about 11 percentage points) is larger than
+the effect, so the sign depends on the seed; it was recorded as discrepant (+7.2%) on one such
+seed. With doubled-at-most clearance (0.2 to 0.36) self-reinfection (17.8 × 0.1 × 0.25 = 0.445
+per sporangium per day) still outgrows clearance, so infected metamorphs still reach the lethal
+load and the mean load of the living ones moves little. With metric = :season it is −45%."""
 
 [[target]]
 id = "barnett2026_tolerance_intensity"
@@ -5056,7 +5059,7 @@ published = "increase"
 call = """
 let p = BarnettParameters(:barnett2026)
     barnett_relative_change(p, barnett_vaccine(:tolerance, 1.0; coverage = 1.0);
-                            rng = Random.Xoshiro(2029)).intensity
+                            nreps = 200, ncontrol = 1000, rng = Random.Xoshiro(2029)).intensity
 end
 """
 tolerance = { lower = 0.0, upper = 1.0e6 }
@@ -5072,7 +5075,8 @@ call = """
 let p = BarnettParameters(:barnett2026)
     v = barnett_vaccine(:tolerance => 1.0, :infection => 0.1;
                         coverage = parameter_set(:barnett2026).coverage_two_way)
-    barnett_relative_change(p, v; rng = Random.Xoshiro(2030)).intensity
+    barnett_relative_change(p, v; nreps = 200, ncontrol = 1000,
+                            rng = Random.Xoshiro(2030)).intensity
 end
 """
 tolerance = { lower = 0.0, upper = 1.0e6 }
@@ -5088,14 +5092,17 @@ call = """
 let p = BarnettParameters(:barnett2026)
     v = barnett_vaccine(:tolerance => 1.0, :infection => 1.0;
                         coverage = parameter_set(:barnett2026).coverage_two_way)
-    barnett_relative_change(p, v; rng = Random.Xoshiro(2031)).intensity
+    barnett_relative_change(p, v; nreps = 200, ncontrol = 1000,
+                            rng = Random.Xoshiro(2031)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
 status = "discrepant"
-regression = { value = 48.82, atol = 5.0 }
+regression = { value = 40.0, atol = 12.0 }
 notes = """
-Not reproduced: +48.8%. In the package's reading, hosts made fully resistant are never infected,
+Not reproduced: +44% (Julia 1.12) and +37% (1.13) with 200 replicate runs; +37% to +44% over
+eight seeds. With 25 runs, as in the preprint, single seeds range from −20% to +149%, so the
+regression tolerance is set from the 200-run spread. In the package's reading, hosts made fully resistant are never infected,
 so the intensity of infected metamorphs comes from the unvaccinated 25% and from vaccinated hosts
 with higher lethal loads, and tolerance still raises it. The preprint reports that resistance
 counteracts tolerance. With metric = :season the change is −41%. No code to check against."""
@@ -5110,14 +5117,16 @@ call = """
 let p = BarnettParameters(:barnett2026)
     v = barnett_vaccine(:tolerance => 1.0, :growth => 1.0;
                         coverage = parameter_set(:barnett2026).coverage_two_way)
-    barnett_relative_change(p, v; rng = Random.Xoshiro(2032)).intensity
+    barnett_relative_change(p, v; nreps = 200, ncontrol = 1000,
+                            rng = Random.Xoshiro(2032)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
 status = "discrepant"
-regression = { value = 63.42, atol = 5.0 }
+regression = { value = 63.0, atol = 25.0 }
 notes = """
-Not reproduced: +63.4% (Fig. 4a reports a decrease once anti-growth resistance is at least
+Not reproduced: +63% with 200 replicate runs on Julia 1.12 and 1.13 (+40% to +70% over eight
+seeds, hence the wide regression tolerance) (Fig. 4a reports a decrease once anti-growth resistance is at least
 small). As for barnett2026_antigrowth_intensity, increased clearance does not stop runaway
 self-reinfection here. With metric = :season the change is −43%. No code to check against."""
 
@@ -5130,12 +5139,18 @@ published = "increase"
 call = """
 let p = BarnettParameters(:barnett2026)
     v = barnett_vaccine(:infection, 1.0; coverage = 0.5, adverse = true)
-    barnett_relative_change(p, v; rng = Random.Xoshiro(2033)).intensity
+    barnett_relative_change(p, v; nreps = 1000, ncontrol = 2000,
+                            rng = Random.Xoshiro(2033)).intensity
 end
 """
 tolerance = { lower = 0.0, upper = 1.0e6 }
 status = "qualitative"
-notes = "Reproduced only weakly (+3.9% with this seed; the season-mean metric gives +89%)."
+notes = """
+Reproduced only weakly: +3.9% (Julia 1.12) and +2.0% (1.13) with this seed and 1000 replicate
+runs, but −1.3% to +5.9% over five seeds (mean about +2%, SD about 2), so the sign is not
+robust and may change with another seed or Julia version; if it does, record it as discrepant.
+With 25 runs, as in the preprint, the spread is far larger than the effect. The season-mean
+metric (metric = :season) gives +89%; the preprint does not define its intensity statistic."""
 
 [[target]]
 id = "barnett2026_adverse_infection_population"
@@ -5146,7 +5161,8 @@ published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
     v = barnett_vaccine(:infection, 1.0; coverage = 0.5, adverse = true)
-    barnett_relative_change(p, v; rng = Random.Xoshiro(2033)).survivors
+    barnett_relative_change(p, v; nreps = 200, ncontrol = 1000,
+                            rng = Random.Xoshiro(2033)).survivors
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
@@ -5161,7 +5177,8 @@ published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
     v = barnett_vaccine(:tolerance, 0.5; coverage = 1.0, adverse = true)
-    barnett_relative_change(p, v; rng = Random.Xoshiro(2034)).intensity
+    barnett_relative_change(p, v; nreps = 200, ncontrol = 1000,
+                            rng = Random.Xoshiro(2034)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
@@ -7921,10 +7938,10 @@ source = { ref = "heard2024", location = "Results 3.2, para. 1" }
 quantity = "fraction of the 20,000 simulations in which the L. raniformis metapopulation went extinct within 50 years, pre-Bd survival"
 published = 0.17
 call = "1 - _heard2024_reference_grid(:raniformis, :historical).overall"
-tolerance = { atol = 0.01 }
+tolerance = { atol = 0.005 }
 status = "discrepant"
 regression = { value = 0.179, atol = 0.006 }
-notes = "Ours 0.179 (0.180 with bounds checking on, which changes floating-point order in the simulation); the authors' archived outputs give 0.178, which would print as 18%. With 20,000 runs the Monte Carlo SE is about 0.003, so the printed 17% is 3-4 SE below both. The regression tolerance allows two SE."
+notes = "Ours 0.179 (0.180 with bounds checking on, which changes floating-point order in the simulation); the authors' archived outputs give 0.178, which would print as 18%. With 20,000 runs the Monte Carlo SE is about 0.003, so the printed 17% is 3-4 SE below both. The regression tolerance allows two SE. The published tolerance is ±0.005, the rounding interval of the printed whole percentage (±0.01 put 0.18 on the boundary, and the result straddled it between runs)."
 
 [[target]]
 id = "heard2024_extinction_Lran_contemporary"
