@@ -85,6 +85,7 @@ Every model belongs to one of three categories. They differ in what a result fro
 |---|---|---|
 | Microbiome (probiotic) treatment | Schmidt, Mitchell, load tipping, Bsal with larvae | [`MicrobiomeTreatment`](@ref), [`ProbioticSLIProblem`](@ref), [`ProbioticPondProblem`](@ref) (also stochastic, `solve(prob; rng)`), [`ProbioticLoadProblem`](@ref), [`ProbioticLarvalProblem`](@ref) |
 | Bacterial abundance on each frog, with repeated baths | Load tipping | [`ProbioticAbundanceProblem`](@ref) |
+| Two-trait IPM: Bd load and the load of an applied antifungal bacterium (*J. lividum*) on each frog, with a zoospore pool and baths | Wilber et al. 2016 (Bd) and 2017 (pool) | [`BacteriaIPMProblem`](@ref), [`BacteriaIPMParameters`](@ref), [`bacteria_ipm_summary`](@ref), [`joint_load_distribution`](@ref) |
 | One nested model with each piece of biology as a switch, and its stochastic version | Reduces to Schmidt et al. 2017 | [`ChytridBiology`](@ref), [`NestedChytridProblem`](@ref), [`StochasticNestedProblem`](@ref) |
 | Swab and eDNA observation model, and identifiability of the Briggs parameters | Briggs moments | [`SurveyModel`](@ref), [`simulate_survey`](@ref), [`identifiable_combinations`](@ref) |
 

@@ -111,11 +111,14 @@ using LinearAlgebra: LinearAlgebra, dot, mul!, logdet
 using Distributions: UnivariateDistribution, cdf, ccdf, MvNormal
 using SciMLBase: DiscreteProblem
 include("ipm.jl")
+include("ipm2d.jl")
 include("models/wilber2016.jl")
 include("fitting/wilber2016.jl")
 # Wilber et al. 2017 hybrid IPM: zoospore pool, tadpoles, seasonality, demographic stochasticity
 include("models/wilber2017.jl")
 include("fitting/wilber2017.jl")
+# NEW MODEL: two-trait IPM of Bd load and the load of an applied antifungal bacterium
+include("novel/bacteria_ipm.jl")
 # Canessa et al. 2018 Bsal integral projection model and management actions
 include("models/canessa2018.jl")
 # Louca et al. 2014 DOI-distribution model of adults and tadpoles, Q_o and extinction risk
@@ -293,6 +296,9 @@ export Wilber2017Parameters, zoospore_survival, annual_demography_matrix, Hybrid
        HybridIPMSolution, hybrid_summary, wilber2017_temperature, extinction_curve, stasis_load,
        extinction_sensitivity, sensitivity_weights, wilber2017_path, load_wilber2017,
        Wilber2017Transmission, Wilber2017Regression, posterior_summary, posterior_draws
+# Two-trait IPM layer and the NEW Bd–bacteria IPM (Bd load and applied J. lividum load)
+export IPMMesh2D, BacteriaIPMParameters, BacteriaIPMProblem, BacteriaIPMSolution,
+       bacteria_ipm_summary, joint_load_distribution
 # Canessa et al. 2018 Bsal integral projection model and management actions
 export CanessaDraw, canessa2018_path, load_canessa2018, CanessaAction, canessa_actions,
        canessa_action, canessa_growth_coefficients, CanessaParameters, canessa_survival,

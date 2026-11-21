@@ -58,6 +58,7 @@ makedocs(;
                                         "Fitting to field data" => "api/fitting.md",
                                         "Bayesian fit to field data" => "api/knapp_bayes.md"],
                   "New models" => ["Microbiome treatment" => "api/treatment.md",
+                                   "Two-trait IPM: Bd and bacteria" => "api/bacteria_ipm.md",
                                    "Nested and stochastic models" => "api/nested.md",
                                    "Swabs, eDNA and identifiability" => "api/identifiability.md"],
                   "Infrastructure" => ["Parameter compendium" => "api/compendium.md",
