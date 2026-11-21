@@ -119,6 +119,7 @@ include("models/wilber2017.jl")
 include("fitting/wilber2017.jl")
 # NEW MODEL: two-trait IPM of Bd load and the load of an applied antifungal bacterium
 include("novel/bacteria_ipm.jl")
+include("fitting/bacteria_ipm.jl")
 # Canessa et al. 2018 Bsal integral projection model and management actions
 include("models/canessa2018.jl")
 # Louca et al. 2014 DOI-distribution model of adults and tadpoles, Q_o and extinction risk
@@ -298,7 +299,8 @@ export Wilber2017Parameters, zoospore_survival, annual_demography_matrix, Hybrid
        Wilber2017Transmission, Wilber2017Regression, posterior_summary, posterior_draws
 # Two-trait IPM layer and the NEW Bd–bacteria IPM (Bd load and applied J. lividum load)
 export IPMMesh2D, BacteriaIPMParameters, BacteriaIPMProblem, BacteriaIPMSolution,
-       bacteria_ipm_summary, joint_load_distribution
+       bacteria_ipm_summary, joint_load_distribution, KnappJointModel, knapp_joint_params,
+       knapp_joint_start
 # Canessa et al. 2018 Bsal integral projection model and management actions
 export CanessaDraw, canessa2018_path, load_canessa2018, CanessaAction, canessa_actions,
        canessa_action, canessa_growth_coefficients, CanessaParameters, canessa_survival,

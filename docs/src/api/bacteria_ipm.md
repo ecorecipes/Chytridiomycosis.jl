@@ -7,8 +7,9 @@ CurrentModule = Chytridiomycosis
 !!! note "New model"
     This model is new work in this package, not a published result. The Bd side and the
     zoospore pool are published models (Wilber et al. 2016; Wilber et al. 2017) with values from
-    the compendium. The bacterial decline and the bacterial load just after a bath come from this
-    package's fit to the Knapp et al. (2022) swabs. The protective effects are illustrative.
+    the compendium. The bacterial decline, its variability and the bacterial load just after a
+    bath come from this package's fit to the Knapp et al. (2022) swabs (below). The protective
+    effects are illustrative, and that fit found no support for an effect on Bd growth.
 
 Each frog carries two continuous traits: its Bd load `x` (ln zoospore equivalents per swab,
 as in Wilber et al. 2016) and the load `y` of an applied antifungal bacterium,
@@ -58,6 +59,27 @@ Tolerance and resistance pull `R0` in opposite directions: bacteria that let inf
 survive longer at a given load (`κ_survival`) raise `R0`, because those frogs shed for longer,
 while bacteria that slow Bd growth (`κ_growth`) lower it.
 
+## Fit to the Knapp et al. (2022) cohort
+
+The frogs of the Dusy Basin trial were group-marked, so a frog's two loads cannot be followed
+from visit to visit. [`KnappJointModel`](@ref) fits the model to the joint distribution of Bd
+and *J. lividum* loads in the treated group on days 12, 37 and 56, starting from its day-0
+swabs and a bath of every frog (a **new fit**, not a published analysis;
+`scripts/bacteria_ipm_knapp_fit.jl`). Infection is a constant probability per step, the
+temperature is fixed at 15 °C, and ITS copies are converted to zoospore equivalents with a
+fitted copy number within the range of Longo et al. (2013).
+
+Without coupling (`coupled = false`) the fit gives a *J. lividum* half-life of 4.07 days, a
+post-bath load of ln GE 6.5 (SD 2.1), `σy = 0.29` per step, an infection probability of 0.50
+per step and 64 ITS copies per zoospore equivalent; these are the defaults of
+[`BacteriaIPMParameters`](@ref). Letting the bacteria act on Bd growth finds no protective
+effect: with `κ_growth` fixed anywhere between −2 and 4 (and the threshold re-fitted) the
+log-likelihood is within 0.6 of the uncoupled fit. The unconstrained maximum (13 log-likelihood
+units better) puts an implausibly large effect in the opposite direction (`κ_growth ≈ −107`
+above ln GE 10.4), carried by a few swabs. Jani & Briggs (2014) likewise found
+*Janthinobacterium* positively associated with Bd in an infection experiment, and not
+correlated with it in the field.
+
 ## API
 
 ```@docs
@@ -68,6 +90,11 @@ BacteriaIPMSolution
 bacteria_ipm_summary
 joint_load_distribution
 basic_reproduction_number(::BacteriaIPMProblem)
+KnappJointModel
+knapp_joint_params
+knapp_joint_start
+pointwise_loglikelihood(::KnappJointModel, ::AbstractVector)
+maximum_likelihood(::KnappJointModel)
 ```
 
 ## References
@@ -78,6 +105,9 @@ basic_reproduction_number(::BacteriaIPMProblem)
   [doi:10.1128/AEM.01294-09](https://doi.org/10.1128/AEM.01294-09)
 - Brucker RM et al. (2008) *J Chem Ecol* 34:1422–1429 (the violacein MIC, as cited by Becker
   et al. 2009).
+- Jani AJ, Briggs CJ (2014) The pathogen *Batrachochytrium dendrobatidis* disturbs the frog
+  skin microbiome during a natural epidemic and experimental infection. *PNAS*
+  111:E5049–E5058. [doi:10.1073/pnas.1412752111](https://doi.org/10.1073/pnas.1412752111)
 - Knapp RA, Joseph MB, Smith TC, et al. (2022) Effectiveness of antifungal treatments during
   chytridiomycosis epizootics in populations of an endangered frog. *PeerJ* 10:e12712.
   [doi:10.7717/peerj.12712](https://doi.org/10.7717/peerj.12712)

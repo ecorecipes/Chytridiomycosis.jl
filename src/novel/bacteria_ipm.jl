@@ -35,29 +35,39 @@
 #               Z′ = ν(T) Z + μA Σ eˣ n(x) over infected frogs. The removal of zoospores by
 #               newly infected frogs (ψ in the authors' code) is left out, as their text does.
 #   :wilber2016 the regression φ(T) of Wilber et al. (2016), from frogs housed singly (no pool).
+#   :constant   a fixed infection probability per step (`φ`), e.g. a cohort in a pond whose
+#               zoospores are not modelled (the fit to the Knapp et al. 2022 cohort).
 # The Bd vital rates are those of Wilber et al. (2016); the pool parameters come from the
 # separate fit of Wilber et al. (2017) to the same system. Combining them is our choice.
 #
 # Parameter values. The Bd side and the pool are published (compendium wilber2016, wilber2017).
-# The bacterial decline δ = ln 2 / 4.33 d⁻¹ and the post-bath distribution come from this
-# package's fit to the Knapp et al. (2022) Dusy Basin swabs (KnappLoadModel(:applied): half-life
-# 4.33 days on treated frogs; day-12 mean ln GE 5.0, SD 1.48, extrapolated back 11 days), which
-# is not a published estimate. Frogs in that trial were group-marked, so individual changes in
-# load (σy, r) cannot be estimated from it. Everything else is ILLUSTRATIVE: the protection
-# threshold y50, its width, the effects κ, ρ, σy, r and colonisation. Becker et al. (2009)
-# support a threshold: "a threshold violacein concentration of about 18 μM on a salamander's
+# The bacterial decline δ = 0.1704 d⁻¹ (half-life 4.07 days), σy = 0.29 and the post-bath
+# distribution (ln GE 6.5, SD 2.1) are this package's fit of the uncoupled model to the joint
+# loads of the treated Knapp et al. (2022) cohort (KnappJointModel(coupled = false),
+# scripts/bacteria_ipm_knapp_fit.jl), not published estimates. Frogs in that trial were
+# group-marked, so σy is identified only through how the cross-sections spread out over time,
+# and r not at all. Letting the bacteria act on Bd growth (coupled = true) found no protective
+# effect: with κ_growth fixed anywhere in [−2, 4] the log-likelihood is within 0.6 of the
+# uncoupled fit, and the unconstrained maximum (κ_growth ≈ −107 above ln GE 10.4) is an
+# implausible effect carried by a few swabs. ρ defaults to 0: in wild R. sierrae, Jani & Briggs
+# (2014, PNAS 111:E5049) "found no correlation between Bd load and any OTUs of the genus
+# Janthinobacterium" (rare in the field), and in their infection experiment an OTU of the genus
+# "was positively associated with Bd infection" (relative abundance, not load), so nothing
+# published supports Bd lowering J. lividum; ρ ≠ 0 is a scenario. Everything else is
+# ILLUSTRATIVE: the protection threshold y50, its width, the effects κ, r and colonisation.
+# Becker et al. (2009) support a threshold: "a threshold violacein concentration of about 18 μM on a salamander's
 # skin prevents mortality" (violacein MIC against Bd 1.82 μM, Brucker et al. 2008), but they
 # did not measure Bd load, and J. lividum load predicts violacein only weakly (r = 0.33), so
 # the threshold cannot be placed on the load axis from published data.
 
 """
     BacteriaIPMParameters(; bd = WilberParameters(:wilber2016),
-                          pool = Wilber2017Parameters(:wilber2017), decline = log(2)/4.33,
-                          σy = 0.5, ρ = 0.02, r = 0.0, y50 = log(100), width = 0.5,
+                          pool = Wilber2017Parameters(:wilber2017), decline = 0.1704,
+                          σy = 0.29, ρ = 0.0, r = 0.0, y50 = log(100), width = 0.5,
                           κ_survival = 2.0, κ_growth = 1.0, κ_clearance = 0.0,
                           κ_infection = 0.0, colonisation = 0.0, exchange = 0.0,
-                          colonise_mean = 2.0, colonise_sd = 1.0, bath_mean = 6.8,
-                          bath_sd = 1.5)
+                          colonise_mean = 2.0, colonise_sd = 1.0, bath_mean = 6.5,
+                          bath_sd = 2.1)
 
 Parameters of the two-trait Bd–bacteria IPM ([`BacteriaIPMProblem`](@ref)), a **new model**
 (not from a paper). `x` is ln Bd load (ZE per swab) and `y` ln load of the applied bacterium
@@ -68,9 +78,9 @@ Parameters of the two-trait Bd–bacteria IPM ([`BacteriaIPMProblem`](@ref)), a 
 |:--|:--|:--|
 | `bd` | Bd vital rates (survival, growth, clearance, initial load, `φ(T)`) | Wilber et al. 2016 |
 | `pool` | zoospore pool: transmission, shedding `μA`, zoospore survival `ν(T)` | Wilber et al. 2017 |
-| `decline` | decline of `y` per day, `δ` | fit to Knapp et al. 2022 swabs (this package) |
-| `σy` | SD of the change in `y` over a step | illustrative |
-| `ρ` | fall in `y` per step per unit of `x` (Bd disturbs the bacteria) | illustrative |
+| `decline` | decline of `y` per day, `δ` (half-life 4.07 days) | [`KnappJointModel`](@ref) fit (this package) |
+| `σy` | SD of the change in `y` over a step | [`KnappJointModel`](@ref) fit (this package) |
+| `ρ` | fall in `y` per step per unit of `x` (Bd disturbs the bacteria) | 0: no published support (Jani & Briggs 2014) |
 | `r` | correlation of the changes in `x` and `y` | illustrative |
 | `y50`, `width` | protection `h(y) = logistic((y − y50)/width)` | illustrative |
 | `κ_survival` | added to logit survival at full protection (tolerance) | illustrative |
@@ -80,7 +90,7 @@ Parameters of the two-trait Bd–bacteria IPM ([`BacteriaIPMProblem`](@ref)), a 
 | `colonisation` | per-day rate at which frogs without bacteria acquire them from the pond | illustrative |
 | `exchange` | per-day rate of acquisition per unit fraction of frogs carrying them | illustrative |
 | `colonise_mean`, `colonise_sd` | `y` of newly colonised frogs | illustrative |
-| `bath_mean`, `bath_sd` | `y` just after a probiotic bath | from the Knapp et al. 2022 fit |
+| `bath_mean`, `bath_sd` | `y` just after a probiotic bath | [`KnappJointModel`](@ref) fit (this package) |
 
 Bacteria are lost when `y` falls below the lower edge of the `y` mesh (0 = 1 GE per swab, the
 detection floor). With every `κ`, `ρ` and `r` zero the traits are independent and the Bd side
@@ -89,9 +99,9 @@ is the Wilber et al. (2016) IPM. Use `with(p; field = value)` to change fields.
 Base.@kwdef struct BacteriaIPMParameters
     bd::WilberParameters = WilberParameters(:wilber2016)
     pool::Wilber2017Parameters = Wilber2017Parameters(:wilber2017)
-    decline::Float64 = log(2) / 4.33
-    σy::Float64 = 0.5
-    ρ::Float64 = 0.02
+    decline::Float64 = 0.1704
+    σy::Float64 = 0.29
+    ρ::Float64 = 0.0
     r::Float64 = 0.0
     y50::Float64 = log(100.0)
     width::Float64 = 0.5
@@ -103,8 +113,8 @@ Base.@kwdef struct BacteriaIPMParameters
     exchange::Float64 = 0.0
     colonise_mean::Float64 = 2.0
     colonise_sd::Float64 = 1.0
-    bath_mean::Float64 = 6.8
-    bath_sd::Float64 = 1.5
+    bath_mean::Float64 = 6.5
+    bath_sd::Float64 = 2.1
     function BacteriaIPMParameters(bd, pool, decline, σy, ρ, r, y50, width, κ_survival,
             κ_growth, κ_clearance, κ_infection, colonisation, exchange, colonise_mean,
             colonise_sd, bath_mean, bath_sd)
@@ -132,7 +142,7 @@ _protection(p::BacteriaIPMParameters, y) = _logistic((y - p.y50) / p.width)
     BacteriaIPMProblem(p::BacteriaIPMParameters; temperature,
                        xmesh = IPMMesh(:wilber2016; n = 50), ymesh = IPMMesh(0.0, 14.0, 28),
                        uninfected = 100, infected = 0, zoospores = 0, days = 120,
-                       baths = (), transmission = :pool, u0 = nothing)
+                       baths = (), transmission = :pool, φ = nothing, u0 = nothing)
 
 A season of the two-trait Bd–bacteria IPM (a **new model**; see
 [`BacteriaIPMParameters`](@ref)) for adult frogs without births, in steps of 3 days.
@@ -146,8 +156,10 @@ A season of the two-trait Bd–bacteria IPM (a **new model**; see
 - `baths`: probiotic baths, each `(day = d, coverage = f)`: at the start of the step beginning
   on day `d` (rounded down to a step), a fraction `f` of every class gets a fresh bacterial
   load `y ~ Normal(bath_mean, bath_sd)`.
-- `transmission`: `:pool` (zoospore pool of Wilber et al. 2017) or `:wilber2016` (the
-  regression `φ(T)` of frogs housed singly; the pool is still tracked but does not infect).
+- `transmission`: `:pool` (zoospore pool of Wilber et al. 2017), `:wilber2016` (the
+  regression `φ(T)` of frogs housed singly) or `:constant` (infection probability `φ` per
+  step, from a pond whose zoospores are not modelled). For the last two the pool is still
+  tracked but does not infect.
 
 The state is `u = [S0; S(y); I0(x); I(x, y); Z]`: uninfected without bacteria, uninfected per
 `y` bin, infected without bacteria per `x` bin, infected per product bin (`x` fastest; see
@@ -161,15 +173,19 @@ struct BacteriaIPMProblem{TT}
     steps::Int
     baths::Vector{NamedTuple{(:day, :coverage),Tuple{Float64,Float64}}}
     transmission::Symbol
+    φ::Float64
 end
 
 function BacteriaIPMProblem(p::BacteriaIPMParameters; temperature,
         xmesh::IPMMesh = IPMMesh(:wilber2016; n = 50), ymesh::IPMMesh = IPMMesh(0.0, 14.0, 28),
         uninfected::Real = 100.0, infected::Real = 0.0, zoospores::Real = 0.0,
         days::Real = 120, baths = (), transmission::Symbol = :pool,
-        u0::Union{Nothing,AbstractVector} = nothing)
-    transmission in (:pool, :wilber2016) ||
-        throw(ArgumentError("transmission must be :pool or :wilber2016"))
+        φ::Union{Nothing,Real} = nothing, u0::Union{Nothing,AbstractVector} = nothing)
+    transmission in (:pool, :wilber2016, :constant) ||
+        throw(ArgumentError("transmission must be :pool, :wilber2016 or :constant"))
+    (transmission === :constant) == (φ !== nothing) ||
+        throw(ArgumentError("give φ exactly when transmission = :constant"))
+    φ === nothing || 0 <= φ <= 1 || throw(ArgumentError("φ must lie in [0, 1]"))
     temperature isa Real || applicable(temperature, 0.0) ||
         throw(ArgumentError("temperature must be a number or a function of time (days)"))
     mesh = IPMMesh2D(xmesh, ymesh)
@@ -194,7 +210,7 @@ function BacteriaIPMProblem(p::BacteriaIPMParameters; temperature,
         (day = Float64(b.day), coverage = Float64(b.coverage)) for b in baths]
     all(b -> 0 <= b.coverage <= 1, bs) || throw(ArgumentError("bath coverage must lie in [0, 1]"))
     return BacteriaIPMProblem(p, temperature, mesh, collect(Float64, u0), steps, bs,
-        transmission)
+        transmission, φ === nothing ? NaN : Float64(φ))
 end
 
 """
@@ -338,6 +354,7 @@ end
 function _bacteria_phi(prob::BacteriaIPMProblem, u, T)
     p = prob.p
     prob.transmission === :wilber2016 && return infection_probability(p.bd, T)
+    prob.transmission === :constant && return prob.φ
     R = _bipm_ranges(prob.mesh)
     Itot = sum(@view u[R.I0]) + sum(@view u[R.I])
     A = u[R.S0] + sum(@view u[R.S]) + Itot

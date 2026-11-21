@@ -127,6 +127,28 @@ using LinearAlgebra: dot
             temperature = T, xmesh, ymesh, transmission = :wilber2016))
     end
 
+    @testset "fit to the Knapp et al. (2022) treated cohort" begin
+        # The maximum of the uncoupled model found by scripts/bacteria_ipm_knapp_fit.jl
+        # (6 starts, 5 agreeing): log-likelihood −540.38 at these estimates.
+        m = KnappJointModel(; coupled = false)
+        @test parameter_names(m) == (:decline, :bath_mean, :bath_sd, :σy, :φ, :copies_per_ze)
+        lo, hi = log.(m.cz_range)
+        logit(v) = log(v / (1 - v))
+        x = [log(0.1704), 6.4965, log(2.1197), log(0.2887), logit(0.5049),
+            logit((log(64.2015) - lo) / (hi - lo))]
+        θ = knapp_joint_params(m, x)
+        @test θ.decline ≈ 0.1704 && θ.copies_per_ze ≈ 64.2015
+        @test lo ≈ log(10) && hi ≈ log(144)                    # Longo et al. 2013 range
+        ll = Chytridiomycosis.LogDensityProblems.logdensity(m, x)
+        @test ll ≈ -540.38 atol = 0.05
+        @test length(pointwise_loglikelihood(m, x)) == 143      # days 12, 37, 56, both loads
+        @test ll > Chytridiomycosis.LogDensityProblems.logdensity(m, knapp_joint_start(m))
+        mc = KnappJointModel(; coupled = true)
+        @test length(knapp_joint_start(mc)) == 8
+        # κ_growth = 0 in the coupled model is the uncoupled model
+        @test Chytridiomycosis.LogDensityProblems.logdensity(mc, [x; 0.0; log(100.0)]) ≈ ll
+    end
+
     @testset "arguments" begin
         @test_throws ArgumentError BacteriaIPMParameters(r = 1.0)
         @test_throws ArgumentError BacteriaIPMParameters(κ_infection = 2.0)
