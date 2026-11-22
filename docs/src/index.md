@@ -85,6 +85,7 @@ Every model belongs to one of three categories. They differ in what a result fro
 |---|---|---|
 | Microbiome (probiotic) treatment | Schmidt, Mitchell, load tipping, Bsal with larvae | [`MicrobiomeTreatment`](@ref), [`ProbioticSLIProblem`](@ref), [`ProbioticPondProblem`](@ref) (also stochastic, `solve(prob; rng)`), [`ProbioticLoadProblem`](@ref), [`ProbioticLarvalProblem`](@ref) |
 | Bacterial abundance on each frog, with repeated baths | Load tipping | [`ProbioticAbundanceProblem`](@ref) |
+| Two-trait IPM: Bd load and the load of an applied antifungal bacterium (*J. lividum*) on each frog, with a zoospore pool and baths | Wilber et al. 2016 (Bd) and 2017 (pool) | [`BacteriaIPMProblem`](@ref), [`BacteriaIPMParameters`](@ref), [`bacteria_ipm_summary`](@ref), [`joint_load_distribution`](@ref) |
 | One nested model with each piece of biology as a switch, and its stochastic version | Reduces to Schmidt et al. 2017 | [`ChytridBiology`](@ref), [`NestedChytridProblem`](@ref), [`StochasticNestedProblem`](@ref) |
 | Swab and eDNA observation model, and identifiability of the Briggs parameters | Briggs moments | [`SurveyModel`](@ref), [`simulate_survey`](@ref), [`identifiable_combinations`](@ref) |
 
@@ -136,6 +137,10 @@ Every tutorial opens with a table of the models it uses and the category of each
 9. [Fitting to a field trial](tutorials/09_knapp_fit.md): the frog load equation fitted to
    field swabs of treated, wild and control frogs, comparing four explanations for why
    treated frogs stayed low.
+10. [Does it matter that frogs carry different amounts of a protective bacterium?](tutorials/10_bacteria_ipm.md):
+    a two-trait IPM of Bd load and *J. lividum* load, fitted to the joint loads of the
+    treated frogs of a field trial, and how the spread of bacterial loads and the kind of
+    protection change survival and R0.
 
 The tutorials are Quarto documents in `vignettes/`, rendered to HTML, PDF and Markdown.
 

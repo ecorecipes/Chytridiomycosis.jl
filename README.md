@@ -75,6 +75,7 @@ Every model belongs to one of three categories. They differ in what a result fro
 |---|---|---|
 | Microbiome (probiotic) treatment | Schmidt, Mitchell, load tipping, Bsal with larvae | `MicrobiomeTreatment`, `ProbioticSLIProblem`, `ProbioticPondProblem` (also stochastic, `solve(prob; rng)`), `ProbioticLoadProblem`, `ProbioticLarvalProblem` |
 | Bacterial abundance on each frog, with repeated baths | Load tipping | `ProbioticAbundanceProblem` |
+| Two-trait IPM: Bd load and the load of an applied antifungal bacterium (*J. lividum*) on each frog, with a zoospore pool and baths | Wilber et al. 2016 (Bd) and 2017 (pool) | `BacteriaIPMProblem`, `BacteriaIPMParameters`, `bacteria_ipm_summary`, `joint_load_distribution` |
 | One nested model with each piece of biology as a switch, and its stochastic version | Reduces to Schmidt et al. 2017 | `ChytridBiology`, `NestedChytridProblem`, `StochasticNestedProblem` |
 | Swab and eDNA observation model, and identifiability of the Briggs parameters | Briggs moments | `SurveyModel`, `simulate_survey`, `identifiable_combinations` |
 
@@ -176,6 +177,18 @@ Fits the frog load equation to field swabs from frogs treated with itraconazole 
 explanations. Something held treated frogs' loads down for weeks. A waning drug and the applied
 bacteria fit about equally well, but resident *J. lividum* at the measured abundances did not
 protect.
+
+[Does it matter that frogs carry different amounts of a protective bacterium?](vignettes/10_bacteria_ipm/10_bacteria_ipm.md)
+([PDF](vignettes/10_bacteria_ipm/10_bacteria_ipm.pdf),
+[HTML](vignettes/10_bacteria_ipm/10_bacteria_ipm.html),
+[source](vignettes/10_bacteria_ipm/10_bacteria_ipm.qmd))
+
+A two-trait integral projection model in which each frog carries a Bd load and a load of the
+applied bacterium *Janthinobacterium lividum*. Fitted to the joint loads of the treated frogs
+of Knapp et al. (2022), it recovers how fast the bacteria decline but finds no evidence that
+more bacteria mean less Bd. With illustrative protection, the spread of bacterial loads among
+frogs helps or hurts depending on where the protection threshold lies, and protection that
+acts on survival raises R0 while protection that acts on Bd growth lowers it.
 
 Each vignette writes out the equations of every model it runs, with a symbol table and a
 diagram of the model.
