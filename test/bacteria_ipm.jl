@@ -114,6 +114,14 @@ using LinearAlgebra: dot
         end
         R0 = basic_reproduction_number(prob_with(p))
         @test R0 > 1
+        # no bacteria: the Wilber et al. (2017) R0 calculation on the Wilber 2016 kernel
+        d = discretize(IPMKernel(p.bd; temperature = T), xmesh)
+        ref = reservoir_reproduction_number(d; host_transmission = p.pool.β1 * 100,
+            pool_transmission = p.pool.β0 * 100,
+            shedding = log.(exp.(meshpoints(xmesh)) .+ 1),
+            pool_survival = zoospore_survival(p.pool, T))
+        @test R0 ≈ ref.total rtol = 1e-10
+        @test basic_reproduction_number(prob_with(p); as_coded = false) > 1e3 * R0
         nopool = C.with(p; pool = C._with(p.pool; β0 = 0.0, β1 = 0.0))
         @test basic_reproduction_number(prob_with(nopool)) == 0
         @test basic_reproduction_number(prob_with(p; A = 200.0)) > R0

@@ -178,6 +178,18 @@ explanations. Something held treated frogs' loads down for weeks. A waning drug 
 bacteria fit about equally well, but resident *J. lividum* at the measured abundances did not
 protect.
 
+[Does it matter that frogs carry different amounts of a protective bacterium?](vignettes/10_bacteria_ipm/10_bacteria_ipm.md)
+([PDF](vignettes/10_bacteria_ipm/10_bacteria_ipm.pdf),
+[HTML](vignettes/10_bacteria_ipm/10_bacteria_ipm.html),
+[source](vignettes/10_bacteria_ipm/10_bacteria_ipm.qmd))
+
+A two-trait integral projection model in which each frog carries a Bd load and a load of the
+applied bacterium *Janthinobacterium lividum*. Fitted to the joint loads of the treated frogs
+of Knapp et al. (2022), it recovers how fast the bacteria decline but finds no evidence that
+more bacteria mean less Bd. With illustrative protection, the spread of bacterial loads among
+frogs helps or hurts depending on where the protection threshold lies, and protection that
+acts on survival raises R0 while protection that acts on Bd growth lowers it.
+
 Each vignette writes out the equations of every model it runs, with a symbol table and a
 diagram of the model.
 

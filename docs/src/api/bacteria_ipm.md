@@ -72,7 +72,10 @@ fitted copy number within the range of Longo et al. (2013).
 Without coupling (`coupled = false`) the fit gives a *J. lividum* half-life of 4.07 days, a
 post-bath load of ln GE 6.5 (SD 2.1), `σy = 0.29` per step, an infection probability of 0.50
 per step and 64 ITS copies per zoospore equivalent; these are the defaults of
-[`BacteriaIPMParameters`](@ref). Letting the bacteria act on Bd growth finds no protective
+[`BacteriaIPMParameters`](@ref). The half-life and `σy` trade off along a nearly flat ridge
+(4.68 days and `σy = 0.15` fit almost as well, log-likelihood −540.40 against −540.38): with
+group-marked frogs the cross-sections do not separate a slower, quieter decline from a faster,
+noisier one. Letting the bacteria act on Bd growth finds no protective
 effect: with `κ_growth` fixed anywhere between −2 and 4 (and the threshold re-fitted) the
 log-likelihood is within 0.6 of the uncoupled fit. The unconstrained maximum (13 log-likelihood
 units better) puts an implausibly large effect in the opposite direction (`κ_growth ≈ −107`

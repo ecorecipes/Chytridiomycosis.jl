@@ -479,7 +479,8 @@ function joint_load_distribution(sol::BacteriaIPMSolution, k::Integer)
 end
 
 """
-    basic_reproduction_number(prob::BacteriaIPMProblem; temperature = nothing) -> Float64
+    basic_reproduction_number(prob::BacteriaIPMProblem; temperature = nothing,
+                              as_coded = true) -> Float64
 
 The basic reproduction number of Bd in the uninfected frogs of `prob.u0` (with their bacteria
 as given there), for `transmission = :pool`: the expected number of frogs infected by one
@@ -491,8 +492,17 @@ new infections. Every new infection enters through the same infection probabilit
 rank one and `R0 = cᵀ (I − T)⁻¹ n`, with `n` the distribution of newly infected frogs over
 both loads. The bacteria of uninfected frogs are held as in `u0` (no decline), so this is
 `R0` for Bd arriving at that moment. `temperature` defaults to the temperature at time 0.
+
+`as_coded = true` (default) follows the R0 code of Wilber et al. (2017), as
+[`basic_reproduction_number(::Wilber2017Parameters)`](@ref) does: shedding `ln(eˣ + 1)`
+zoospores per infected frog and transmission per step without the factor `Δt`. Linearising
+`ln(Z + 1)` at `Z = 0` with shedding `μA eˣ` (`as_coded = false`, the model as simulated)
+counts every zoospore of a frog shedding thousands as if the pool were nearly empty, and
+gives values in the millions. With no bacteria, `as_coded = true` equals that function's
+calculation on the Wilber et al. (2016) kernel (tested).
 """
-function basic_reproduction_number(prob::BacteriaIPMProblem; temperature = nothing)
+function basic_reproduction_number(prob::BacteriaIPMProblem; temperature = nothing,
+        as_coded::Bool = true)
     prob.transmission === :pool ||
         throw(ArgumentError("R0 is defined here for transmission = :pool"))
     p = prob.p
@@ -528,8 +538,9 @@ function basic_reproduction_number(prob::BacteriaIPMProblem; temperature = nothi
     for j in 1:nx+nI
         colonise!(view(Tm, 1:nx+nI, j))
     end
-    @views Tm[M, 1:nx] .= pool.μA .* exp.(xs)
-    @views Tm[M, nx+1:nx+nI] .= pool.μA .* repeat(exp.(xs), ny)
+    shed = as_coded ? log.(exp.(xs) .+ 1) : pool.μA .* exp.(xs)
+    @views Tm[M, 1:nx] .= shed
+    @views Tm[M, nx+1:nx+nI] .= repeat(shed, ny)
     Tm[M, M] = pc.ν
     s0 = p.bd.s0
     Sφ = s0 .* pc.infection_factor .* S
@@ -538,7 +549,7 @@ function basic_reproduction_number(prob::BacteriaIPMProblem; temperature = nothi
     @views newv[nx+1:nx+nI] .= pc.S_inf_I * Sφ
     colonise!(view(newv, 1:nx+nI))
     # dφ/d(state) at no Bd: β0 Δt per zoospore; β1 Δt (dd) or β1 Δt / A (fd) per infected frog
-    Δt = pool.Δt
+    Δt = as_coded ? 1.0 : pool.Δt
     cvec = zeros(M)
     cvec[M] = pool.β0 * Δt
     direct = pool.transmission === :zpool_dd ? pool.β1 * Δt :
