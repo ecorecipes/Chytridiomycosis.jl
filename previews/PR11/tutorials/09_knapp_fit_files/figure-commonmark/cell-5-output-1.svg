@@ -1,0 +1,93 @@
+<svg width="439pt" height="192pt"
+ viewBox="0.00 0.00 439.00 192.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 188.4)">
+<!-- pond -->
+<g id="node1" class="node">
+<title>pond</title>
+<ellipse fill="#e2efda" stroke="#555555" cx="61.14" cy="-161.32" rx="49.87" ry="23.08"/>
+<text xml:space="preserve" text-anchor="middle" x="61.14" y="-162.87" font-family="Helvetica,sans-Serif" font-size="11.00">zoospores</text>
+<text xml:space="preserve" text-anchor="middle" x="61.14" y="-150.87" font-family="Helvetica,sans-Serif" font-size="11.00">in the pond</text>
+</g>
+<!-- L -->
+<g id="node2" class="node">
+<title>L</title>
+<path fill="#f4c7c3" stroke="#555555" d="M327.06,-183.64C327.06,-183.64 248.28,-183.64 248.28,-183.64 242.28,-183.64 236.28,-177.64 236.28,-171.64 236.28,-171.64 236.28,-151 236.28,-151 236.28,-145 242.28,-139 248.28,-139 248.28,-139 327.06,-139 327.06,-139 333.06,-139 339.06,-145 339.06,-151 339.06,-151 339.06,-171.64 339.06,-171.64 339.06,-177.64 333.06,-183.64 327.06,-183.64"/>
+<text xml:space="preserve" text-anchor="middle" x="287.67" y="-168.87" font-family="Helvetica,sans-Serif" font-size="11.00">L</text>
+<text xml:space="preserve" text-anchor="middle" x="287.67" y="-156.87" font-family="Helvetica,sans-Serif" font-size="11.00">median Bd load</text>
+<text xml:space="preserve" text-anchor="middle" x="287.67" y="-144.87" font-family="Helvetica,sans-Serif" font-size="11.00">(copies per swab)</text>
+</g>
+<!-- pond&#45;&gt;L -->
+<g id="edge1" class="edge">
+<title>pond&#45;&gt;L</title>
+<path fill="none" stroke="#444444" d="M111.41,-161.32C145.59,-161.32 191.29,-161.32 227.45,-161.32"/>
+<polygon fill="#444444" stroke="#444444" points="227.44,-163.77 234.44,-161.32 227.44,-158.87 227.44,-163.77"/>
+<text xml:space="preserve" text-anchor="middle" x="179.28" y="-162.52" font-family="Helvetica,sans-Serif" font-size="9.00">ι</text>
+</g>
+<!-- out1 -->
+<g id="node3" class="node">
+<title>out1</title>
+<ellipse fill="#f2f2f2" stroke="#555555" cx="429.36" cy="-166.32" rx="1.8" ry="1.8"/>
+</g>
+<!-- L&#45;&gt;out1 -->
+<g id="edge2" class="edge">
+<title>L&#45;&gt;out1</title>
+<path fill="none" stroke="#444444" d="M339.5,-163.14C368.62,-164.18 402.53,-165.4 418.75,-165.98"/>
+<polygon fill="#444444" stroke="#444444" points="418.52,-168.42 425.61,-166.22 418.7,-163.52 418.52,-168.42"/>
+<text xml:space="preserve" text-anchor="middle" x="383.31" y="-166.79" font-family="Helvetica,sans-Serif" font-size="9.00">−r0 L</text>
+</g>
+<!-- out2 -->
+<g id="node4" class="node">
+<title>out2</title>
+<ellipse fill="#f2f2f2" stroke="#555555" cx="429.36" cy="-105.32" rx="1.8" ry="1.8"/>
+</g>
+<!-- L&#45;&gt;out2 -->
+<g id="edge3" class="edge">
+<title>L&#45;&gt;out2</title>
+<path fill="none" stroke="#444444" d="M339.5,-140.94C368.91,-129.15 403.19,-115.41 419.22,-108.99"/>
+<polygon fill="#444444" stroke="#444444" points="420.13,-111.26 425.71,-106.38 418.3,-106.71 420.13,-111.26"/>
+<text xml:space="preserve" text-anchor="middle" x="383.31" y="-134.52" font-family="Helvetica,sans-Serif" font-size="9.00">s(t) L / (h + L)</text>
+</g>
+<!-- drug -->
+<g id="node5" class="node">
+<title>drug</title>
+<path fill="#cfe2f3" stroke="#555555" d="M105.78,-105.32C105.78,-105.32 16.5,-105.32 16.5,-105.32 10.5,-105.32 4.5,-99.32 4.5,-93.32 4.5,-93.32 4.5,-81.32 4.5,-81.32 4.5,-75.32 10.5,-69.32 16.5,-69.32 16.5,-69.32 105.78,-69.32 105.78,-69.32 111.78,-69.32 117.78,-75.32 117.78,-81.32 117.78,-81.32 117.78,-93.32 117.78,-93.32 117.78,-99.32 111.78,-105.32 105.78,-105.32"/>
+<text xml:space="preserve" text-anchor="middle" x="61.14" y="-88.87" font-family="Helvetica,sans-Serif" font-size="11.00">leftover itraconazole</text>
+<text xml:space="preserve" text-anchor="middle" x="61.14" y="-76.87" font-family="Helvetica,sans-Serif" font-size="11.00">(from day 0)</text>
+</g>
+<!-- s -->
+<g id="node7" class="node">
+<title>s</title>
+<path fill="none" stroke="none" d="M321.06,-101.32C321.06,-101.32 254.28,-101.32 254.28,-101.32 248.28,-101.32 242.28,-95.32 242.28,-89.32 242.28,-89.32 242.28,-77.32 242.28,-77.32 242.28,-71.32 248.28,-65.32 254.28,-65.32 254.28,-65.32 321.06,-65.32 321.06,-65.32 327.06,-65.32 333.06,-71.32 333.06,-77.32 333.06,-77.32 333.06,-89.32 333.06,-89.32 333.06,-95.32 327.06,-101.32 321.06,-101.32"/>
+<text xml:space="preserve" text-anchor="middle" x="287.67" y="-84.87" font-family="Helvetica,sans-Serif" font-size="11.00">s(t)</text>
+<text xml:space="preserve" text-anchor="middle" x="287.67" y="-72.87" font-family="Helvetica,sans-Serif" font-size="11.00">extra clearance</text>
+</g>
+<!-- drug&#45;&gt;s -->
+<g id="edge4" class="edge">
+<title>drug&#45;&gt;s</title>
+<path fill="none" stroke="#888888" stroke-dasharray="5,2" d="M118.22,-86.32C153.81,-85.69 199.56,-84.87 234.4,-84.25"/>
+<polygon fill="#888888" stroke="#888888" points="234.08,-86.71 241.04,-84.13 234,-81.81 234.08,-86.71"/>
+<text xml:space="preserve" text-anchor="middle" x="179.28" y="-87.11" font-family="Helvetica,sans-Serif" font-size="9.00">decay: Δc exp(−t/τ)</text>
+</g>
+<!-- J -->
+<g id="node6" class="node">
+<title>J</title>
+<path fill="#cfe2f3" stroke="#555555" d="M110.28,-44.64C110.28,-44.64 12,-44.64 12,-44.64 6,-44.64 0,-38.64 0,-32.64 0,-32.64 0,-12 0,-12 0,-6 6,0 12,0 12,0 110.28,0 110.28,0 116.28,0 122.28,-6 122.28,-12 122.28,-12 122.28,-32.64 122.28,-32.64 122.28,-38.64 116.28,-44.64 110.28,-44.64"/>
+<text xml:space="preserve" text-anchor="middle" x="61.14" y="-29.87" font-family="Helvetica,sans-Serif" font-size="11.00">J</text>
+<text xml:space="preserve" text-anchor="middle" x="61.14" y="-17.87" font-family="Helvetica,sans-Serif" font-size="11.00">J. lividum</text>
+<text xml:space="preserve" text-anchor="middle" x="61.14" y="-5.87" font-family="Helvetica,sans-Serif" font-size="11.00">(genomic equivalents)</text>
+</g>
+<!-- J&#45;&gt;s -->
+<g id="edge5" class="edge">
+<title>J&#45;&gt;s</title>
+<path fill="none" stroke="#888888" stroke-dasharray="5,2" d="M122.62,-34.77C151.74,-41.19 187.04,-49.61 218.28,-58.82 223.56,-60.38 229.03,-62.12 234.47,-63.93"/>
+<polygon fill="#888888" stroke="#888888" points="233.55,-66.2 240.97,-66.14 235.13,-61.57 233.55,-66.2"/>
+<text xml:space="preserve" text-anchor="middle" x="179.28" y="-69.77" font-family="Helvetica,sans-Serif" font-size="9.00">applied, bacteria:</text>
+<text xml:space="preserve" text-anchor="middle" x="179.28" y="-60.02" font-family="Helvetica,sans-Serif" font-size="9.00">Δc J / (J + K)</text>
+</g>
+<!-- s&#45;&gt;out2 -->
+<g id="edge6" class="edge">
+<title>s&#45;&gt;out2</title>
+<path fill="none" stroke="#888888" stroke-dasharray="5,2" d="M332.81,-88.23C355.81,-91.12 384.32,-95.21 409.56,-100.32 416.45,-101.71 424.55,-104.14 427.35,-105.01"/>
+</g>
+</g>
+</svg>

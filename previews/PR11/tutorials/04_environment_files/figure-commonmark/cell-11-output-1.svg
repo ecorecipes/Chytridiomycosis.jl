@@ -1,0 +1,70 @@
+<svg width="473pt" height="53pt"
+ viewBox="0.00 0.00 473.00 53.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 48.64)">
+<!-- H -->
+<g id="node1" class="node">
+<title>H</title>
+<path fill="#cfe2f3" stroke="#555555" d="M54.78,-44.64C54.78,-44.64 12,-44.64 12,-44.64 6,-44.64 0,-38.64 0,-32.64 0,-32.64 0,-12 0,-12 0,-6 6,0 12,0 12,0 54.78,0 54.78,0 60.78,0 66.78,-6 66.78,-12 66.78,-12 66.78,-32.64 66.78,-32.64 66.78,-38.64 60.78,-44.64 54.78,-44.64"/>
+<text xml:space="preserve" text-anchor="middle" x="33.39" y="-29.87" font-family="Helvetica,sans-Serif" font-size="11.00">H − I</text>
+<text xml:space="preserve" text-anchor="middle" x="33.39" y="-17.87" font-family="Helvetica,sans-Serif" font-size="11.00">uninfected</text>
+<text xml:space="preserve" text-anchor="middle" x="33.39" y="-5.87" font-family="Helvetica,sans-Serif" font-size="11.00">larvae</text>
+</g>
+<!-- I -->
+<g id="node2" class="node">
+<title>I</title>
+<path fill="#f4c7c3" stroke="#555555" d="M158.31,-44.64C158.31,-44.64 127.53,-44.64 127.53,-44.64 121.53,-44.64 115.53,-38.64 115.53,-32.64 115.53,-32.64 115.53,-12 115.53,-12 115.53,-6 121.53,0 127.53,0 127.53,0 158.31,0 158.31,0 164.31,0 170.31,-6 170.31,-12 170.31,-12 170.31,-32.64 170.31,-32.64 170.31,-38.64 164.31,-44.64 158.31,-44.64"/>
+<text xml:space="preserve" text-anchor="middle" x="142.92" y="-29.87" font-family="Helvetica,sans-Serif" font-size="11.00">I</text>
+<text xml:space="preserve" text-anchor="middle" x="142.92" y="-17.87" font-family="Helvetica,sans-Serif" font-size="11.00">infected</text>
+<text xml:space="preserve" text-anchor="middle" x="142.92" y="-5.87" font-family="Helvetica,sans-Serif" font-size="11.00">larvae</text>
+</g>
+<!-- H&#45;&gt;I -->
+<g id="edge1" class="edge">
+<title>H&#45;&gt;I</title>
+<path fill="none" stroke="#444444" d="M67.24,-22.32C79.68,-22.32 93.9,-22.32 106.57,-22.32"/>
+<polygon fill="#444444" stroke="#444444" points="106.53,-24.77 113.53,-22.32 106.53,-19.87 106.53,-24.77"/>
+<text xml:space="preserve" text-anchor="middle" x="91.15" y="-23.52" font-family="Helvetica,sans-Serif" font-size="9.00">β Z</text>
+</g>
+<!-- I&#45;&gt;H -->
+<g id="edge2" class="edge">
+<title>I&#45;&gt;H</title>
+<path fill="none" stroke="#444444" d="M115.08,-11.15C109.38,-9.25 103.33,-7.57 97.53,-6.57 90.17,-5.3 82.4,-5.74 74.93,-7.09"/>
+<polygon fill="#444444" stroke="#444444" points="74.74,-4.62 68.44,-8.54 75.81,-9.4 74.74,-4.62"/>
+<text xml:space="preserve" text-anchor="middle" x="91.15" y="-7.77" font-family="Helvetica,sans-Serif" font-size="9.00">σ</text>
+</g>
+<!-- Z -->
+<g id="node3" class="node">
+<title>Z</title>
+<path fill="#e2efda" stroke="#555555" d="M312.84,-44.64C312.84,-44.64 270.06,-44.64 270.06,-44.64 264.06,-44.64 258.06,-38.64 258.06,-32.64 258.06,-32.64 258.06,-12 258.06,-12 258.06,-6 264.06,0 270.06,0 270.06,0 312.84,0 312.84,0 318.84,0 324.84,-6 324.84,-12 324.84,-12 324.84,-32.64 324.84,-32.64 324.84,-38.64 318.84,-44.64 312.84,-44.64"/>
+<text xml:space="preserve" text-anchor="middle" x="291.45" y="-29.87" font-family="Helvetica,sans-Serif" font-size="11.00">Z</text>
+<text xml:space="preserve" text-anchor="middle" x="291.45" y="-17.87" font-family="Helvetica,sans-Serif" font-size="11.00">zoospores</text>
+<text xml:space="preserve" text-anchor="middle" x="291.45" y="-5.87" font-family="Helvetica,sans-Serif" font-size="11.00">in the tank</text>
+</g>
+<!-- I&#45;&gt;Z -->
+<g id="edge3" class="edge">
+<title>I&#45;&gt;Z</title>
+<path fill="none" stroke="#444444" d="M170.8,-22.32C192.77,-22.32 224.2,-22.32 249.33,-22.32"/>
+<polygon fill="#444444" stroke="#444444" points="249.08,-24.77 256.08,-22.32 249.08,-19.87 249.08,-24.77"/>
+<text xml:space="preserve" text-anchor="middle" x="214.18" y="-23.52" font-family="Helvetica,sans-Serif" font-size="9.00">λ (shedding)</text>
+</g>
+<!-- out -->
+<g id="node4" class="node">
+<title>out</title>
+<path fill="none" stroke="none" d="M453.09,-40.32C453.09,-40.32 423.09,-40.32 423.09,-40.32 417.09,-40.32 411.09,-34.32 411.09,-28.32 411.09,-28.32 411.09,-16.32 411.09,-16.32 411.09,-10.32 417.09,-4.32 423.09,-4.32 423.09,-4.32 453.09,-4.32 453.09,-4.32 459.09,-4.32 465.09,-10.32 465.09,-16.32 465.09,-16.32 465.09,-28.32 465.09,-28.32 465.09,-34.32 459.09,-40.32 453.09,-40.32"/>
+<text xml:space="preserve" text-anchor="middle" x="438.09" y="-17.87" font-family="Helvetica,sans-Serif" font-size="11.00">lost</text>
+</g>
+<!-- Z&#45;&gt;out -->
+<g id="edge4" class="edge">
+<title>Z&#45;&gt;out</title>
+<path fill="none" stroke="#444444" d="M325.27,-22.32C348.43,-22.32 379.39,-22.32 402.86,-22.32"/>
+<polygon fill="#444444" stroke="#444444" points="402.62,-24.77 409.62,-22.32 402.62,-19.87 402.62,-24.77"/>
+<text xml:space="preserve" text-anchor="middle" x="367.96" y="-23.52" font-family="Helvetica,sans-Serif" font-size="9.00">γ</text>
+</g>
+<!-- Z&#45;&gt;out -->
+<g id="edge5" class="edge">
+<title>Z&#45;&gt;out</title>
+<path fill="none" stroke="#444444" stroke-dasharray="5,2" d="M325.18,-10.52C330.99,-8.88 337.04,-7.46 342.84,-6.57 364.92,-3.2 371.09,-2.75 393.09,-6.57 396.51,-7.16 400.01,-8 403.48,-8.98"/>
+<polygon fill="#444444" stroke="#444444" points="402.58,-11.26 409.99,-11.02 404.04,-6.59 402.58,-11.26"/>
+<text xml:space="preserve" text-anchor="middle" x="367.96" y="-7.77" font-family="Helvetica,sans-Serif" font-size="9.00">β H (uptake)</text>
+</g>
+</g>
+</svg>
