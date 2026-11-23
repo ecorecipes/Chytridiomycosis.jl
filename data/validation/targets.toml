@@ -4971,17 +4971,96 @@ status = "pending"
 notes = "Needs the capture histories, which are not deposited. The Pradel (1996) temporal-symmetry likelihood itself is now available (`pradel_loglikelihood`, used for Hardy et al. 2023)."
 
 # ---- barnett2026 ----
-# Barnett et al. 2026, bioRxiv PREPRINT doi:10.64898/2026.05.15.725113 (v2). No model code was
-# released, so the ABM targets are the preprint's qualitative statements about its contour
-# plots (signs of percent changes against the unvaccinated control), checked with the
-# package's documented choices (src/models/barnett2026.jl) and fixed seeds. The preprint ran 25
-# replicates per scenario (compendium n_reps, n_control); the targets use 200 (1000 for the two
-# smallest effects), because with 25 the run-to-run spread is as large as several of the
-# effects, and the sign then depends on the seed and the Julia version's random streams.
-# Infection intensity is the default
-# `metric = :metamorph` of barnett_relative_change (season mean load of infected metamorphs;
-# the preprint does not define its intensity statistic). Efficacy and coverage levels in the
-# calls are points of the preprint's scenario grid (10–100% in steps of 10).
+# Barnett et al. 2026, bioRxiv PREPRINT doi:10.64898/2026.05.15.725113 (v2). The ABM is a port of
+# the authors' NetLogo code (github.com/kmbarnett100/protection_to_amplification, commit 29f4af6;
+# src/models/barnett2026.jl). Three kinds of target:
+# - the statistics of the authors' 250 control runs, and the preprint's statements about its
+#   figures, from seeded live runs;
+# - the mean outputs of each of the authors' 12 output files against the package's 8 runs per
+#   author run, stored in data/barnett2026/reproduction.toml (scripts/barnett2026_abm.jl); the
+#   tolerance is 3 standard errors of the difference;
+# - the field-trial and challenge GLMMs, refitted to the authors' data (not bundled; skipped
+#   without it).
+
+[[target]]
+id = "barnett2026_control_population_mean"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' no_vaccination table (250 runs); figure code" }
+quantity = "mean metamorphs alive at day 90, unvaccinated control"
+published = 128.84
+call = """
+barnett_summary(BarnettParameters(:barnett2026); nreps = 250, rng = Random.Xoshiro(2035)).mean.survivors
+"""
+tolerance = { atol = 23.0 }
+status = "reproduced"
+notes = """
+Tolerance 3 standard errors of the difference of two sets of 250 runs (SD 85)."""
+
+[[target]]
+id = "barnett2026_control_population_median"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' no_vaccination table (250 runs); figure code" }
+quantity = "median metamorphs alive at day 90, unvaccinated control"
+published = 133.5
+call = """
+barnett_summary(BarnettParameters(:barnett2026); nreps = 250, rng = Random.Xoshiro(2035)).median.survivors
+"""
+tolerance = { atol = 30.0 }
+status = "reproduced"
+notes = """
+Tolerance from the sampling error of two medians of 250 runs. With 4000 runs the package's median is 148."""
+
+[[target]]
+id = "barnett2026_control_intensity_median"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' no_vaccination table (250 runs); figure code" }
+quantity = "median over runs of the median load of infected metamorphs, unvaccinated control"
+published = 280.0
+call = """
+barnett_summary(BarnettParameters(:barnett2026); nreps = 250, rng = Random.Xoshiro(2035)).median.median_intensity
+"""
+tolerance = { atol = 45.0 }
+status = "reproduced"
+notes = """
+Tolerance from the sampling error of two medians of about 221 runs (SD 124). With 4000 runs the package's median is 269."""
+
+[[target]]
+id = "barnett2026_control_zoospores_median"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' no_vaccination table (250 runs); figure code" }
+quantity = "median cumulative zoospore density, unvaccinated control"
+published = 425864.0
+call = """
+barnett_summary(BarnettParameters(:barnett2026); nreps = 250, rng = Random.Xoshiro(2035)).median.zoospore_density
+"""
+tolerance = { atol = 60000.0 }
+status = "reproduced"
+notes = """
+Sum over days of the zoospores per perimeter patch. Tolerance as above (SD 165,000)."""
+
+[[target]]
+id = "barnett2026_control_dieoff"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' no_vaccination table (250 runs); figure code" }
+quantity = "fraction of control runs with no metamorph left"
+published = 0.092
+call = """
+barnett_summary(BarnettParameters(:barnett2026); nreps = 250, rng = Random.Xoshiro(2035)).dieoff
+"""
+tolerance = { atol = 0.08 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_control_prevalence"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection' ('Median infection prevalence in unvaccinated scenarios was already 100%')" }
+quantity = "median infection prevalence of the unvaccinated control"
+published = 1.0
+call = """
+barnett_summary(BarnettParameters(:barnett2026); nreps = 250, rng = Random.Xoshiro(2035)).median.prevalence
+"""
+tolerance = { atol = 0.001 }
+status = "reproduced"
 
 [[target]]
 id = "barnett2026_antiinfection_intensity"
@@ -4991,12 +5070,16 @@ quantity = "percent change in infection intensity, anti-infection resistance (80
 published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
-    barnett_relative_change(p, barnett_vaccine(:infection, 0.8; coverage = 0.8);
-                            nreps = 200, ncontrol = 1000, rng = Random.Xoshiro(2026)).intensity
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3001))
+    v = barnett_vaccine(:infection => 0.8; coverage = 0.8)
+    barnett_relative_change(p, v; nreps = 100, control = c,
+                            rng = Random.Xoshiro(3002)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
 status = "qualitative"
+notes = """
+About −98% with 1000 runs."""
 
 [[target]]
 id = "barnett2026_antiinfection_population"
@@ -5006,12 +5089,16 @@ quantity = "percent change in final frog population, anti-infection resistance (
 published = "increase"
 call = """
 let p = BarnettParameters(:barnett2026)
-    barnett_relative_change(p, barnett_vaccine(:infection, 0.8; coverage = 0.8);
-                            nreps = 200, ncontrol = 1000, rng = Random.Xoshiro(2026)).survivors
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3001))
+    v = barnett_vaccine(:infection => 0.8; coverage = 0.8)
+    barnett_relative_change(p, v; nreps = 100, control = c,
+                            rng = Random.Xoshiro(3002)).survivors
 end
 """
 tolerance = { lower = 0.0, upper = 1.0e6 }
 status = "qualitative"
+notes = """
+About +57% with 1000 runs."""
 
 [[target]]
 id = "barnett2026_antitransmission_intensity"
@@ -5021,12 +5108,16 @@ quantity = "percent change in infection intensity, anti-transmission resistance 
 published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
-    barnett_relative_change(p, barnett_vaccine(:transmission, 0.8; coverage = 0.8);
-                            nreps = 200, ncontrol = 1000, rng = Random.Xoshiro(2027)).intensity
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3003))
+    v = barnett_vaccine(:transmission => 0.8; coverage = 0.8)
+    barnett_relative_change(p, v; nreps = 100, control = c,
+                            rng = Random.Xoshiro(3004)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
 status = "qualitative"
+notes = """
+About −96% with 1000 runs."""
 
 [[target]]
 id = "barnett2026_antigrowth_intensity"
@@ -5036,19 +5127,35 @@ quantity = "percent change in infection intensity, anti-growth resistance (80% e
 published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
-    barnett_relative_change(p, barnett_vaccine(:growth, 0.8; coverage = 0.8);
-                            nreps = 1000, ncontrol = 2000, rng = Random.Xoshiro(2028)).intensity
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3005))
+    v = barnett_vaccine(:growth => 0.8; coverage = 0.8)
+    barnett_relative_change(p, v; nreps = 100, control = c,
+                            rng = Random.Xoshiro(3006)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
 status = "qualitative"
 notes = """
-A small decrease: −7% to −14% with 1000 replicate runs (five seeds, Julia 1.12 and 1.13). With
-25 runs, as in the preprint, the run-to-run spread (SD about 11 percentage points) is larger than
-the effect, so the sign depends on the seed; it was recorded as discrepant (+7.2%) on one such
-seed. With doubled-at-most clearance (0.2 to 0.36) self-reinfection (17.8 × 0.1 × 0.25 = 0.445
-per sporangium per day) still outgrows clearance, so infected metamorphs still reach the lethal
-load and the mean load of the living ones moves little. With metric = :season it is −45%."""
+About −89% with 1000 runs."""
+
+[[target]]
+id = "barnett2026_antiinfection_zoospores"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. S4a" }
+quantity = "percent change in zoospore density, anti-infection resistance (80% efficacy, 80% coverage)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3007))
+    v = barnett_vaccine(:infection => 0.8; coverage = 0.8)
+    barnett_relative_change(p, v; nreps = 100, control = c,
+                            rng = Random.Xoshiro(3008)).zoospore_density
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+notes = """
+About −75% with 1000 runs."""
 
 [[target]]
 id = "barnett2026_tolerance_intensity"
@@ -5058,29 +5165,93 @@ quantity = "percent change in infection intensity, tolerance (100% efficacy, 100
 published = "increase"
 call = """
 let p = BarnettParameters(:barnett2026)
-    barnett_relative_change(p, barnett_vaccine(:tolerance, 1.0; coverage = 1.0);
-                            nreps = 200, ncontrol = 1000, rng = Random.Xoshiro(2029)).intensity
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3009))
+    v = barnett_vaccine(:tolerance => 1.0; coverage = 1.0)
+    barnett_relative_change(p, v; nreps = 200, control = c,
+                            rng = Random.Xoshiro(3010)).intensity
 end
 """
 tolerance = { lower = 0.0, upper = 1.0e6 }
 status = "qualitative"
+notes = """
+About +47% with 1000 runs (SD over runs 92)."""
+
+[[target]]
+id = "barnett2026_tolerance_population"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. 1d" }
+quantity = "percent change in final frog population, tolerance (100% efficacy, 100% coverage)"
+published = "increase"
+call = """
+let p = BarnettParameters(:barnett2026)
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3009))
+    v = barnett_vaccine(:tolerance => 1.0; coverage = 1.0)
+    barnett_relative_change(p, v; nreps = 200, control = c,
+                            rng = Random.Xoshiro(3010)).survivors
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0e6 }
+status = "qualitative"
+notes = """
+About +28% with 1000 runs."""
+
+[[target]]
+id = "barnett2026_herd_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. 2a" }
+quantity = "percent change in infection intensity of unvaccinated frogs, anti-infection resistance (80% efficacy, 50% coverage)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3011))
+    v = barnett_vaccine(:infection => 0.8; coverage = 0.5)
+    barnett_relative_change(p, v; nreps = 100, control = c,
+                            rng = Random.Xoshiro(3012)).unvaccinated_intensity
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+notes = """
+Herd immunity; about −73% with 1000 runs."""
+
+[[target]]
+id = "barnett2026_tolerance_unvaccinated_survival"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Modes of protection'; Fig. 2d" }
+quantity = "percent change in the unvaccinated share of the survivors, tolerance (100% efficacy, 50% coverage)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3013))
+    v = barnett_vaccine(:tolerance => 1.0; coverage = 0.5)
+    barnett_relative_change(p, v; nreps = 200, control = c,
+                            rng = Random.Xoshiro(3014)).unvaccinated_survival
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+notes = """
+About −36% with 1000 runs."""
 
 [[target]]
 id = "barnett2026_tolerance_weak_resistance_intensity"
 model = "bd-barnett2026-prophylaxis-abm"
-source = { ref = "barnett2026", location = "Results, 'Two-way interactions with tolerance'; Fig. S7a; Discussion" }
-quantity = "percent change in infection intensity, tolerance 100% with weak anti-infection resistance 10%, coverage 75%"
+source = { ref = "barnett2026", location = "Results, 'Two-way interactions with tolerance'; Figs. 4a, S7" }
+quantity = "percent change in infection intensity, tolerance 100% without resistance, coverage 75%"
 published = "increase"
 call = """
 let p = BarnettParameters(:barnett2026)
-    v = barnett_vaccine(:tolerance => 1.0, :infection => 0.1;
-                        coverage = parameter_set(:barnett2026).coverage_two_way)
-    barnett_relative_change(p, v; nreps = 200, ncontrol = 1000,
-                            rng = Random.Xoshiro(2030)).intensity
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3015))
+    p2 = with(p; relative_variation = 0.0)
+    v = barnett_vaccine(:tolerance => 1.0; coverage = parameter_set(:barnett2026).coverage_two_way)
+    barnett_relative_change(p2, v; nreps = 200, control = c,
+                            rng = Random.Xoshiro(3016)).intensity
 end
 """
 tolerance = { lower = 0.0, upper = 1.0e6 }
 status = "qualitative"
+notes = """
+About +39% with 1000 runs. The effect is gone once there is some resistance: the authors' own 25 runs with 10% anti-infection or anti-transmission resistance average −23% and −18%."""
 
 [[target]]
 id = "barnett2026_tolerance_strong_resistance_intensity"
@@ -5090,22 +5261,17 @@ quantity = "percent change in infection intensity, tolerance 100% with strong an
 published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
-    v = barnett_vaccine(:tolerance => 1.0, :infection => 1.0;
-                        coverage = parameter_set(:barnett2026).coverage_two_way)
-    barnett_relative_change(p, v; nreps = 200, ncontrol = 1000,
-                            rng = Random.Xoshiro(2031)).intensity
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3017))
+    p2 = with(p; relative_variation = 0.0)
+    v = barnett_vaccine(:tolerance => 1.0, :infection => 1.0; coverage = parameter_set(:barnett2026).coverage_two_way)
+    barnett_relative_change(p2, v; nreps = 100, control = c,
+                            rng = Random.Xoshiro(3018)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
-status = "discrepant"
-regression = { value = 40.0, atol = 12.0 }
+status = "qualitative"
 notes = """
-Not reproduced: +44% (Julia 1.12) and +37% (1.13) with 200 replicate runs; +37% to +44% over
-eight seeds. With 25 runs, as in the preprint, single seeds range from −20% to +149%, so the
-regression tolerance is set from the 200-run spread. In the package's reading, hosts made fully resistant are never infected,
-so the intensity of infected metamorphs comes from the unvaccinated 25% and from vaccinated hosts
-with higher lethal loads, and tolerance still raises it. The preprint reports that resistance
-counteracts tolerance. With metric = :season the change is −41%. No code to check against."""
+About −96% with 1000 runs. Discrepant in the package's earlier implementation from the text alone."""
 
 [[target]]
 id = "barnett2026_tolerance_growth_intensity"
@@ -5115,58 +5281,74 @@ quantity = "percent change in infection intensity, tolerance 100% with anti-grow
 published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
-    v = barnett_vaccine(:tolerance => 1.0, :growth => 1.0;
-                        coverage = parameter_set(:barnett2026).coverage_two_way)
-    barnett_relative_change(p, v; nreps = 200, ncontrol = 1000,
-                            rng = Random.Xoshiro(2032)).intensity
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3019))
+    p2 = with(p; relative_variation = 0.0)
+    v = barnett_vaccine(:tolerance => 1.0, :growth => 1.0; coverage = parameter_set(:barnett2026).coverage_two_way)
+    barnett_relative_change(p2, v; nreps = 100, control = c,
+                            rng = Random.Xoshiro(3020)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
-status = "discrepant"
-regression = { value = 63.0, atol = 25.0 }
+status = "qualitative"
 notes = """
-Not reproduced: +63% with 200 replicate runs on Julia 1.12 and 1.13 (+40% to +70% over eight
-seeds, hence the wide regression tolerance) (Fig. 4a reports a decrease once anti-growth resistance is at least
-small). As for barnett2026_antigrowth_intensity, increased clearance does not stop runaway
-self-reinfection here. With metric = :season the change is −43%. No code to check against."""
+About −92% with 1000 runs. Discrepant in the package's earlier implementation from the text alone."""
 
 [[target]]
 id = "barnett2026_adverse_infection_intensity"
 model = "bd-barnett2026-prophylaxis-abm"
 source = { ref = "barnett2026", location = "Abstract; Results, 'Hypothetical adverse reactions'; Fig. 5a" }
-quantity = "percent change in infection intensity, vaccination increases susceptibility (establishment +100%, coverage 50%)"
+quantity = "percent change in infection intensity, vaccination increases susceptibility (establishment +50%, coverage 50%)"
 published = "increase"
 call = """
 let p = BarnettParameters(:barnett2026)
-    v = barnett_vaccine(:infection, 1.0; coverage = 0.5, adverse = true)
-    barnett_relative_change(p, v; nreps = 1000, ncontrol = 2000,
-                            rng = Random.Xoshiro(2033)).intensity
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3021))
+    v = barnett_vaccine(:infection => 0.5; coverage = 0.5, adverse = true)
+    barnett_relative_change(p, v; nreps = 200, control = c,
+                            rng = Random.Xoshiro(3022)).intensity
 end
 """
 tolerance = { lower = 0.0, upper = 1.0e6 }
 status = "qualitative"
 notes = """
-Reproduced only weakly: +3.9% (Julia 1.12) and +2.0% (1.13) with this seed and 1000 replicate
-runs, but −1.3% to +5.9% over five seeds (mean about +2%, SD about 2), so the sign is not
-robust and may change with another seed or Julia version; if it does, record it as discrepant.
-With 25 runs, as in the preprint, the spread is far larger than the effect. The season-mean
-metric (metric = :season) gives +89%; the preprint does not define its intensity statistic."""
+About +25% with 1000 runs, over the 37% of runs with infected survivors. At higher efficacy and coverage almost no metamorph survives (in the authors' runs none of 75 at +100% and coverage of at least 80%), so there the GAM surface of Fig. 5a is an extrapolation."""
 
 [[target]]
 id = "barnett2026_adverse_infection_population"
 model = "bd-barnett2026-prophylaxis-abm"
 source = { ref = "barnett2026", location = "Results, 'Hypothetical adverse reactions'; Fig. 5b" }
-quantity = "percent change in final frog population, vaccination increases susceptibility (establishment +100%, coverage 50%)"
+quantity = "percent change in final frog population, vaccination increases susceptibility (establishment +50%, coverage 50%)"
 published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
-    v = barnett_vaccine(:infection, 1.0; coverage = 0.5, adverse = true)
-    barnett_relative_change(p, v; nreps = 200, ncontrol = 1000,
-                            rng = Random.Xoshiro(2033)).survivors
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3021))
+    v = barnett_vaccine(:infection => 0.5; coverage = 0.5, adverse = true)
+    barnett_relative_change(p, v; nreps = 200, control = c,
+                            rng = Random.Xoshiro(3022)).survivors
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
 status = "qualitative"
+notes = """
+About −80% with 1000 runs."""
+
+[[target]]
+id = "barnett2026_adverse_infection_zoospores"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Hypothetical adverse reactions'; Fig. S14a" }
+quantity = "percent change in zoospore density, vaccination increases susceptibility (establishment +100%, coverage 50%)"
+published = "increase"
+call = """
+let p = BarnettParameters(:barnett2026)
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3023))
+    v = barnett_vaccine(:infection => 1.0; coverage = 0.5, adverse = true)
+    barnett_relative_change(p, v; nreps = 100, control = c,
+                            rng = Random.Xoshiro(3024)).zoospore_density
+end
+"""
+tolerance = { lower = 0.0, upper = 1.0e6 }
+status = "qualitative"
+notes = """
+About +55% with 1000 runs."""
 
 [[target]]
 id = "barnett2026_adverse_tolerance_intensity"
@@ -5176,41 +5358,540 @@ quantity = "percent change in infection intensity, vaccination reduces tolerance
 published = "decrease"
 call = """
 let p = BarnettParameters(:barnett2026)
-    v = barnett_vaccine(:tolerance, 0.5; coverage = 1.0, adverse = true)
-    barnett_relative_change(p, v; nreps = 200, ncontrol = 1000,
-                            rng = Random.Xoshiro(2034)).intensity
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3025))
+    v = barnett_vaccine(:tolerance => 0.5; coverage = 1.0, adverse = true)
+    barnett_relative_change(p, v; nreps = 100, control = c,
+                            rng = Random.Xoshiro(3026)).intensity
 end
 """
 tolerance = { lower = -100.0, upper = 0.0 }
 status = "qualitative"
-
-[[target]]
-id = "barnett2026_control_prevalence"
-model = "bd-barnett2026-prophylaxis-abm"
-source = { ref = "barnett2026", location = "Results, 'Modes of protection' ('Median infection prevalence in unvaccinated scenarios was already 100%')" }
-quantity = "median infection prevalence of the unvaccinated control"
-published = 1.0
-call = """
-barnett_summary(BarnettParameters(:barnett2026); rng = Random.Xoshiro(2035),
-                nreps = round(Int, parameter_set(:barnett2026).n_control)).median_final_prevalence
-"""
-tolerance = { atol = 0.05 }
-status = "discrepant"
-regression = { value = 0.0, atol = 5.0 }
 notes = """
-Not reproduced: in the package's runs most infected hosts die when they metamorphose with
-loads above smax, so the survivors at day 90 are mostly uninfected (median 0). The preprint
-does not give the number of tadpoles, the pond geometry or its prevalence statistic; with
-denser ponds (n_tadpoles = 5000, n_perimeter = 120) the median is 1. Not tuned."""
+About −47% with 1000 runs."""
 
 [[target]]
-id = "barnett2026_field_intensity_ratio"
+id = "barnett2026_adverse_tolerance_zoospores"
 model = "bd-barnett2026-prophylaxis-abm"
-source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
-quantity = "post-intervention Bd intensity in treated ponds relative to the expectation had they declined like controls (ZINB BACI interaction)"
-published = 6.42
-status = "pending"
-notes = "Field swab data (Santa Clara County ponds, 2011–2022) are not deposited with the preprint; the BACI zero-inflated negative binomial GLMM (glmmTMB) is not implemented."
+source = { ref = "barnett2026", location = "Results, 'Hypothetical adverse reactions'; Fig. S14d" }
+quantity = "percent change in zoospore density, vaccination reduces tolerance (smax −50%, coverage 100%)"
+published = "decrease"
+call = """
+let p = BarnettParameters(:barnett2026)
+    c = barnett_summary(p; nreps = 250, rng = Random.Xoshiro(3025))
+    v = barnett_vaccine(:tolerance => 0.5; coverage = 1.0, adverse = true)
+    barnett_relative_change(p, v; nreps = 100, control = c,
+                            rng = Random.Xoshiro(3026)).zoospore_density
+end
+"""
+tolerance = { lower = -100.0, upper = 0.0 }
+status = "qualitative"
+notes = """
+About −34% with 1000 runs."""
+
+[[target]]
+id = "barnett2026_runs_control_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, control" }
+quantity = "mean over all 250 runs of the metamorphs alive at day 90, control scenarios"
+published = 128.84
+call = """
+_barnett_reproduction()["control"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 17.253 }
+status = "reproduced"
+notes = """
+z = -0.08; KS distance 0.057 (p = 0.47); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_control_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, control" }
+quantity = "mean over all 250 runs of the median load of infected metamorphs, control scenarios"
+published = 261.597
+call = """
+_barnett_reproduction()["control"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 26.789 }
+status = "reproduced"
+notes = """
+z = -1.0; KS distance 0.0768 (p = 0.2); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_control_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, control" }
+quantity = "mean over all 250 runs of the cumulative zoospore density, control scenarios"
+published = 399160
+call = """
+_barnett_reproduction()["control"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 33518 }
+status = "reproduced"
+notes = """
+z = -0.64; KS distance 0.0725 (p = 0.19); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_infection_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, infection" }
+quantity = "mean over all 2500 runs of the metamorphs alive at day 90, infection scenarios"
+published = 208.274
+call = """
+_barnett_reproduction()["infection"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 3.493 }
+status = "reproduced"
+notes = """
+z = -1.23; KS distance 0.0258 (p = 0.1); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_infection_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, infection" }
+quantity = "mean over all 2500 runs of the median load of infected metamorphs, infection scenarios"
+published = 85.687
+call = """
+_barnett_reproduction()["infection"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 6.822 }
+status = "reproduced"
+notes = """
+z = 0.55; KS distance 0.0174 (p = 0.57); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_infection_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, infection" }
+quantity = "mean over all 2500 runs of the cumulative zoospore density, infection scenarios"
+published = 220203
+call = """
+_barnett_reproduction()["infection"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 10292 }
+status = "reproduced"
+notes = """
+z = -0.14; KS distance 0.011 (p = 1.0); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_transmission_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, transmission" }
+quantity = "mean over all 2500 runs of the metamorphs alive at day 90, transmission scenarios"
+published = 193.631
+call = """
+_barnett_reproduction()["transmission"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 3.87 }
+status = "reproduced"
+notes = """
+z = -0.03; KS distance 0.0098 (p = 1.0); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_transmission_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, transmission" }
+quantity = "mean over all 2500 runs of the median load of infected metamorphs, transmission scenarios"
+published = 102.914
+call = """
+_barnett_reproduction()["transmission"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 7.013 }
+status = "reproduced"
+notes = """
+z = -0.11; KS distance 0.0115 (p = 1.0); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_transmission_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, transmission" }
+quantity = "mean over all 2500 runs of the cumulative zoospore density, transmission scenarios"
+published = 246809
+call = """
+_barnett_reproduction()["transmission"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 10284 }
+status = "reproduced"
+notes = """
+z = -0.07; KS distance 0.0134 (p = 0.9); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_growth_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, growth" }
+quantity = "mean over all 2500 runs of the metamorphs alive at day 90, growth scenarios"
+published = 187.793
+call = """
+_barnett_reproduction()["growth"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 4.132 }
+status = "reproduced"
+notes = """
+z = -0.43; KS distance 0.0162 (p = 0.62); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_growth_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, growth" }
+quantity = "mean over all 2500 runs of the median load of infected metamorphs, growth scenarios"
+published = 125.934
+call = """
+_barnett_reproduction()["growth"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 7.234 }
+status = "reproduced"
+notes = """
+z = 0.09; KS distance 0.0092 (p = 1.0); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_growth_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, growth" }
+quantity = "mean over all 2500 runs of the cumulative zoospore density, growth scenarios"
+published = 288713
+call = """
+_barnett_reproduction()["growth"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 10962 }
+status = "reproduced"
+notes = """
+z = -0.37; KS distance 0.0105 (p = 1.0); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance" }
+quantity = "mean over all 2500 runs of the metamorphs alive at day 90, tolerance scenarios"
+published = 147.3
+call = """
+_barnett_reproduction()["tolerance"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 5.331 }
+status = "reproduced"
+notes = """
+z = 1.1; KS distance 0.024 (p = 0.16); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance" }
+quantity = "mean over all 2500 runs of the median load of infected metamorphs, tolerance scenarios"
+published = 315.042
+call = """
+_barnett_reproduction()["tolerance"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 12.678 }
+status = "reproduced"
+notes = """
+z = -0.21; KS distance 0.0115 (p = 1.0); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance" }
+quantity = "mean over all 2500 runs of the cumulative zoospore density, tolerance scenarios"
+published = 436701
+call = """
+_barnett_reproduction()["tolerance"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 13605 }
+status = "reproduced"
+notes = """
+z = -0.84; KS distance 0.0178 (p = 0.49); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_infection_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance_infection" }
+quantity = "mean over all 3025 runs of the metamorphs alive at day 90, tolerance × infection scenarios"
+published = 220.272
+call = """
+_barnett_reproduction()["tolerance_infection"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 2.555 }
+status = "reproduced"
+notes = """
+z = -0.73; KS distance 0.0117 (p = 0.96); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_infection_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance_infection" }
+quantity = "mean over all 3025 runs of the median load of infected metamorphs, tolerance × infection scenarios"
+published = 71.827
+call = """
+_barnett_reproduction()["tolerance_infection"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 7.753 }
+status = "reproduced"
+notes = """
+z = -0.04; KS distance 0.0117 (p = 0.99); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_infection_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance_infection" }
+quantity = "mean over all 3025 runs of the cumulative zoospore density, tolerance × infection scenarios"
+published = 193627
+call = """
+_barnett_reproduction()["tolerance_infection"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 9583 }
+status = "reproduced"
+notes = """
+z = -0.42; KS distance 0.0293 (p = 0.02); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_transmission_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance_transmission" }
+quantity = "mean over all 3025 runs of the metamorphs alive at day 90, tolerance × transmission scenarios"
+published = 210.846
+call = """
+_barnett_reproduction()["tolerance_transmission"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 2.635 }
+status = "reproduced"
+notes = """
+z = -0.45; KS distance 0.0144 (p = 0.66); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_transmission_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance_transmission" }
+quantity = "mean over all 3025 runs of the median load of infected metamorphs, tolerance × transmission scenarios"
+published = 85.402
+call = """
+_barnett_reproduction()["tolerance_transmission"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 7.732 }
+status = "reproduced"
+notes = """
+z = 0.19; KS distance 0.0097 (p = 1.0); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_transmission_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance_transmission" }
+quantity = "mean over all 3025 runs of the cumulative zoospore density, tolerance × transmission scenarios"
+published = 218437
+call = """
+_barnett_reproduction()["tolerance_transmission"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 9455 }
+status = "reproduced"
+notes = """
+z = 0.68; KS distance 0.0158 (p = 0.52); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_growth_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance_growth" }
+quantity = "mean over all 3025 runs of the metamorphs alive at day 90, tolerance × growth scenarios"
+published = 206.797
+call = """
+_barnett_reproduction()["tolerance_growth"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 2.878 }
+status = "reproduced"
+notes = """
+z = -0.54; KS distance 0.0147 (p = 0.63); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_growth_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance_growth" }
+quantity = "mean over all 3025 runs of the median load of infected metamorphs, tolerance × growth scenarios"
+published = 115.649
+call = """
+_barnett_reproduction()["tolerance_growth"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 8.313 }
+status = "reproduced"
+notes = """
+z = -0.32; KS distance 0.0111 (p = 1.0); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_tolerance_growth_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, tolerance_growth" }
+quantity = "mean over all 3025 runs of the cumulative zoospore density, tolerance × growth scenarios"
+published = 271688
+call = """
+_barnett_reproduction()["tolerance_growth"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 10634 }
+status = "reproduced"
+notes = """
+z = -0.95; KS distance 0.0133 (p = 0.77); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_adverse_infection_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_infection" }
+quantity = "mean over all 2500 runs of the metamorphs alive at day 90, adverse infection scenarios"
+published = 40.138
+call = """
+_barnett_reproduction()["adverse_infection"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 4.624 }
+status = "reproduced"
+notes = """
+z = 0.73; KS distance 0.0167 (p = 0.58); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_adverse_infection_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_infection" }
+quantity = "mean over all 2500 runs of the median load of infected metamorphs, adverse infection scenarios"
+published = 300.228
+call = """
+_barnett_reproduction()["adverse_infection"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 13.516 }
+status = "reproduced"
+notes = """
+z = 0.88; KS distance 0.0259 (p = 0.65); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_adverse_infection_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_infection" }
+quantity = "mean over all 2500 runs of the cumulative zoospore density, adverse infection scenarios"
+published = 520100
+call = """
+_barnett_reproduction()["adverse_infection"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 16846 }
+status = "reproduced"
+notes = """
+z = 0.46; KS distance 0.0232 (p = 0.18); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_adverse_transmission_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_transmission" }
+quantity = "mean over all 2500 runs of the metamorphs alive at day 90, adverse transmission scenarios"
+published = 42.903
+call = """
+_barnett_reproduction()["adverse_transmission"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 4.646 }
+status = "discrepant"
+regression = { value = 48.499, rtol = 1e-3 }
+notes = """
+z = 3.61; KS distance 0.0332 (p = 0.015); 8 package runs per author run. Not explained: the gap does not grow with efficacy or coverage (70% coverage contributes most), the released code is followed exactly, and decreased shedding and the other scenarios agree. Those adverse files come from an older version of the model's reporters, so an older version of the model is possible; with this many comparisons chance is too. Not tuned."""
+
+[[target]]
+id = "barnett2026_runs_adverse_transmission_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_transmission" }
+quantity = "mean over all 2500 runs of the median load of infected metamorphs, adverse transmission scenarios"
+published = 312.002
+call = """
+_barnett_reproduction()["adverse_transmission"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 12.054 }
+status = "reproduced"
+notes = """
+z = -1.71; KS distance 0.0356 (p = 0.17); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_adverse_transmission_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_transmission" }
+quantity = "mean over all 2500 runs of the cumulative zoospore density, adverse transmission scenarios"
+published = 558665
+call = """
+_barnett_reproduction()["adverse_transmission"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 13854 }
+status = "reproduced"
+notes = """
+z = -2.26; KS distance 0.029 (p = 0.048); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_adverse_growth_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_growth" }
+quantity = "mean over all 2500 runs of the metamorphs alive at day 90, adverse growth scenarios"
+published = 53.94
+call = """
+_barnett_reproduction()["adverse_growth"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 4.876 }
+status = "reproduced"
+notes = """
+z = -0.53; KS distance 0.0272 (p = 0.074); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_adverse_growth_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_growth" }
+quantity = "mean over all 2500 runs of the median load of infected metamorphs, adverse growth scenarios"
+published = 307.174
+call = """
+_barnett_reproduction()["adverse_growth"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 10.749 }
+status = "reproduced"
+notes = """
+z = -0.99; KS distance 0.0249 (p = 0.47); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_adverse_growth_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_growth" }
+quantity = "mean over all 2500 runs of the cumulative zoospore density, adverse growth scenarios"
+published = 478661
+call = """
+_barnett_reproduction()["adverse_growth"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 11818 }
+status = "reproduced"
+notes = """
+z = 1.04; KS distance 0.0201 (p = 0.33); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_adverse_tolerance_survivors"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_tolerance" }
+quantity = "mean over all 2500 runs of the metamorphs alive at day 90, adverse tolerance scenarios"
+published = 92.46
+call = """
+_barnett_reproduction()["adverse_tolerance"]["survivors"]["package_mean"]
+"""
+tolerance = { atol = 5.327 }
+status = "reproduced"
+notes = """
+z = 2.28; KS distance 0.0248 (p = 0.13); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_adverse_tolerance_median_intensity"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_tolerance" }
+quantity = "mean over all 2500 runs of the median load of infected metamorphs, adverse tolerance scenarios"
+published = 238.059
+call = """
+_barnett_reproduction()["adverse_tolerance"]["median_intensity"]["package_mean"]
+"""
+tolerance = { atol = 8.98 }
+status = "reproduced"
+notes = """
+z = -2.84; KS distance 0.0317 (p = 0.048); 8 package runs per author run."""
+
+[[target]]
+id = "barnett2026_runs_adverse_tolerance_zoospore_density"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "authors' BehaviorSpace table, adverse_tolerance" }
+quantity = "mean over all 2500 runs of the cumulative zoospore density, adverse tolerance scenarios"
+published = 321888
+call = """
+_barnett_reproduction()["adverse_tolerance"]["zoospore_density"]["package_mean"]
+"""
+tolerance = { atol = 9676 }
+status = "reproduced"
+notes = """
+z = -2.06; KS distance 0.0257 (p = 0.11); 8 package runs per author run."""
 
 [[target]]
 id = "barnett2026_field_interaction_p"
@@ -5218,17 +5899,256 @@ model = "bd-barnett2026-prophylaxis-abm"
 source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. 3" }
 quantity = "P value of the time-by-treatment interaction on infection intensity"
 published = 0.001
-status = "pending"
-notes = "Field data not deposited."
+call = """
+_barnett_baci(:field_intensity).interaction.p
+"""
+tolerance = { digits = 3 }
+status = "reproduced"
+notes = """
+Zero-inflated NB2 mixed model, Laplace likelihood −3800.2853 as glmmTMB (P = 0.00135)."""
+
+[[target]]
+id = "barnett2026_field_intensity_ratio"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
+quantity = "post-intervention Bd intensity in treated ponds relative to the expectation had they declined like controls"
+published = 6.42
+call = """
+let m = _barnett_baci(:field_intensity).means
+    m.vaccine_after.response / (m.vaccine_before.response * m.sham_after.response / m.sham_before.response)
+end
+"""
+tolerance = { atol = 0.03 }
+status = "reproduced"
+notes = """
+6.44 from unrounded means; 6.42 is 667/(866 × 0.12) with the rounded 88% decrease."""
+
+[[target]]
+id = "barnett2026_field_intensity_sham_before"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
+quantity = "estimated marginal mean infection intensity (Bd GE), field, sham before"
+published = 1625.0
+call = """
+_barnett_baci(:field_intensity).means.sham_before.response
+"""
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_field_intensity_sham_after"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
+quantity = "estimated marginal mean infection intensity (Bd GE), field, sham after"
+published = 194.0
+call = """
+_barnett_baci(:field_intensity).means.sham_after.response
+"""
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_field_intensity_vaccine_before"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
+quantity = "estimated marginal mean infection intensity (Bd GE), field, vaccine before"
+published = 866.0
+call = """
+_barnett_baci(:field_intensity).means.vaccine_before.response
+"""
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_field_intensity_vaccine_after"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
+quantity = "estimated marginal mean infection intensity (Bd GE), field, vaccine after"
+published = 667.0
+call = """
+_barnett_baci(:field_intensity).means.vaccine_after.response
+"""
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_field_intensity_ci"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
+quantity = "95% CI of the sham-before marginal mean infection intensity (Bd GE)"
+published = [329.0, 8034.0]
+call = """
+let m = _barnett_baci(:field_intensity).means.sham_before
+    [m.response_lower, m.response_upper]
+end
+"""
+tolerance = { rtol = 2e-3 }
+status = "reproduced"
 
 [[target]]
 id = "barnett2026_field_control_decline"
 model = "bd-barnett2026-prophylaxis-abm"
 source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
-quantity = "percent decrease in estimated marginal mean infection intensity, control ponds, pre to post (1,625 to 194 Bd GE)"
+quantity = "percent decrease in marginal mean infection intensity, control ponds, pre to post"
 published = 88.0
-status = "pending"
-notes = "Field data not deposited. Treated ponds: 23% decrease (866 to 667)."
+call = """
+let m = _barnett_baci(:field_intensity).means
+    100 * (1 - m.sham_after.response / m.sham_before.response)
+end
+"""
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_field_treated_decline"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'" }
+quantity = "percent decrease in marginal mean infection intensity, treated ponds, pre to post"
+published = 23.0
+call = """
+let m = _barnett_baci(:field_intensity).means
+    100 * (1 - m.vaccine_after.response / m.vaccine_before.response)
+end
+"""
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_field_prevalence_sham_before"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. S5" }
+quantity = "marginal mean infection prevalence (%), field, sham before"
+published = 36.0
+call = """
+100 * _barnett_baci(:field_prevalence).means.sham_before.response
+"""
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = """
+The preprint's text prints the two control intervals swapped (36%, 0–83% and 11%, 6–82%); the authors' file and the package give 6–82% before and 0–83% after."""
+
+[[target]]
+id = "barnett2026_field_prevalence_sham_after"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. S5" }
+quantity = "marginal mean infection prevalence (%), field, sham after"
+published = 11.0
+call = """
+100 * _barnett_baci(:field_prevalence).means.sham_after.response
+"""
+tolerance = { digits = 0 }
+status = "reproduced"
+notes = """
+The preprint's text prints the two control intervals swapped (36%, 0–83% and 11%, 6–82%); the authors' file and the package give 6–82% before and 0–83% after."""
+
+[[target]]
+id = "barnett2026_field_prevalence_vaccine_before"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. S5" }
+quantity = "marginal mean infection prevalence (%), field, vaccine before"
+published = 43.0
+call = """
+100 * _barnett_baci(:field_prevalence).means.vaccine_before.response
+"""
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_field_prevalence_vaccine_after"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. S5" }
+quantity = "marginal mean infection prevalence (%), field, vaccine after"
+published = 21.0
+call = """
+100 * _barnett_baci(:field_prevalence).means.vaccine_after.response
+"""
+tolerance = { digits = 0 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_challenge_intensity_sham_before"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. S6b" }
+quantity = "marginal mean infection intensity (Bd GE), challenge experiment, sham before"
+published = 8333.0
+call = """
+_barnett_baci(:challenge_intensity).means.sham_before.response
+"""
+tolerance = { rtol = 1e-4 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_challenge_intensity_sham_after"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. S6b" }
+quantity = "marginal mean infection intensity (Bd GE), challenge experiment, sham after"
+published = 20674.0
+call = """
+_barnett_baci(:challenge_intensity).means.sham_after.response
+"""
+tolerance = { rtol = 1e-4 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_challenge_intensity_vaccine_before"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. S6b" }
+quantity = "marginal mean infection intensity (Bd GE), challenge experiment, vaccine before"
+published = 18333.0
+call = """
+_barnett_baci(:challenge_intensity).means.vaccine_before.response
+"""
+tolerance = { rtol = 1e-4 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_challenge_intensity_vaccine_after"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. S6b" }
+quantity = "marginal mean infection intensity (Bd GE), challenge experiment, vaccine after"
+published = 37841.0
+call = """
+_barnett_baci(:challenge_intensity).means.vaccine_after.response
+"""
+tolerance = { rtol = 1e-4 }
+status = "reproduced"
+
+[[target]]
+id = "barnett2026_field_prevalence_interaction"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. S5" }
+quantity = "P value of the time-by-treatment interaction on field prevalence (not significant)"
+published = "P > 0.05"
+call = """
+_barnett_baci(:field_prevalence).interaction.p
+"""
+tolerance = { lower = 0.05, upper = 1.0 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_challenge_intensity_interaction"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. S6b" }
+quantity = "P value of the time-by-treatment interaction on challenge intensity (not significant)"
+published = "P > 0.05"
+call = """
+_barnett_baci(:challenge_intensity).interaction.p
+"""
+tolerance = { lower = 0.05, upper = 1.0 }
+status = "qualitative"
+
+[[target]]
+id = "barnett2026_challenge_prevalence_interaction"
+model = "bd-barnett2026-prophylaxis-abm"
+source = { ref = "barnett2026", location = "Results, 'Field trial and challenge experiment'; Fig. S6a" }
+quantity = "P value of the time-by-treatment interaction on challenge prevalence (not significant)"
+published = "P > 0.05"
+call = """
+_barnett_baci(:challenge_prevalence).interaction.p
+"""
+tolerance = { lower = 0.05, upper = 1.0 }
+status = "qualitative"
+
 # ---- woodhams2011 ----
 # Woodhams et al. 2011 Front Zool 8:8, Appendix and extended Figure 6 legend. Fig. 6B runs on
 # the compendium set "fig6b". Fig. 6C and 6D need the antibody rates r and c (and μ for 6D),
