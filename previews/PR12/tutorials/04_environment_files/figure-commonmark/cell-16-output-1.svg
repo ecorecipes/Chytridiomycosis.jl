@@ -1,0 +1,75 @@
+<svg width="349pt" height="123pt"
+ viewBox="0.00 0.00 349.00 123.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 119.06)">
+<!-- S -->
+<g id="node1" class="node">
+<title>S</title>
+<path fill="#cfe2f3" stroke="#555555" d="M61.53,-80.06C61.53,-80.06 12,-80.06 12,-80.06 6,-80.06 0,-74.06 0,-68.06 0,-68.06 0,-56.06 0,-56.06 0,-50.06 6,-44.06 12,-44.06 12,-44.06 61.53,-44.06 61.53,-44.06 67.53,-44.06 73.53,-50.06 73.53,-56.06 73.53,-56.06 73.53,-68.06 73.53,-68.06 73.53,-74.06 67.53,-80.06 61.53,-80.06"/>
+<text xml:space="preserve" text-anchor="middle" x="36.76" y="-63.61" font-family="Helvetica,sans-Serif" font-size="11.00">salamander</text>
+<text xml:space="preserve" text-anchor="middle" x="36.76" y="-51.61" font-family="Helvetica,sans-Serif" font-size="11.00">larvae</text>
+</g>
+<!-- Z -->
+<g id="node4" class="node">
+<title>Z</title>
+<path fill="#e2efda" stroke="#555555" d="M219.81,-80.06C219.81,-80.06 138.03,-80.06 138.03,-80.06 132.03,-80.06 126.03,-74.06 126.03,-68.06 126.03,-68.06 126.03,-56.06 126.03,-56.06 126.03,-50.06 132.03,-44.06 138.03,-44.06 138.03,-44.06 219.81,-44.06 219.81,-44.06 225.81,-44.06 231.81,-50.06 231.81,-56.06 231.81,-56.06 231.81,-68.06 231.81,-68.06 231.81,-74.06 225.81,-80.06 219.81,-80.06"/>
+<text xml:space="preserve" text-anchor="middle" x="178.92" y="-63.61" font-family="Helvetica,sans-Serif" font-size="11.00">Z</text>
+<text xml:space="preserve" text-anchor="middle" x="178.92" y="-51.61" font-family="Helvetica,sans-Serif" font-size="11.00">one zoospore pool</text>
+</g>
+<!-- S&#45;&gt;Z -->
+<g id="edge1" class="edge">
+<title>S&#45;&gt;Z</title>
+<path fill="none" stroke="#444444" d="M73.86,-62.06C87.13,-62.06 102.56,-62.06 117.4,-62.06"/>
+<polygon fill="#444444" stroke="#444444" points="117.05,-64.51 124.05,-62.06 117.05,-59.61 117.05,-64.51"/>
+<text xml:space="preserve" text-anchor="middle" x="99.78" y="-63.26" font-family="Helvetica,sans-Serif" font-size="9.00">λ_S</text>
+</g>
+<!-- T -->
+<g id="node2" class="node">
+<title>T</title>
+<path fill="#cfe2f3" stroke="#555555" d="M327.45,-115.06C327.45,-115.06 297.45,-115.06 297.45,-115.06 291.45,-115.06 285.45,-109.06 285.45,-103.06 285.45,-103.06 285.45,-91.06 285.45,-91.06 285.45,-85.06 291.45,-79.06 297.45,-79.06 297.45,-79.06 327.45,-79.06 327.45,-79.06 333.45,-79.06 339.45,-85.06 339.45,-91.06 339.45,-91.06 339.45,-103.06 339.45,-103.06 339.45,-109.06 333.45,-115.06 327.45,-115.06"/>
+<text xml:space="preserve" text-anchor="middle" x="312.45" y="-98.61" font-family="Helvetica,sans-Serif" font-size="11.00">toad</text>
+<text xml:space="preserve" text-anchor="middle" x="312.45" y="-86.61" font-family="Helvetica,sans-Serif" font-size="11.00">larvae</text>
+</g>
+<!-- T&#45;&gt;Z -->
+<g id="edge2" class="edge">
+<title>T&#45;&gt;Z</title>
+<path fill="none" stroke="#444444" d="M285.35,-88.28C278.91,-86.22 272.01,-84.11 265.56,-82.31 257.42,-80.05 248.8,-77.81 240.28,-75.7"/>
+<polygon fill="#444444" stroke="#444444" points="241.02,-73.36 233.64,-74.08 239.86,-78.12 241.02,-73.36"/>
+<text xml:space="preserve" text-anchor="middle" x="257.68" y="-83.51" font-family="Helvetica,sans-Serif" font-size="9.00">λ_T</text>
+</g>
+<!-- F -->
+<g id="node3" class="node">
+<title>F</title>
+<path fill="#cfe2f3" stroke="#555555" d="M329.34,-45.06C329.34,-45.06 295.56,-45.06 295.56,-45.06 289.56,-45.06 283.56,-39.06 283.56,-33.06 283.56,-33.06 283.56,-21.06 283.56,-21.06 283.56,-15.06 289.56,-9.06 295.56,-9.06 295.56,-9.06 329.34,-9.06 329.34,-9.06 335.34,-9.06 341.34,-15.06 341.34,-21.06 341.34,-21.06 341.34,-33.06 341.34,-33.06 341.34,-39.06 335.34,-45.06 329.34,-45.06"/>
+<text xml:space="preserve" text-anchor="middle" x="312.45" y="-28.61" font-family="Helvetica,sans-Serif" font-size="11.00">tree frog</text>
+<text xml:space="preserve" text-anchor="middle" x="312.45" y="-16.61" font-family="Helvetica,sans-Serif" font-size="11.00">larvae</text>
+</g>
+<!-- F&#45;&gt;Z -->
+<g id="edge3" class="edge">
+<title>F&#45;&gt;Z</title>
+<path fill="none" stroke="#444444" d="M287.27,-8.63C275.95,-2.25 262.25,2.28 249.81,-2.31 230.46,-9.46 212.84,-24.61 200.13,-37.87"/>
+<polygon fill="#444444" stroke="#444444" points="198.63,-35.88 195.68,-42.68 202.23,-39.21 198.63,-35.88"/>
+<text xml:space="preserve" text-anchor="middle" x="257.68" y="-3.51" font-family="Helvetica,sans-Serif" font-size="9.00">λ_F</text>
+</g>
+<!-- Z&#45;&gt;S -->
+<g id="edge4" class="edge">
+<title>Z&#45;&gt;S</title>
+<path fill="none" stroke="#444444" stroke-dasharray="5,2" d="M125.95,-47.07C114.63,-45.35 102.7,-44.71 91.53,-46.31 88.37,-46.77 85.14,-47.36 81.9,-48.06"/>
+<polygon fill="#444444" stroke="#444444" points="81.61,-45.61 75.37,-49.61 82.74,-50.37 81.61,-45.61"/>
+<text xml:space="preserve" text-anchor="middle" x="99.78" y="-47.51" font-family="Helvetica,sans-Serif" font-size="9.00">β_S</text>
+</g>
+<!-- Z&#45;&gt;T -->
+<g id="edge5" class="edge">
+<title>Z&#45;&gt;T</title>
+<path fill="none" stroke="#444444" stroke-dasharray="5,2" d="M214.98,-80.5C225.86,-85.43 238.08,-90.18 249.81,-93.06 258.41,-95.18 267.88,-96.34 276.76,-96.95"/>
+<polygon fill="#444444" stroke="#444444" points="276.42,-99.39 283.53,-97.3 276.67,-94.5 276.42,-99.39"/>
+<text xml:space="preserve" text-anchor="middle" x="257.68" y="-96.99" font-family="Helvetica,sans-Serif" font-size="9.00">β_T</text>
+</g>
+<!-- Z&#45;&gt;F -->
+<g id="edge6" class="edge">
+<title>Z&#45;&gt;F</title>
+<path fill="none" stroke="#444444" stroke-dasharray="5,2" d="M232.28,-48.13C246.64,-44.31 261.89,-40.25 275.13,-36.73"/>
+<polygon fill="#444444" stroke="#444444" points="275.49,-39.17 281.62,-35 274.23,-34.43 275.49,-39.17"/>
+<text xml:space="preserve" text-anchor="middle" x="257.68" y="-43.67" font-family="Helvetica,sans-Serif" font-size="9.00">β_F</text>
+</g>
+</g>
+</svg>
