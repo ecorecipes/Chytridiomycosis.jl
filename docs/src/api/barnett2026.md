@@ -9,8 +9,9 @@ CurrentModule = Chytridiomycosis
     al. (2026), "From protection to amplification: imperfect chytridiomycosis prophylaxis
     increases infections in wild amphibians",
     [doi:10.64898/2026.05.15.725113](https://doi.org/10.64898/2026.05.15.725113) (v2,
-    August 2026). The authors' NetLogo code was not released, so this implementation was
-    checked against the text only.
+    August 2026). The agent-based model is a port of the authors' NetLogo code
+    ([kmbarnett100/protection_to_amplification](https://github.com/kmbarnett100/protection_to_amplification)),
+    checked against all their released runs.
 
 The preprint couples a field trial with an agent-based model. In the field trial, Bd
 metabolites (a prophylaxis that acts like an imperfect vaccine) were added to whole ponds in
@@ -31,61 +32,77 @@ A vaccinated tadpole has one or more of its traits changed:
 | tolerance (`:tolerance`) | lethal load `smax` | increase |
 
 The preprint's "adverse reaction" scenarios reverse each direction
-(`barnett_vaccine(...; adverse = true)`). Every published value (Table S1 and Methods) is in
+(`barnett_vaccine(...; adverse = true)`). Every value (Table S1, Methods and the NetLogo code) is in
 `data/compendium/barnett2026.toml`.
 
-## Choices where the preprint is silent
+## The code and the text
 
-The source header of `src/models/barnett2026.jl` lists every choice. The ones that matter
-most are these:
+The port follows the code where it differs from the preprint's text. The source header of
+`src/models/barnett2026.jl` lists every difference. The ones that matter most are these:
 
-- **Population and pond size.** The preprint gives neither. The package uses 1000
-  tadpoles, so that 0.2% initially infected is 2 tadpoles, and a ring of 60 perimeter
-  patches.
-- **Transmission.** The preprint describes a multinomial draw driven by an exposure
-  parameter (0.25) and zoospore mortality (2 day⁻¹). The package reads these as competing
-  daily hazards.
-- **Vaccine efficacy.** A change of `e` is applied as the factor `(1 ± e)^imm`, which is
-  the preprint's exponential modulation. Here `imm` is uniform on 1 ± 10%.
-- **The intensity statistic.** The preprint does not define it. The default
-  (`metric = :metamorph`) is the season mean of the mean load of infected live metamorphs.
-  `:season` uses all live hosts, and `:final` uses the survivors on the last day.
+- **Infection.** Zoospores on a patch are shared among all hosts in the world, not only those
+  on the patch. Only the share that falls on hosts of that patch infects them. A vaccinated
+  host's lower establishment probability reduces the number of establishing zoospores for
+  everybody, but not that host's own share.
+- **Clearance** is a rate: daily survival of a zoosporangium is ``e^{-0.2} = 0.82``.
+- **Stalled infections.** A host whose zoosporangia number 0 stops maturing the stages it
+  carries until it is infected again.
+- **Population.** Every perimeter patch starts with 500 tadpoles, one infected. Ponds have
+  about 136 patches, and 28–49 of them are on the perimeter.
+- **Vaccine response** varies by ±5%, not ±10%, and not at all in the two-way runs.
+- **Statistics.** Intensity is the median load of infected metamorphs on the last day, and
+  changes are relative to the median control run. Runs with fewer than two infected metamorphs
+  are left out.
 
 ## What is reproduced
 
-The targets in `data/validation/targets.toml` test the signs of the preprint's percent
-changes against an unvaccinated control.
+`scripts/barnett2026_abm.jl` runs the package with the parameters of each of the authors'
+29,325 runs, eight times over, and compares the distributions (`data/barnett2026/`). NetLogo's
+random numbers cannot be reproduced, so the match is in distribution.
 
-!!! note "Replicate runs"
-    The preprint ran 25 replicates per scenario. With 25, the run-to-run spread of a percent
-    change (standard deviations of 5–37 percentage points across seeds) is as large as several
-    of the effects, so their signs depend on the seed and on the Julia version's random
-    streams. The targets therefore use 200 replicates, and 1,000 for the two smallest effects.
+| Scenarios (mean over runs: authors / package) | Survivors | Median load | Zoospore density |
+| --- | --- | --- | --- |
+| Control | 128.8 / 128.4 | 261.6 / 252.6 | 399,160 / 392,056 |
+| Anti-infection | 208.3 / 206.8 | 85.7 / 86.9 | 220,203 / 219,712 |
+| Anti-transmission | 193.6 / 193.6 | 102.9 / 102.7 | 246,809 / 246,563 |
+| Anti-growth | 187.8 / 187.2 | 125.9 / 126.1 | 288,713 / 287,356 |
+| Tolerance | 147.3 / 149.3 | 315.0 / 314.2 | 436,701 / 432,909 |
+| Tolerance × anti-infection | 220.3 / 219.6 | 71.8 / 71.7 | 193,627 / 192,298 |
+| Tolerance × anti-transmission | 210.8 / 210.4 | 85.4 / 85.9 | 218,437 / 220,594 |
+| Tolerance × anti-growth | 206.8 / 206.3 | 115.6 / 114.8 | 271,688 / 268,308 |
+| Adverse: susceptibility | 40.1 / 41.3 | 300.2 / 304.2 | 520,100 / 522,678 |
+| Adverse: shedding | 42.9 / 48.5 | 312.0 / 305.1 | 558,665 / 548,248 |
+| Adverse: clearance | 53.9 / 53.1 | 307.2 / 303.6 | 478,661 / 482,744 |
+| Adverse: tolerance | 92.5 / 96.5 | 238.1 / 229.6 | 321,888 / 315,239 |
 
-The model reproduces the preprint's headline results:
+Of 85 comparisons of means (up to nine outputs per file), 77 have |z| < 2 and one has
+|z| > 3: the survivors of the increased-shedding runs (42.9 against 48.5, z = 3.6), recorded as
+discrepant. That gap does not grow with efficacy, and is not explained. The adverse-tolerance
+file shows smaller differences in the same direction (|z| up to 2.9). The other ten files agree
+within sampling error.
 
-- Resistance (anti-infection, anti-transmission or anti-growth) lowers infection intensity.
-  Anti-infection resistance also increases the final population. The anti-growth effect is
-  small (−7% to −14% with 1,000 replicates).
-- **Tolerance raises infection intensity.** This is the amplification that the preprint
-  offers as one explanation of its field result.
-- **Increased susceptibility, an adverse reaction, lowers the population.** This is the
-  second explanation. Its effect on intensity is only weak with the default statistic
-  (about +2%, with a sign that is not robust across seeds).
-- Reduced tolerance lowers intensity.
+Every statement of the preprint about its scenario figures that the package checks has the
+published sign, by a clear margin. This includes three that an earlier version of this page
+recorded as discrepant, when only the text was available.
 
-Three statements are **discrepant**:
+!!! note "Increased susceptibility"
+    The preprint reports that infection intensity rises when vaccination increases
+    susceptibility (Fig. 5a). That holds where metamorphs survive (about +25% at 50% efficacy
+    and coverage). At high efficacy and coverage almost none do (none of the authors' 75 runs at
+    +100% and coverage of at least 80%), so that corner of the figure is extrapolated.
 
-- **Resistance does not counteract tolerance** in the two-way scenarios (Fig. 4a, Fig. S7):
-  with tolerance, strong anti-infection resistance gives about +40% and anti-growth
-  resistance about +63%, where the preprint reports decreases.
-- The **control's median prevalence** is 0, not 100%.
+## Field trial and challenge experiment
 
-Self-reinfection (17.8 × 0.1 × 0.25 ≈ 0.45 per zoosporangium per day) outgrows clearance
-even when clearance is doubled. As a result, infected tadpoles reach the lethal load by
-metamorphosis. With the season-mean statistic, the two-way results have the preprint's sign,
-but tolerance alone no longer does. The field-trial numbers are `pending`, because the field
-data are not deposited.
+[`BarnettBACIModel`](@ref) refits the authors' four mixed models (zero-inflated negative
+binomial for intensity, binomial for prevalence; pond and year as random effects), with the
+Laplace likelihood that glmmTMB uses. Log-likelihoods, estimates, standard errors and marginal
+means agree with glmmTMB to four or five digits. That includes the headline interaction
+(P = 0.00135) and the 88% and 23% declines. The preprint's text prints the intervals of the two
+control-pond prevalences swapped. The ratio it gives as 6.42 is 6.44 before rounding.
+
+!!! note "Data not bundled"
+    The repository has no licence, so its files are not bundled. [`barnett2026_path`](@ref)
+    finds them in the lab workspace or in `ENV["CHYTRIDIOMYCOSIS_BARNETT2026"]`.
 
 ## API
 
@@ -96,4 +113,8 @@ barnett_vaccine
 BarnettABMProblem
 barnett_summary
 barnett_relative_change
+barnett2026_path
+load_barnett2026
+BarnettBACIModel
+maximum_likelihood(::BarnettBACIModel)
 ```

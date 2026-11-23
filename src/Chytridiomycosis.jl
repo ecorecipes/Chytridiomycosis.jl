@@ -104,6 +104,8 @@ include("fitting/tompros2022.jl")
 include("models/drawert2017.jl")
 # Barnett et al. 2026 (bioRxiv preprint) agent-based model of imperfect Bd prophylaxis
 include("models/barnett2026.jl")
+using LinearAlgebra: cholesky, issuccess, norm, I
+include("fitting/barnett2026.jl")
 # Chowdhury et al. 2025 stage- and temperature-structured Bsal model of the eastern newt
 include("models/chowdhury2025.jl")
 # Integral projection models: generic machinery, and Wilber et al. 2016 Bd–R. muscosa IPM
@@ -279,7 +281,8 @@ export DrawertParameters, DrawertIBMProblem, DrawertODEProblem, DrawertIntervent
        drawert_summary, outcome_class, survival_group, intervention_effect
 # Barnett et al. 2026 (bioRxiv preprint) agent-based model of imperfect Bd prophylaxis
 export BarnettParameters, BarnettVaccine, barnett_vaccine, BarnettABMProblem, barnett_summary,
-       barnett_relative_change
+       barnett_relative_change, barnett2026_path, load_barnett2026,
+       BarnettBACIModel
 # Chowdhury et al. 2025 stage- and temperature-structured Bsal model
 export ChowdhuryParameters, BsalStageTemperatureProblem, chowdhury_scenarios,
        stage_transmission_rates, stage_totals, stage_decline_time, stage_disease_free_state,

@@ -8,16 +8,20 @@
     @test validation_target("schmidt2017_K_threshold").source === :schmidt2017
     @test_throws ArgumentError validation_target("no_such_target")
     @test_throws ArgumentError reproduce(validation_target("blooi2015_heat_clearance"))
-    @test length(validation_targets(; status = :discrepant)) == 130
+    @test length(validation_targets(; status = :discrepant)) == 128
     @test all(t -> t.source === :schmidt2017, validation_targets(; source = :schmidt2017))
     # Wilber 2022 targets need the authors' deposit, which is not bundled (data/wilber2022)
     w22 = Chytridiomycosis._wilber2022_find() !== nothing
     # Hollanders 2023 targets that read the authors' posterior draws (not bundled)
     h23 = Chytridiomycosis._hollanders2023_draws_find() !== nothing
     h23draws(t) = occursin(r"hollanders2023_posterior|_hollanders2023_slope_deviation", t.call)
+    # Barnett 2026 targets that read the authors' field data (not bundled)
+    b26 = Chytridiomycosis._barnett2026_find() !== nothing
+    b26data(t) = occursin("_barnett_baci", t.call)
     @testset "$(t.id)" for t in filter(t -> t.status !== :pending &&
                                              (w22 || t.source !== :wilber2022) &&
-                                             (h23 || !h23draws(t)), ts)
+                                             (h23 || !h23draws(t)) &&
+                                             (b26 || !b26data(t)), ts)
         r = check_target(t)
         if t.status === :discrepant
             @test_broken r.published

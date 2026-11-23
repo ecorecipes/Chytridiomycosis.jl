@@ -1,0 +1,891 @@
+# Written by scripts/barnett2026_abm.jl: authors' BehaviorSpace runs against the port.
+commit = "29f4af6"
+comparisons = 85
+reps = 8
+z_above_3 = 1
+
+[adverse_growth]
+author_runs = 2500
+
+    [adverse_growth.bd_death_fraction]
+    author_mean = 0.5889629304864
+    author_median = 0.6490507935000001
+    ks = 0.0369
+    ks_p = 0.0048
+    package_mean = 0.5921965396885787
+    package_median = 0.6596875761054866
+    se = 0.004709095055838707
+    z = 0.69
+
+    [adverse_growth.mean_intensity]
+    author_mean = 311.81663770632133
+    author_median = 350.98677315
+    ks = 0.0243
+    ks_p = 0.49
+    package_mean = 309.09060180888713
+    package_median = 345.62629505326134
+    se = 3.249453421898353
+    z = -0.84
+
+    [adverse_growth.median_intensity]
+    author_mean = 307.17379879879877
+    author_median = 355.0
+    ks = 0.0249
+    ks_p = 0.47
+    package_mean = 303.6366836136097
+    package_median = 346.5
+    se = 3.58314282815634
+    z = -0.99
+
+    [adverse_growth.prevalence]
+    author_mean = 0.930540403773465
+    author_median = 1.0
+    ks = 0.0067
+    ks_p = 1.0
+    package_mean = 0.9342148528827068
+    package_median = 1.0
+    se = 0.007011478999266567
+    z = 0.52
+
+    [adverse_growth.survivors]
+    author_mean = 53.9404
+    author_median = 4.0
+    ks = 0.0272
+    ks_p = 0.074
+    package_mean = 53.08015
+    package_median = 2.0
+    se = 1.625234873618925
+    z = -0.53
+
+    [adverse_growth.zoospore_density]
+    author_mean = 478660.6816
+    author_median = 484803.5
+    ks = 0.0201
+    ks_p = 0.33
+    package_mean = 482744.32305
+    package_median = 486611.0
+    se = 3939.1695107694354
+    z = 1.04
+
+[adverse_infection]
+author_runs = 2500
+
+    [adverse_infection.bd_death_fraction]
+    author_mean = 0.6425793647011999
+    author_median = 0.6979774675
+    ks = 0.0197
+    ks_p = 0.35
+    package_mean = 0.6399502748390997
+    package_median = 0.6930484432461768
+    se = 0.004834861353920439
+    z = -0.54
+
+    [adverse_infection.mean_intensity]
+    author_mean = 304.722575842515
+    author_median = 347.89512365
+    ks = 0.0274
+    ks_p = 0.57
+    package_mean = 308.6635145985202
+    package_median = 349.59083613016196
+    se = 4.143115352652574
+    z = 0.95
+
+    [adverse_infection.median_intensity]
+    author_mean = 300.22751605995717
+    author_median = 349.0
+    ks = 0.0259
+    ks_p = 0.65
+    package_mean = 304.2016692546584
+    package_median = 352.0
+    se = 4.505479469878251
+    z = 0.88
+
+    [adverse_infection.prevalence]
+    author_mean = 0.9306439409059656
+    author_median = 1.0
+    ks = 0.0054
+    ks_p = 1.0
+    package_mean = 0.9307076924031557
+    package_median = 1.0
+    se = 0.00833573284792685
+    z = 0.01
+
+    [adverse_infection.survivors]
+    author_mean = 40.1376
+    author_median = 0.0
+    ks = 0.0167
+    ks_p = 0.58
+    package_mean = 41.25575
+    package_median = 0.0
+    se = 1.5411771123214122
+    z = 0.73
+
+    [adverse_infection.zoospore_density]
+    author_mean = 520099.8516
+    author_median = 495228.0
+    ks = 0.0232
+    ks_p = 0.18
+    package_mean = 522677.6323
+    package_median = 493332.0
+    se = 5615.187206048866
+    z = 0.46
+
+[adverse_tolerance]
+author_runs = 2500
+
+    [adverse_tolerance.bd_death_fraction]
+    author_mean = 0.484283338058
+    author_median = 0.5413088685
+    ks = 0.0235
+    ks_p = 0.17
+    package_mean = 0.47543675208849856
+    package_median = 0.5319982243097721
+    se = 0.005229790392285606
+    z = -1.69
+
+    [adverse_tolerance.mean_intensity]
+    author_mean = 247.0661490253734
+    author_median = 263.5
+    ks = 0.0334
+    ks_p = 0.032
+    package_mean = 239.09341328055038
+    package_median = 252.3083110516934
+    se = 2.7966034914172235
+    z = -2.85
+
+    [adverse_tolerance.median_intensity]
+    author_mean = 238.05864049784586
+    author_median = 249.0
+    ks = 0.0317
+    ks_p = 0.048
+    package_mean = 229.55735311643429
+    package_median = 238.0
+    se = 2.9932824137824747
+    z = -2.84
+
+    [adverse_tolerance.prevalence]
+    author_mean = 0.9553226650296159
+    author_median = 1.0
+    ks = 0.0099
+    ks_p = 1.0
+    package_mean = 0.9506709146688468
+    package_median = 1.0
+    se = 0.004532994549865471
+    z = -1.03
+
+    [adverse_tolerance.survivors]
+    author_mean = 92.4604
+    author_median = 74.5
+    ks = 0.0248
+    ks_p = 0.13
+    package_mean = 96.50315
+    package_median = 79.0
+    se = 1.7756600432405942
+    z = 2.28
+
+    [adverse_tolerance.zoospore_density]
+    author_mean = 321888.0164
+    author_median = 328025.0
+    ks = 0.0257
+    ks_p = 0.11
+    package_mean = 315239.30785
+    package_median = 318563.0
+    se = 3225.1733573404263
+    z = -2.06
+
+[adverse_transmission]
+author_runs = 2500
+
+    [adverse_transmission.bd_death_fraction]
+    author_mean = 0.6096987526424
+    author_median = 0.6701300805
+    ks = 0.0305
+    ks_p = 0.032
+    package_mean = 0.5975619258087467
+    package_median = 0.6651933539759907
+    se = 0.004509552757716821
+    z = -2.69
+
+    [adverse_transmission.mean_intensity]
+    author_mean = 315.392398457375
+    author_median = 358.7007681
+    ks = 0.0361
+    ks_p = 0.16
+    package_mean = 309.3213864218202
+    package_median = 350.06779661016947
+    se = 3.6868579248984736
+    z = -1.65
+
+    [adverse_transmission.median_intensity]
+    author_mean = 312.0022977941176
+    author_median = 363.0
+    ks = 0.0356
+    ks_p = 0.17
+    package_mean = 305.14684585847505
+    package_median = 352.0
+    se = 4.0178924053644405
+    z = -1.71
+
+    [adverse_transmission.prevalence]
+    author_mean = 0.9170629799643162
+    author_median = 1.0
+    ks = 0.0143
+    ks_p = 1.0
+    package_mean = 0.929499688477028
+    package_median = 1.0
+    se = 0.008306768710640778
+    z = 1.5
+
+    [adverse_transmission.survivors]
+    author_mean = 42.9032
+    author_median = 0.0
+    ks = 0.0332
+    ks_p = 0.015
+    package_mean = 48.49885
+    package_median = 0.0
+    se = 1.5487094433250597
+    z = 3.61
+
+    [adverse_transmission.zoospore_density]
+    author_mean = 558665.3208
+    author_median = 554941.5
+    ks = 0.029
+    ks_p = 0.048
+    package_mean = 548248.48445
+    package_median = 548312.5
+    se = 4618.151805993285
+    z = -2.26
+
+[control]
+author_runs = 250
+
+    [control.bd_death_fraction]
+    author_mean = 0.35520000000000007
+    author_median = 0.371
+    ks = 0.055
+    ks_p = 0.52
+    package_mean = 0.3499425
+    package_median = 0.363
+    se = 0.014486322093357519
+    z = -0.36
+
+    [control.mean_intensity]
+    author_mean = 271.78578280542985
+    author_median = 293.454
+    ks = 0.0785
+    ks_p = 0.18
+    package_mean = 263.3790103536554
+    package_median = 286.0561922187982
+    se = 8.155304843774209
+    z = -1.03
+
+    [control.median_intensity]
+    author_mean = 261.5972850678733
+    author_median = 280.0
+    ks = 0.0768
+    ks_p = 0.2
+    package_mean = 252.6369318181818
+    package_median = 274.0
+    se = 8.929657511716261
+    z = -1.0
+
+    [control.prevalence]
+    author_mean = 0.9843392070484581
+    author_median = 1.0
+    ks = 0.013
+    ks_p = 1.0
+    package_mean = 0.9846664621279987
+    package_median = 1.0
+    se = 0.007436970950519858
+    z = 0.04
+
+    [control.survivors]
+    author_mean = 128.84
+    author_median = 133.5
+    ks = 0.057
+    ks_p = 0.47
+    package_mean = 128.39
+    package_median = 143.0
+    se = 5.7511094855074445
+    z = -0.08
+
+    [control.unvaccinated_median_intensity]
+    author_mean = 261.5972850678733
+    author_median = 280.0
+    ks = 0.0768
+    ks_p = 0.2
+    package_mean = 252.6369318181818
+    package_median = 274.0
+    se = 8.929657511716261
+    z = -1.0
+
+    [control.zoospore_density]
+    author_mean = 399160.408
+    author_median = 425864.0
+    ks = 0.0725
+    ks_p = 0.19
+    package_mean = 392056.0385
+    package_median = 423079.0
+    se = 11172.711718368751
+    z = -0.64
+
+[growth]
+author_runs = 2500
+
+    [growth.bd_death_fraction]
+    author_mean = 0.18355679999999996
+    author_median = 0.1165
+    ks = 0.0137
+    ks_p = 0.86
+    package_mean = 0.18261285
+    package_median = 0.112
+    se = 0.003957782054403691
+    z = -0.24
+
+    [growth.mean_intensity]
+    author_mean = 145.2545709638064
+    author_median = 128.07
+    ks = 0.0129
+    ks_p = 0.97
+    package_mean = 145.0850040208463
+    package_median = 126.96315789473684
+    se = 2.26323718613239
+    z = -0.07
+
+    [growth.median_intensity]
+    author_mean = 125.93411956079707
+    author_median = 92.0
+    ks = 0.0092
+    ks_p = 1.0
+    package_mean = 126.14868574914841
+    package_median = 92.0
+    se = 2.4113313592737144
+    z = 0.09
+
+    [growth.prevalence]
+    author_mean = 0.9628859790491539
+    author_median = 1.0
+    ks = 0.0103
+    ks_p = 1.0
+    package_mean = 0.9594950752586312
+    package_median = 1.0
+    se = 0.0033903081686854093
+    z = -1.0
+
+    [growth.survivors]
+    author_mean = 187.7932
+    author_median = 205.0
+    ks = 0.0162
+    ks_p = 0.62
+    package_mean = 187.20285
+    package_median = 204.0
+    se = 1.3772648262889655
+    z = -0.43
+
+    [growth.unvaccinated_fraction]
+    author_mean = 0.34886623690572127
+    author_median = 0.2985
+    ks = 0.0182
+    ks_p = 0.46
+    package_mean = 0.34764032468384665
+    package_median = 0.2986103664943921
+    se = 0.005820966254319158
+    z = -0.21
+
+    [growth.unvaccinated_median_intensity]
+    author_mean = 205.97791724779174
+    author_median = 205.0
+    ks = 0.023
+    ks_p = 0.26
+    package_mean = 203.78196353767183
+    package_median = 205.0
+    se = 2.944664781322847
+    z = -0.75
+
+    [growth.vaccinated_median_intensity]
+    author_mean = 97.59507328990227
+    author_median = 60.5
+    ks = 0.0097
+    ks_p = 1.0
+    package_mean = 98.38548839581739
+    package_median = 61.0
+    se = 2.1583594040446243
+    z = 0.37
+
+    [growth.zoospore_density]
+    author_mean = 288712.7988
+    author_median = 269559.0
+    ks = 0.0105
+    ks_p = 1.0
+    package_mean = 287355.59205
+    package_median = 268634.0
+    se = 3654.0766713436574
+    z = -0.37
+
+[infection]
+author_runs = 2500
+
+    [infection.bd_death_fraction]
+    author_mean = 0.10903559999999998
+    author_median = 0.03
+    ks = 0.0108
+    ks_p = 1.0
+    package_mean = 0.10967550000000001
+    package_median = 0.03
+    se = 0.003331117079342658
+    z = 0.19
+
+    [infection.mean_intensity]
+    author_mean = 108.08484140591514
+    author_median = 73.298
+    ks = 0.014
+    ks_p = 0.89
+    package_mean = 108.90719546250962
+    package_median = 74.20408163265306
+    se = 2.1401843087337658
+    z = 0.38
+
+    [infection.median_intensity]
+    author_mean = 85.68731247321045
+    author_median = 38.5
+    ks = 0.0174
+    ks_p = 0.57
+    package_mean = 86.93572773742265
+    package_median = 39.0
+    se = 2.2739365370842743
+    z = 0.55
+
+    [infection.prevalence]
+    author_mean = 0.7949735258724429
+    author_median = 1.0
+    ks = 0.0137
+    ks_p = 0.87
+    package_mean = 0.7926865814282925
+    package_median = 1.0
+    se = 0.007580695657660685
+    z = -0.3
+
+    [infection.survivors]
+    author_mean = 208.274
+    author_median = 221.0
+    ks = 0.0258
+    ks_p = 0.1
+    package_mean = 206.8401
+    package_median = 219.0
+    se = 1.1642312327090094
+    z = -1.23
+
+    [infection.unvaccinated_fraction]
+    author_mean = 0.40004251905334937
+    author_median = 0.383
+    ks = 0.0083
+    ks_p = 1.0
+    package_mean = 0.39914688266476883
+    package_median = 0.38498826291079813
+    se = 0.00577872707611865
+    z = -0.15
+
+    [infection.unvaccinated_median_intensity]
+    author_mean = 135.18047752808988
+    author_median = 94.0
+    ks = 0.0198
+    ks_p = 0.45
+    package_mean = 136.14565461752352
+    package_median = 100.5
+    se = 2.759230727081047
+    z = 0.35
+
+    [infection.vaccinated_median_intensity]
+    author_mean = 57.847143480157
+    author_median = 20.0
+    ks = 0.0113
+    ks_p = 1.0
+    package_mean = 59.25390539654796
+    package_median = 20.0
+    se = 1.8823243271103391
+    z = 0.75
+
+    [infection.zoospore_density]
+    author_mean = 220202.756
+    author_median = 173919.0
+    ks = 0.011
+    ks_p = 1.0
+    package_mean = 219711.82085
+    package_median = 174762.5
+    se = 3430.63299013155
+    z = -0.14
+
+[tolerance]
+author_runs = 2500
+
+    [tolerance.bd_death_fraction]
+    author_mean = 0.2966516
+    author_median = 0.276
+    ks = 0.0213
+    ks_p = 0.26
+    package_mean = 0.2916381
+    package_median = 0.262
+    se = 0.004684807872759158
+    z = -1.07
+
+    [tolerance.mean_intensity]
+    author_mean = 336.1234200680272
+    author_median = 335.404
+    ks = 0.0158
+    ks_p = 0.7
+    package_mean = 334.9531395879428
+    package_median = 333.77063719862224
+    se = 3.984389573472624
+    z = -0.29
+
+    [tolerance.median_intensity]
+    author_mean = 315.04187925170066
+    author_median = 309.5
+    ks = 0.0115
+    ks_p = 1.0
+    package_mean = 314.1729137949316
+    package_median = 310.0
+    se = 4.226139569224483
+    z = -0.21
+
+    [tolerance.prevalence]
+    author_mean = 0.9896964735516374
+    author_median = 1.0
+    ks = 0.0099
+    ks_p = 1.0
+    package_mean = 0.9851450723418865
+    package_median = 1.0
+    se = 0.0018850355155695326
+    z = -2.41
+
+    [tolerance.survivors]
+    author_mean = 147.3004
+    author_median = 166.0
+    ks = 0.024
+    ks_p = 0.16
+    package_mean = 149.26165
+    package_median = 172.0
+    se = 1.7769007192491368
+    z = 1.1
+
+    [tolerance.unvaccinated_fraction]
+    author_mean = 0.34928757346767425
+    author_median = 0.299
+    ks = 0.0107
+    ks_p = 1.0
+    package_mean = 0.34726121375720626
+    package_median = 0.2955260148656375
+    se = 0.006317848924902548
+    z = -0.32
+
+    [tolerance.unvaccinated_median_intensity]
+    author_mean = 250.72633212622867
+    author_median = 269.5
+    ks = 0.0137
+    ks_p = 1.0
+    package_mean = 248.42247910135842
+    package_median = 267.0
+    se = 3.178346630076827
+    z = -0.72
+
+    [tolerance.vaccinated_median_intensity]
+    author_mean = 333.0040529010239
+    author_median = 327.0
+    ks = 0.0112
+    ks_p = 1.0
+    package_mean = 331.6287120808941
+    package_median = 328.5
+    se = 4.439803818445787
+    z = -0.31
+
+    [tolerance.zoospore_density]
+    author_mean = 436701.0224
+    author_median = 450940.0
+    ks = 0.0178
+    ks_p = 0.49
+    package_mean = 432909.3234
+    package_median = 449889.0
+    se = 4535.138777310195
+    z = -0.84
+
+[tolerance_growth]
+author_runs = 3025
+
+    [tolerance_growth.bd_death_fraction]
+    author_mean = 0.12374509269256198
+    author_median = 0.077720207
+    ks = 0.0143
+    ks_p = 0.66
+    package_mean = 0.12182000010018106
+    package_median = 0.07936507936507936
+    se = 0.0025907613798355866
+    z = -0.74
+
+    [tolerance_growth.mean_intensity]
+    author_mean = 138.1713632184679
+    author_median = 83.11802903
+    ks = 0.0113
+    ks_p = 1.0
+    package_mean = 137.27670312687746
+    package_median = 83.8433734939759
+    se = 2.695659608986695
+    z = -0.33
+
+    [tolerance_growth.median_intensity]
+    author_mean = 115.64923128342247
+    author_median = 55.0
+    ks = 0.0111
+    ks_p = 1.0
+    package_mean = 114.77596464032845
+    package_median = 55.0
+    se = 2.771080548351088
+    z = -0.32
+
+    [tolerance_growth.prevalence]
+    author_mean = 0.9572891361046164
+    author_median = 1.0
+    ks = 0.0111
+    ks_p = 1.0
+    package_mean = 0.9567649131738674
+    package_median = 1.0
+    se = 0.003263458070165996
+    z = -0.16
+
+    [tolerance_growth.survivors]
+    author_mean = 206.79735537190084
+    author_median = 216.0
+    ks = 0.0147
+    ks_p = 0.63
+    package_mean = 206.27574380165288
+    package_median = 215.0
+    se = 0.959331695124025
+    z = -0.54
+
+    [tolerance_growth.zoospore_density]
+    author_mean = 271688.3381818182
+    author_median = 232794.0
+    ks = 0.0133
+    ks_p = 0.77
+    package_mean = 268308.37987603305
+    package_median = 232127.5
+    se = 3544.55538672174
+    z = -0.95
+
+[tolerance_infection]
+author_runs = 3025
+
+    [tolerance_infection.bd_death_fraction]
+    author_mean = 0.059113082325289244
+    author_median = 0.01369863
+    ks = 0.0191
+    ks_p = 0.28
+    package_mean = 0.060704197099636314
+    package_median = 0.013245033112582781
+    se = 0.0021921692886155584
+    z = 0.73
+
+    [tolerance_infection.mean_intensity]
+    author_mean = 94.69300804542175
+    author_median = 37.398660715
+    ks = 0.0132
+    ks_p = 0.82
+    package_mean = 94.50999419908304
+    package_median = 37.47186147186147
+    se = 2.540386470951607
+    z = -0.07
+
+    [tolerance_infection.median_intensity]
+    author_mean = 71.82719054242003
+    author_median = 10.0
+    ks = 0.0117
+    ks_p = 0.99
+    package_mean = 71.73273181200999
+    package_median = 10.0
+    se = 2.584302635249886
+    z = -0.04
+
+    [tolerance_infection.prevalence]
+    author_mean = 0.739371174332118
+    author_median = 0.976190476
+    ks = 0.0253
+    ks_p = 0.065
+    package_mean = 0.725884291562273
+    package_median = 0.9702970297029703
+    se = 0.006894020594510412
+    z = -1.96
+
+    [tolerance_infection.survivors]
+    author_mean = 220.27206611570247
+    author_median = 226.0
+    ks = 0.0117
+    ks_p = 0.96
+    package_mean = 219.64752066115702
+    package_median = 227.0
+    se = 0.8517262711603152
+    z = -0.73
+
+    [tolerance_infection.zoospore_density]
+    author_mean = 193626.89223140496
+    author_median = 141172.0
+    ks = 0.0293
+    ks_p = 0.02
+    package_mean = 192298.45338842974
+    package_median = 137912.5
+    se = 3194.266141971066
+    z = -0.42
+
+[tolerance_transmission]
+author_runs = 3025
+
+    [tolerance_transmission.bd_death_fraction]
+    author_mean = 0.10435748104231404
+    author_median = 0.066079295
+    ks = 0.0159
+    ks_p = 0.52
+    package_mean = 0.10591637366451631
+    package_median = 0.06666666666666667
+    se = 0.0023457216174583677
+    z = 0.66
+
+    [tolerance_transmission.mean_intensity]
+    author_mean = 108.56139591754952
+    author_median = 55.16257923
+    ks = 0.0095
+    ks_p = 1.0
+    package_mean = 109.15289489843757
+    package_median = 54.27508347725964
+    se = 2.5220173389888987
+    z = 0.23
+
+    [tolerance_transmission.median_intensity]
+    author_mean = 85.40245956873315
+    author_median = 24.5
+    ks = 0.0097
+    ks_p = 1.0
+    package_mean = 85.90427852348994
+    package_median = 24.0
+    se = 2.577281037909442
+    z = 0.19
+
+    [tolerance_transmission.prevalence]
+    author_mean = 0.9304374383927032
+    author_median = 1.0
+    ks = 0.0096
+    ks_p = 1.0
+    package_mean = 0.9352657137919597
+    package_median = 1.0
+    se = 0.003950700668382105
+    z = 1.22
+
+    [tolerance_transmission.survivors]
+    author_mean = 210.84628099173554
+    author_median = 218.0
+    ks = 0.0144
+    ks_p = 0.66
+    package_mean = 210.44876033057852
+    package_median = 218.0
+    se = 0.8783821495508346
+    z = -0.45
+
+    [tolerance_transmission.zoospore_density]
+    author_mean = 218436.68958677686
+    author_median = 177685.0
+    ks = 0.0158
+    ks_p = 0.52
+    package_mean = 220593.63900826446
+    package_median = 180871.0
+    se = 3151.793368468069
+    z = 0.68
+
+[transmission]
+author_runs = 2500
+
+    [transmission.bd_death_fraction]
+    author_mean = 0.16328399999999998
+    author_median = 0.09
+    ks = 0.0142
+    ks_p = 0.82
+    package_mean = 0.16203515
+    package_median = 0.09
+    se = 0.0037565041023755403
+    z = -0.33
+
+    [transmission.mean_intensity]
+    author_mean = 124.52589300411525
+    author_median = 99.53399999999999
+    ks = 0.0105
+    ks_p = 1.0
+    package_mean = 124.32529987668545
+    package_median = 98.9297520661157
+    se = 2.204704656602743
+    z = -0.09
+
+    [transmission.median_intensity]
+    author_mean = 102.9141975308642
+    author_median = 62.25
+    ks = 0.0115
+    ks_p = 1.0
+    package_mean = 102.66286887349243
+    package_median = 59.5
+    se = 2.337810831709264
+    z = -0.11
+
+    [transmission.prevalence]
+    author_mean = 0.8996331194867684
+    author_median = 1.0
+    ks = 0.0143
+    ks_p = 0.81
+    package_mean = 0.9068809569201112
+    package_median = 1.0
+    se = 0.0054802963249062486
+    z = 1.32
+
+    [transmission.survivors]
+    author_mean = 193.6308
+    author_median = 208.0
+    ks = 0.0098
+    ks_p = 1.0
+    package_mean = 193.59525
+    package_median = 209.0
+    se = 1.2900184916618513
+    z = -0.03
+
+    [transmission.unvaccinated_fraction]
+    author_mean = 0.35736848436246993
+    author_median = 0.3135
+    ks = 0.0135
+    ks_p = 0.89
+    package_mean = 0.3570679592732991
+    package_median = 0.31216931216931215
+    se = 0.00576515765147941
+    z = -0.05
+
+    [transmission.unvaccinated_median_intensity]
+    author_mean = 184.94045412418907
+    author_median = 175.75
+    ks = 0.018
+    ks_p = 0.57
+    package_mean = 181.83164953840793
+    package_median = 171.0
+    se = 2.8807741915110476
+    z = -1.08
+
+    [transmission.vaccinated_median_intensity]
+    author_mean = 74.88863636363637
+    author_median = 39.0
+    ks = 0.0132
+    ks_p = 0.95
+    package_mean = 75.07331136738055
+    package_median = 37.25
+    se = 2.0065296470330822
+    z = 0.09
+
+    [transmission.zoospore_density]
+    author_mean = 246808.6116
+    author_median = 213881.5
+    ks = 0.0134
+    ks_p = 0.9
+    package_mean = 246562.61795
+    package_median = 216333.5
+    se = 3427.856155118316
+    z = -0.07

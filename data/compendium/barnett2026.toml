@@ -8,8 +8,11 @@
 # "Bd–amphibian–vaccine model", "Modes of protection", "Two-way interactions with tolerance",
 # "Hypothetical adverse reactions to vaccination") and Supplementary Information Table S1
 # (media-1.pdf), read on 2026-11-19 (lab/papers/barnett2026/). Licence of the preprint:
-# CC BY-NC-ND 4.0. The model was written in NetLogo 6.3.0; no model code or field data are
-# linked from the preprint, and none were found on GitHub or Zenodo.
+# CC BY-NC-ND 4.0. The authors' NetLogo 6.3.0 model, BehaviorSpace output, field data and R code
+# are at https://github.com/kmbarnett100/protection_to_amplification (commit 29f4af6,
+# 2026-08-12; no licence), read on 2026-11-23. Values marked "NetLogo" come from
+# Chytrid_Vaccine_ABM.nlogo. Every value the preprint and the code share was checked against
+# both.
 #
 # System: Bd in Pseudacris regilla (Pacific chorus frog) tadpoles and metamorphs, ephemeral
 # ponds in Santa Clara County, California. Time unit: days (one NetLogo tick = one day).
@@ -92,7 +95,7 @@ role = "default"
 system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
 location = "Methods; Table S1 (metamorphosis)"
 verified = true
-notes = "Determined through pattern-matching (Fig. S16, not in the supplement)."
+notes = "Determined through pattern-matching (Fig. S16, not in the supplement). In the code a tadpole must be older than 55 days (age starts at 1 on the first tick)."
 
 [[parameter]]
 symbol = "meta_prob"
@@ -115,6 +118,7 @@ role = "default"
 system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
 location = "Methods; Table S1 ('On day 74, all remaining tadpoles become metamorphs')"
 verified = true
+notes = "In the code all metamorphose once any tadpole is older than 74 days."
 
 [[parameter]]
 symbol = "init_prevalence"
@@ -126,6 +130,7 @@ role = "structural"
 system = { pathogen = "Bd", host = "Pseudacris regilla", stage = "tadpole" }
 location = "Methods ('Each simulation began with 0.2% of tadpoles infected')"
 verified = true
+notes = "In the code 1 of the 500 tadpoles on each perimeter patch."
 
 [[parameter]]
 symbol = "init_load"
@@ -150,7 +155,7 @@ role = "default"
 system = { pathogen = "Bd", host = "Pseudacris regilla" }
 location = "Methods ('exposure parameter ... of 0.25'); Table S1 (host exposure to zoospores)"
 verified = true
-notes = "Table S1 calls it unitless and says it was determined through pattern-matching (Fig. S17, not in the supplement). Transmission is a multinomial draw (Table S1, citing Civitello et al. 2022); the package's reading of it as a daily contact hazard per host is documented in src/models/barnett2026.jl."
+notes = "Table S1 calls it unitless and says it was determined through pattern-matching (Fig. S17, not in the supplement). Transmission is a multinomial draw (Table S1, citing Civitello et al. 2022); the package's reading of it as a daily contact hazard per host is documented in src/models/barnett2026.jl. In the code the hazard sums the exposure of every host in the world, not of the hosts on the patch."
 
 [[parameter]]
 symbol = "est"
@@ -199,7 +204,7 @@ role = "default"
 system = { pathogen = "Bd" }
 location = "Methods ('clear zoosporangia with a baseline probability of 0.2 per day'); Table S1"
 verified = true
-notes = "Cited from Briggs et al. (2010). Binomial draw of surviving sporangia (Table S1)."
+notes = "Cited from Briggs et al. (2010). Binomial draw of surviving sporangia (Table S1). The code uses it as a rate: daily survival exp(-0.2 exp(c_clear imm))."
 
 [[parameter]]
 symbol = "shedding"
@@ -223,6 +228,7 @@ role = "structural"
 system = { pathogen = "Bd" }
 location = "Table S1 (zoosporangia shedding: 'shed 40% of zoospores to the patch the host is currently on')"
 verified = true
+notes = "In the code 40% of what is left after self-exposure (NetLogo, tadpole-zsp-shedding-and-reinfection)."
 
 [[parameter]]
 symbol = "shed_neighbour"
@@ -234,6 +240,7 @@ role = "structural"
 system = { pathogen = "Bd" }
 location = "Table S1 (zoosporangia shedding: '50% of zoospores to a neighboring perimeter or inner patch')"
 verified = true
+notes = "Not used by the model code; see shed_neighbour_code."
 
 [[parameter]]
 symbol = "self_reinfection"
@@ -294,7 +301,7 @@ role = "structural"
 system = { pathogen = "Bd", host = "Pseudacris regilla" }
 location = "Table S1 (vaccination: 'relative_variation = 10%', '+/- 10% differences in response')"
 verified = true
-notes = "The distribution of the variation is not stated; the package draws imm uniformly in v_efficacy × [1 − 0.1, 1 + 0.1]."
+notes = "The distribution of the variation is not stated; the package draws imm uniformly in v_efficacy × [1 − 0.1, 1 + 0.1]. In the code the range is 10% in all: imm uniform on 1 +/- 0.05. The two-way runs set it to 0."
 
 [[parameter]]
 symbol = "vaccination_day"
@@ -341,3 +348,107 @@ role = "scenario"
 system = { pathogen = "Bd", host = "Pseudacris regilla" }
 location = "Methods, 'Two-way interactions with tolerance' ('constant at 75%')"
 verified = true
+
+# --- values given only by the model code (NetLogo) --------------------------------------------------
+
+[[parameter]]
+symbol = "tadpoles_per_patch"
+quantity = "tadpoles on each perimeter patch at the start"
+value = 500
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "NetLogo, ini-tadpoles-per-pondpatch (BehaviorSpace experiments)"
+verified = true
+
+[[parameter]]
+symbol = "infected_per_patch"
+quantity = "infected tadpoles on each perimeter patch at the start"
+value = 1
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "NetLogo, Bd-inf-tadpoles-per-infpondpatch with inf-ponds = 1 (BehaviorSpace experiments)"
+verified = true
+
+[[parameter]]
+symbol = "shed_neighbour_code"
+quantity = "share of the zoospores left after self-exposure and the own-patch share that goes to one neighbouring perimeter patch"
+value = 0.58
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "NetLogo, tadpole-zsp-shedding-and-reinfection"
+verified = true
+notes = "The rest goes to a patch off the perimeter. Table S1 says 50% to a neighbouring perimeter or inner patch; code comments say 35% and 25%, which are 0.58 x 0.6 of all released."
+
+[[parameter]]
+symbol = "natural_imm"
+quantity = "increase in a host's imm on clearing an infection"
+value = 0
+units = "1"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "NetLogo, natural_imm_efficacy (BehaviorSpace experiments)"
+verified = true
+
+[[parameter]]
+symbol = "world_size"
+quantity = "side of the square NetLogo world"
+value = 21
+units = "patches"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "NetLogo, resize-world 0 20 0 20"
+verified = true
+
+[[parameter]]
+symbol = "pond_mean"
+quantity = "mean of the normal number of patches added to the first pond patch"
+value = 135
+units = "patches"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "NetLogo, create-pond"
+verified = true
+
+[[parameter]]
+symbol = "pond_sd"
+quantity = "standard deviation of the number of patches added to the first pond patch"
+value = 18
+units = "patches"
+provenance = "A"
+role = "structural"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "NetLogo, create-pond"
+verified = true
+
+[[parameter]]
+symbol = "c_decrease_10"
+quantity = "vaccine constant the authors used for a 10% decrease"
+value = -0.11
+units = "1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "NetLogo, BehaviorSpace experiments"
+verified = true
+notes = "log(0.9) = -0.105; the other levels are log(1 +/- e) to 3 decimals."
+
+[[parameter]]
+symbol = "c_decrease_100"
+quantity = "vaccine constant the authors used for a 100% decrease"
+value = -16.118
+units = "1"
+provenance = "A"
+role = "scenario"
+system = { pathogen = "Bd", host = "Pseudacris regilla" }
+location = "NetLogo, BehaviorSpace experiments"
+verified = true
+notes = "log(1e-7)."
