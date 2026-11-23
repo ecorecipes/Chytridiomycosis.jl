@@ -34,6 +34,8 @@
 #   cleaning the env Binomial(Z, fraction) zoospores are removed. The authors' clean_env()
 #                    sets Z = 0 before drawing the binomial, so their code removes every
 #                    zoospore whatever the fraction; `as_coded = true` does the same.
+# Package extensions (off by default; not in the paper): several interventions in one run, and
+# a probability that a treated frog dies of the treatment (DrawertIntervention's `mortality`).
 # An intervention is not applied once the run's outcome is settled (the C code stops then).
 #
 # Two printed formulas in the ESM disagree with the rest of the paper:
@@ -78,7 +80,9 @@ The compendium form reads `Smax`, `S0`, `Z0` and `V` from `data/compendium/drawe
 - with `point = id`, they are point `id` of the authors' table of 2132 sampled points
   ([`load_drawert2017`](@ref)), at full precision.
 
-Keyword arguments override single values.
+Keyword arguments override single values. `DrawertParameters(id)` is the form with `point = id`,
+and `DrawertParameters(row)` takes a row of [`load_drawert2017`](@ref) or
+[`drawert2017_draws`](@ref).
 """
 Base.@kwdef struct DrawertParameters
     N::Int
@@ -289,7 +293,7 @@ end
 # Interventions
 
 """
-    DrawertIntervention(kind, day, fraction)
+    DrawertIntervention(kind, day, fraction; mortality = 0)
 
 A one-time intervention (§3.3), applied at time `day`:
 
@@ -300,17 +304,26 @@ A one-time intervention (§3.3), applied at time `day`:
   them with `as_coded = true` in [`DrawertIBMProblem`](@ref)).
 
 `N` and `Z` are the live frogs and pool zoospores at `day`.
+
+`mortality` is an extension of this package, **not in the paper**: the probability that a frog
+handled by `:clean_frogs` dies of the treatment (capture, holding, bathing). Such deaths are
+reported apart from deaths of chytridiomycosis. At 0, the default, no random number is drawn
+for it, so runs are those of the published model.
 """
 struct DrawertIntervention
     kind::Symbol
     day::Float64
     fraction::Float64
-    function DrawertIntervention(kind::Symbol, day::Real, fraction::Real)
+    mortality::Float64
+    function DrawertIntervention(kind::Symbol, day::Real, fraction::Real; mortality::Real = 0)
         kind in DRAWERT_INTERVENTION_KINDS ||
             throw(ArgumentError("kind must be one of $DRAWERT_INTERVENTION_KINDS"))
         day > 0 || throw(ArgumentError("the intervention day must be positive"))
         0 <= fraction <= 1 || throw(ArgumentError("fraction must lie in [0, 1]"))
-        return new(kind, Float64(day), Float64(fraction))
+        0 <= mortality <= 1 || throw(ArgumentError("mortality must lie in [0, 1]"))
+        (mortality == 0 || kind === :clean_frogs) ||
+            throw(ArgumentError("mortality applies to :clean_frogs only"))
+        return new(kind, Float64(day), Float64(fraction), Float64(mortality))
     end
 end
 
@@ -379,6 +392,9 @@ point, ordered by `id`:
   with fewer than `N` frogs), `mean_days_to_Z0`, `mean_days_to_F0` and their sds;
 - `λ`, the authors' linearised growth rate, and `simulation_time`, their CPU seconds for the
   30 runs.
+
+The points are a space-filling design over plausible ranges, not a posterior.
+[`drawert2017_draws`](@ref) is the same table with survival groups.
 """
 function load_drawert2017()
     _DRAWERT_TABLE[] === nothing || return _DRAWERT_TABLE[]::Vector
@@ -396,6 +412,32 @@ function load_drawert2017()
     _DRAWERT_TABLE[] = rows
     return rows
 end
+
+"""
+    drawert2017_draws() -> Vector{NamedTuple}
+
+The authors' 2132 parameter points as a table of draws: a vector of named tuples of one
+concrete type, which Tables.jl accepts as a row table (`DataFrame(drawert2017_draws())`,
+`Tables.columntable(…)`). Columns: `draw_id`, `group` (the authors' survival group, a
+`Symbol` `:A`–`:E`, by [`survival_group`](@ref) from their 30 runs), the parameters `N`, `γ`,
+`η`, `ν0`, `f`, `σ0`, `μ`, the authors' growth rate `load_growth_rate`, and the other summary
+columns of [`load_drawert2017`](@ref). Any row, or an id, makes parameters:
+`DrawertParameters(row)`, `DrawertParameters(draw_id)`.
+
+The points are a **space-filling design over plausible ranges, not a posterior**: no data
+were fitted, and no point is more probable than another. Averages over them depend on the
+ranges and on the design.
+"""
+drawert2017_draws() = [(; draw_id = r.id, group = survival_group(r.mean_surviving, r.std_surviving),
+                        N = r.N, γ = r.γ, η = r.η, ν0 = r.ν0, f = r.f, σ0 = r.σ0, μ = r.μ,
+                        load_growth_rate = r.λ,
+                        Base.structdiff(r, NamedTuple{(:id, :N, :γ, :η, :ν0, :f, :σ0, :μ, :λ)})...)
+                       for r in load_drawert2017()]
+
+# Parameters from a point id, or from a row with the point's parameters (documented above).
+DrawertParameters(id::Integer; kwargs...) = DrawertParameters(:drawert2017; point = id, kwargs...)
+DrawertParameters(r::NamedTuple; kwargs...) = DrawertParameters(:drawert2017; N = r.N, γ = r.γ,
+    η = r.η, ν0 = r.ν0, f = r.f, σ0 = r.σ0, μ = r.μ, kwargs...)
 
 function _drawert_point(id::Integer)
     rows = load_drawert2017()
@@ -421,14 +463,17 @@ end
 
 """
     DrawertIBMProblem(p; intervention = nothing, tfinal = 1000, saveat = Float64[],
-                      save_loads = false, as_coded = false)
+                      save_loads = false, as_coded = false, evaluate = Float64[],
+                      infection_threshold = 0)
 
 The stochastic individual-based model of Drawert et al. (2017) (ESM §1.3, Table S3): an
 integer load on each frog and an integer number of zoospores in the pool, simulated exactly
 with the direct method (Gillespie). One frog starts with `p.S0` sporangia, the others with
 none, and the pool with `p.Z0` zoospores. `tfinal` (1000 days) comes from the compendium.
 
-`intervention` is a [`DrawertIntervention`](@ref) or `nothing`. With `as_coded = true`,
+`intervention` is a [`DrawertIntervention`](@ref), a vector of them (an extension of this
+package: the paper has one pulse; they are applied in order of day, and in the order given
+within a day) or `nothing`. With `as_coded = true`,
 cleaning the environment removes every zoospore, as the authors' C code does (the paper
 describes removing the given fraction).
 
@@ -439,32 +484,69 @@ describes removing the given fraction).
 - `survivors`, `surviving_fraction` (survivors / `N`; culled frogs do not survive);
 - `death_time`: per frog, the time it died of chytridiomycosis (`NaN` otherwise);
   `culled`: per frog, whether it was culled;
-- `first_loss`: the first time a frog died or was culled (`Inf` if none);
+- `treatment_death`: per frog, whether it died of the treatment (`mortality`);
+- `first_loss`: the first time a frog died, of any cause, or was culled (`Inf` if none);
+- `handled`, `treatment_deaths`: animals handled, and deaths due to treatment, over all pulses;
+- `pulses`: one named tuple per intervention, in order of application, with `kind`, `day`,
+  `fraction`, `applied`, `frogs` (alive just before it), `zoospores` (in the pool just before
+  it), `handled`, `treatment_deaths` and `zoospores_removed`;
 - `t_end`: when the outcome was settled (or `tfinal`); `events`: the number of reactions;
 - `t`, `frogs`, `zoospores`, `sporangia`: the state at the `saveat` times, and, with
   `save_loads = true`, `loads`, an `N × length(saveat)` matrix (`-1` for a dead frog).
+
+- `uninfected`, `infected`: live frogs at the end (`t_end`) with a load of at most
+  `infection_threshold` sporangia, and above it; `survivors = uninfected + infected`, so culled
+  frogs and frogs killed by disease or treatment are in neither. The default threshold, 0, calls
+  a frog infected if it carries any sporangium;
+- `evaluation`: one named tuple `(; day, uninfected, infected)` per day in `evaluate` (package
+  addition; a pulse on that day has been applied). Unlike `saveat`, these days do not lengthen
+  the run: once the outcome is settled the numbers of frogs no longer change.
+
+The animals `handled` by a pulse are the frogs cleaned or culled: with `n` frogs alive just
+before, a `Binomial(n, fraction)` number, so `0 ≤ handled ≤ n`, equal to `n` at `fraction = 1`
+and 0 at `fraction = 0`. It is always 0 for `:clean_environment` (which handles no animal) and
+for a pulse that was not applied. With `mortality`, `treatment_deaths` is
+`Binomial(handled, mortality)`.
+
+A pulse is **not applied once the outcome is settled** (all frogs dead, or no Bd left), as in
+the authors' code: `applied = false`, `handled = 0`, and `frogs` is the number alive then. A
+manager who does not know that Bd has gone would still handle frogs, so `handled` is a lower
+bound on effort in those runs. A pulse after `tfinal` is not applied either.
+
+All randomness comes from the one `rng`, in event order: there are no per-frog streams. Two
+runs with the same seed and different interventions are identical up to the first day on which
+they differ, and independent in effect after it.
 
 The run stops when its outcome is settled unless later `saveat` times remain.
 """
 struct DrawertIBMProblem
     p::DrawertParameters
-    intervention::Union{Nothing,DrawertIntervention}
+    interventions::Vector{DrawertIntervention}
     tfinal::Float64
     saveat::Vector{Float64}
     save_loads::Bool
     as_coded::Bool
+    evaluate::Vector{Float64}
+    infection_threshold::Int
 end
 
 function DrawertIBMProblem(p::DrawertParameters;
-        intervention::Union{Nothing,DrawertIntervention} = nothing,
+        intervention::Union{Nothing,DrawertIntervention,AbstractVector{DrawertIntervention}} = nothing,
         tfinal::Real = _drawert_design().tfinal, saveat = Float64[], save_loads::Bool = false,
-        as_coded::Bool = false)
+        as_coded::Bool = false, evaluate = Float64[], infection_threshold::Integer = 0)
     _check(p)
     model_variant(p) === :both && throw(ArgumentError("set ν1 or σ1, not both"))
     tfinal > 0 || throw(ArgumentError("tfinal must be positive"))
     ts = sort!(Float64.(collect(saveat)))
     all(t -> 0 <= t <= tfinal, ts) || throw(ArgumentError("saveat must lie in [0, tfinal]"))
-    return DrawertIBMProblem(p, intervention, Float64(tfinal), ts, save_loads, as_coded)
+    ivs = intervention === nothing ? DrawertIntervention[] :
+          intervention isa DrawertIntervention ? [intervention] :
+          sort(collect(DrawertIntervention, intervention); by = iv -> iv.day, alg = MergeSort)
+    es = sort!(Float64.(collect(evaluate)))
+    all(t -> 0 <= t <= tfinal, es) || throw(ArgumentError("evaluate must lie in [0, tfinal]"))
+    infection_threshold >= 0 || throw(ArgumentError("infection_threshold must not be negative"))
+    return DrawertIBMProblem(p, ivs, Float64(tfinal), ts, save_loads, as_coded, es,
+                             Int(infection_threshold))
 end
 
 # Fenwick (binary indexed) tree over non-negative integer weights.
@@ -552,31 +634,40 @@ end
     return nothing
 end
 
+# Returns the number of animals handled and the number killed by the treatment.
 function _apply_intervention!(st::_DrawertState, iv::DrawertIntervention, rng::AbstractRNG,
-        as_coded::Bool, culled, t)
+        as_coded::Bool, culled, treatment_death)
     n = length(st.alive)
     if iv.kind === :clean_environment
         st.Z = as_coded ? 0 : st.Z - rand(rng, Binomial(st.Z, iv.fraction))
-        return nothing
+        return 0, 0
     end
-    n == 0 && return nothing
+    n == 0 && return 0, 0
     k = rand(rng, Binomial(n, iv.fraction))
     chosen = copy(st.alive)                   # k distinct live frogs, uniformly
     for i in 1:k
         r = rand(rng, i:n)
         chosen[i], chosen[r] = chosen[r], chosen[i]
     end
+    deaths = 0
     for i in 1:k
         j = chosen[i]
-        if iv.kind === :clean_frogs
-            _set_load!(st, j, 0)
-        else
+        if iv.kind === :cull_frogs
             _remove_frog!(st, j)
             culled[j] = true
+        elseif iv.mortality > 0 && rand(rng) < iv.mortality
+            _remove_frog!(st, j)
+            treatment_death[j] = true
+            deaths += 1
+        else
+            _set_load!(st, j, 0)
         end
     end
-    return nothing
+    return k, deaths
 end
+
+const _DrawertPulse = @NamedTuple{kind::Symbol, day::Float64, fraction::Float64, applied::Bool,
+    frogs::Int, zoospores::Int, handled::Int, treatment_deaths::Int, zoospores_removed::Int}
 
 function CommonSolve.solve(prob::DrawertIBMProblem; rng::AbstractRNG = Random.default_rng())
     p = prob.p
@@ -589,12 +680,25 @@ function CommonSolve.solve(prob::DrawertIBMProblem; rng::AbstractRNG = Random.de
     sig_dep = p.σ1 > 0
     death_time = fill(NaN, N)
     culled = falses(N)
+    treatment_death = falses(N)
+    removed_at = fill(Inf, N)           # day of a cull or treatment death
+    ivs = prob.interventions
+    pulses = _DrawertPulse[]
     ns = length(prob.saveat)
     frogs = zeros(Int, ns)
     zoos = zeros(Int, ns)
     spor = zeros(Int, ns)
     loads = prob.save_loads ? fill(-1, N, ns) : zeros(Int, 0, 0)
     k = 1
+    es = prob.evaluate
+    evaluation = @NamedTuple{day::Float64, uninfected::Int, infected::Int}[]
+    count_infected() = count(>(prob.infection_threshold), st.S)        # dead frogs are -1
+    function evaluate!()
+        i = count_infected()
+        push!(evaluation, (; day = es[length(evaluation) + 1],
+                           uninfected = length(st.alive) - i, infected = i))
+        return nothing
+    end
     function record!(k)
         frogs[k] = length(st.alive)
         zoos[k] = st.Z
@@ -607,7 +711,7 @@ function CommonSolve.solve(prob::DrawertIBMProblem; rng::AbstractRNG = Random.de
     end
     t = 0.0
     tf = prob.tfinal
-    ti = prob.intervention === nothing ? Inf : prob.intervention.day
+    ti = isempty(ivs) ? Inf : ivs[1].day
     outcome = :none
     t_end = tf
     events = 0
@@ -634,10 +738,22 @@ function CommonSolve.solve(prob::DrawertIBMProblem; rng::AbstractRNG = Random.de
             while k <= ns && prob.saveat[k] < tstop
                 record!(k); k += 1
             end
+            while length(evaluation) < length(es) && es[length(evaluation) + 1] < tstop
+                evaluate!()
+            end
             t = tstop
             if tstop == ti
-                _apply_intervention!(st, prob.intervention, rng, prob.as_coded, culled, t)
-                ti = Inf
+                iv = ivs[length(pulses) + 1]
+                z = st.Z
+                handled, deaths = _apply_intervention!(st, iv, rng, prob.as_coded, culled,
+                                                       treatment_death)
+                for j in 1:N
+                    (culled[j] || treatment_death[j]) && removed_at[j] == Inf && (removed_at[j] = t)
+                end
+                push!(pulses, (; iv.kind, iv.day, iv.fraction, applied = true, frogs = n,
+                               zoospores = z, handled, treatment_deaths = deaths,
+                               zoospores_removed = z - st.Z))
+                ti = length(pulses) < length(ivs) ? ivs[length(pulses) + 1].day : Inf
                 continue
             end
             while k <= ns
@@ -648,6 +764,9 @@ function CommonSolve.solve(prob::DrawertIBMProblem; rng::AbstractRNG = Random.de
         end
         while k <= ns && prob.saveat[k] < tnext
             record!(k); k += 1
+        end
+        while length(evaluation) < length(es) && es[length(evaluation) + 1] < tnext
+            evaluate!()
         end
         t = tnext
         events += 1
@@ -676,11 +795,21 @@ function CommonSolve.solve(prob::DrawertIBMProblem; rng::AbstractRNG = Random.de
             st.Z -= 1
         end
     end
+    while length(evaluation) < length(es)
+        evaluate!()
+    end
     survivors = length(st.alive)
-    first_loss = minimum((isnan(death_time[j]) ? (culled[j] ? prob.intervention.day : Inf) : death_time[j])
-                         for j in 1:N)
-    res = (; outcome, survivors, surviving_fraction = survivors / N, death_time,
-           culled = collect(culled), first_loss, t_end, events,
+    infected = count_infected()
+    first_loss = minimum((isnan(death_time[j]) ? removed_at[j] : death_time[j]) for j in 1:N)
+    for iv in ivs[(length(pulses) + 1):end]             # not applied: the outcome was settled
+        push!(pulses, (; iv.kind, iv.day, iv.fraction, applied = false, frogs = survivors,
+                       zoospores = st.Z, handled = 0, treatment_deaths = 0,
+                       zoospores_removed = 0))
+    end
+    res = (; outcome, survivors, uninfected = survivors - infected, infected, evaluation, surviving_fraction = survivors / N, death_time,
+           culled = collect(culled), treatment_death = collect(treatment_death), first_loss,
+           handled = sum(q -> q.handled, pulses; init = 0),
+           treatment_deaths = sum(q -> q.treatment_deaths, pulses; init = 0), pulses, t_end, events,
            t = copy(prob.saveat), frogs, zoospores = zoos, sporangia = spor)
     return prob.save_loads ? merge(res, (; loads)) : res
 end
@@ -783,6 +912,12 @@ The deterministic version of the model (eqs 3.1–3.2; ESM eqs 1–2): one load 
 the pool, from the same initial state as [`DrawertIBMProblem`](@ref). A frog dies (its load
 is removed) when it reaches `Smax`.
 
+!!! warning "Not a stand-in for the stochastic model"
+    Every one of the authors' 2132 points, in every variant, ends here with **no surviving
+    frog**, by construction (§4: the points were kept because Bd grows at each of them), also
+    where the stochastic model keeps almost all frogs because Bd dies out by chance. Use
+    [`DrawertIBMProblem`](@ref) for survival and for comparing interventions.
+
 Interventions follow the authors' `determ_frogs.c`, which the paper does not describe:
 
 - cleaning and culling act on `floor(fraction × N)` live frogs, at least one, taken in index
@@ -806,6 +941,8 @@ function DrawertODEProblem(p::DrawertParameters;
         tfinal::Real = _drawert_design().tfinal)
     _check(p)
     model_variant(p) === :both && throw(ArgumentError("set ν1 or σ1, not both"))
+    intervention !== nothing && intervention.mortality > 0 &&
+        throw(ArgumentError("treatment mortality is only implemented in DrawertIBMProblem"))
     return DrawertODEProblem(p, intervention, Float64(tfinal))
 end
 

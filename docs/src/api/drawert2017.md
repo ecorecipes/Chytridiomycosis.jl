@@ -114,6 +114,32 @@ intervention_effect
 drawert2017_path
 load_drawert2017
 load_drawert2017_reproduction
+drawert2017_draws
+```
+
+## Outcome table for decision analysis
+
+!!! note "Package additions"
+    The treatment mortality, several interventions in one run, the table below and the survey
+    functions are additions of this package, not published results. With the defaults the
+    model is the published one.
+
+`scripts/drawert2017_decision_table.jl` runs the stochastic model over draws × actions ×
+replicates, and writes one row per run to `data/drawert2017/decision_runs.csv`. Utilities,
+costs and decision rules are left to the user. The seed depends only on the draw and the
+replicate, so all actions share random numbers up to the first intervention. `saveat` days
+before that give the state on which a survey would be taken.
+
+```@docs
+load_drawert_decisions
+drawert_run_seed
+```
+
+## Survey data from a run
+
+```@docs
+simulate_survey(::Chytridiomycosis.Random.AbstractRNG, ::DrawertParameters, ::NamedTuple, ::SurveyObservation, ::SurveyPond)
+survey_loglikelihood
 ```
 
 ## What reproduces
