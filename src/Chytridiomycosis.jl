@@ -102,6 +102,7 @@ include("fitting/malagon2020.jl")
 include("fitting/tompros2022.jl")
 # Drawert et al. 2017 stochastic individual-based Bd model with one-time interventions
 include("models/drawert2017.jl")
+include("models/drawert2017_decision.jl")
 # Barnett et al. 2026 (bioRxiv preprint) agent-based model of imperfect Bd prophylaxis
 include("models/barnett2026.jl")
 using LinearAlgebra: cholesky, issuccess, norm, I
@@ -277,7 +278,8 @@ export TransmissionFunction, DensityDependent, FrequencyDependent, PowerLaw,
 export DrawertParameters, DrawertIBMProblem, DrawertODEProblem, DrawertIntervention,
        drawert_interventions, drawert_variant, model_variant, encystment_probability,
        sporangium_loss_rate, nondimensional_parameters, nondimensional_ranges,
-       nondimensional_distance, equilibrium_load_ratio, drawert2017_path, load_drawert2017, load_drawert2017_reproduction,
+       nondimensional_distance, equilibrium_load_ratio, drawert2017_path, load_drawert2017,
+       load_drawert2017_reproduction, drawert2017_draws, drawert_run_seed, load_drawert_decisions, survey_loglikelihood,
        drawert_summary, outcome_class, survival_group, intervention_effect
 # Barnett et al. 2026 (bioRxiv preprint) agent-based model of imperfect Bd prophylaxis
 export BarnettParameters, BarnettVaccine, barnett_vaccine, BarnettABMProblem, barnett_summary,

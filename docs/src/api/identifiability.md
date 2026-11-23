@@ -47,7 +47,7 @@ BriggsMomentProblem
 SurveyPond
 SurveySample
 SurveyObservation
-simulate_survey
+simulate_survey(::Chytridiomycosis.Random.AbstractRNG, ::BriggsParameters, ::SurveyObservation, ::AbstractVector{SurveyPond})
 SurveyModel
 ```
 

@@ -1,0 +1,10 @@
+# Written by scripts/drawert2017_decision_table.jl
+S_star = 1.2
+actions = ["none", "clean_frogs_d14_f75", "clean_frogs_d28_f75", "clean_frogs_d56_f75", "cull_frogs_d14_f75", "cull_frogs_d28_f75", "cull_frogs_d56_f75", "clean_environment_d14_f75", "clean_environment_d28_f75", "clean_environment_d56_f75"]
+draws = 100
+evaluation_days = [120.0, 365.0]
+infection_threshold = 0
+julia = "1.12.6"
+replicates = 30
+rows = 30000
+variants = ["baseline"]

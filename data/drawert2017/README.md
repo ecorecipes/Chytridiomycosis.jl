@@ -68,3 +68,36 @@ Written by `scripts/drawert2017_*.jl`; see the script headers for designs and se
   (`scripts/drawert2017_summarise.jl`).
 - `deterministic.csv` (checks on all 2132 points) is not committed. It is 380 kB, and
   `scripts/drawert2017_deterministic.jl` regenerates it in a few minutes.
+
+## Outcome table for decision analysis (ours, not the authors')
+
+Written by `scripts/drawert2017_decision_table.jl` (design and options in its header); read with
+`load_drawert_decisions()`, whose docstring defines the columns.
+
+- `decision_runs.csv`: one row per run, 100 draws × 10 actions × 30 replicates of the Baseline
+  model. `Inf` in `first_loss` means that no frog was lost. `uninfected` and `infected` count live
+  frogs without and with sporangia (load threshold 0, `--threshold` to change it) at the end of the
+  run and on days 120 and 365; culled frogs are in neither.
+- `decision_runs_seconds.csv`: the wall time of each run, in the same row order. It is apart
+  because it is not reproducible; the other files are, with the same Julia version.
+- `decision_draws.csv`: the parameters of the draws, and `weight`, the number of the 2132 points
+  in the draw's group per sampled draw. The draws oversample the smaller groups, so use the
+  weights to describe all 2132 points. The points are a space-filling design, not a posterior.
+- `decision_design.toml`: Julia version, actions, variants, replicates and rows.
+
+**Seeds.** `drawert_run_seed(draw_id, replicate)`, the same for every action: common random
+numbers up to the first intervention, one stream per run, no per-frog streams.
+
+**Pulses that are not applied.** As in the authors' code, a pulse is skipped once the frogs or Bd
+have gone (`applied` is false). By group, the share skipped is, on days 14, 28 and 56: A 0%, 5%,
+61%; B 0%, 0%, 1%; C 0%, 11%, 26%; D 0%, 43%, 72%; E 0%. In Groups C and D (Bd has usually died
+out) this makes a late cull look much less harmful than it would be for a manager who did not
+know that Bd had gone: in those runs no frog is culled, and `handled` is 0.
+
+**Cost.** 0.78 s per run over 50 random points, 10 actions and one replicate (7.8 s per point;
+median 3.2, maximum 46.5; 6 threads on an Apple M-series laptop). It varies by group: A 0.87, B
+0.18, C 0.02, D 0.003 and E 4.7 s per run. The Nu variant takes 8.7 s per run on the
+same design (87 s per point; median 18, maximum 1073), because surviving runs go on to day 1000
+with large pools: about 73 CPU-hours for 100 draws. The Sigma variant takes 11.5 s per run
+(115 s per point; median 20, maximum 1041), or about 95 CPU-hours; other jobs were running, so that
+figure is an upper estimate. The Nu and Sigma tables are not stored; make them with `--variants=nu,sigma`.
