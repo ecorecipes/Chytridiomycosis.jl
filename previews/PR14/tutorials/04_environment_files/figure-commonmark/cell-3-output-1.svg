@@ -1,0 +1,67 @@
+<svg width="369pt" height="113pt"
+ viewBox="0.00 0.00 369.00 113.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 109.32)">
+<!-- ZL -->
+<g id="node1" class="node">
+<title>ZL</title>
+<path fill="#e2efda" stroke="#555555" d="M73.53,-72.32C73.53,-72.32 12,-72.32 12,-72.32 6,-72.32 0,-66.32 0,-60.32 0,-60.32 0,-48.32 0,-48.32 0,-42.32 6,-36.32 12,-36.32 12,-36.32 73.53,-36.32 73.53,-36.32 79.53,-36.32 85.53,-42.32 85.53,-48.32 85.53,-48.32 85.53,-60.32 85.53,-60.32 85.53,-66.32 79.53,-72.32 73.53,-72.32"/>
+<text xml:space="preserve" text-anchor="middle" x="42.76" y="-55.87" font-family="Helvetica,sans-Serif" font-size="11.00">Z_L</text>
+<text xml:space="preserve" text-anchor="middle" x="42.76" y="-43.87" font-family="Helvetica,sans-Serif" font-size="11.00">live zoospores</text>
+</g>
+<!-- ZD -->
+<g id="node2" class="node">
+<title>ZD</title>
+<path fill="#eeeeee" stroke="#555555" d="M210.81,-105.32C210.81,-105.32 141.03,-105.32 141.03,-105.32 135.03,-105.32 129.03,-99.32 129.03,-93.32 129.03,-93.32 129.03,-81.32 129.03,-81.32 129.03,-75.32 135.03,-69.32 141.03,-69.32 141.03,-69.32 210.81,-69.32 210.81,-69.32 216.81,-69.32 222.81,-75.32 222.81,-81.32 222.81,-81.32 222.81,-93.32 222.81,-93.32 222.81,-99.32 216.81,-105.32 210.81,-105.32"/>
+<text xml:space="preserve" text-anchor="middle" x="175.92" y="-88.87" font-family="Helvetica,sans-Serif" font-size="11.00">Z_D</text>
+<text xml:space="preserve" text-anchor="middle" x="175.92" y="-76.87" font-family="Helvetica,sans-Serif" font-size="11.00">dead zoospores</text>
+</g>
+<!-- ZL&#45;&gt;ZD -->
+<g id="edge1" class="edge">
+<title>ZL&#45;&gt;ZD</title>
+<path fill="none" stroke="#444444" d="M85.99,-64.94C97.06,-67.73 109.15,-70.77 120.76,-73.69"/>
+<polygon fill="#444444" stroke="#444444" points="119.84,-75.99 127.23,-75.32 121.04,-71.24 119.84,-75.99"/>
+<text xml:space="preserve" text-anchor="middle" x="107.28" y="-72.02" font-family="Helvetica,sans-Serif" font-size="9.00">m</text>
+</g>
+<!-- S -->
+<g id="node4" class="node">
+<title>S</title>
+<path fill="#cfe2f3" stroke="#555555" d="M199.18,-44.64C199.18,-44.64 152.65,-44.64 152.65,-44.64 146.65,-44.64 140.65,-38.64 140.65,-32.64 140.65,-32.64 140.65,-12 140.65,-12 140.65,-6 146.65,0 152.65,0 152.65,0 199.18,0 199.18,0 205.18,0 211.18,-6 211.18,-12 211.18,-12 211.18,-32.64 211.18,-32.64 211.18,-38.64 205.18,-44.64 199.18,-44.64"/>
+<text xml:space="preserve" text-anchor="middle" x="175.92" y="-29.87" font-family="Helvetica,sans-Serif" font-size="11.00">S</text>
+<text xml:space="preserve" text-anchor="middle" x="175.92" y="-17.87" font-family="Helvetica,sans-Serif" font-size="11.00">susceptible</text>
+<text xml:space="preserve" text-anchor="middle" x="175.92" y="-5.87" font-family="Helvetica,sans-Serif" font-size="11.00">tadpoles</text>
+</g>
+<!-- ZL&#45;&gt;S -->
+<g id="edge4" class="edge">
+<title>ZL&#45;&gt;S</title>
+<path fill="none" stroke="#444444" stroke-dasharray="5,2" d="M85.99,-44.02C103.51,-39.74 123.59,-34.84 140.23,-30.78"/>
+</g>
+<!-- gone -->
+<g id="node3" class="node">
+<title>gone</title>
+<path fill="none" stroke="none" d="M348.84,-105.32C348.84,-105.32 294.06,-105.32 294.06,-105.32 288.06,-105.32 282.06,-99.32 282.06,-93.32 282.06,-93.32 282.06,-81.32 282.06,-81.32 282.06,-75.32 288.06,-69.32 294.06,-69.32 294.06,-69.32 348.84,-69.32 348.84,-69.32 354.84,-69.32 360.84,-75.32 360.84,-81.32 360.84,-81.32 360.84,-93.32 360.84,-93.32 360.84,-99.32 354.84,-105.32 348.84,-105.32"/>
+<text xml:space="preserve" text-anchor="middle" x="321.45" y="-82.87" font-family="Helvetica,sans-Serif" font-size="11.00">decomposed</text>
+</g>
+<!-- ZD&#45;&gt;gone -->
+<g id="edge2" class="edge">
+<title>ZD&#45;&gt;gone</title>
+<path fill="none" stroke="#444444" d="M223.12,-87.32C239.45,-87.32 257.81,-87.32 274.15,-87.32"/>
+<polygon fill="#444444" stroke="#444444" points="273.98,-89.77 280.98,-87.32 273.98,-84.87 273.98,-89.77"/>
+<text xml:space="preserve" text-anchor="middle" x="252.43" y="-88.52" font-family="Helvetica,sans-Serif" font-size="9.00">d</text>
+</g>
+<!-- I -->
+<g id="node5" class="node">
+<title>I</title>
+<path fill="#f4c7c3" stroke="#555555" d="M338.34,-44.64C338.34,-44.64 304.56,-44.64 304.56,-44.64 298.56,-44.64 292.56,-38.64 292.56,-32.64 292.56,-32.64 292.56,-12 292.56,-12 292.56,-6 298.56,0 304.56,0 304.56,0 338.34,0 338.34,0 344.34,0 350.34,-6 350.34,-12 350.34,-12 350.34,-32.64 350.34,-32.64 350.34,-38.64 344.34,-44.64 338.34,-44.64"/>
+<text xml:space="preserve" text-anchor="middle" x="321.45" y="-29.87" font-family="Helvetica,sans-Serif" font-size="11.00">I</text>
+<text xml:space="preserve" text-anchor="middle" x="321.45" y="-17.87" font-family="Helvetica,sans-Serif" font-size="11.00">infected</text>
+<text xml:space="preserve" text-anchor="middle" x="321.45" y="-5.87" font-family="Helvetica,sans-Serif" font-size="11.00">tadpoles</text>
+</g>
+<!-- S&#45;&gt;I -->
+<g id="edge3" class="edge">
+<title>S&#45;&gt;I</title>
+<path fill="none" stroke="#444444" d="M211.66,-22.32C233.49,-22.32 261.61,-22.32 283.79,-22.32"/>
+<polygon fill="#444444" stroke="#444444" points="283.77,-24.77 290.77,-22.32 283.77,-19.87 283.77,-24.77"/>
+<text xml:space="preserve" text-anchor="middle" x="252.43" y="-23.52" font-family="Helvetica,sans-Serif" font-size="9.00">β Z_L</text>
+</g>
+</g>
+</svg>
