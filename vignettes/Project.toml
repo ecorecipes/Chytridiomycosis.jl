@@ -1,4 +1,6 @@
 [deps]
+DecisionAnalysis = "6a9d793e-d09c-4461-8cb4-55c12d181024"
+FiniteKernels = "2ee73795-50db-4096-9573-22982ed4949b"
 DynamicalResilience = "54629d0c-0bd5-4489-a333-4d325b057304"
 ResilienceCore = "e31f93f6-99b1-4a70-b0c5-c402beffe4e1"
 StructuredPopulationCore = "33358fd2-7d60-4541-bded-caea801370e0"
@@ -11,6 +13,8 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Turing = "fce5fe82-541a-59a6-adf8-730c64b5f9a0"
 
 [sources]
+DecisionAnalysis = {url = "https://github.com/ecorecipes/DecisionAnalysis.jl"}
+FiniteKernels = {url = "https://github.com/ecorecipes/FiniteKernels.jl"}
 DynamicalResilience = {url = "https://github.com/ecorecipes/DynamicalResilience.jl"}
 ResilienceCore = {url = "https://github.com/ecorecipes/ResilienceCore.jl"}
 StructuredPopulationCore = {url = "https://github.com/ecorecipes/ProjectionModels.jl"}

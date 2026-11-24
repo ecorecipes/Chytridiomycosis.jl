@@ -18,21 +18,27 @@ StructuredPopulationCore = "33358fd2-7d60-4541-bded-caea801370e0"
 TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 
 [weakdeps]
+DecisionAnalysis = "6a9d793e-d09c-4461-8cb4-55c12d181024"
 Turing = "fce5fe82-541a-59a6-adf8-730c64b5f9a0"
 
 [extensions]
+ChytridiomycosisDecisionAnalysisExt = "DecisionAnalysis"
 ChytridiomycosisTuringExt = "Turing"
 
 [sources]
+DecisionAnalysis = {url = "https://github.com/ecorecipes/DecisionAnalysis.jl"}
 DynamicalResilience = {url = "https://github.com/ecorecipes/DynamicalResilience.jl"}
+FiniteKernels = {url = "https://github.com/ecorecipes/FiniteKernels.jl"}
 ResilienceCore = {url = "https://github.com/ecorecipes/ResilienceCore.jl"}
 StructuredPopulationCore = {url = "https://github.com/ecorecipes/ProjectionModels.jl"}
 
 [compat]
 CommonSolve = "0.2.14"
 Dates = "1.11.0"
+DecisionAnalysis = "0.1"
 Distributions = "0.25"
 DynamicalResilience = "0.3"
+FiniteKernels = "0.1"
 LinearAlgebra = "1.12.0"
 LogDensityProblems = "2.2.1"
 OrdinaryDiffEqTsit5 = "2.1.5"
@@ -46,8 +52,10 @@ Turing = "0.49"
 julia = "1.12"
 
 [extras]
+DecisionAnalysis = "6a9d793e-d09c-4461-8cb4-55c12d181024"
+FiniteKernels = "2ee73795-50db-4096-9573-22982ed4949b"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Turing = "fce5fe82-541a-59a6-adf8-730c64b5f9a0"
 
 [targets]
-test = ["Test", "Turing"]
+test = ["DecisionAnalysis", "FiniteKernels", "Test", "Turing"]

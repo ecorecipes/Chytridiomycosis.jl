@@ -190,6 +190,18 @@ more bacteria mean less Bd. With illustrative protection, the spread of bacteria
 frogs helps or hurts depending on where the protection threshold lies, and protection that
 acts on survival raises R0 while protection that acts on Bd growth lowers it.
 
+[Which response to a Bd outbreak, with new actions?](vignettes/11_decision_adapter/11_decision_adapter.md)
+([PDF](vignettes/11_decision_adapter/11_decision_adapter.pdf),
+[HTML](vignettes/11_decision_adapter/11_decision_adapter.html),
+[source](vignettes/11_decision_adapter/11_decision_adapter.qmd))
+
+The Drawert et al. (2017) model run through
+[DecisionAnalysis.jl](https://github.com/ecorecipes/DecisionAnalysis.jl), which this package
+supports as an optional extension: parameter draws × actions × replicates in one call, and the
+outcomes, counts of frogs, compared with no intervention. Cleaning the frogs twice is compared
+with cleaning them once and with also cleaning the water. Illustrative: the weights on the
+parameter points are those of a design, not of a posterior.
+
 Each vignette writes out the equations of every model it runs, with a symbol table and a
 diagram of the model.
 
