@@ -20,9 +20,18 @@ counterparts under other actions use **common random numbers**: they are identic
 first intervention. After that they diverge, because the model draws from one stream in event
 order and has no per-frog streams. The seed is a fixed integer hash, the same on every Julia
 version; the random numbers made from it can differ between Julia versions.
+
+    drawert_run_seed(draw::NamedTuple, replicate) -> UInt64
+
+The same from a draw, a row with a `draw_id` column (`drawert2017_draws()`,
+[`load_drawert_decision_draws`](@ref)). This is the form a driver that seeds each run from its
+draw and replicate calls: with DecisionAnalysis.jl,
+`outcomes(prob, actions, draws; replicates, run_seed = drawert_run_seed)` makes runs with the
+random numbers of the stored table ([`drawert_outcome_table`](@ref)).
 """
 drawert_run_seed(draw_id::Integer, replicate::Integer) =
     _splitmix64(_splitmix64(UInt64(draw_id)) + UInt64(replicate))
+drawert_run_seed(draw::NamedTuple, replicate::Integer) = drawert_run_seed(draw.draw_id, replicate)
 
 # Stable label of an action.
 _drawert_action_label(::Nothing) = "none"
@@ -189,13 +198,25 @@ function load_drawert_decision_draws(; path::AbstractString = joinpath(dirname(d
 end
 
 """
-    drawert_outcome_table(; variant = "baseline", outcomes = (:survivors, :uninfected, …))
+    drawert_outcome_table(; variant = "baseline", outcomes = (:survivors, :uninfected, …),
+                          actions = nothing)
 
 The stored decision table ([`load_drawert_decisions`](@ref)) as a `DecisionAnalysis.OutcomeTable`
 over draws × actions × replicates, with the parameters and design weights of
 [`load_drawert_decision_draws`](@ref). `outcomes` names the columns to keep; the default is
 `survivors`, `uninfected`, `infected`, the same on days 120 and 365, `initial_frogs`, `handled`
-and `treatment_deaths`. Runs whose `status` is not `ok` are kept and counted as failures.
+and `treatment_deaths`. Runs whose `status` is not `ok` are kept and counted as failures. The
+replicates are labelled `r1`, `r2`, …, as `DecisionAnalysis.outcomes` labels them.
+
+`actions` adds **actions the stored table does not hold**: `label => action` pairs (or a named
+tuple), each action as `DecisionAnalysis.apply_action` takes it (a `DrawertIntervention`, a
+named tuple, a list of pulses). They are run now, at the stored draws, with the stored number
+of replicates and the stored seeds ([`drawert_run_seed`](@ref)), and joined to the stored runs
+(`DecisionAnalysis.combine_actions`). A new action therefore shares its random numbers with
+every stored one, up to the first pulse on which they differ, and its difference from a stored
+action is not blurred by different random numbers. That is 3,000 runs of a year for each new
+action, at roughly a second each on one core. Only the Baseline model (`variant = "baseline"`)
+can be extended.
 
 The method is defined when DecisionAnalysis.jl is loaded (a package extension); without it the
 function has no method. The weights are those of a design, not of a posterior.

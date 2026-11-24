@@ -11,8 +11,8 @@ module ChytridiomycosisDecisionAnalysisExt
 # DecisionAnalysis's vocabulary. Outcomes are counts of frogs: utilities are left to the user.
 
 using Chytridiomycosis: Chytridiomycosis, DrawertIBMProblem, DrawertIntervention, DrawertODEProblem,
-                        DrawertParameters, load_drawert_decision_draws, load_drawert_decisions,
-                        solve
+                        DrawertParameters, drawert_run_seed, load_drawert_decision_draws,
+                        load_drawert_decisions, solve
 import DecisionAnalysis
 
 # ---------------------------------------------------------------------------------------------
@@ -151,13 +151,35 @@ const _STORED_OUTCOMES = (:survivors, :uninfected, :infected, :uninfected_d120, 
                           :treatment_deaths)
 
 function Chytridiomycosis.drawert_outcome_table(; variant::AbstractString = "baseline",
-        outcomes = _STORED_OUTCOMES)
+        outcomes = _STORED_OUTCOMES, actions = nothing)
     runs = filter(r -> r.variant == variant, load_drawert_decisions())
     isempty(runs) && throw(ArgumentError("the stored table has no runs of the variant $variant"))
-    return DecisionAnalysis.OutcomeTable(runs; draw = :draw_id, action = :action,
-                                         replicate = :replicate, outcomes = collect(Symbol, outcomes),
-                                         status = :status, parameters = load_drawert_decision_draws(),
-                                         key = :draw_id, weights = :weight)
+    draws = load_drawert_decision_draws()
+    # Replicate k is labelled r<k>, as the driver labels it, so that new runs line up.
+    stored = DecisionAnalysis.OutcomeTable([(; r..., replicate = string("r", r.replicate)) for r in runs];
+                                           draw = :draw_id, action = :action, replicate = :replicate,
+                                           outcomes = collect(Symbol, outcomes), status = :status,
+                                           parameters = draws, key = :draw_id, weights = :weight)
+    (actions === nothing || isempty(actions)) && return stored
+    variant == "baseline" ||
+        throw(ArgumentError("only the Baseline model can be extended with new actions; the " *
+                            "variant $variant has parameters that depend on the others"))
+    new = DecisionAnalysis.outcomes(_stored_problem(first(draws)), actions, _stored_belief(draws);
+                                    replicates = maximum(r.replicate for r in runs),
+                                    run_seed = drawert_run_seed)
+    return DecisionAnalysis.combine_actions(stored, new)
 end
+
+# The problem of the stored runs (scripts/drawert2017_decision_table.jl): a year, the load
+# threshold 0, uninfected and infected frogs on days 120 and 365.
+_stored_problem(draw) = DrawertIBMProblem(DrawertParameters(draw);
+                                          evaluate = Chytridiomycosis._DRAWERT_EVALUATION_DAYS)
+
+# The stored draws as a belief: labelled by `draw_id` and still carrying it, for the seeds.
+_stored_belief(draws) = DecisionAnalysis.SampleBelief(
+    Base.structdiff(_columns(draws), NamedTuple{(:weight,)});
+    weights = [d.weight for d in draws], labels = [d.draw_id for d in draws])
+_columns(rows) = NamedTuple{keys(first(rows))}(Tuple([getfield(r, k) for r in rows]
+                                                     for k in keys(first(rows))))
 
 end
