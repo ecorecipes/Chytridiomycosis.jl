@@ -162,6 +162,46 @@ function load_drawert_decisions(; path::AbstractString = joinpath(dirname(drawer
     end
 end
 
+"""
+    load_drawert_decision_draws(; path = data/drawert2017/decision_draws.csv) -> Vector{NamedTuple}
+
+The parameter draws of the stored decision table ([`load_drawert_decisions`](@ref)), one named
+tuple per draw, in a Tables.jl row-table form: `draw_id`, `group` (the authors' survival group,
+a `String`), the parameters `N`, `γ`, `η`, `ν0`, `f`, `σ0`, `μ`, the authors'
+`load_growth_rate`, and `weight`, the number of points of the group that the draw stands for.
+
+The draws are a stratified sample of the authors' space-filling design, **not a posterior**:
+with these weights an average is an average over the 2132 design points, each counted once.
+"""
+function load_drawert_decision_draws(; path::AbstractString = joinpath(dirname(drawert2017_path()),
+                                                                       "decision_draws.csv"))
+    isfile(path) || throw(ArgumentError("no table of draws at $path; run " *
+                                        "scripts/drawert2017_decision_table.jl"))
+    lines = filter(!isempty ∘ strip, readlines(path))
+    names = Tuple(Symbol.(split(lines[1], ',')))
+    names == (:draw_id, :group, :N, :γ, :η, :ν0, :f, :σ0, :μ, :load_growth_rate, :weight) ||
+        throw(ArgumentError("unexpected columns in $path"))
+    return map(lines[2:end]) do line
+        v = split(line, ',')
+        NamedTuple{names}((parse(Int, v[1]), String(v[2]), parse(Int, v[3]),
+                           (parse(Float64, x) for x in v[4:end])...))
+    end
+end
+
+"""
+    drawert_outcome_table(; variant = "baseline", outcomes = (:survivors, :uninfected, …))
+
+The stored decision table ([`load_drawert_decisions`](@ref)) as a `DecisionAnalysis.OutcomeTable`
+over draws × actions × replicates, with the parameters and design weights of
+[`load_drawert_decision_draws`](@ref). `outcomes` names the columns to keep; the default is
+`survivors`, `uninfected`, `infected`, the same on days 120 and 365, `initial_frogs`, `handled`
+and `treatment_deaths`. Runs whose `status` is not `ok` are kept and counted as failures.
+
+The method is defined when DecisionAnalysis.jl is loaded (a package extension); without it the
+function has no method. The weights are those of a design, not of a posterior.
+"""
+function drawert_outcome_table end
+
 # --------------------------------------------------------------------------------------------
 # Survey data from an individual-based run (observation model: src/novel/swab_edna.jl)
 

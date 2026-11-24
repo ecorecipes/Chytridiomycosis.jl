@@ -141,6 +141,9 @@ Every tutorial opens with a table of the models it uses and the category of each
     a two-trait IPM of Bd load and *J. lividum* load, fitted to the joint loads of the
     treated frogs of a field trial, and how the spread of bacterial loads and the kind of
     protection change survival and R0.
+11. [Which response to a Bd outbreak, with new actions?](tutorials/11_decision_adapter.md):
+    the Drawert et al. (2017) model run through DecisionAnalysis.jl over parameter draws,
+    actions and replicates, comparing one and two treatments with no intervention, in frogs.
 
 The tutorials are Quarto documents in `vignettes/`, rendered to HTML, PDF and Markdown.
 

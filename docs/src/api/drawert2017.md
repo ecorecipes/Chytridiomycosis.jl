@@ -132,8 +132,44 @@ before that give the state on which a survey would be taken.
 
 ```@docs
 load_drawert_decisions
+load_drawert_decision_draws
 drawert_run_seed
 ```
+
+## Adapter for DecisionAnalysis.jl
+
+[DecisionAnalysis.jl](https://github.com/ecorecipes/DecisionAnalysis.jl) is a weak dependency:
+this package does not need it, and when both are loaded an extension gives its adapter verbs
+methods for [`DrawertIBMProblem`](@ref) and [`DrawertODEProblem`](@ref). Then
+
+```julia
+using Chytridiomycosis, DecisionAnalysis
+draws = load_drawert_decision_draws()
+belief = SampleBelief(draws; weights = [d.weight for d in draws])
+prob = DrawertIBMProblem(DrawertParameters(first(draws)); tfinal = 120.0)
+actions = (; none = nothing, clean = DrawertIntervention(:clean_frogs, 14, 0.75))
+table = outcomes(prob, actions, belief; replicates = 6, seed = 2017)
+```
+
+runs the model over draws × actions × replicates with common random numbers and returns an
+`OutcomeTable`, to which a utility is applied afterwards. The four verbs are:
+
+| Verb | For the Drawert problems |
+|---|---|
+| `with_parameters(prob, θ)` | the fields of [`DrawertParameters`](@ref) named in the draw `θ` replace those of `prob`; other columns (`draw_id`, `group`, `weight`) are ignored; `ν1` and `σ1` are not recomputed |
+| `apply_action(prob, action)` | `nothing` (no intervention), a [`DrawertIntervention`](@ref), a named tuple `(; kind, day, fraction)`, or a list of those (several pulses; individual-based model only) |
+| `simulate(prob; rng)` | `solve(prob; rng)`; the deterministic model ignores `rng` |
+| `outcome(prob, run)` | counts: `initial_frogs`, `survivors`, the outcome class as three 0/1 columns, and for the individual-based model `uninfected`, `infected`, `handled`, `treatment_deaths` and the counts on each day of `evaluate` |
+
+Outcomes are counts of frogs. No cost or utility is built in, and no intervention is always
+among the actions that the user lists. The stored table is available in the same form:
+
+```@docs
+drawert_outcome_table
+```
+
+The tutorial [Which response to a Bd outbreak, with new actions?](../tutorials/11_decision_adapter.md)
+uses the adapter.
 
 ## Survey data from a run
 
