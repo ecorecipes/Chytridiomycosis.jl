@@ -139,5 +139,60 @@ using Distributions: mean
         small = drawert_outcome_table(; outcomes = (:survivors,))
         @test outcome_names(small) == [:survivors]
         @test_throws ArgumentError drawert_outcome_table(; variant = "nu")
+        @test t.replicates[1:2] == [:r1, :r2] && length(t.replicates) == 30
+    end
+
+    @testset "the stored seeds: stored runs reproduced, new actions joined" begin
+        runs = load_drawert_decisions()
+        draws = load_drawert_decision_draws()
+        @test drawert_run_seed(draws[3], 2) == drawert_run_seed(draws[3].draw_id, 2)
+        # The smallest ponds, to keep this quick; two replicates; the stored `none` and one
+        # stored clean, run again through the adapter with the stored seeds.
+        few = sort(draws; by = d -> d.N)[1:4]
+        ids = [d.draw_id for d in few]
+        stored_clean = DrawertIntervention(:clean_frogs, 28, 0.75)
+        two_cleans = [DrawertIntervention(:clean_frogs, 14, 0.75), stored_clean]
+        belief = SampleBelief((; (k => [getfield(d, k) for d in few] for k in keys(first(few)))...);
+                              weights = :weight, labels = ids)
+        base = DrawertIBMProblem(DrawertParameters(first(few)); evaluate = (120.0, 365.0))
+        again = outcomes(base, ["none" => nothing, "clean_frogs_d28_f75" => stored_clean,
+                                "two_cleans" => two_cleans], belief;
+                         replicates = 2, run_seed = drawert_run_seed, on_error = :throw)
+        names = (:survivors, :uninfected, :infected, :uninfected_d120, :infected_d120,
+                 :uninfected_d365, :infected_d365, :initial_frogs, :handled, :treatment_deaths)
+        for (a, label) in enumerate(("none", "clean_frogs_d28_f75")), (d, id) in enumerate(ids),
+            r in 1:2
+            row = only(x for x in runs if x.variant == "baseline" && x.action == label &&
+                       x.draw_id == id && x.replicate == r)
+            for name in names
+                k = findfirst(==(name), outcome_names(again))
+                @test again.values[a, d, r, k] == getfield(row, name)
+            end
+        end
+        # Joined to the stored rows of the same draws and replicates.
+        part = OutcomeTable([(; x..., replicate = string("r", x.replicate)) for x in runs
+                             if x.variant == "baseline" && x.draw_id in ids && x.replicate <= 2];
+                            draw = :draw_id, action = :action, replicate = :replicate,
+                            outcomes = collect(names), status = :status, parameters = few,
+                            key = :draw_id, weights = :weight)
+        new = outcomes(base, ["two_cleans" => two_cleans], belief; replicates = 2,
+                       run_seed = drawert_run_seed, on_error = :throw)
+        joined = combine_actions(part, new)
+        @test action_labels(joined) == vcat(action_labels(part), :two_cleans)
+        @test outcome_names(joined) == collect(names)
+        @test joined.values[end, :, :, :] ==
+              again.values[3, :, :, [findfirst(==(n), outcome_names(again)) for n in names]]
+        # Common random numbers with the stored runs: until day 14 nothing differs, so a pond
+        # whose outcome is settled before then has the stored outcome under the new action.
+        none = findfirst(==(:none), action_labels(joined))
+        settled = [(d, r) for d in 1:4, r in 1:2
+                   if only(x.first_loss for x in runs if x.variant == "baseline" &&
+                           x.action == "none" && x.draw_id == ids[d] && x.replicate == r) < 14 &&
+                      joined.values[none, d, r, 1] == 0]
+        for (d, r) in settled
+            @test joined.values[end, d, r, 1] == joined.values[none, d, r, 1]
+        end
+        @test_throws ArgumentError drawert_outcome_table(; variant = "nu",
+                                                         actions = ["x" => two_cleans])
     end
 end

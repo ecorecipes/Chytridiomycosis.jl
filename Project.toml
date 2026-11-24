@@ -35,7 +35,7 @@ StructuredPopulationCore = {url = "https://github.com/ecorecipes/ProjectionModel
 [compat]
 CommonSolve = "0.2.14"
 Dates = "1.11.0"
-DecisionAnalysis = "0.1"
+DecisionAnalysis = "0.1.1"
 Distributions = "0.25"
 DynamicalResilience = "0.3"
 FiniteKernels = "0.1"
