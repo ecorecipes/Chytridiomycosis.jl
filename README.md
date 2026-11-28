@@ -230,7 +230,7 @@ sol = solve(SchmidtSLIProblem(p))
 using Pkg; Pkg.test()
 ```
 
-Requires Julia 1.12.
+Requires Julia 1.13.
 
 ## Documentation
 

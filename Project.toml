@@ -49,7 +49,7 @@ StructuredPopulationCore = "0.1"
 TOML = "1.0.3"
 Test = "1"
 Turing = "0.49"
-julia = "1.12"
+julia = "1.13"
 
 [extras]
 DecisionAnalysis = "6a9d793e-d09c-4461-8cb4-55c12d181024"
