@@ -280,7 +280,8 @@ export DrawertParameters, DrawertIBMProblem, DrawertODEProblem, DrawertIntervent
        sporangium_loss_rate, nondimensional_parameters, nondimensional_ranges,
        nondimensional_distance, equilibrium_load_ratio, drawert2017_path, load_drawert2017,
        load_drawert2017_reproduction, drawert2017_draws, drawert_run_seed, load_drawert_decisions,
-       load_drawert_decision_draws, drawert_outcome_table, survey_loglikelihood,
+       load_drawert_decision_draws, drawert_outcome_table, drawert_survey_study,
+       survey_loglikelihood,
        drawert_summary, outcome_class, survival_group, intervention_effect
 # Barnett et al. 2026 (bioRxiv preprint) agent-based model of imperfect Bd prophylaxis
 export BarnettParameters, BarnettVaccine, barnett_vaccine, BarnettABMProblem, barnett_summary,
@@ -312,7 +313,8 @@ export CanessaDraw, canessa2018_path, load_canessa2018, CanessaAction, canessa_a
        canessa_action, canessa_growth_coefficients, CanessaParameters, canessa_survival,
        canessa_transmission, canessa_initial_load, canessa_growth_mean, canessa_growth_variance,
        CanessaIPMProblem, canessa_density_ratio, canessa_cohort_survival, canessa_dispersal,
-       canessa_ensemble, canessa_summary, CanessaSIParameters, CanessaSIProblem,
+       canessa_ensemble, canessa_summary, canessa_outcome_table, CanessaSIParameters,
+       CanessaSIProblem,
        required_reduction, final_size_transmission, final_density_ratio
 # Louca et al. 2014 DOI-distribution model and Monte Carlo extinction risk
 export LoucaParameters, LoucaDOIProblem, tadpoles_tolerate, louca_breeding_shape,

@@ -764,6 +764,23 @@ function _canessa_reference(name::Symbol; cap::Symbol = :truncate, units::Symbol
     return _CANESSA_ENSEMBLES[key]
 end
 
+"""
+    canessa_outcome_table(; actions = CANESSA_ACTION_NAMES, draws = load_canessa2018(),
+                          units = :transect, I0 = nothing, nsteps = 30,
+                          mesh = (-10.0, 15.0, 300), cap = :truncate, v = 0.5, s0 = :fit)
+
+Run the Canessa et al. (2018) IPM over `draws × actions` and return a
+`DecisionAnalysis.OutcomeTable` carrying outcomes `final_susceptibles`, `density_ratio`,
+`R0`, `eradicated`, `lifespan`, `max_distance`, and `mean_distance` together with the
+archived parameter columns (`S_0`..`S_10000`, `T_0`..`T_10000`, `Lmax`, `growth`, `beta0`,
+`S0`).
+
+Each element of `actions` may be a `Symbol` (`:a`..`:h`), a [`CanessaAction`](@ref), or a
+`label => action` pair. The method is defined when `DecisionAnalysis.jl` is loaded
+(package extension `ChytridiomycosisDecisionAnalysisExt`).
+"""
+function canessa_outcome_table end
+
 # --- Simplified SI model (eqs S11, S12; Fig. 4) --------------------------------------------------
 
 """

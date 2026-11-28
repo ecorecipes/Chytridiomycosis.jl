@@ -195,4 +195,119 @@ using Distributions: mean
         @test_throws ArgumentError drawert_outcome_table(; variant = "nu",
                                                          actions = ["x" => two_cleans])
     end
+
+    @testset "DrawertSurveyStudy (AbstractStudyDesign)" begin
+        obs = SurveyObservation(; ρ = 1.0, κ = 1.0, σe = 0.5)
+        pond = SurveyPond(; N = 30, days = [7.0], swabs = 2, pool = 5, edna = 1)
+        study = drawert_survey_study(obs, pond; nruns = 3, template = p)
+        @test study isa DecisionAnalysis.AbstractStudyDesign
+        small_draws = [(; N = 20, ν0 = 0.2), (; N = 30, ν0 = 0.15), (; N = 40, ν0 = 0.25),
+                       (; N = 25, ν0 = 0.3)]
+        belief = SampleBelief((; N = [d.N for d in small_draws],
+                               ν0 = [d.ν0 for d in small_draws]))
+        dat = simulate_study(Xoshiro(7), study, small_draws[2])
+        @test dat isa Vector{SurveySample}
+        @test !isempty(dat)
+        ll = study_loglikelihood(study, dat, small_draws[2])
+        @test ll isa Float64 && (isfinite(ll) || ll == -Inf)
+        ss = SummaryStatistics(belief, study; seed = 9)
+        @test ss isa SummaryStatistics
+        is_study = ImportanceSampling(belief, study; seed = 9, datasets = 2)
+        @test is_study isa ImportanceSampling
+        @test size(is_study.loglikelihood) == (2, 4)
+        @test_throws ArgumentError study_posterior(Xoshiro(1), study, dat, (;))
+    end
+
+    @testset "Canessa 2018 adapters (IPM, SI, canessa_outcome_table)" begin
+        d_all = load_canessa2018()[1:4]
+        mesh = (-10.0, 15.0, 40)
+        # CanessaIPMProblem verbs
+        ipm = CanessaIPMProblem(CanessaParameters(d_all[1]); nsteps = 10, mesh)
+        ipm_d2 = DA.with_parameters(ipm, d_all[2])
+        @test ipm_d2.p.S0 == d_all[2].S0
+        ipm_nt = DA.with_parameters(ipm, (; beta0 = 0.01, S0 = 400.0))
+        @test ipm_nt.p.β0 == 0.01 && ipm_nt.p.S0 == 400.0
+        @test_throws ArgumentError DA.with_parameters(ipm, (; unused = 1.0))
+        ipm_f = DA.apply_action(ipm, :f)
+        @test ipm_f.p.S0 ≈ 0.5 * ipm.p.S0
+        @test_throws ArgumentError DA.apply_action(ipm, :d) # growth_factor != 1
+        r_ipm = DA.simulate(ipm_f; rng = Xoshiro(1))
+        o_ipm = DA.outcome(ipm_f, r_ipm)
+        @test o_ipm.final_susceptibles == r_ipm.S[end]
+        @test o_ipm.R0 ≈ basic_reproduction_number(ipm_f.p; mesh)
+        t_ipm = outcomes(ipm, [:a => :a, :f => :f, :g => :g],
+                         [(; β0 = 0.005, S0 = 400.0), (; β0 = 0.009, S0 = 600.0)];
+                         replicates = 1, seed = 1, on_error = :throw)
+        @test action_labels(t_ipm) == [:a, :f, :g]
+        @test run_counts(t_ipm).ok == 6
+
+        # CanessaSIProblem verbs
+        si = CanessaSIProblem(CanessaSIParameters(:canessa2018); nsteps = 20)
+        si_draws = [(; β = 0.005, S0 = 400.0), (; β = 0.009, S0 = 600.0)]
+        si_acts = [:none => nothing, :thin50 => (; mS0 = 0.5), :trans50 => (; mβ = 0.5)]
+        t_si = outcomes(si, si_acts, si_draws; replicates = 1, seed = 1, on_error = :throw)
+        @test action_labels(t_si) == [:none, :thin50, :trans50]
+        @test run_counts(t_si).ok == 6
+        @test_throws ArgumentError DA.apply_action(si, (; bogus = 0.1))
+
+        # canessa_outcome_table includes growth_factor != 1 actions (e.g. :d)
+        tbl = canessa_outcome_table(; actions = [:a, :d, :f], draws = d_all, nsteps = 10, mesh)
+        @test tbl isa OutcomeTable
+        @test action_labels(tbl) == [:a, :d, :f]
+        @test length(state_labels(tbl)) == 4
+        ens_d = canessa_ensemble(canessa_action(:d); draws = d_all, nsteps = 10, mesh)
+        k_R0 = findfirst(==(:R0), outcome_names(tbl))
+        @test [tbl.values[2, i, 1, k_R0] for i in 1:4] ≈ [e.R0 for e in ens_d]
+    end
+
+    @testset "Cook 2022 adapter (CookProjectionProblem)" begin
+        cp = CookParameters(:cook2022)
+        cprob = CookProjectionProblem(cp; years = 5)
+        c_acts = [:none => nothing, :treat50 => (; treated_fraction = 0.5, treated_years = 1.0)]
+        c_draws = [(; SU = 0.10, ST = 0.45), (; SU = 0.15, ST = 0.55)]
+        ct = outcomes(cprob, c_acts, c_draws; replicates = 3, seed = 2022, on_error = :throw)
+        @test action_labels(ct) == [:none, :treat50]
+        @test run_counts(ct) == (runs = 12, ok = 12, failed = 0, absent = 0)
+        @test :final_adults in outcome_names(ct) && :lambda in outcome_names(ct)
+        # Oracle parity with direct solve
+        acted = DA.apply_action(DA.with_parameters(cprob, c_draws[1]), c_acts[2][2])
+        direct = solve(acted; nsims = 1, rng = Xoshiro(99))
+        o = DA.outcome(acted, DA.simulate(acted; rng = Xoshiro(99)))
+        @test o.final_adults == direct.states[end, 4, 1] && o.lambda == direct.λ[1]
+        @test_throws ArgumentError DA.apply_action(cprob, (; bad = 1.0))
+    end
+
+    @testset "Heard 2024 adapter (HeardMetapopulationProblem)" begin
+        hp = HeardParameters(:heard2024; species = :raniformis, epoch = :contemporary,
+                             mets = 20, mets_cv = 0.3, mortality_cv = 0.3)
+        hp_short = HeardParameters(hp.adult_survival, hp.subadult_survival, hp.carrying_capacity,
+                                   hp.prop_dispersing, hp.mets, hp.mets_cv, hp.mortality_cv,
+                                   hp.met_survival, hp.sex_ratio, hp.subadult_breeding_fraction,
+                                   hp.initial_fraction, 5, hp.cell_size,
+                                   hp.distance_decay, hp.max_distance)
+        hprob = HeardMetapopulationProblem(hp_short, 1)
+        h_acts = [:none => nothing, :boost => (; survival_multiplier = 1.25)]
+        h_draws = [(; adult_survival = 0.30, mets = 18.0), (; adult_survival = 0.40, mets = 24.0)]
+        ht = outcomes(hprob, h_acts, h_draws; replicates = 2, seed = 2024, on_error = :throw)
+        @test action_labels(ht) == [:none, :boost]
+        @test run_counts(ht).ok == 8
+        @test :final_females in outcome_names(ht) && :persisted in outcome_names(ht)
+        # Coupled subadult survival follows adult_survival
+        hp_upd = DA.with_parameters(hprob, (; adult_survival = 0.55))
+        @test hp_upd.p.adult_survival == 0.55 && hp_upd.p.subadult_survival == 0.55
+        @test_throws ArgumentError DA.apply_action(hprob, (; unknown = 1))
+    end
+
+    @testset "Turner 2025 adapter (TurnerPVAProblem)" begin
+        tprob = TurnerPVAProblem(:turner2025; month = :august, pattern = :random, replicates = 1)
+        t_acts = [:aug_rand => (; month = :august, pattern = :random),
+                  :oct_max1 => (; month = :october, pattern = :max1dry)]
+        t_draws = [(; p_wet = 0.65), (; p_wet = 0.80)]
+        tt = outcomes(tprob, t_acts, t_draws; replicates = 2, seed = 2025, on_error = :throw)
+        @test action_labels(tt) == [:aug_rand, :oct_max1]
+        @test run_counts(tt).ok == 8
+        @test :final_females in outcome_names(tt) && :quasi_extinct_20 in outcome_names(tt)
+        @test_throws ArgumentError DA.apply_action(tprob, :not_a_pattern)
+        @test_throws ArgumentError DA.apply_action(tprob, (; month = :july))
+    end
 end

@@ -166,6 +166,7 @@ among the actions that the user lists. The stored table is available in the same
 
 ```@docs
 drawert_outcome_table
+drawert_survey_study
 ```
 
 The tutorial [Which response to a Bd outbreak, with new actions?](../tutorials/11_decision_adapter.md)

@@ -223,6 +223,20 @@ function has no method. The weights are those of a design, not of a posterior.
 """
 function drawert_outcome_table end
 
+"""
+    drawert_survey_study(obs::SurveyObservation, pond::SurveyPond;
+                         nruns = 30, seeds = 1:nruns, template = nothing)
+
+Wrap the Drawert et al. (2017) swab/eDNA surveillance model ([`simulate_survey`](@ref) and
+[`survey_loglikelihood`](@ref)) as a `DecisionAnalysis.AbstractStudyDesign` for
+sample-based EVSI (`evsi(problem, study, ImportanceSampling())` or `SummaryStatistics`).
+
+`template` supplies fixed `DrawertParameters` fields not present in a draw (defaults to
+`DrawertParameters(first(load_drawert_decision_draws()))`). The method is defined when
+`DecisionAnalysis.jl` is loaded (package extension `ChytridiomycosisDecisionAnalysisExt`).
+"""
+function drawert_survey_study end
+
 # --------------------------------------------------------------------------------------------
 # Survey data from an individual-based run (observation model: src/novel/swab_edna.jl)
 

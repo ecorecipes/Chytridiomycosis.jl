@@ -150,6 +150,7 @@ canessa_cohort_survival
 canessa_dispersal
 canessa_ensemble
 canessa_summary
+canessa_outcome_table
 CanessaSIParameters
 CanessaSIProblem
 required_reduction
